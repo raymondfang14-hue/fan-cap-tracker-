@@ -331,7 +331,7 @@ dialog#sheet::backdrop{background:rgba(6,12,24,.55)}
 .fc-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .fc-nums span{display:grid;padding:6px 2px;font:600 .82rem/1.1 var(--mono)}
 .fc-nums small{font:600 .56rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.fc-rings{display:flex;gap:16px;justify-content:center}
+.fc-rings{display:flex;gap:12px;justify-content:center}
 .ring{display:grid;justify-items:center;gap:2px;font:600 .58rem/1.1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .ring svg{display:block}
 .ring text{font:800 13px var(--display);fill:var(--fg)}
@@ -403,6 +403,74 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
   .hb .fill,.gb .fill,.col .bx,.meter i{transition:width .35s ease,height .35s ease}
   .chip,.seg button,.nav a,.tile{transition:background-color .12s,color .12s,border-color .12s}
 }
+
+/* ===== on-field: roles, traits, play ratings ===== */
+:root{--gold:#9A6A00;--gold-bg:#FBEFC9;--silver:#56657A;--silver-bg:#E5EAF1;--bronze:#9A4E1C;--bronze-bg:#F7E2D3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--gold:#F2C55C;--gold-bg:#3A2E0E;--silver:#C3CEDD;--silver-bg:#253246;--bronze:#E8A06E;--bronze-bg:#3B2416}}
+:root[data-theme="dark"]{--gold:#F2C55C;--gold-bg:#3A2E0E;--silver:#C3CEDD;--silver-bg:#253246;--bronze:#E8A06E;--bronze-bg:#3B2416}
+.role{display:inline-block;padding:3px 8px;border-radius:3px;border:1.5px solid var(--brand);color:var(--brand);font:700 .62rem/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.role.sm{border-width:1px;padding:2px 6px;font-size:.6rem;color:var(--fg);border-color:var(--line)}
+.fc .role{margin-top:-4px}
+.ot{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 5px;border-radius:999px;font:700 .64rem/1.1 var(--body);white-space:nowrap;background:var(--surface-2);color:var(--fg)}
+.ot i{width:10px;height:10px;transform:rotate(45deg);border-radius:2px;flex:none}
+.ot.gold{background:var(--gold-bg);color:var(--gold)} .ot.gold i{background:var(--gold)}
+.ot.silver{background:var(--silver-bg);color:var(--silver)} .ot.silver i{background:var(--silver)}
+.ot.bronze{background:var(--bronze-bg);color:var(--bronze)} .ot.bronze i{background:var(--bronze)}
+.otdots{display:inline-flex;gap:3px;margin-left:4px}
+.otdots i{width:7px;height:7px;transform:rotate(45deg);border-radius:1px}
+.otdots i.gold{background:var(--gold)} .otdots i.silver{background:var(--silver)} .otdots i.bronze{background:var(--bronze)}
+.fc-band .prk{position:absolute;left:8px;top:32px;font:800 .9rem/1 var(--display);font-stretch:80%;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.pscore{display:inline-grid;place-items:center;min-width:2.4rem;padding:4px 6px;border-radius:4px;font:800 .95rem/1 var(--display);font-stretch:80%;background:color-mix(in srgb,var(--pc) 18%,transparent);color:var(--fg);box-shadow:inset 3px 0 0 var(--pc)}
+.vl{font:600 .74rem/1 var(--body)} .vl.good,.vlab.good{color:var(--good)} .vl.bad,.vlab.bad{color:var(--bad)}
+.posseg{overflow-x:auto;scrollbar-width:none;max-width:100%}
+.posseg::-webkit-scrollbar{display:none}
+.posseg button{flex:none}
+.rls{display:grid;gap:2px}
+.rlrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 3.6rem;gap:10px;align-items:center;padding:7px 6px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:6px;color:inherit}
+.rlrow:hover,.rlrow[aria-pressed="true"]{background:var(--brand-soft)}
+.rlrow .nm{display:grid;min-width:0}
+.rlrow .nm b{font:700 .88rem/1.2 var(--body)}
+.rlrow .nm small{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rlrow .track{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.rlrow .track i{display:block;height:100%;background:var(--brand);border-radius:5px}
+.rlrow .val{font:700 .9rem/1.1 var(--mono);text-align:right;display:grid}
+.rlrow .val small{font:500 .64rem/1.2 var(--mono);color:var(--muted)}
+.pvps{width:100%;height:auto;display:block}
+.pvps text{fill:var(--muted);font:500 10px var(--mono)}
+.pvps .gl{stroke:var(--line);stroke-width:1}
+.pvps .mid{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;opacity:.7}
+.pvps .q{font:700 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;fill:var(--muted);opacity:.8}
+.pvps .ax{font:600 10px var(--mono);fill:var(--muted)}
+.pvps .lb{font:600 10px var(--body);fill:var(--fg)}
+.pvps .dot{fill:var(--brand);fill-opacity:.7;stroke:var(--surface);stroke-width:1.2;cursor:pointer}
+.pvps .dot.good{fill:var(--good);fill-opacity:.85} .pvps .dot.bad{fill:var(--bad);fill-opacity:.85}
+.pvps .dot:hover,.pvps .dot:focus-visible{stroke:var(--fg);stroke-width:2;outline:none}
+.tholders{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:6px}
+.tholder{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-align:left;cursor:pointer;color:inherit}
+.tholder:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tholder .av{box-shadow:0 0 0 2px var(--c2);font-size:.8rem}
+.tholder b{display:block;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tholder small{font-size:.74rem;color:var(--muted)}
+.tholder .ot{grid-column:1/-1;justify-self:start}
+.field{display:grid;gap:14px}
+.fhead{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.bigplay{display:grid;place-items:center;width:84px;height:84px;border-radius:10px;background:color-mix(in srgb,var(--pc) 16%,var(--surface));box-shadow:inset 0 -5px 0 var(--pc)}
+.bigplay b{font:800 2.5rem/1 var(--display);font-stretch:78%;font-variant-numeric:tabular-nums}
+.bigplay small{font:600 .56rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:-14px}
+.bigplay.na{background:var(--surface-2);box-shadow:none}
+.rkpill{font:700 .72rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:3px;background:var(--fg);color:var(--bg)}
+.stiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,118px),1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stiles>div{padding:9px 11px;display:grid;gap:2px;min-width:0;box-shadow:inset -1px -1px 0 var(--line)}
+.stiles .k{font:600 .6rem/1.2 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stiles .v{font:800 1.3rem/1.05 var(--display);font-stretch:80%}
+.stiles .s{font-size:.72rem;color:var(--muted)}
+.pbars.wide .pb{grid-template-columns:8.4rem minmax(0,1fr) 2.2rem 5.8rem}
+.pb .pv{font:500 .74rem/1 var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.pvp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:14px;align-items:end;padding:12px;border-radius:var(--r);background:var(--surface-2)}
+.pvp>div{display:grid;gap:5px;min-width:0}
+.vlab{font:800 1.1rem/1 var(--display);font-stretch:82%;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.shtabs{justify-self:start}
+@media (max-width:560px){.pbars.wide .pb{grid-template-columns:6.4rem minmax(0,1fr) 2rem;}.pbars.wide .pv{grid-column:1/-1;text-align:left;margin-top:-4px}.pvp{grid-template-columns:minmax(0,1fr)}.rlrow{grid-template-columns:minmax(0,1fr) 4.5rem 3.2rem}}
 </style>
 
 <header class="cmd gut">
@@ -413,6 +481,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
       <a href="#home" data-nav="home">Home</a>
       <a href="#news" data-nav="news">News</a>
       <a href="#teams" data-nav="teams">Teams</a>
+      <a href="#onfield" data-nav="onfield">Players</a>
       <a href="#contracts" data-nav="contracts">Contracts</a>
       <a href="#tools" data-nav="tools">Tools</a>
       <a href="#analytics" data-nav="analytics">Analytics</a>
@@ -448,10 +517,11 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
         <button type="button" data-hc="top" aria-pressed="true">Top paid</button>
         <button type="button" data-hc="young" aria-pressed="false">Young core</button>
         <button type="button" data-hc="cut" aria-pressed="false">Cut watch</button>
+        <button type="button" data-hc="value" aria-pressed="false">Bargains</button>
       </div>
     </div>
     <div class="fcs row" id="home-cards"></div>
-    <p class="note">Market ring: how his yearly pay ranks at his position (99 = top). Security ring: how safe his money is, from guarantees, dead money and years left. Scroll sideways for more.</p>
+    <p class="note">Market ring: how his yearly pay ranks at his position (99 = top). Security ring: how safe his money is, from guarantees, dead money and years left. Play ring: his 2026 play rating, from 40 to 99. Scroll sideways for more.</p>
   </div>
 
   <div class="grid2">
@@ -497,6 +567,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
       <a class="tile" href="#tools" data-tool="cut"><b>Cut or keep</b><span>Pick a player and see the dead money and the cap space a release would free.</span></a>
       <a class="tile" href="#tools" data-tool="trade"><b>Trade checker</b><span>Swap players between two teams and see each team's cap room after the deal.</span></a>
       <a class="tile" href="#tools" data-tool="compare"><b>Compare players</b><span>Put two contracts side by side: pay, guarantees and cap hit.</span></a>
+      <a class="tile" href="#onfield"><b>Player ratings</b><span>Roles, trait badges and a play rating for every player, next to what he is paid.</span></a>
       <a class="tile" href="#learn"><b>Cap 101</b><span>Dead money, void years and restructures, each in two sentences.</span></a>
     </div>
   </div>
@@ -652,6 +723,49 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
   </div>
 </section>
 
+<!-- ON THE FIELD -->
+<section class="view" id="v-onfield" hidden aria-labelledby="h-onfield">
+  <div class="sechead">
+    <div><span class="eyebrow" id="of-eyebrow">2026 season stats</span><h1 class="title" id="h-onfield">Players on the field</h1></div>
+  </div>
+  <p class="lede">How each player is actually playing, set next to what he is paid. Every player gets a role, a play rating from 40 to 99, a rank at his position and trait badges, all built from this season's stats.</p>
+  <div class="seg posseg" id="of-pos" role="group" aria-label="Position"></div>
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow">Ranked by play rating</span><h2 class="sec" id="of-top-title">Top players right now</h2></div></div>
+    <div class="fcs row" id="of-top"></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div><span class="eyebrow">How teams use them · tap to filter</span><h2 class="sec" id="of-roles-title">Roles</h2></div>
+      <div class="rls" id="of-roles"></div>
+      <p class="note">Each player gets one role from how much he plays and what he is asked to do. The number is how many players have that role; "avg" is their average play rating.</p>
+    </div>
+    <div class="panel">
+      <div><span class="eyebrow">Qualified players · tap a dot</span><h2 class="sec">Pay vs. play</h2></div>
+      <div id="of-scatter"></div>
+      <p class="note">Dashed lines mark the middle pay and the middle rating. Green dots play well above their pay rank; red dots are paid well above how they are playing so far.</p>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow" id="of-count"></span><h2 class="sec">Positional rankings</h2></div></div>
+    <div class="controls">
+      <label class="f" for="of-role">Role<select id="of-role"></select></label>
+      <label class="f" for="of-trait">Trait<select id="of-trait"></select></label>
+      <label class="f" for="of-team">Team<select id="of-team"></select></label>
+      <label style="display:flex;gap:8px;align-items:center;font-size:.86rem;align-self:end;padding-bottom:9px"><input type="checkbox" id="of-qual" checked> Enough snaps only</label>
+    </div>
+    <div class="tw"><table class="t" id="of-table"></table></div>
+    <button class="btn ghost more" id="of-more" type="button">Show more</button>
+  </div>
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow">Trait badges · gold, silver, bronze</span><h2 class="sec" id="of-tname">Traits</h2></div></div>
+    <div class="chips" id="of-tchips" role="group" aria-label="Trait"></div>
+    <p class="note" id="of-tdesc"></p>
+    <div class="tholders" id="of-tcards"></div>
+    <p class="note">Gold is the top 6% of qualified players at the position in that skill, silver the top 16%, bronze the top 28%. Iron man, Clean sheet and Big leg are earned outright.</p>
+  </div>
+</section>
+
 <!-- ANALYTICS -->
 <section class="view" id="v-analytics" hidden aria-labelledby="h-analytics">
   <div class="sechead">
@@ -717,6 +831,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
   <ul id="foot-src">
     <li><a href="https://overthecap.com/salary-cap-space" target="_blank" rel="noopener">Over The Cap: cap space</a></li>
     <li><a href="https://www.spotrac.com/nfl/" target="_blank" rel="noopener">Spotrac</a></li>
+    <li><a href="https://github.com/nflverse/nflverse-data/releases" target="_blank" rel="noopener">nflverse: player stats</a></li>
     <li><a href="https://amp.nfl.com/news/nfl-announces-2026-salary-cap-set-at-301-2-million-per-team" target="_blank" rel="noopener">NFL: 2026 cap</a></li>
     <li><a href="https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league" target="_blank" rel="noopener">SI trade tracker</a></li>
     <li><a href="https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/" target="_blank" rel="noopener">CBS: Kraft</a></li>
@@ -735,7 +850,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
   </ul>
   <details id="setup" class="faq" style="margin-top:8px"><summary style="padding-inline:16px">Site setup</summary>
     <div style="padding:0 16px 14px;display:grid;gap:8px;max-width:70ch">
-      <p>For whoever runs the site. Contract and cap figures live in <code>data/nfl.json</code> and the news feed in <code>data/moves.json</code>. A daily task refreshes both each morning.</p>
+      <p>For whoever runs the site. Contract and cap figures live in <code>data/nfl.json</code>, the news feed in <code>data/moves.json</code> and season stats in <code>data/stats.json</code> (built by <code>data/build_stats.py</code> from nflverse files). A daily task refreshes all three each morning.</p>
       <p>Airtable holds the featured deal breakdowns. Set <code>AIRTABLE_TOKEN</code> and <code>AIRTABLE_BASE_ID</code> (and <code>AIRTABLE_TABLE</code> if the table is not named Contracts) in Vercel, and the page reads them through <code>/api/contracts</code>. Without them, the built-in breakdowns show.</p>
       <p>Working Copy keeps the code. Edit <code>src.html</code> in Koder, run <code>build.sh</code> or copy it into <code>index.html</code>, then commit and push. Vercel redeploys on its own.</p>
     </div>
@@ -841,6 +956,11 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It blends percentiles in the stats that matter most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) against everyone at his position with enough snaps. It is Plain Cap\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, No-fly zone and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
+  ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
+  ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
+  ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
 ];
 const LEARN_NBA = [
@@ -858,7 +978,7 @@ const st = {
   lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tSort: 'space', newsKind: 'All', mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'cut', cut: null, cutWhen: 'post',
-  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null]
+  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], shTab: store.get('shTab', 'field')
 };
 
 /* ===== data ===== */
@@ -944,8 +1064,9 @@ function faceCard(p) {
     ${avatar(p)}
     <span class="fc-name">${esc(p.name)}</span>
     <span class="fc-sub">${esc(t.city)} ${esc(t.name)}${p.age ? ' · ' + p.age : ''}</span>
+    ${rolePill(p)}
     <span class="fc-nums"><span><small>Per yr</small>${mon(p.apy)}</span><span><small>Cap hit</small>${mon(p.cap)}</span><span><small>Gtd</small>${pct(p.gtdp)}</span></span>
-    <span class="fc-rings">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}</span>
+    <span class="fc-rings">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.play != null ? ringSVG(p.play, 'Play', pColor(p.playPct)) : ''}</span>
     ${p.traits.length ? `<span class="traits">${p.traits.slice(0, 2).map(k => `<span class="trait">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}
   </button>`;
 }
@@ -992,6 +1113,496 @@ function renderDG() {
 $('#trait-chips').onclick = e => { const b = e.target.closest('[data-trait]'); if (b) { traitSel = b.dataset.trait; traitLimit = 24; renderTraits(); } };
 $('#trait-more').onclick = () => { traitLimit += 24; renderTraits(); };
 $('#heat').onclick = e => { const b = e.target.closest('[data-hs]'); if (b) { e.stopPropagation(); heatSort = b.dataset.hs || null; renderHeat(); } };
+
+
+/* ===== on-field stats: roles, traits, play ratings, positional ranks ===== */
+let SD = null, THRU = 0, TEAMST = {};
+const sm = p => (p.st && p.st.m) || {};
+const gp = p => Math.max(1, p.st ? p.st.g : 1);
+const W = () => Math.max(1, THRU);
+const f1 = v => v.toFixed(1), f2 = v => v.toFixed(2), pc1 = v => (v * 100).toFixed(1) + '%', pc0 = v => Math.round(v * 100) + '%';
+const i0 = v => Math.round(v).toLocaleString(), h1 = v => (Math.round(v * 2) / 2).toString();
+const nz = v => (Number.isFinite(v) ? v : null);
+const covOK = p => (sm(p).dtg || 0) >= 1.2 * W();
+const tch = p => (sm(p).car || 0) + (sm(p).rec || 0);
+// key: [label, sub, value(p), format, lowerIsBetter, short]
+const MET = {
+  epa: ['EPA per play', 'expected points added per dropback or run', p => nz(sm(p).epa), f2, 0, 'EPA/play'],
+  cpoe: ['Accuracy', 'completion % over expected', p => sm(p).att ? (sm(p).cpoe || 0) : null, v => (v > 0 ? '+' : '') + v.toFixed(1), 0, 'CPOE'],
+  ny: ['Yards per dropback', 'sacks count as dropbacks', p => nz(sm(p).ny), f1, 0, 'Y/DB'],
+  tdp: ['Touchdown rate', 'TDs per pass', p => sm(p).att ? (sm(p).tdp || 0) : null, pc1, 0, 'TD%'],
+  intp: ['Interception rate', 'lower is better', p => sm(p).att ? (sm(p).intp || 0) : null, pc1, 1, 'INT%'],
+  skp: ['Sack rate', 'lower is better', p => sm(p).att ? (sm(p).skp || 0) : null, pc1, 1, 'Sack%'],
+  pydg: ['Pass yards a game', '', p => sm(p).att ? (sm(p).pyd || 0) / gp(p) : null, i0, 0, 'Yds/G'],
+  rydg: ['Rush yards a game', '', p => (sm(p).ryd || 0) / gp(p), f1, 0, 'Rush/G'],
+  adot: ['Throw depth', 'air yards per pass', p => sm(p).att ? (sm(p).adot || 0) : null, f1, 0, 'aDOT'],
+  deep: ['Deep completions', '20+ yard passes a game', p => sm(p).att ? (sm(p).p20 || 0) / gp(p) : null, f1, 0, '20+/G'],
+  pyd: ['Pass yards', '', p => sm(p).att ? (sm(p).pyd || 0) : null, i0, 0, 'Pass yds'],
+  ptdt: ['Pass TDs', '', p => sm(p).att ? (sm(p).ptd || 0) : null, i0, 0, 'TD'],
+  qint: ['Interceptions thrown', 'lower is better', p => sm(p).att ? (sm(p).int || 0) : null, i0, 1, 'INT'],
+  intt: ['Interceptions', '', p => sm(p).dint || 0, i0, 0, 'INT'],
+  rush: ['Rush yards', '', p => sm(p).ryd || 0, i0, 0, 'Rush yds'],
+  scrg: ['Scrimmage yards a game', 'rushing plus receiving', p => (sm(p).scr || 0) / gp(p), i0, 0, 'Scrim/G'],
+  ypc: ['Yards per carry', '', p => sm(p).car ? sm(p).ypc : null, f1, 0, 'YPC'],
+  yco: ['Yards after contact', 'per carry, after the first hit', p => sm(p).car ? (sm(p).yco || 0) : null, f1, 0, 'YCO'],
+  repa: ['Rush EPA', 'expected points added per carry', p => sm(p).car ? (sm(p).repa || 0) : null, f2, 0, 'EPA/car'],
+  btt: ['Broken tackles', 'per 10 touches', p => tch(p) ? ((sm(p).rbt || 0) + (sm(p).rbt2 || 0)) / tch(p) * 10 : null, f1, 0, 'BT/10'],
+  r20r: ['Long runs', '20+ yard runs per 100 carries', p => sm(p).car ? (sm(p).r20 || 0) / sm(p).car * 100 : null, f1, 0, '20+%'],
+  recg: ['Receiving yards a game', '', p => (sm(p).ryds || 0) / gp(p), f1, 0, 'Rec/G'],
+  tdg: ['Touchdowns a game', 'rushing plus receiving', p => ((sm(p).rtd || 0) + (sm(p).rectd || 0)) / gp(p), f2, 0, 'TD/G'],
+  tdt: ['Touchdowns', 'rushing plus receiving', p => (sm(p).rtd || 0) + (sm(p).rectd || 0), i0, 0, 'TD'],
+  fumt: ['Fumbles lost', 'per 100 touches, lower is better', p => tch(p) ? (sm(p).fum || 0) / tch(p) * 100 : null, f1, 1, 'Fum/100'],
+  tchg: ['Touches a game', 'carries plus catches', p => tch(p) / gp(p), f1, 0, 'Tch/G'],
+  rsh: ['Carry share', 'of team carries', p => sm(p).rsh || 0, pc0, 0, 'Car%'],
+  recy: ['Receiving yards', '', p => sm(p).ryds || 0, i0, 0, 'Rec yds'],
+  rec: ['Catches', '', p => sm(p).rec || 0, i0, 0, 'Rec'],
+  ryg: ['Receiving yards a game', '', p => (sm(p).ryds || 0) / gp(p), f1, 0, 'Yds/G'],
+  tsh: ['Target share', 'of team targets', p => sm(p).tsh || 0, pc0, 0, 'Tgt%'],
+  ypt: ['Yards per target', '', p => sm(p).tgt ? sm(p).ypt : null, f1, 0, 'Y/Tgt'],
+  xepa: ['EPA per target', 'expected points added', p => sm(p).tgt ? (sm(p).xepa || 0) : null, f2, 0, 'EPA/Tgt'],
+  cat: ['Catch rate', '', p => sm(p).tgt ? (sm(p).cat || 0) : null, pc0, 0, 'Catch%'],
+  yac: ['Yards after catch', 'per catch', p => sm(p).rec ? (sm(p).yac || 0) : null, f1, 0, 'YAC'],
+  rtdg: ['Receiving TDs a game', '', p => (sm(p).rectd || 0) / gp(p), f2, 0, 'TD/G'],
+  rtdt: ['Receiving TDs', '', p => sm(p).rectd || 0, i0, 0, 'TD'],
+  drpp: ['Drop rate', 'per target, lower is better', p => sm(p).tgt ? (sm(p).drpp || 0) : null, pc1, 1, 'Drop%'],
+  radot: ['Target depth', 'air yards per target', p => sm(p).tgt ? (sm(p).radot || 0) : null, f1, 0, 'aDOT'],
+  fdpt: ['First downs', 'share of targets that move the chains', p => sm(p).tgt ? (sm(p).rfd1 || 0) / sm(p).tgt : null, pc0, 0, '1D/Tgt'],
+  big: ['Big plays', '20+ yard catches a game', p => (sm(p).x20 || 0) / gp(p), f2, 0, '20+/G'],
+  snaps: ['Snaps', '', p => p.st ? (p.st.osn || p.st.dsn || 0) : 0, i0, 0, 'Snaps'],
+  osh: ['Snap share', 'of team offensive snaps', p => p.st ? (p.st.osh || 0) : null, pc0, 0, 'Snap%'],
+  penr: ['Clean play', 'penalties per 100 snaps, lower is better', p => p.st && p.st.osn ? (sm(p).pen || 0) / p.st.osn * 100 : null, f2, 1, 'Pen/100'],
+  tskp: ['Team pass protection', 'team sack rate, lower is better', p => TEAMST[p.team] ? TEAMST[p.team].skp : null, pc1, 1, 'Team sack%'],
+  tybc: ['Team run lanes', 'team yards before contact per carry', p => TEAMST[p.team] ? TEAMST[p.team].ybc : null, f2, 0, 'Team YBC'],
+  prsr: ['Pressure rate', 'pressures per 100 snaps', p => p.st && p.st.dsn ? (sm(p).prs || 0) / p.st.dsn * 100 : null, f1, 0, 'Prs/100'],
+  sckg: ['Sacks a game', '', p => (sm(p).sck || 0) / gp(p), f2, 0, 'Sck/G'],
+  sck: ['Sacks', '', p => sm(p).sck || 0, h1, 0, 'Sacks'],
+  prsg: ['Pressures a game', '', p => (sm(p).prs || 0) / gp(p), f1, 0, 'Prs/G'],
+  prst: ['Pressures', '', p => sm(p).prs || 0, i0, 0, 'Prs'],
+  tflg: ['Tackles for loss a game', '', p => (sm(p).tfl || 0) / gp(p), f2, 0, 'TFL/G'],
+  tflt: ['Tackles for loss', '', p => sm(p).tfl || 0, i0, 0, 'TFL'],
+  dsh: ['Snap share', 'of team defensive snaps', p => p.st ? (p.st.dsh || 0) : null, pc0, 0, 'Snap%'],
+  tkg: ['Tackles a game', '', p => (sm(p).tk || 0) / gp(p), f1, 0, 'Tkl/G'],
+  tkt: ['Tackles', '', p => sm(p).tk || 0, i0, 0, 'Tkl'],
+  mtp: ['Missed tackles', 'share of attempts, lower is better', p => (sm(p).tk || 0) + (sm(p).mtk || 0) >= 8 ? (sm(p).mtp || 0) : null, pc0, 1, 'Miss%'],
+  pra: ['Passer rating allowed', 'when targeted, lower is better', p => covOK(p) ? (sm(p).pra || 0) : null, f1, 1, 'Rtg alw'],
+  ypta: ['Yards per target allowed', 'lower is better', p => covOK(p) ? (sm(p).dya || 0) / sm(p).dtg : null, f1, 1, 'Y/Tgt alw'],
+  cmpa: ['Catch rate allowed', 'lower is better', p => covOK(p) ? (sm(p).dca || 0) / sm(p).dtg : null, pc0, 1, 'Cmp alw'],
+  dtgt: ['Times targeted', '', p => sm(p).dtg || 0, i0, 0, 'Tgts'],
+  tgr: ['Targets faced', 'per 100 snaps', p => p.st && p.st.dsn ? (sm(p).dtg || 0) / p.st.dsn * 100 : null, f1, 0, 'Tgt/100'],
+  plyg: ['Plays on the ball', 'passes defended plus 2× INTs, a game', p => ((sm(p).pd || 0) + 2 * (sm(p).dint || 0)) / gp(p), f2, 0, 'Ball/G'],
+  pdt: ['Passes defended', '', p => sm(p).pd || 0, i0, 0, 'PD'],
+  tov: ['Takeaways', 'INTs plus forced fumbles a game', p => ((sm(p).dint || 0) + (sm(p).ff || 0)) / gp(p), f2, 0, 'TO/G'],
+  fgm: ['Field goals', 'made', p => sm(p).fga ? (sm(p).fgm || 0) : null, i0, 0, 'FGM'],
+  fgp: ['Field goal rate', '', p => sm(p).fga ? (sm(p).fgp || 0) : null, pc0, 0, 'FG%'],
+  fg40: ['From 40 and out', 'make rate', p => sm(p).fg40a ? (sm(p).fg40m || 0) / sm(p).fg40a : null, pc0, 0, '40+%'],
+  fg50: ['50+ yard makes', '', p => sm(p).fga ? (sm(p).fg50 || 0) : null, i0, 0, '50+'],
+  lngk: ['Longest make', 'yards', p => sm(p).fga ? (sm(p).lng || 0) : null, i0, 0, 'Long'],
+  patp: ['Extra points', 'make rate', p => sm(p).pata ? (sm(p).patm || 0) / sm(p).pata : null, pc0, 0, 'XP%'],
+  punts: ['Punts', '', p => sm(p).pun || 0, i0, 0, 'Punts'],
+  pnet: ['Net average', 'yards per punt after returns', p => sm(p).pun ? sm(p).pnet : null, f1, 0, 'Net'],
+  pavg: ['Gross average', 'yards per punt', p => sm(p).pun ? sm(p).pavg : null, f1, 0, 'Gross'],
+  pi20: ['Inside the 20', 'share of punts', p => sm(p).pun ? (sm(p).pi20p || 0) : null, pc0, 0, 'In 20']
+};
+const MET_KEYS = Object.keys(MET);
+const SG_ORDER = ['QB', 'RB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
+const SG_NAME = Object.assign({}, GROUP_NAME, { WR: 'Wide receiver', K: 'Kicker', P: 'Punter' });
+const sgOf = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.group === 'ST' ? null : p.group;
+// q: qualifier per week played, bars: weighted percentile mix behind the play rating, cols: table and stat tiles
+const recBars = [['ryg', .22], ['tsh', .14], ['ypt', .14], ['xepa', .16], ['cat', .06], ['yac', .07], ['rtdg', .12], ['drpp', .05], ['fdpt', .04]];
+const rushDef = [['prsr', .26], ['sckg', .18], ['prsg', .14], ['tflg', .16], ['dsh', .1], ['mtp', .06], ['tov', .1]];
+const GCFG = {
+  QB: { q: p => (sm(p).att || 0) >= 12 * W(), need: () => `${12 * W()} passes`, bars: [['epa', .3], ['cpoe', .15], ['ny', .15], ['tdp', .1], ['intp', .1], ['skp', .05], ['pydg', .1], ['rydg', .05]], cols: ['pyd', 'ptdt', 'qint', 'epa', 'cpoe', 'ny', 'rush'] },
+  RB: { q: p => tch(p) >= 6 * W(), need: () => `${6 * W()} touches`, bars: [['scrg', .25], ['ypc', .13], ['yco', .14], ['repa', .12], ['btt', .1], ['recg', .1], ['tdg', .11], ['fumt', .05]], cols: ['rush', 'ypc', 'yco', 'recy', 'tdt', 'btt'] },
+  WR: { q: p => (sm(p).tgt || 0) >= 2.5 * W(), need: () => `${2.5 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
+  TE: { q: p => (sm(p).tgt || 0) >= 2 * W(), need: () => `${2 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
+  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .45], ['penr', .25], ['tskp', .15], ['tybc', .15]], cols: ['snaps', 'osh', 'penr', 'tskp', 'tybc'] },
+  EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
+  DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
+  LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .2], ['tflg', .14], ['mtp', .14], ['pra', .14], ['prsg', .1], ['plyg', .1], ['dsh', .12], ['tov', .06]], cols: ['tkt', 'tflt', 'sck', 'prst', 'pdt', 'pra'] },
+  CB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['pra', .24], ['ypta', .18], ['cmpa', .1], ['plyg', .2], ['mtp', .08], ['dsh', .12], ['tov', .08]], cols: ['dtgt', 'pra', 'ypta', 'intt', 'pdt', 'tkt'] },
+  S: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['pra', .15], ['ypta', .1], ['plyg', .18], ['tkg', .15], ['mtp', .14], ['tflg', .06], ['dsh', .12], ['tov', .1]], cols: ['tkt', 'intt', 'pdt', 'pra', 'tflt', 'dsh'] },
+  K: { q: p => (sm(p).fga || 0) >= 0.8 * W(), need: () => `${Math.ceil(0.8 * W())} field goal tries`, bars: [['fgp', .4], ['fg40', .3], ['fg50', .15], ['patp', .15]], cols: ['fgm', 'fgp', 'fg40', 'fg50', 'lngk'] },
+  P: { q: p => (sm(p).pun || 0) >= 2 * W(), need: () => `${2 * W()} punts`, bars: [['pnet', .5], ['pavg', .2], ['pi20', .3]], cols: ['punts', 'pavg', 'pnet', 'pi20'] }
+};
+// Roles: one per player, NFL-specific usage labels
+const ROLE_DESC = {
+  'Dual threat': 'Runs for real yardage on top of passing: six or more carries or 30+ rushing yards a game.',
+  'Gunslinger': 'Pushes the ball downfield, with an average throw of nine air yards or more.',
+  'Quick-game distributor': 'Short, on-time throws: throw depth of seven yards or less and a completion rate of 66% or better.',
+  'Pocket passer': 'A starting quarterback who wins mostly from the pocket.',
+  'Spot starter': 'Has started a game this season but has not thrown enough to rate.',
+  'Backup': 'The backup quarterback.',
+  'Bell cow': 'The back who carries the load: 17+ touches a game and most of the snaps.',
+  'Receiving back': 'A back used heavily in the passing game, with 3.5+ targets a game.',
+  'Lead back': 'Gets at least 45% of his team\'s carries.',
+  'Committee back': 'Splits the work, with 20% to 45% of the carries.',
+  'Change of pace': 'A secondary back who spells the starter.',
+  'Depth back': 'Rarely on the field on offense.',
+  'Alpha target': 'The focal point of the passing game, with a quarter or more of his team\'s targets.',
+  'Field stretcher': 'Targeted deep, 13+ air yards per target on average.',
+  'YAC weapon': 'Gets the ball short and creates after the catch.',
+  'Chain mover': 'Works the short and intermediate areas to move the sticks.',
+  'Every-down starter': 'A full-time receiver who is not the main target.',
+  'Rotational receiver': 'Part of the receiver rotation.',
+  'Depth receiver': 'Rarely on the field on offense.',
+  'Blocking/decoy': 'On the field a lot but rarely targeted.',
+  'Receiving weapon': 'A tight end who draws 17% or more of his team\'s targets.',
+  'In-line blocker': 'Plays most snaps but sees fewer than three targets a game.',
+  'Two-way tight end': 'Plays most snaps and is part of the passing game.',
+  'Rotational tight end': 'Shares time at tight end.',
+  'Depth tight end': 'Rarely on the field on offense.',
+  'Every-snap starter': 'Has played at least 97% of his team\'s offensive snaps.',
+  'Starter': 'A regular starter on the line.',
+  'Fill-in starter': 'Has started part of the season, often for an injured player.',
+  'Jumbo package': 'Comes in for a handful of snaps in heavy formations.',
+  'Reserve': 'A backup lineman.',
+  'Every-down rusher': 'Plays most snaps and still generates pressure at an above-average rate.',
+  'Pass-rush specialist': 'Plays less, but gets home: a top-40% pressure rate.',
+  'Edge setter': 'Holds the edge against the run more than he rushes the passer.',
+  'Rotational rusher': 'Part of the edge rotation.',
+  'Depth rusher': 'Rarely on the field on defense.',
+  'Interior disruptor': 'An interior lineman who pressures the quarterback like an edge rusher.',
+  'Run anchor': 'Takes on blocks and plays a big share of snaps in the middle.',
+  'Rotational lineman': 'Part of the defensive line rotation.',
+  'Depth lineman': 'Rarely on the field on defense.',
+  'Blitzer': 'A linebacker sent after the quarterback often.',
+  'Green-dot tackler': 'The every-down linebacker who wears the helmet radio and makes the tackles.',
+  'Coverage linebacker': 'Draws four or more targets a game in coverage.',
+  'Two-down thumper': 'Comes off the field on passing downs.',
+  'Box linebacker': 'A starting linebacker who plays near the line.',
+  'Sub-package linebacker': 'Plays in certain packages.',
+  'Special teams/depth': 'Mostly a special teams player.',
+  'No-fly zone': 'A starting corner quarterbacks avoid: one of the lowest target rates at the position.',
+  'Targeted starter': 'A starting corner offenses throw at more than most.',
+  'Boundary starter': 'A full-time starting corner.',
+  'Nickel/rotational corner': 'Plays a part-time role, often in the slot.',
+  'Sub-package corner': 'Plays in certain packages.',
+  'Depth corner': 'Rarely on the field on defense.',
+  'Box safety': 'Plays near the line and tackles like a linebacker.',
+  'Center fielder': 'Plays deep and makes plays on the ball.',
+  'Hybrid safety': 'Does a bit of everything.',
+  'Rotational safety': 'Shares time at safety.',
+  'Sub-package safety': 'Plays in certain packages.',
+  'Depth safety': 'Rarely on the field on defense.',
+  'Big-leg kicker': 'Has made a 58-yarder, or three or more from 50 and out.',
+  'Kicker': 'The team\'s kicker.',
+  'Coffin-corner punter': 'Pins teams inside the 20 more than most.',
+  'Field flipper': 'Big gross average, flips field position.',
+  'Punter': 'The team\'s punter.'
+};
+const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
+const ROLES = {
+  QB: p => { const m = sm(p); if (!p.fq) return p.st.gs ? 'Spot starter' : 'Backup';
+    if ((m.car || 0) / gp(p) >= 6 || (m.ryd || 0) / gp(p) >= 30) return 'Dual threat';
+    if ((m.adot || 0) >= 9) return 'Gunslinger';
+    if ((m.adot || 0) <= 7 && (m.cmpp || 0) >= .66) return 'Quick-game distributor';
+    return 'Pocket passer'; },
+  RB: p => { const m = sm(p), o = p.st.opg || 0, t = tch(p) / gp(p), tg = (m.tgt || 0) / gp(p);
+    if (t >= 17 && o >= .55) return 'Bell cow';
+    if (tg >= 3.5 && o >= .3 && (m.rsh || 0) < .45) return 'Receiving back';
+    if ((m.rsh || 0) >= .45) return 'Lead back';
+    if ((m.rsh || 0) >= .2) return 'Committee back';
+    return o >= .1 ? 'Change of pace' : 'Depth back'; },
+  WR: p => { const m = sm(p), o = p.st.opg || 0;
+    if (!m.tgt) return o >= .3 ? 'Blocking/decoy' : 'Depth receiver';
+    if (!p.fq) return o >= .4 ? 'Rotational receiver' : 'Depth receiver';
+    if ((m.tsh || 0) >= .24) return 'Alpha target';
+    if ((m.radot || 0) >= 13) return 'Field stretcher';
+    if ((m.radot || 0) <= 7 && (m.yac || 0) >= 5) return 'YAC weapon';
+    if ((m.radot || 0) <= 9.5) return 'Chain mover';
+    return o >= .6 ? 'Every-down starter' : 'Rotational receiver'; },
+  TE: p => { const m = sm(p), o = p.st.opg || 0, tg = (m.tgt || 0) / gp(p);
+    if ((m.tsh || 0) >= .17 && p.fq) return 'Receiving weapon';
+    if (o >= .55 && tg < 3) return 'In-line blocker';
+    if (o >= .55) return 'Two-way tight end';
+    return o >= .2 ? 'Rotational tight end' : 'Depth tight end'; },
+  OL: p => { const s = p.st, o = s.opg || 0, full = s.g >= (s.tg || THRU) - 1;
+    if (o >= .6) return !full ? 'Fill-in starter' : (s.osh || 0) >= .97 ? 'Every-snap starter' : 'Starter';
+    return o > 0 && o < .2 && s.g >= 2 ? 'Jumbo package' : 'Reserve'; },
+  EDGE: p => { const d = p.st.dpg || 0, pr = pcv(p, 'prsr');
+    if (!p.fq) return d >= .3 ? 'Rotational rusher' : 'Depth rusher';
+    if (d >= .7 && pr >= .5) return 'Every-down rusher';
+    if (pr >= .6) return 'Pass-rush specialist';
+    if (d >= .6 && pr < .4) return 'Edge setter';
+    return 'Rotational rusher'; },
+  DT: p => { const d = p.st.dpg || 0;
+    if (!p.fq) return d >= .3 ? 'Rotational lineman' : 'Depth lineman';
+    if (pcv(p, 'prsr') >= .65) return 'Interior disruptor';
+    return d >= .6 ? 'Run anchor' : 'Rotational lineman'; },
+  LB: p => { const m = sm(p), d = p.st.dpg || 0;
+    if (!p.fq) return d >= .25 ? 'Sub-package linebacker' : 'Special teams/depth';
+    if ((m.prs || 0) / gp(p) >= 1.3 || (m.blz || 0) / gp(p) >= 5) return 'Blitzer';
+    if (d >= .9 && (m.tk || 0) / gp(p) >= 6.5) return 'Green-dot tackler';
+    if ((m.dtg || 0) / gp(p) >= 4) return 'Coverage linebacker';
+    return d < .7 ? 'Two-down thumper' : 'Box linebacker'; },
+  CB: p => { const d = p.st.dpg || 0;
+    if (!p.fq) return d >= .3 ? 'Sub-package corner' : 'Depth corner';
+    if (d < .75) return 'Nickel/rotational corner';
+    const t = pcv(p, 'tgr'); if (t <= .2) return 'No-fly zone'; if (t >= .8) return 'Targeted starter';
+    return 'Boundary starter'; },
+  S: p => { const m = sm(p), d = p.st.dpg || 0;
+    if (!p.fq) return d >= .3 ? 'Sub-package safety' : 'Depth safety';
+    const tk = (m.tk || 0) / gp(p);
+    if (tk >= 6 || pcv(p, 'tflg') >= .8) return 'Box safety';
+    if (tk <= 4.5 && pcv(p, 'plyg') >= .5) return 'Center fielder';
+    return d < .75 ? 'Rotational safety' : 'Hybrid safety'; },
+  K: p => (sm(p).lng || 0) >= 58 || (sm(p).fg50 || 0) >= 3 ? 'Big-leg kicker' : 'Kicker',
+  P: p => (p.fq && pcv(p, 'pi20') >= .7) ? 'Coffin-corner punter' : (p.fq && pcv(p, 'pavg') >= .7) ? 'Field flipper' : 'Punter'
+};
+// On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
+const OTRAITS = {
+  engine: ['EPA engine', 'Adds expected points on almost every play.', ['QB'], 'epa'],
+  surgeon: ['Surgeon', 'Completes more passes than the difficulty of his throws predicts.', ['QB'], 'cpoe'],
+  airraid: ['Air raid', 'Completes 20-yard passes often.', ['QB'], 'deep'],
+  escape: ['Sack dodger', 'Rarely goes down behind the line.', ['QB'], 'skp'],
+  protect: ['Ball protector', 'Rarely throws interceptions.', ['QB'], 'intp'],
+  scramble: ['Scramble threat', 'Picks up real yardage with his legs.', ['QB'], 'rydg', p => (sm(p).car || 0) >= 1.5 * W()],
+  homerun: ['Home-run hitter', 'Breaks 20-yard runs often.', ['RB'], 'r20r'],
+  breaker: ['Tackle breaker', 'Makes the first defender miss often.', ['RB', 'WR', 'TE'], 'btt', p => tch(p) >= 3 * W()],
+  balance: ['Contact balance', 'Keeps gaining after the first hit.', ['RB'], 'yco'],
+  workhorse: ['Workhorse', 'Gets the ball as much as any back.', ['RB'], 'tchg'],
+  thirddown: ['Third-down weapon', 'Produces as a receiver out of the backfield.', ['RB'], 'recg'],
+  deepthreat: ['Deep threat', 'Targeted far downfield.', ['WR', 'TE'], 'radot'],
+  yacmonster: ['YAC monster', 'Piles up yards after the catch.', ['WR', 'TE'], 'yac'],
+  magnet: ['Target magnet', 'Commands a huge share of his team\'s targets.', ['WR', 'TE'], 'tsh'],
+  hands: ['Sure hands', 'No drops on a big target load: gold at 6+ targets a game, silver at 4+.', ['WR', 'TE'], null, p => !sm(p).drp && (sm(p).tgt || 0) >= 4 * W(), p => (sm(p).tgt || 0) >= 6 * W() ? 'gold' : 'silver'],
+  chain: ['Chain mover', 'Turns targets into first downs.', ['WR', 'TE'], 'fdpt'],
+  bigplay: ['Big-play maker', 'Turns catches into 20-yard gains.', ['WR', 'TE'], 'big'],
+  redzone: ['Red-zone threat', 'Scores at a high rate.', ['WR', 'TE'], 'rtdg'],
+  pressure: ['Pressure machine', 'Gets after the quarterback on a high share of snaps.', ['EDGE', 'DT', 'LB'], 'prsr'],
+  sackartist: ['Sack artist', 'Finishes his rushes.', ['EDGE', 'DT'], 'sckg'],
+  wrecker: ['Run wrecker', 'Makes tackles behind the line of scrimmage.', ['EDGE', 'DT', 'LB', 'S'], 'tflg'],
+  tackler: ['Tackle machine', 'Racks up tackles.', ['LB', 'S'], 'tkg'],
+  sure: ['Sure tackler', 'Has not missed a tackle on a real workload: gold at 4+ tackle attempts a game, silver at 2.5+.', ['LB', 'CB', 'S', 'EDGE', 'DT'], null, p => !sm(p).mtk && (sm(p).tk || 0) >= 2.5 * W(), p => (sm(p).tk || 0) >= 4 * W() ? 'gold' : 'silver'],
+  lockdown: ['Lockdown', 'Quarterbacks struggle when they throw at him.', ['CB', 'S', 'LB'], 'pra'],
+  sticky: ['Sticky coverage', 'Gives up few yards per target.', ['CB', 'S'], 'ypta'],
+  ballhawk: ['Ballhawk', 'Gets his hands on the ball a lot.', ['CB', 'S', 'LB'], 'plyg'],
+  takeaway: ['Takeaway artist', 'Creates turnovers.', ['EDGE', 'DT', 'LB', 'CB', 'S'], 'tov'],
+  money: ['Money from 40+', 'Makes long field goals.', ['K'], 'fg40', p => (sm(p).fg40a || 0) >= 4],
+  automatic: ['Automatic', 'Rarely misses a field goal.', ['K'], 'fgp'],
+  coffin: ['Coffin corner', 'Pins teams inside the 20.', ['P'], 'pi20'],
+  flipper: ['Field flipper', 'High net average per punt.', ['P'], 'pnet'],
+  iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', 'ALL', null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
+  clean: ['Clean sheet', 'A starting lineman with no penalties yet.', ['OL'], null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
+  bigleg: ['Big leg', 'Has made a field goal of 58 yards or longer.', ['K'], null, p => (sm(p).lng || 0) >= 58, 'bronze']
+};
+const TIER_ORDER = { gold: 0, silver: 1, bronze: 2 };
+const TIER_NAME = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
+const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze' : null;
+
+const SUFX = /\b(jr|sr|ii|iii|iv|v)\b/g;
+const nkey = n => n.toLowerCase().replace(/[.,'’]/g, '').replace(/-/g, ' ').replace(SUFX, '').replace(/\s+/g, ' ').trim();
+const NICK = { matt: 'matthew', cam: 'camryn', mike: 'michael', chris: 'christopher', josh: 'joshua', nate: 'nathan', will: 'william', tony: 'anthony', jon: 'jonathan', dan: 'daniel', ben: 'benjamin', zach: 'zachary', alex: 'alexander', nick: 'nicholas', sam: 'samuel', joe: 'joseph', jake: 'jacob', rob: 'robert', bob: 'robert', tom: 'thomas', greg: 'gregory', pat: 'patrick', ed: 'edward', drew: 'andrew', andy: 'andrew', jt: 'j t' };
+const ALIAS = { 'ahmad gardner': 'sauce gardner', 'chigoziem okonkwo': 'chig okonkwo', 'cameron bynum': 'camryn bynum', 'tariq woolen': 'riq woolen', 'gabriel davis': 'gabe davis', 'hollywood brown': 'marquise brown', 'bam knight': 'zonovan knight', 'kenneth walker': 'kenneth walker' };
+const SNAP_SIDE = { QB: 'off', RB: 'off', FB: 'off', WR: 'off', TE: 'off', T: 'off', G: 'off', C: 'off', OT: 'off', OG: 'off', OL: 'off', DE: 'def', DT: 'def', NT: 'def', DL: 'def', LB: 'def', OLB: 'def', ILB: 'def', MLB: 'def', CB: 'def', DB: 'def', S: 'def', FS: 'def', SS: 'def', K: 'st', P: 'st', LS: 'st' };
+
+function attachStats(sd) {
+  SD = sd; THRU = sd.thru || 0; TEAMST = sd.teams || {};
+  const byK = {}, byLast = {};
+  sd.players.forEach(s => {
+    s.side = SNAP_SIDE[s.pp] || (s.dsn > (s.osn || 0) ? 'def' : 'off');
+    (byK[s.k] = byK[s.k] || []).push(s);
+    const w = s.k.split(' '); const lk = w[w.length - 1] + '|' + s.t; (byLast[lk] = byLast[lk] || []).push(s);
+  });
+  const used = new Set();
+  const pickFrom = (L, p, side) => {
+    if (!L || !L.length) return null;
+    L = L.filter(s => !used.has(s));
+    const sameSide = L.filter(s => s.side === side);
+    return L.find(s => s.t === p.team && s.side === side) || (sameSide.length === 1 ? sameSide[0] : null) || L.find(s => s.t === p.team) || (L.length === 1 && side !== 'st' ? L[0] : null);
+  };
+  const order = [...PL].sort((a, b) => b.apy - a.apy);
+  order.forEach(p => {
+    const side = GROUP_SIDE[p.group] || 'st';
+    let k = nkey(p.name); k = ALIAS[k] || k;
+    let s = pickFrom(byK[k], p, side);
+    if (!s) { const w = k.split(' '); if (NICK[w[0]]) s = pickFrom(byK[[NICK[w[0]]].concat(w.slice(1)).join(' ')], p, side); }
+    if (!s) { const w = k.split(' '); const L = (byLast[w[w.length - 1] + '|' + p.team] || []).filter(x => x.side === side && x.k[0] === w[0][0]); if (L.length === 1) s = L[0]; }
+    if (s) { used.add(s); p.st = s; }
+  });
+}
+
+function analyzeField() {
+  PL.forEach(p => { p.sg = sgOf(p); p.pc = {}; p.rk = {}; p.ot = []; p.role = ''; p.play = null; p.fq = false; p.prk = null; p.val = null; p.vlab = ''; p.payPct = null; });
+  SG_ORDER.forEach(g => {
+    const cfg = GCFG[g];
+    const all = PL.filter(p => p.sg === g && p.st && (p.st.g || 0) > 0);
+    all.forEach(p => (p.fq = cfg.q(p)));
+    const qs = all.filter(p => p.fq);
+    MET_KEYS.forEach(k => {
+      const [, , f, , low] = MET[k];
+      const vals = qs.map(f).filter(v => v != null);
+      if (!vals.length) return;
+      all.forEach(p => { const v = f(p); if (v == null) return; const r = pctRank(vals, v); p.pc[k] = low ? 1 - r : r; });
+      const ranked = qs.filter(p => f(p) != null).sort((a, b) => low ? f(a) - f(b) : f(b) - f(a));
+      ranked.forEach((p, n) => (p.rk[k] = [n + 1, ranked.length]));
+    });
+    const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
+    const cs = qs.map(comp);
+    qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
+    [...qs].sort((a, b) => b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
+    all.forEach(p => { p.role = ROLES[g](p); });
+    all.forEach(p => {
+      Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
+        if (groups !== 'ALL' && !groups.includes(g)) return;
+        if (gate && !gate(p)) return;
+        if (fixed) { if (p.fq || key === 'bigleg') p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
+        if (!p.fq || p.pc[met] == null) return;
+        const t = tierOf(p.pc[met]); if (t) p.ot.push([key, t]);
+      });
+      p.ot.sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
+    });
+    const pays = qs.filter(p => p.apy > 0).map(p => p.apy);
+    const paidRank = [...qs].filter(p => p.apy > 0).sort((a, b) => b.apy - a.apy);
+    paidRank.forEach((p, n) => { p.payRk = n + 1; p.payN = paidRank.length; });
+    qs.forEach(p => {
+      if (!(p.apy > 0)) return;
+      p.payPct = pctRank(pays, p.apy);
+      p.val = p.playPct - p.payPct;
+      p.vlab = p.val >= .35 ? 'Bargain' : p.val <= -.35 ? 'Overpaid so far' : 'Worth it';
+    });
+  });
+}
+
+/* field rendering helpers */
+const otChip = ([k, t]) => `<span class="ot ${t}" title="${esc(TIER_NAME[t] + ': ' + OTRAITS[k][1])}"><i aria-hidden="true"></i>${esc(OTRAITS[k][0])}</span>`;
+const vClass = l => l === 'Bargain' ? 'good' : l === 'Overpaid so far' ? 'bad' : '';
+const rolePill = p => p.role ? `<span class="role" title="${esc(ROLE_DESC[p.role] || '')}">${esc(p.role)}</span>` : '';
+const fmtMet = (p, k) => { const v = MET[k][2](p); return v == null ? '—' : MET[k][3](v); };
+const posRank = p => p.prk ? `${p.sg} ${p.prk}` : '';
+function fieldCard(p) {
+  const t = TB[p.team], cols = GCFG[p.sg].cols.slice(0, 3);
+  return `<button type="button" class="fc" data-p="${p.i}" style="${teamVars(p.team)}" aria-label="${esc(p.name)}, ${esc(p.role)}, play rating ${p.play ?? 'not rated'}">
+    <span class="fc-band"><span class="pos">${esc(posTag(p.pos))}</span>${p.prk ? `<span class="prk">#${p.prk}</span>` : ''}${crest(p.team, 24)}</span>
+    ${avatar(p)}
+    <span class="fc-name">${esc(p.name)}</span>
+    <span class="fc-sub">${esc(t.city)} ${esc(t.name)}</span>
+    ${rolePill(p)}
+    <span class="fc-nums">${cols.map(k => `<span><small>${esc(MET[k][5])}</small>${fmtMet(p, k)}</span>`).join('')}</span>
+    <span class="fc-rings">${p.play != null ? ringSVG(p.play, 'Play', pColor(p.playPct)) : ''}${ringSVG(p.payPct != null ? Math.round(p.payPct * 100) : p.mkt, 'Pay', 'var(--brand)')}</span>
+    ${p.ot.length ? `<span class="traits">${p.ot.slice(0, 2).map(otChip).join('')}</span>` : ''}
+  </button>`;
+}
+function fieldSimilar(p, n = 4) {
+  const keys = GCFG[p.sg].bars.map(b => b[0]);
+  const v = q => keys.map(k => pcv(q, k));
+  const a = v(p);
+  return PL.filter(q => q !== p && q.sg === p.sg && q.fq).map(q => { const b = v(q); const d = Math.sqrt(a.reduce((s, x, i) => s + (x - b[i]) ** 2, 0) / keys.length); return { q, sim: Math.round(100 * (1 - d)) }; })
+    .sort((x, y) => y.sim - x.sim).slice(0, n);
+}
+function fieldHTML(p) {
+  if (!SD) return '<p class="empty">Season stats did not load. Reload the page to try again.</p>';
+  if (!p.sg) return '<p class="empty">Plain Cap does not rate long snappers.</p>';
+  if (!p.st) return `<p class="empty">No 2026 snaps through Week ${THRU}. He may be injured, suspended, inactive or new to the team.</p>`;
+  const s = p.st, cfg = GCFG[p.sg], snapSh = Math.max(s.osh || 0, s.dsh || 0);
+  const tiles = cfg.cols.map(k => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
+  const bars = cfg.bars.map(([k]) => { const v = p.pc[k], r = p.rk[k]; return `<div class="pb"><span class="lbl">${esc(MET[k][0])}<small>${esc(MET[k][1] || '')}</small></span><span class="tr">${v != null ? `<i style="width:${(v * 100).toFixed(0)}%;background:${pColor(v)}"></i>` : ''}</span><b>${v != null ? Math.round(v * 100) : '—'}</b><span class="pv num">${fmtMet(p, k)}${r ? ` · ${ord(r[0])}` : ''}</span></div>`; }).join('');
+  const verdict = p.vlab ? `<div class="pvp"><div><span class="eyebrow">Pay rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.payPct * 100)}%"></i></div><span class="note">${ord(p.payRk)} highest paid of ${p.payN} qualified</span></div><div><span class="eyebrow">Play rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.playPct * 100)}%;background:var(--good)"></i></div><span class="note">${ord(p.prk)} of ${p.pn} qualified</span></div><span class="vlab ${vClass(p.vlab)}">${esc(p.vlab)}</span></div>` : '';
+  return `<div class="field">
+    <div class="fhead">
+      ${p.play != null ? `<div class="bigplay" style="--pc:${pColor(p.playPct)}"><b>${p.play}</b><small>Play rating</small></div>` : `<div class="bigplay na"><b>—</b><small>Not rated yet</small></div>`}
+      <div style="display:grid;gap:6px;min-width:0">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rolePill(p)}${p.prk ? `<span class="rkpill">${esc(SG_NAME[p.sg])} #${p.prk} of ${p.pn}</span>` : ''}</div>
+        <span class="note">${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}</span>
+        ${p.role ? `<span class="note">${esc(ROLE_DESC[p.role] || '')}</span>` : ''}
+      </div>
+    </div>
+    ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
+    ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
+    <div class="stiles">${tiles}</div>
+    ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
+    ${verdict}
+    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
+    ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
+  </div>`;
+}
+
+/* on-field view */
+const of = { g: 'QB', role: 'all', trait: 'all', team: 'all', qual: true, sort: 'play', dir: -1, limit: 40 };
+function renderOnField() {
+  if (!SD) return;
+  const g = of.g, cfg = GCFG[g];
+  $('#of-pos').innerHTML = SG_ORDER.map(x => `<button type="button" data-g="${x}" aria-pressed="${x === g}">${x}</button>`).join('');
+  const all = PL.filter(p => p.sg === g && p.st);
+  const qs = all.filter(p => p.fq).sort((a, b) => a.prk - b.prk);
+  $('#of-top-title').textContent = `Top ${SG_NAME[g].toLowerCase()}s right now`;
+  $('#of-top').innerHTML = qs.slice(0, 8).map(fieldCard).join('') || '<p class="empty">No one qualifies yet.</p>';
+  // roles
+  const roles = {}; all.forEach(p => { (roles[p.role] = roles[p.role] || []).push(p); });
+  const rl = Object.entries(roles).sort((a, b) => b[1].length - a[1].length);
+  const maxR = Math.max(1, ...rl.map(r => r[1].length));
+  $('#of-roles-title').textContent = `${SG_NAME[g]} roles`;
+  $('#of-roles').innerHTML = rl.map(([r, ps]) => { const rated = ps.filter(p => p.play != null); const avg = rated.length ? Math.round(rated.reduce((s, p) => s + p.play, 0) / rated.length) : null; const best = [...rated].sort((a, b) => b.play - a.play)[0];
+    return `<button type="button" class="rlrow" data-role="${esc(r)}" aria-pressed="${of.role === r}" title="${esc(ROLE_DESC[r] || '')}"><span class="nm"><b>${esc(r)}</b><small>${best ? 'Best: ' + esc(best.name) : esc(ROLE_DESC[r] || '')}</small></span><span class="track"><i style="width:${(ps.length / maxR * 100).toFixed(0)}%"></i></span><span class="val num">${ps.length}<small>${avg != null ? 'avg ' + avg : ''}</small></span></button>`; }).join('');
+  // filters
+  $('#of-role').innerHTML = `<option value="all">All roles</option>` + rl.map(([r]) => `<option value="${esc(r)}"${of.role === r ? ' selected' : ''}>${esc(r)}</option>`).join('');
+  const tKeys = Object.keys(OTRAITS).filter(k => OTRAITS[k][2] === 'ALL' || OTRAITS[k][2].includes(g));
+  if (of.trait !== 'all' && !tKeys.includes(of.trait)) of.trait = 'all';
+  $('#of-trait').innerHTML = `<option value="all">Any trait</option>` + tKeys.map(k => `<option value="${k}"${of.trait === k ? ' selected' : ''}>${esc(OTRAITS[k][0])}</option>`).join('');
+  $('#of-team').value = of.team; $('#of-qual').checked = of.qual;
+  renderOFTraits(tKeys, all);
+  renderOFScatter(qs);
+  renderOFTable(all);
+}
+function renderOFTraits(tKeys, all) {
+  $('#of-tchips').innerHTML = tKeys.map(k => { const n = all.filter(p => p.ot.some(o => o[0] === k)).length; return `<button type="button" class="chip" data-ot="${k}" aria-pressed="${of.trait === k}">${esc(OTRAITS[k][0])} <span class="num" style="opacity:.7">${n}</span></button>`; }).join('');
+  const k = of.trait !== 'all' ? of.trait : tKeys.find(x => all.some(p => p.ot.some(o => o[0] === x)));
+  if (!k) { $('#of-tdesc').textContent = ''; $('#of-tcards').innerHTML = '<p class="empty">No traits earned yet.</p>'; return; }
+  $('#of-tname').textContent = OTRAITS[k][0];
+  $('#of-tdesc').textContent = OTRAITS[k][1] + (OTRAITS[k][3] ? ` Measured by ${MET[OTRAITS[k][3]][0].toLowerCase()}${MET[OTRAITS[k][3]][1] ? ' (' + MET[OTRAITS[k][3]][1] + ')' : ''}.` : '');
+  const holders = all.filter(p => p.ot.some(o => o[0] === k)).sort((a, b) => { const ta = a.ot.find(o => o[0] === k)[1], tb = b.ot.find(o => o[0] === k)[1]; return TIER_ORDER[ta] - TIER_ORDER[tb] || (b.play || 0) - (a.play || 0); });
+  $('#of-tcards').innerHTML = holders.slice(0, 12).map(p => { const t = p.ot.find(o => o[0] === k)[1]; return `<button type="button" class="tholder" data-p="${p.i}">${otChip([k, t])}${avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${esc(TB[p.team].name)} · ${OTRAITS[k][3] ? esc(MET[OTRAITS[k][3]][5]) + ' ' + fmtMet(p, OTRAITS[k][3]) : esc(p.role)}</small></span></button>`; }).join('');
+}
+function renderOFScatter(qs) {
+  const pts = qs.filter(p => p.apy > 0);
+  const el = $('#of-scatter');
+  if (pts.length < 4) { el.innerHTML = '<p class="empty">Not enough qualified players yet.</p>'; return; }
+  const Wd = 480, H = 320, L = 46, R = 14, T = 14, B = 40;
+  const xmax = Math.max(...pts.map(p => p.apy)) * 1.05;
+  const X = v => L + (v / xmax) * (Wd - L - R), Y = v => T + (99 - v) / 59 * (H - T - B);
+  const medPay = [...pts].map(p => p.apy).sort((a, b) => a - b)[Math.floor(pts.length / 2)];
+  const step = xmax > 40e6 ? 10e6 : xmax > 15e6 ? 5e6 : xmax > 6e6 ? 2e6 : 1e6;
+  let ticks = ''; for (let v = 0; v <= xmax; v += step) ticks += `<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${H - B}" class="gl"></line><text x="${X(v)}" y="${H - B + 16}" text-anchor="middle">${v ? '$' + Math.round(v / 1e6) + 'M' : '$0'}</text>`;
+  [40, 55, 70, 85, 99].forEach(v => { ticks += `<line x1="${L}" x2="${Wd - R}" y1="${Y(v)}" y2="${Y(v)}" class="gl"></line><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`; });
+  const lab = new Set([...pts].sort((a, b) => b.val - a.val).slice(0, 3).concat([...pts].sort((a, b) => a.val - b.val).slice(0, 2), [...pts].sort((a, b) => b.play - a.play).slice(0, 1)));
+  const last = n => n.replace(/,? (Jr|Sr|II|III|IV)\.?$/, '').split(' ').slice(-1)[0];
+  const dots = pts.map(p => `<circle cx="${X(p.apy).toFixed(1)}" cy="${Y(p.play).toFixed(1)}" r="5" class="dot ${vClass(p.vlab)}" data-p="${p.i}" data-tip="fp|${p.i}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${mon(p.apy)} a year, play rating ${p.play}"></circle>`).join('');
+  const labels = [...lab].map(p => { const lft = X(p.apy) > Wd - 90; return `<text x="${(X(p.apy) + (lft ? -8 : 8)).toFixed(1)}" y="${(Y(p.play) + 4).toFixed(1)}" text-anchor="${lft ? 'end' : 'start'}" class="lb">${esc(last(p.name))}</text>`; }).join('');
+  el.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" class="pvps" role="img" aria-label="Pay versus play rating for qualified ${SG_NAME[of.g].toLowerCase()}s">
+    ${ticks}
+    <line x1="${X(medPay)}" x2="${X(medPay)}" y1="${T}" y2="${H - B}" class="mid"></line><line x1="${L}" x2="${Wd - R}" y1="${Y(69.5)}" y2="${Y(69.5)}" class="mid"></line>
+    <text x="${(L + X(medPay)) / 2}" y="${T + 12}" text-anchor="middle" class="q">Bargains</text><text x="${(X(medPay) + Wd - R) / 2}" y="${T + 12}" text-anchor="middle" class="q">Earning it</text>
+    <text x="${(L + X(medPay)) / 2}" y="${H - B - 8}" text-anchor="middle" class="q">Cheap depth</text><text x="${(X(medPay) + Wd - R) / 2}" y="${H - B - 8}" text-anchor="middle" class="q">Overpaid so far</text>
+    ${labels}${dots}
+    <text x="${(L + Wd - R) / 2}" y="${H - 4}" text-anchor="middle" class="ax">Pay per year</text>
+    <text x="12" y="${(T + H - B) / 2}" text-anchor="middle" class="ax" transform="rotate(-90 12 ${(T + H - B) / 2})">Play rating</text>
+  </svg>`;
+}
+function renderOFTable(all) {
+  const g = of.g, cols = GCFG[g].cols;
+  let list = all.filter(p => (!of.qual || p.fq) && (of.role === 'all' || p.role === of.role) && (of.trait === 'all' || p.ot.some(o => o[0] === of.trait)) && (of.team === 'all' || p.team === of.team));
+  const key = of.sort;
+  const val = p => key === 'play' ? (p.play ?? -1) : key === 'apy' ? p.apy : key === 'val' ? (p.val ?? -9) : key === 'name' ? p.name : key === 'role' ? p.role : (MET[key] ? (MET[key][2](p) ?? (of.dir < 0 ? -1e9 : 1e9)) : 0);
+  list.sort((a, b) => { const x = val(a), y = val(b); return typeof x === 'string' ? x.localeCompare(y) * -of.dir : (x - y) * of.dir; });
+  const th = (k, l, cls = 'r', title = '') => `<th class="${cls}"${of.sort === k ? ` aria-sort="${of.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-ofs="${k}"${title ? ` title="${esc(title)}"` : ''}>${esc(l)}</button></th>`;
+  $('#of-count').textContent = `${list.length} ${SG_NAME[g].toLowerCase()}s${of.qual ? ' with enough snaps' : ''}`;
+  $('#of-table').innerHTML = `<thead><tr><th class="r"><span>Rk</span></th>${th('name', 'Player', '')}${th('role', 'Role', '')}${th('play', 'Play')}${cols.map(k => th(k, MET[k][5], 'r', MET[k][0] + (MET[k][1] ? ', ' + MET[k][1] : ''))).join('')}${th('apy', 'Pay/yr')}${th('val', 'Value')}</tr></thead>
+  <tbody>${list.slice(0, of.limit).map(p => `<tr data-p="${p.i}"><td class="r">${p.prk || '—'}</td><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${p.ot.length ? `<span class="otdots">${p.ot.slice(0, 3).map(([k, t]) => `<i class="${t}" title="${esc(OTRAITS[k][0])}"></i>`).join('')}</span>` : ''}</span></td><td><span class="role sm">${esc(p.role)}</span></td><td class="r"><span class="pscore" style="--pc:${p.play != null ? pColor(p.playPct) : 'var(--line)'}">${p.play ?? '—'}</span></td>${cols.map(k => `<td class="r">${fmtMet(p, k)}</td>`).join('')}<td class="r">${mon(p.apy)}</td><td class="r"><span class="vl ${vClass(p.vlab)}">${esc(p.vlab || '—')}</span></td></tr>`).join('') || `<tr style="cursor:default"><td colspan="${cols.length + 6}" class="empty">No players match these filters.</td></tr>`}</tbody>`;
+  $('#of-more').hidden = list.length <= of.limit;
+}
+function wireOnField() {
+  $('#of-pos').onclick = e => { const b = e.target.closest('[data-g]'); if (b) { of.g = b.dataset.g; of.role = 'all'; of.trait = 'all'; of.sort = 'play'; of.dir = -1; of.limit = 40; store.set('ofg', of.g); renderOnField(); } };
+  $('#of-roles').onclick = e => { const b = e.target.closest('[data-role]'); if (b) { of.role = of.role === b.dataset.role ? 'all' : b.dataset.role; renderOnField(); $('#of-table').scrollIntoView({ block: 'nearest' }); } };
+  $('#of-role').onchange = e => { of.role = e.target.value; renderOnField(); };
+  $('#of-trait').onchange = e => { of.trait = e.target.value; renderOnField(); };
+  $('#of-team').onchange = e => { of.team = e.target.value; renderOnField(); };
+  $('#of-qual').onchange = e => { of.qual = e.target.checked; renderOnField(); };
+  $('#of-tchips').onclick = e => { const b = e.target.closest('[data-ot]'); if (b) { of.trait = of.trait === b.dataset.ot ? 'all' : b.dataset.ot; renderOnField(); } };
+  $('#of-more').onclick = () => { of.limit += 40; renderOnField(); };
+  $('#of-table').onclick = e => { const b = e.target.closest('[data-ofs]'); if (b) { e.stopPropagation(); const k = b.dataset.ofs; if (of.sort === k) of.dir *= -1; else { of.sort = k; of.dir = (['name', 'role'].includes(k) || (MET[k] && MET[k][4])) ? 1 : -1; } renderOnField(); } };
+  $('#of-team').innerHTML = `<option value="all">All teams</option>` + [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(t => `<option value="${t.id}">${esc(t.city)} ${esc(t.name)}</option>`).join('');
+  const sg = store.get('ofg', null); if (sg && GCFG[sg]) of.g = sg;
+}
 
 /* ===== tooltip ===== */
 const tip = $('#tip');
@@ -1056,7 +1667,7 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'contracts', 'tools', 'analytics', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'learn'];
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
@@ -1066,6 +1677,7 @@ function route() {
   if (['cut', 'trade', 'compare', 'decode', 'decoder'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h; v = 'tools'; }
   if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
   if (h === 'nba') v = 'learn';
+  if (['stats', 'ratings', 'roles', 'traits'].includes(h)) v = 'onfield';
   if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
   if (!VIEWS.includes(v)) v = 'home';
   VIEWS.forEach(x => ($('#v-' + x).hidden = x !== v));
@@ -1150,10 +1762,10 @@ function renderDeadline() {
 
 let hcSel = 'top';
 function renderHomeCards() {
-  const pick = { top: () => [...PL].sort((a, b) => b.apy - a.apy), young: () => PL.filter(p => p.traits.includes('young')).sort((a, b) => b.apy - a.apy), cut: () => PL.filter(p => p.traits.includes('cut')).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost)) }[hcSel]();
-  $('#hc-title').textContent = { top: 'Biggest contracts in football', young: 'Young players already paid', cut: 'Biggest savings if released' }[hcSel];
+  const pick = { top: () => [...PL].sort((a, b) => b.apy - a.apy), young: () => PL.filter(p => p.traits.includes('young')).sort((a, b) => b.apy - a.apy), cut: () => PL.filter(p => p.traits.includes('cut')).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost)), value: () => PL.filter(p => p.vlab === 'Bargain' && p.play >= 80).sort((a, b) => (b.play - a.play) || (b.val - a.val)) }[hcSel]();
+  $('#hc-title').textContent = { top: 'Biggest contracts in football', young: 'Young players already paid', cut: 'Biggest savings if released', value: 'Playing far above their pay' }[hcSel];
   $$('#hc-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hc === hcSel)));
-  $('#home-cards').innerHTML = pick.slice(0, 16).map(faceCard).join('');
+  $('#home-cards').innerHTML = pick.slice(0, 16).map(hcSel === 'value' ? fieldCard : faceCard).join('') || '<p class="empty">Season stats did not load.</p>';
 }
 $('#hc-seg').onclick = e => { const b = e.target.closest('button'); if (b) { hcSel = b.dataset.hc; renderHomeCards(); } };
 
@@ -1201,7 +1813,7 @@ function renderTeam(id) {
   const ends = yrs.map(y => { const ps = roster.filter(p => (y === 2032 ? p.end >= 2032 : p.end === y)); return { y, n: ps.length, cap: ps.reduce((s, p) => s + (p.cap || 0), 0), names: ps.sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 3).map(p => p.name) }; });
   const maxE = Math.max(1, ...ends.map(e => e.cap));
   const team_moves = MOVES.filter(m => (m.teams || []).includes(id));
-  const th = (k, l) => `<th class="${['name', 'pos'].includes(k) ? '' : 'r'}" data-k="${k}"${r.sort === k ? ` aria-sort="${r.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${l}</button></th>`;
+  const th = (k, l) => `<th class="${['name', 'pos', 'role'].includes(k) ? '' : 'r'}" data-k="${k}"${r.sort === k ? ` aria-sort="${r.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${l}</button></th>`;
   $('#team-body').innerHTML = `
   <div class="view">
     <a href="#teams" class="note" style="text-decoration:none">← All teams</a>
@@ -1220,6 +1832,8 @@ function renderTeam(id) {
         <div style="display:flex;gap:12px;align-items:center" data-tip="hh|${id}"><span class="eyebrow">Cap health</span><span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}" style="font-size:2rem">${t.health}</span><span class="note">${ord(t.r_health)} of 32</span></div></div>
       <div class="fcs row">${[...roster].sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 6).map(faceCard).join('')}</div>
     </div>
+    ${SD ? (() => { const rated = roster.filter(p => p.play != null).sort((a, b) => b.play - a.play); const avg = rated.length ? Math.round(rated.reduce((s, p) => s + p.play, 0) / rated.length) : null; const bargains = rated.filter(p => p.vlab === 'Bargain').length, over = rated.filter(p => p.vlab === 'Overpaid so far').length;
+      return `<div class="panel"><div class="sechead"><div><span class="eyebrow">2026 stats through Week ${THRU} · best play ratings</span><h2 class="sec">Who is playing well</h2></div><span class="note">${rated.length} rated players · average ${avg ?? '—'} · <span class="vl good">${bargains} bargains</span> · <span class="vl bad">${over} overpaid so far</span></span></div><div class="fcs row">${rated.slice(0, 8).map(fieldCard).join('')}</div></div>`; })() : ''}
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Total budget ${mon(t.eff)} with carryover</span><h2 class="sec">How the cap is split</h2></div></div>
       ${capStack(t)}
@@ -1247,13 +1861,13 @@ function renderTeam(id) {
     ${team_moves.length ? `<div class="panel"><h2 class="sec">${esc(t.name)} moves</h2><div class="feed">${team_moves.map(moveHTML).join('')}</div></div>` : ''}
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
-      <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
-      <tbody>${sorted.map(p => `<tr data-p="${p.i}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('role', 'Role')}${th('play', 'Play')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
+      <tbody>${sorted.map(p => `<tr data-p="${p.i}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
   </div>`;
   $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
-  $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos'].includes(k) ? 1 : -1; } renderTeam(id); });
+  $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos', 'role'].includes(k) ? 1 : -1; } renderTeam(id); });
   document.title = `${t.name} cap · Plain Cap`;
 }
 function gtdBar(p) {
@@ -1342,6 +1956,9 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · free agent ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab !== 'field'}">Contract</button></div>
+    <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
+    <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'field' ? 'hidden' : ''}>
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
     <div class="bigrow">
       <div><span class="k">Per year</span><div class="v">${mon(p.apy)}</div></div>
@@ -1371,9 +1988,11 @@ function openPlayer(i) {
       ${p.cap != null && p.dpost != null ? `<button type="button" class="btn" data-act="cut">Try cutting him</button>` : ''}
       <button type="button" class="btn ghost" data-act="cmp">Compare</button>
       <a class="btn ghost" href="#team-${p.team}" data-act="team">${esc(t.name)} cap page</a>
+    </div>
     </div>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
+  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab === 'field'; };
   $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
     sheet.close();
     if (b.dataset.act === 'cut') { st.cut = p.i; st.tool = 'cut'; go('tools'); renderCut(); }
@@ -1483,6 +2102,7 @@ document.addEventListener('click', e => {
 function tipFor(el) {
   const d = el.dataset.tip.split('|');
   if (d[0] === 'p') { const p = PL[+d[1]]; return `<b>${esc(p.name)}</b>${esc(posTag(p.pos))} · ${esc(TB[p.team].name)} · age ${p.age || '—'}<br>${mon(p.apy)} a year · ${pct(p.gtdp)} guaranteed`; }
+  if (d[0] === 'fp') { const p = PL[+d[1]]; return `<b>${esc(p.name)} · play ${p.play}</b>${esc(p.role)} · ${esc(TB[p.team].name)}<br>${mon(p.apy)} a year · ${ord(p.payRk)} highest paid of ${p.payN}<br>${esc(p.sg)} #${p.prk} of ${p.pn} on the field · ${esc(p.vlab)}`; }
   if (d[0] === 'seg') return `<b>${esc(d[1])}</b>${mon(+d[2])} · ${pct(+d[2] / +d[3])}`;
   if (d[0] === 'g') { const g = d[1], ts = [...TEAMS].sort((a, b) => b.g[g] - a.g[g]); return `<b>${GROUP_NAME[g]}</b>Most: ${esc(ts[0].name)} ${mon(ts[0].g[g])}<br>Least: ${esc(ts[31].name)} ${mon(ts[31].g[g])}`; }
   if (d[0] === 'hm') { const t = TB[d[1]], g = d[2]; return `<b>${esc(t.name)} · ${GROUP_NAME[g]}</b>${mon(t.g[g])} in 2026 cap hits<br>${ord(TEAMS.filter(x => x.g[g] > t.g[g]).length + 1)} most of 32 teams`; }
@@ -1507,7 +2127,7 @@ $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { s
 faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
 
 /* ===== boot ===== */
-function boot(d, mv) {
+function boot(d, mv, sd) {
   prepare(d, mv);
   const dt = new Date(d.asOf + 'T12:00:00');
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
@@ -1515,6 +2135,10 @@ function boot(d, mv) {
   $('#news-asof').textContent = `Contract news · updated ${ds}`;
   $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
   analyze();
+  if (sd && Array.isArray(sd.players)) attachStats(sd);
+  analyzeField();
+  if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
+  wireOnField(); renderOnField();
   renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
   renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); renderNews(); renderTeamGrid();
   buildContractControls(); renderDeals(); renderMarket(); renderTable();
@@ -1533,8 +2157,8 @@ function boot(d, mv) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null)])
-  .then(([d, mv, as]) => { if (as && as.teams) ASSETS = as; boot(d, mv); })
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null)])
+  .then(([d, mv, as, sd]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>
