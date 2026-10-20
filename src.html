@@ -324,6 +324,7 @@ dialog#sheet::backdrop{background:rgba(6,12,24,.55)}
 .fc-band{width:100%;height:62px;background:linear-gradient(135deg,var(--c1) 0 62%,var(--c2) 62% 70%,var(--c1) 70%);position:relative}
 .fc-band .crest{position:absolute;right:8px;top:8px}
 .fc-band .pos{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.35);color:#fff}
+.av .ph{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%;background:var(--c1)}
 .fc .av{margin-top:-40px;width:72px;height:72px;font-size:1.65rem}
 .fc-name{font:800 1.02rem/1.1 var(--display);font-stretch:82%;text-transform:uppercase;letter-spacing:.02em;padding-inline:8px;text-wrap:balance}
 .fc-sub{font-size:.74rem;color:var(--muted);margin-top:-6px}
@@ -769,11 +770,14 @@ const CAP = 301.2e6;
 const COLORS = { ARI: '#97233F', ATL: '#A71930', BAL: '#241773', BUF: '#00338D', CAR: '#0085CA', CHI: '#0B162A', CIN: '#FB4F14', CLE: '#311D00', DAL: '#003594', DEN: '#FB4F14', DET: '#0076B6', GB: '#203731', HOU: '#03202F', IND: '#002C5F', JAX: '#006778', KC: '#E31837', LV: '#000000', LAC: '#0080C6', LAR: '#003594', MIA: '#008E97', MIN: '#4F2683', NE: '#002244', NO: '#D3BC8D', NYG: '#0B2265', NYJ: '#125740', PHI: '#004C54', PIT: '#FFB612', SF: '#AA0000', SEA: '#002244', TB: '#D50A0A', TEN: '#4B92DB', WAS: '#5A1414' };
 const inkFor = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#111' : '#fff'; };
 const COLORS2 = { ARI: '#FFB612', ATL: '#000000', BAL: '#9E7C0C', BUF: '#C60C30', CAR: '#101820', CHI: '#C83803', CIN: '#000000', CLE: '#FF3C00', DAL: '#869397', DEN: '#002244', DET: '#B0B7BC', GB: '#FFB612', HOU: '#A71930', IND: '#A2AAAD', JAX: '#D7A22A', KC: '#FFB81C', LV: '#A5ACAF', LAC: '#FFC20E', LAR: '#FFA300', MIA: '#FC4C02', MIN: '#FFC62F', NE: '#C60C30', NO: '#101820', NYG: '#A71930', NYJ: '#FFFFFF', PHI: '#A5ACAF', PIT: '#101820', SF: '#B3995D', SEA: '#69BE28', TB: '#34302B', TEN: '#0C2340', WAS: '#FFB612' };
+let ASSETS = { teams: {}, players: {} };
+const normName = n => n.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b/g, '').replace(/[^a-z]/g, '');
+const headshot = p => ASSETS.players[p.team + '|' + normName(p.name)] || '';
 const crest = (id, w = 26) => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc', ink = inkFor(c1), small = id.length > 2;
-  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><path d="M6 12.5 H34" stroke="${c2}" stroke-width="1.6" opacity=".7"></path><path d="M20 35 L23 39.5 H17 Z" fill="${c2}" opacity=".85"></path><text x="20" y="${small ? 29 : 30}" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${small ? 12 : 14.5}" fill="${ink}">${id}</text></svg>`; };
+  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><path d="M6 12.5 H34" stroke="${c2}" stroke-width="1.6" opacity=".7"></path><path d="M20 35 L23 39.5 H17 Z" fill="${c2}" opacity=".85"></path><text x="20" y="${small ? 29 : 30}" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${small ? 12 : 14.5}" fill="${ink}">${id}</text>${ASSETS.teams[id] ? `<image href="${ASSETS.teams[id].logo}" x="0" y="0" width="40" height="46" preserveAspectRatio="xMidYMid meet" onload="[...this.parentNode.children].forEach(n=>n!==this&&n.remove())" onerror="this.remove()"></image>` : ''}</svg>`; };
 const initials = n => { const w = n.replace(/[.,]/g, '').split(/\s+/).filter(x => x && !/^(Jr|Sr|II|III|IV|V)$/i.test(x)); return ((w[0] || '?')[0] + (w.length > 1 ? w[w.length - 1][0] : '')).toUpperCase(); };
 const teamVars = id => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc'; return `--c1:${c1};--c2:${c2};--ink:${inkFor(c1)}`; };
-const avatar = (p, px) => `<span class="av" style="${teamVars(p.team)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}</span>`;
+const avatar = (p, px) => `<span class="av" style="${teamVars(p.team)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}${headshot(p) ? `<img class="ph" src="${headshot(p)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>`;
 const badge = (id, lg) => crest(id, lg ? 46 : 22);
 const badgeOld = (id, lg) => `<span class="badge${lg ? ' lg' : ''}" style="background:${COLORS[id] || '#555'};color:${inkFor(COLORS[id] || '#555')}" aria-hidden="true">${esc(id)}</span>`;
 const POSGROUP = { QB: 'QB', RB: 'RB', FB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', IDL: 'DT', EDGE: 'EDGE', LB: 'LB', CB: 'CB', S: 'S', K: 'ST', P: 'ST', LS: 'ST' };
@@ -1529,8 +1533,8 @@ function boot(d, mv) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] }))])
-  .then(([d, mv]) => boot(d, mv))
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), getJSON('data/espn_assets.json').catch(() => null)])
+  .then(([d, mv, as]) => { if (as && as.teams) ASSETS = as; boot(d, mv); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>
