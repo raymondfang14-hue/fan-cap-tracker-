@@ -314,6 +314,76 @@ dialog#sheet::backdrop{background:rgba(6,12,24,.55)}
 .faq details[open] summary::after{content:"\2212"}
 .faq p{padding-bottom:14px;color:var(--muted);max-width:68ch}
 
+/* crests and face cards */
+.crest{flex:none;display:inline-block;vertical-align:middle;overflow:visible}
+.av{position:relative;display:inline-grid;place-items:center;flex:none;border-radius:50%;font:800 1rem/1 var(--display);font-stretch:80%;letter-spacing:.02em;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.28),transparent 55%),var(--c1);color:var(--ink);box-shadow:0 0 0 3px var(--c2),0 0 0 4px var(--line)}
+.fcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px}
+.fcs.row{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:minmax(180px,200px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.fc{position:relative;display:grid;gap:8px;justify-items:center;text-align:center;padding:0 0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;overflow:hidden;scroll-snap-align:start;min-width:0;color:inherit}
+.fc:hover{border-color:var(--brand);transform:translateY(-2px)}
+.fc-band{width:100%;height:62px;background:linear-gradient(135deg,var(--c1) 0 62%,var(--c2) 62% 70%,var(--c1) 70%);position:relative}
+.fc-band .crest{position:absolute;right:8px;top:8px}
+.fc-band .pos{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.35);color:#fff}
+.fc .av{margin-top:-40px;width:72px;height:72px;font-size:1.65rem}
+.fc-name{font:800 1.02rem/1.1 var(--display);font-stretch:82%;text-transform:uppercase;letter-spacing:.02em;padding-inline:8px;text-wrap:balance}
+.fc-sub{font-size:.74rem;color:var(--muted);margin-top:-6px}
+.fc-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fc-nums span{display:grid;padding:6px 2px;font:600 .82rem/1.1 var(--mono)}
+.fc-nums small{font:600 .56rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fc-rings{display:flex;gap:16px;justify-content:center}
+.ring{display:grid;justify-items:center;gap:2px;font:600 .58rem/1.1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.ring svg{display:block}
+.ring text{font:800 13px var(--display);fill:var(--fg)}
+.traits{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.trait{display:inline-block;padding:3px 7px;border-radius:999px;font:600 .64rem/1.1 var(--body);background:var(--brand-soft);color:var(--fg);white-space:nowrap}
+/* percentile bars */
+.pbars{display:grid;gap:7px}
+.pb{display:grid;grid-template-columns:8.4rem minmax(0,1fr) 2.6rem;gap:10px;align-items:center;font-size:.84rem}
+.pb .tr{height:12px;background:var(--surface-2);border-radius:6px;position:relative;overflow:hidden}
+.pb .tr i{position:absolute;inset:0 auto 0 0;border-radius:6px}
+.pb b{font:700 .9rem/1 var(--mono);text-align:right}
+.pb .lbl{display:grid}
+.pb .lbl small{color:var(--muted);font-size:.7rem}
+/* heatmap */
+.heat{border-collapse:separate;border-spacing:2px;font-size:.78rem;width:100%}
+.heat th{font:600 .64rem/1.15 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:4px 2px;text-align:center;white-space:nowrap}
+.heat th button{border:0;background:none;font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit;text-transform:inherit;padding:2px}
+.heat th button[aria-pressed="true"]{color:var(--brand);text-decoration:underline}
+.heat td{position:relative;min-width:52px;height:30px;text-align:center;border-radius:3px;background:var(--surface-2);cursor:pointer;font:600 .74rem/1 var(--mono)}
+.heat td i{position:absolute;inset:0;border-radius:3px;background:var(--brand)}
+.heat td b{position:relative;font-weight:600}
+.heat td.hi b{color:var(--brand-ink)}
+.heat td.tm{background:none;text-align:left;cursor:pointer;white-space:nowrap;min-width:0}
+.heat td.tm span{display:inline-flex;align-items:center;gap:6px;font:600 .78rem/1 var(--body)}
+.scale-key{display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--muted)}
+.scale-key i{display:block;width:120px;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--surface-2),var(--brand))}
+/* health list */
+.health{display:grid;gap:2px}
+.hl{display:grid;grid-template-columns:1.8rem auto minmax(0,1fr) 3.4rem;gap:10px;align-items:center;padding:8px 6px;border:0;background:none;text-align:left;width:100%;cursor:pointer;border-radius:6px}
+.hl:hover{background:var(--brand-soft)}
+.hl .nm{display:grid;gap:4px;min-width:0}
+.hl .nm b{font:700 .9rem/1.1 var(--body)}
+.hl .segs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+.hl .segs i{height:6px;border-radius:3px;background:var(--surface-2);position:relative;overflow:hidden}
+.hl .segs i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--brand)}
+.score{font:800 1.5rem/1 var(--display);font-stretch:80%;text-align:right;font-variant-numeric:tabular-nums}
+.score.good{color:var(--good)} .score.bad{color:var(--bad)}
+/* similar */
+.sims{display:grid;gap:4px}
+.sim{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px;border:0;background:none;text-align:left;width:100%;cursor:pointer;border-radius:6px}
+.sim:hover{background:var(--brand-soft)}
+.sim .av{width:36px;height:36px;font-size:.9rem;box-shadow:0 0 0 2px var(--c2)}
+.sim b{display:block;font-size:.88rem}
+.sim small{color:var(--muted);font-size:.76rem}
+.sim .pc{font:700 .9rem/1 var(--mono);color:var(--brand);text-align:right}
+.sh-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;margin:-18px -18px 0;padding:16px 18px;background:linear-gradient(135deg,var(--c1) 0 70%,var(--c2) 70% 76%,var(--c1) 76%);color:var(--ink)}
+.sh-top .av{width:78px;height:78px;font-size:1.9rem;box-shadow:0 0 0 3px var(--c2),0 0 0 5px rgba(255,255,255,.5)}
+.sh-top h3{font:800 1.75rem/1 var(--display);font-stretch:78%;text-transform:uppercase}
+.sh-top p{font-size:.86rem;opacity:.9}
+.sh-top .x{background:rgba(255,255,255,.85);color:#111}
+.radar text{fill:var(--muted);font:600 10px var(--mono)}
+@media (max-width:560px){.dg{grid-template-columns:minmax(0,1fr)!important}.dg>.fc{max-width:220px;justify-self:center}.pb{grid-template-columns:6.6rem minmax(0,1fr) 2.2rem}}
+@media (prefers-reduced-motion:no-preference){.fc{transition:transform .15s,border-color .15s}}
 footer{border-top:1px solid var(--line);padding-block:20px 40px;font-size:.8rem;color:var(--muted)}
 footer .wrap{display:grid;gap:8px}
 footer ul{display:flex;flex-wrap:wrap;gap:4px 14px}
@@ -344,6 +414,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
       <a href="#teams" data-nav="teams">Teams</a>
       <a href="#contracts" data-nav="contracts">Contracts</a>
       <a href="#tools" data-nav="tools">Tools</a>
+      <a href="#analytics" data-nav="analytics">Analytics</a>
       <a href="#learn" data-nav="learn">Learn</a>
     </nav>
   </div>
@@ -368,6 +439,19 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
   </div>
 
   <div class="kpis" id="kpis"></div>
+
+  <div class="panel">
+    <div class="sechead">
+      <div><span class="eyebrow">Player cards</span><h2 class="sec" id="hc-title">Biggest contracts in football</h2></div>
+      <div class="seg" id="hc-seg" role="group" aria-label="Which players">
+        <button type="button" data-hc="top" aria-pressed="true">Top paid</button>
+        <button type="button" data-hc="young" aria-pressed="false">Young core</button>
+        <button type="button" data-hc="cut" aria-pressed="false">Cut watch</button>
+      </div>
+    </div>
+    <div class="fcs row" id="home-cards"></div>
+    <p class="note">Market ring: how his yearly pay ranks at his position (99 = top). Security ring: how safe his money is, from guarantees, dead money and years left. Scroll sideways for more.</p>
+  </div>
 
   <div class="grid2">
     <div class="panel">
@@ -478,7 +562,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
       </label>
     </div>
     <div class="grid2" style="gap:22px">
-      <div class="hbars" id="mkt-bars"></div>
+      <div style="display:grid;gap:14px;min-width:0"><div class="fcs row" id="mkt-cards"></div><div class="hbars" id="mkt-bars"></div></div>
       <div class="chartbox"><div id="scatter"></div><p class="note" id="scatter-note"></p></div>
     </div>
   </div>
@@ -500,7 +584,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
           <th class="r" data-k="total"><button type="button">Total</button></th>
           <th class="r" data-k="gtdp"><button type="button">Guaranteed</button></th>
           <th class="r" data-k="cap"><button type="button">2026 cap hit</button></th>
-          <th class="r" data-k="end"><button type="button">Ends</button></th>
+          <th class="r" data-k="end"><button type="button">Free agent</button></th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -564,6 +648,45 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
       <div class="pick"><label class="f" for="cmp-b">Second player<input id="cmp-b" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-br" hidden></div></div>
     </div>
     <div class="cmp" id="cmp-out"></div>
+  </div>
+</section>
+
+<!-- ANALYTICS -->
+<section class="view" id="v-analytics" hidden aria-labelledby="h-analytics">
+  <div class="sechead">
+    <div><span class="eyebrow">Advanced contract analytics</span><h1 class="title" id="h-analytics">The cap lab</h1></div>
+  </div>
+  <p class="lede">Every number here is a percentile against the league, so 90 means better than 90% of players at the same position, or 90% of teams. Tap any card, crest or cell to dig in.</p>
+
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow">Contract traits</span><h2 class="sec" id="tr-title">Find a type of contract</h2></div><span class="note" id="tr-count"></span></div>
+    <div class="chips" id="trait-chips" role="group" aria-label="Trait"></div>
+    <p class="note" id="trait-desc"></p>
+    <div class="fcs" id="trait-cards"></div>
+    <button class="btn ghost more" id="trait-more" type="button">Show more</button>
+  </div>
+
+  <div class="panel">
+    <div class="sechead">
+      <div><span class="eyebrow">32 teams × 11 positions · 2026 cap hits</span><h2 class="sec">Spending heatmap, $M</h2></div>
+      <span class="scale-key">Least <i></i> Most</span>
+    </div>
+    <p class="note">Each cell shows what a team spends at a position, shaded by its rank among the 32 teams. Tap a column name to sort by it; tap a cell to see those players.</p>
+    <div class="tw" style="border:0;background:none"><table class="heat" id="heat"></table></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div><span class="eyebrow">0 to 100, higher is healthier</span><h2 class="sec">Cap health rankings</h2></div>
+      <p class="note">Blends four percentiles: cap room, low dead money, money coming off the books after this season, and how evenly pay is spread beyond the top five contracts. The four small bars show each piece.</p>
+      <div class="health" id="health"></div>
+    </div>
+    <div class="panel">
+      <div><span class="eyebrow">Doppelgänger finder</span><h2 class="sec">Contracts most like his</h2></div>
+      <p class="note">Pick a player and find the deals closest to his in yearly pay, guarantees, length, age and cap share, across the league.</p>
+      <div class="pick"><label class="f" for="dg-q">Player<input id="dg-q" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="dg-r" hidden></div></div>
+      <div id="dg-out"></div>
+    </div>
   </div>
 </section>
 
@@ -645,7 +768,14 @@ const store = {
 const CAP = 301.2e6;
 const COLORS = { ARI: '#97233F', ATL: '#A71930', BAL: '#241773', BUF: '#00338D', CAR: '#0085CA', CHI: '#0B162A', CIN: '#FB4F14', CLE: '#311D00', DAL: '#003594', DEN: '#FB4F14', DET: '#0076B6', GB: '#203731', HOU: '#03202F', IND: '#002C5F', JAX: '#006778', KC: '#E31837', LV: '#000000', LAC: '#0080C6', LAR: '#003594', MIA: '#008E97', MIN: '#4F2683', NE: '#002244', NO: '#D3BC8D', NYG: '#0B2265', NYJ: '#125740', PHI: '#004C54', PIT: '#FFB612', SF: '#AA0000', SEA: '#002244', TB: '#D50A0A', TEN: '#4B92DB', WAS: '#5A1414' };
 const inkFor = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#111' : '#fff'; };
-const badge = (id, lg) => `<span class="badge${lg ? ' lg' : ''}" style="background:${COLORS[id] || '#555'};color:${inkFor(COLORS[id] || '#555')}" aria-hidden="true">${esc(id)}</span>`;
+const COLORS2 = { ARI: '#FFB612', ATL: '#000000', BAL: '#9E7C0C', BUF: '#C60C30', CAR: '#101820', CHI: '#C83803', CIN: '#000000', CLE: '#FF3C00', DAL: '#869397', DEN: '#002244', DET: '#B0B7BC', GB: '#FFB612', HOU: '#A71930', IND: '#A2AAAD', JAX: '#D7A22A', KC: '#FFB81C', LV: '#A5ACAF', LAC: '#FFC20E', LAR: '#FFA300', MIA: '#FC4C02', MIN: '#FFC62F', NE: '#C60C30', NO: '#101820', NYG: '#A71930', NYJ: '#FFFFFF', PHI: '#A5ACAF', PIT: '#101820', SF: '#B3995D', SEA: '#69BE28', TB: '#34302B', TEN: '#0C2340', WAS: '#FFB612' };
+const crest = (id, w = 26) => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc', ink = inkFor(c1), small = id.length > 2;
+  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><path d="M6 12.5 H34" stroke="${c2}" stroke-width="1.6" opacity=".7"></path><path d="M20 35 L23 39.5 H17 Z" fill="${c2}" opacity=".85"></path><text x="20" y="${small ? 29 : 30}" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${small ? 12 : 14.5}" fill="${ink}">${id}</text></svg>`; };
+const initials = n => { const w = n.replace(/[.,]/g, '').split(/\s+/).filter(x => x && !/^(Jr|Sr|II|III|IV|V)$/i.test(x)); return ((w[0] || '?')[0] + (w.length > 1 ? w[w.length - 1][0] : '')).toUpperCase(); };
+const teamVars = id => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc'; return `--c1:${c1};--c2:${c2};--ink:${inkFor(c1)}`; };
+const avatar = (p, px) => `<span class="av" style="${teamVars(p.team)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}</span>`;
+const badge = (id, lg) => crest(id, lg ? 46 : 22);
+const badgeOld = (id, lg) => `<span class="badge${lg ? ' lg' : ''}" style="background:${COLORS[id] || '#555'};color:${inkFor(COLORS[id] || '#555')}" aria-hidden="true">${esc(id)}</span>`;
 const POSGROUP = { QB: 'QB', RB: 'RB', FB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', IDL: 'DT', EDGE: 'EDGE', LB: 'LB', CB: 'CB', S: 'S', K: 'ST', P: 'ST', LS: 'ST' };
 const GROUP_ORDER = ['QB', 'RB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'ST'];
 const GROUP_NAME = { QB: 'Quarterback', RB: 'Running back', WR: 'Receiver', TE: 'Tight end', OL: 'Off. line', EDGE: 'Edge rusher', DT: 'Def. tackle', LB: 'Linebacker', CB: 'Cornerback', S: 'Safety', ST: 'Kick & punt' };
@@ -705,6 +835,8 @@ const LEARN_NFL = [
   ['Franchise tag', 'A one-year deal a team can use to keep a player about to hit free agency. The price is set by what the top players at his position earn.'],
   ['Cap carryover', 'Cap room a team does not use can roll into next season. That is why some teams have more than $301.2M to spend.'],
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
+  ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
+  ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
 ];
 const LEARN_NBA = [
@@ -746,6 +878,117 @@ function prepare(d, mv) {
 }
 const groupAvg = g => TEAMS.reduce((s, t) => s + t.g[g], 0) / TEAMS.length;
 
+/* ===== analytics: percentiles, scores, traits ===== */
+const pctRank = (arr, v) => { if (!arr.length) return .5; let lo = 0, eq = 0; for (const x of arr) { if (x < v) lo++; else if (x === v) eq++; } return (lo + eq / 2) / arr.length; };
+const P_DEFS = [
+  ['pApy', 'Yearly pay', 'vs his position'],
+  ['pGtd', 'Guaranteed share', 'of the total deal'],
+  ['pCap', 'Cap hit', '2026 share of cap'],
+  ['pDead', 'Hard to cut', 'dead money vs cap hit'],
+  ['pYrs', 'Years left', 'contract length'],
+  ['pYouth', 'Youth', 'younger is higher']
+];
+const TRAITS = {
+  setter: ['Market setter', 'The highest-paid player at his position by yearly pay.', p => p.rank === 1 && p.posCount >= 10],
+  top5: ['Top-5 at his spot', 'Among the five highest-paid players at his position.', p => p.rank <= 5 && p.posCount >= 10],
+  lock: ['Locked in', 'Cutting him would free little or no room this season, because the dead money would match his cap hit.', p => p.cap >= 5e6 && p.dpost != null && p.dpost >= p.cap * 0.9],
+  cut: ['Cut candidate', 'His team would save at least 60% of his cap hit by releasing him after June 1. That makes him a name to watch in March.', p => p.cap >= 5e6 && p.dpost != null && (p.cap - p.dpost) / p.cap >= 0.6],
+  gtd: ['Fully guaranteed', 'All of his money is guaranteed, the way most NBA deals work.', p => p.gtdp >= 0.99 && p.total >= 5e6],
+  bonus: ['Bonus heavy', 'At least half of his cap hit is signing bonus money being spread over the deal.', p => p.cap >= 3e6 && p.bonus / p.cap >= 0.5],
+  voidy: ['Void years', 'His deal has fake years at the end to spread out bonus money, which will land as dead money later.', p => p.voidy],
+  exp: ['Expiring', 'Paid at least $5M a year and his deal ends after this season, so he can be a free agent in March 2027.', p => p.end === 2027 && p.apy >= 5e6],
+  long: ['Long haul', 'Paid at least $10M a year and not a free agent until 2030 or later.', p => p.end >= 2030 && p.apy >= 1e7],
+  young: ['Young core', 'Age 25 or younger and already paid at least $10M a year.', p => p.age && p.age <= 25 && p.apy >= 1e7],
+  vet: ['Veteran money', 'Age 31 or older and still paid at least $10M a year.', p => p.age >= 31 && p.apy >= 1e7]
+};
+function analyze() {
+  const by = {};
+  PL.forEach(p => { (by[p.pos] = by[p.pos] || []).push(p); });
+  PL.forEach(p => { p.yl = Math.max(1, p.end - 2026); p.capShare = (p.cap || 0) / CAP; p.deadR = p.cap ? Math.min(2, (p.dpost || 0) / p.cap) : 0; });
+  Object.values(by).forEach(list => {
+    const col = k => list.map(x => x[k]);
+    const A = { apy: col('apy'), gtdp: col('gtdp'), cap: col('capShare'), dead: col('deadR'), yl: col('yl'), age: list.map(x => -(x.age || 30)) };
+    list.forEach(p => {
+      p.pApy = pctRank(A.apy, p.apy); p.pGtd = pctRank(A.gtdp, p.gtdp); p.pCap = pctRank(A.cap, p.capShare);
+      p.pDead = p.cap ? pctRank(A.dead, p.deadR) : 0.5; p.pYrs = pctRank(A.yl, p.yl); p.pYouth = pctRank(A.age, -(p.age || 30));
+      p.sec = Math.round(100 * (0.45 * p.pGtd + 0.35 * p.pDead + 0.20 * p.pYrs));
+      p.mkt = Math.round(100 * p.pApy);
+    });
+  });
+  PL.forEach(p => { p.traits = Object.keys(TRAITS).filter(k => TRAITS[k][2](p)); });
+  // team cap health
+  const exp = t => PL.filter(p => p.team === t.id && p.end === 2027).reduce((a, p) => a + (p.cap || 0), 0) / Math.max(1, t.active);
+  const top5 = t => PL.filter(p => p.team === t.id).map(p => p.cap || 0).sort((a, b) => b - a).slice(0, 5).reduce((a, b) => a + b, 0) / Math.max(1, t.active);
+  TEAMS.forEach(t => { t.expShare = exp(t); t.top5 = top5(t); });
+  const col = f => TEAMS.map(f);
+  const S = col(t => t.space), Dd = col(t => -t.dead), E = col(t => t.expShare), T5 = col(t => -t.top5);
+  TEAMS.forEach(t => {
+    t.hp = [pctRank(S, t.space), pctRank(Dd, -t.dead), pctRank(E, t.expShare), pctRank(T5, -t.top5)];
+    t.health = Math.round(100 * (0.35 * t.hp[0] + 0.25 * t.hp[1] + 0.2 * t.hp[2] + 0.2 * t.hp[3]));
+  });
+  [...TEAMS].sort((a, b) => b.health - a.health).forEach((t, n) => (t.r_health = n + 1));
+  // group rank per team
+  GROUP_ORDER.forEach(g => { const vals = TEAMS.map(t => t.g[g]); TEAMS.forEach(t => { t.gp = t.gp || {}; t.gp[g] = pctRank(vals, t.g[g]); }); });
+}
+const ringSVG = (v, label, color) => { const r = 17, c = 2 * Math.PI * r, f = Math.max(0, Math.min(100, v)) / 100;
+  return `<span class="ring"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="5"></circle><circle cx="22" cy="22" r="${r}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c * f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 22 22)"></circle><text x="22" y="26.5" text-anchor="middle">${Math.round(v)}</text></svg>${label}</span>`; };
+const pColor = v => v >= 0.8 ? 'var(--brand)' : v >= 0.5 ? 'var(--c-off)' : v >= 0.25 ? 'var(--c-space)' : 'var(--c-def)';
+function faceCard(p) {
+  const t = TB[p.team];
+  return `<button type="button" class="fc" data-p="${p.i}" style="${teamVars(p.team)}" aria-label="${esc(p.name)}, ${esc(POS_WORD[p.pos] || p.pos)}, ${esc(t.name)}, ${mon(p.apy)} a year">
+    <span class="fc-band"><span class="pos">${esc(posTag(p.pos))}</span>${crest(p.team, 24)}</span>
+    ${avatar(p)}
+    <span class="fc-name">${esc(p.name)}</span>
+    <span class="fc-sub">${esc(t.city)} ${esc(t.name)}${p.age ? ' · ' + p.age : ''}</span>
+    <span class="fc-nums"><span><small>Per yr</small>${mon(p.apy)}</span><span><small>Cap hit</small>${mon(p.cap)}</span><span><small>Gtd</small>${pct(p.gtdp)}</span></span>
+    <span class="fc-rings">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}</span>
+    ${p.traits.length ? `<span class="traits">${p.traits.slice(0, 2).map(k => `<span class="trait">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}
+  </button>`;
+}
+function pbarsHTML(p) {
+  return `<div class="pbars">${P_DEFS.map(([k, l, s]) => `<div class="pb"><span class="lbl">${l}<small>${s}</small></span><span class="tr"><i style="width:${(p[k] * 100).toFixed(0)}%;background:${pColor(p[k])}"></i></span><b>${Math.round(p[k] * 100)}</b></div>`).join('')}</div>`;
+}
+function similar(p, n = 5) {
+  const f = q => [Math.log10(Math.max(q.apy, 5e5)) * 2.2, q.gtdp * 1.4, (q.age || 28) / 6, q.yl / 2.2, q.capShare * 12];
+  const a = f(p);
+  return PL.filter(q => q !== p && q.group === p.group && q.apy > 0).map(q => { const b = f(q); const d = Math.sqrt(a.reduce((s, v, i) => s + (v - b[i]) ** 2, 0)); return { q, sim: Math.round(100 * Math.exp(-d * 0.35)) }; })
+    .sort((x, y) => y.sim - x.sim).slice(0, n);
+}
+const simHTML = p => `<div class="sims">${similar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(posTag(q.pos))} · ${esc(TB[q.team].name)} · ${mon(q.apy)}/yr · ${pct(q.gtdp)} gtd</small></span><span class="pc">${sim}%</span></button>`).join('')}</div>`;
+
+/* analytics view */
+let traitSel = 'cut', traitLimit = 24, heatSort = null;
+function renderTraits() {
+  $('#trait-chips').innerHTML = Object.entries(TRAITS).map(([k, d]) => `<button type="button" class="chip" data-trait="${k}" aria-pressed="${k === traitSel}">${d[0]} <span class="num" style="opacity:.7">${PL.filter(p => p.traits.includes(k)).length}</span></button>`).join('');
+  const list = PL.filter(p => p.traits.includes(traitSel)).sort((a, b) => b.apy - a.apy);
+  $('#tr-title').textContent = TRAITS[traitSel][0];
+  $('#trait-desc').textContent = TRAITS[traitSel][1];
+  $('#tr-count').textContent = `${list.length} players`;
+  $('#trait-cards').innerHTML = list.slice(0, traitLimit).map(faceCard).join('') || '<p class="empty">No players fit this right now.</p>';
+  $('#trait-more').hidden = list.length <= traitLimit;
+}
+function renderHeat() {
+  const rows = [...TEAMS].sort((a, b) => heatSort ? b.g[heatSort] - a.g[heatSort] : (a.city + a.name).localeCompare(b.city + b.name));
+  $('#heat').innerHTML = `<thead><tr><th style="text-align:left"><button type="button" data-hs="" aria-pressed="${!heatSort}">Team</button></th>${GROUP_ORDER.map(g => `<th><button type="button" data-hs="${g}" aria-pressed="${heatSort === g}" title="${GROUP_NAME[g]}">${g}</button></th>`).join('')}</tr></thead><tbody>` +
+    rows.map(t => `<tr><td class="tm" data-team="${t.id}"><span>${crest(t.id, 20)}${esc(t.name)}</span></td>${GROUP_ORDER.map(g => { const v = t.gp[g]; return `<td class="${v > .6 ? 'hi' : ''}" data-group="${g}" data-team-filter="${t.id}" data-tip="hm|${t.id}|${g}"><i style="opacity:${(0.08 + v * 0.92).toFixed(2)}"></i><b>${(t.g[g] / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
+}
+function renderHealth() {
+  $('#health').innerHTML = [...TEAMS].sort((a, b) => b.health - a.health).map((t, n) => `<button type="button" class="hl" data-team="${t.id}" data-tip="hh|${t.id}">
+    <span class="rk num" style="color:var(--muted);font-size:.8rem;text-align:right">${n + 1}</span>${crest(t.id, 26)}
+    <span class="nm"><b>${esc(t.city)} ${esc(t.name)}</b><span class="segs">${t.hp.map(v => `<i style="--w:${(v * 100).toFixed(0)}%"></i>`).join('')}</span></span>
+    <span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}">${t.health}</span></button>`).join('');
+}
+let dgPick = null;
+function renderDG() {
+  const p = PL[dgPick];
+  if (!p) { $('#dg-out').innerHTML = '<p class="empty">Pick a player to find his closest matches.</p>'; return; }
+  $('#dg-q').value = p.name;
+  $('#dg-out').innerHTML = `<div style="display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:14px;align-items:start" class="dg">${faceCard(p)}<div style="display:grid;gap:8px;min-width:0"><span class="eyebrow">Closest contracts</span>${simHTML(p)}</div></div>`;
+}
+$('#trait-chips').onclick = e => { const b = e.target.closest('[data-trait]'); if (b) { traitSel = b.dataset.trait; traitLimit = 24; renderTraits(); } };
+$('#trait-more').onclick = () => { traitLimit += 24; renderTraits(); };
+$('#heat').onclick = e => { const b = e.target.closest('[data-hs]'); if (b) { e.stopPropagation(); heatSort = b.dataset.hs || null; renderHeat(); } };
+
 /* ===== tooltip ===== */
 const tip = $('#tip');
 function showTip(e, html) {
@@ -760,7 +1003,7 @@ document.addEventListener('scroll', hideTip, { passive: true });
 /* ===== story ===== */
 function story(p) {
   const t = TB[p.team], out = [];
-  out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year. It runs through the ${p.end} season.`);
+  out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year. He can become a free agent in ${p.end}.`);
   if (p.total > 0 && p.gtd > 0) out.push(`${mon(p.gtd)} of it (${pct(p.gtdp)}) is guaranteed${p.fg > 0 && p.fg < p.gtd ? `, and ${mon(p.fg)} of that was locked in the day he signed` : ''}.`);
   else out.push('None of the money is guaranteed, so the team could release him and owe nothing more.');
   if (p.total > 1e6) out.push(`By yearly pay he is the ${p.rank === 1 ? 'highest-paid' : ord(p.rank) + ' highest-paid'} ${POS_WORD[p.pos] || 'player at his spot'} in the league.`);
@@ -809,7 +1052,7 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'contracts', 'tools', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'contracts', 'tools', 'analytics', 'learn'];
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
@@ -901,6 +1144,15 @@ function renderDeadline() {
     : `<span class="eyebrow" style="color:#C9DAF2">Trade deadline</span><b>The ${dstr} deadline has passed</b><span>Teams can sign free agents but cannot trade until the new league year.</span>`;
 }
 
+let hcSel = 'top';
+function renderHomeCards() {
+  const pick = { top: () => [...PL].sort((a, b) => b.apy - a.apy), young: () => PL.filter(p => p.traits.includes('young')).sort((a, b) => b.apy - a.apy), cut: () => PL.filter(p => p.traits.includes('cut')).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost)) }[hcSel]();
+  $('#hc-title').textContent = { top: 'Biggest contracts in football', young: 'Young players already paid', cut: 'Biggest savings if released' }[hcSel];
+  $$('#hc-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hc === hcSel)));
+  $('#home-cards').innerHTML = pick.slice(0, 16).map(faceCard).join('');
+}
+$('#hc-seg').onclick = e => { const b = e.target.closest('button'); if (b) { hcSel = b.dataset.hc; renderHomeCards(); } };
+
 /* ===== news ===== */
 function renderNews() {
   const kinds = ['All', ...new Set(MOVES.map(m => m.kind))];
@@ -941,8 +1193,8 @@ function renderTeam(id) {
       <span class="val">${mon(v)}<span class="diff ${dif > 0 ? 'up' : 'down'}">${dif > 0 ? '+' : '−'}${mon(Math.abs(dif))} vs avg</span></span></button>`;
   }).join('');
   // contract endings
-  const yrs = [2026, 2027, 2028, 2029, 2030, 2031];
-  const ends = yrs.map(y => { const ps = roster.filter(p => (y === 2031 ? p.end >= 2031 : p.end === y)); return { y, n: ps.length, cap: ps.reduce((s, p) => s + (p.cap || 0), 0), names: ps.sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 3).map(p => p.name) }; });
+  const yrs = [2027, 2028, 2029, 2030, 2031, 2032];
+  const ends = yrs.map(y => { const ps = roster.filter(p => (y === 2032 ? p.end >= 2032 : p.end === y)); return { y, n: ps.length, cap: ps.reduce((s, p) => s + (p.cap || 0), 0), names: ps.sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 3).map(p => p.name) }; });
   const maxE = Math.max(1, ...ends.map(e => e.cap));
   const team_moves = MOVES.filter(m => (m.teams || []).includes(id));
   const th = (k, l) => `<th class="${['name', 'pos'].includes(k) ? '' : 'r'}" data-k="${k}"${r.sort === k ? ` aria-sort="${r.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${l}</button></th>`;
@@ -958,6 +1210,11 @@ function renderTeam(id) {
       <div class="kpi"><span class="k">Dead money</span><span class="v ${t.r_dead <= 8 ? 'bad' : ''} num">${mon(t.dead)}</span><span class="s">${ord(t.r_dead)} most · ${pct(t.dead / CAP)} of the cap</span></div>
       <div class="kpi"><span class="k">Spent on roster</span><span class="v num">${mon(t.active)}</span><span class="s">${t.roster} players under contract</span></div>
       ${top ? `<button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Biggest cap hit</span><span class="v num">${mon(top.cap)}</span><span class="s">${esc(top.name)}, ${esc(posTag(top.pos))}</span></button>` : ''}
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Top six 2026 cap hits</span><h2 class="sec">Core contracts</h2></div>
+        <div style="display:flex;gap:12px;align-items:center" data-tip="hh|${id}"><span class="eyebrow">Cap health</span><span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}" style="font-size:2rem">${t.health}</span><span class="note">${ord(t.r_health)} of 32</span></div></div>
+      <div class="fcs row">${[...roster].sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 6).map(faceCard).join('')}</div>
     </div>
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Total budget ${mon(t.eff)} with carryover</span><h2 class="sec">How the cap is split</h2></div></div>
@@ -977,16 +1234,16 @@ function renderTeam(id) {
         <p class="note">The black tick is the league average for that position. Red means the team spends more than average; green means less. Tap a row to see those players.</p>
       </div>
       <div class="panel">
-        <div><span class="eyebrow">Cap hits by final contract year</span><h2 class="sec">When deals run out</h2></div>
-        <div class="cols">${ends.map(e => `<div class="col" data-tip="end|${e.y}|${e.n}|${e.cap}|${esc(e.names.join(', '))}"><span class="amt">${mon(e.cap, 0)}</span><i class="bx" style="height:${(e.cap / maxE * 100).toFixed(1)}%"></i><span class="lab">${e.y === 2031 ? '2031+' : e.y}</span></div>`).join('')}</div>
-        <p class="note">Players whose deals end in 2026 can become free agents in March 2027. A tall bar means a lot of the roster needs a new contract that year.</p>
+        <div><span class="eyebrow">2026 cap hits by free-agent year</span><h2 class="sec">When deals run out</h2></div>
+        <div class="cols">${ends.map(e => `<div class="col" data-tip="end|${e.y}|${e.n}|${e.cap}|${esc(e.names.join(', '))}"><span class="amt">${mon(e.cap, 0)}</span><i class="bx" style="height:${(e.cap / maxE * 100).toFixed(1)}%"></i><span class="lab">${e.y === 2032 ? '2032+' : e.y}</span></div>`).join('')}</div>
+        <p class="note">Each bar is the 2026 cap money tied to players who can become free agents that year. A tall bar means a lot of the roster needs a new contract that year.</p>
         ${t.topDead && t.topDead.length ? `<div><span class="eyebrow">Biggest dead money</span><div class="rows">${t.topDead.map(([n, v]) => `<div><span>${esc(n)}</span><b>${mon(v)}</b></div>`).join('')}</div></div>` : ''}
       </div>
     </div>
     ${team_moves.length ? `<div class="panel"><h2 class="sec">${esc(t.name)} moves</h2><div class="feed">${team_moves.map(moveHTML).join('')}</div></div>` : ''}
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
-      <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Ends')}</tr></thead>
+      <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
       <tbody>${sorted.map(p => `<tr data-p="${p.i}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
@@ -1028,8 +1285,9 @@ function renderMarket() {
   const list = PL.filter(p => p.pos === pos).sort((a, b) => b.apy - a.apy);
   const top = list.slice(0, 12), max = top[0] ? top[0].apy : 1;
   $('#mkt-title').textContent = `Top ${POS_WORD[pos]} contracts`;
-  $('#mkt-bars').innerHTML = top.map((p, n) => `<button type="button" class="hb" data-p="${p.i}" data-tip="p|${p.i}">
-    <span class="rk">${n + 1}</span>${badge(p.team)}
+  $('#mkt-cards').innerHTML = top.slice(0, 5).map(faceCard).join('');
+  $('#mkt-bars').innerHTML = top.slice(5).map((p, n) => `<button type="button" class="hb" data-p="${p.i}" data-tip="p|${p.i}">
+    <span class="rk">${n + 6}</span>${badge(p.team)}
     <span style="display:grid;gap:3px;min-width:0"><span style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</span><span class="track"><i class="fill" style="width:${(p.apy / max * 100).toFixed(1)}%;background:var(--brand)"></i></span></span>
     <span class="val">${mon(p.apy)}</span></button>`).join('');
   drawScatter(list);
@@ -1079,7 +1337,8 @@ function openPlayer(i) {
   const p = PL[i]; if (!p) return; const t = TB[p.team];
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
-    <div class="sh-hd">${badge(p.team, true)}<div><span class="eyebrow">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · through ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><button class="x" type="button" aria-label="Close" id="sh-x">×</button></div>
+    <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · free agent ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
     <div class="bigrow">
       <div><span class="k">Per year</span><div class="v">${mon(p.apy)}</div></div>
       <div><span class="k">Total value</span><div class="v">${mon(p.total, 0)}</div></div>
@@ -1095,7 +1354,9 @@ function openPlayer(i) {
       <div class="meter"><i style="width:${(p.apy / p.posTop * 100).toFixed(1)}%"></i></div>
       <span class="note">${p.rank === 1 ? 'The top of the market at his position.' : `${pct(p.apy / p.posTop)} of the top ${POS_WORD[p.pos]} contract (${mon(p.posTop)} a year).`}</span>
     </div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.posCount} ${esc(POS_WORD[p.pos] || p.pos)}s</span>${pbarsHTML(p)}</div>
     <div class="story">${story(p).map(s => `<p>${esc(s)}</p>`).join('')}</div>
+    <div style="display:grid;gap:6px"><span class="eyebrow">Most similar contracts</span>${simHTML(p)}</div>
     <div class="rows">
       <div><span>Base salary 2026</span><b>${mon(p.base)}</b></div>
       <div><span>Bonus counting in 2026</span><b>${mon(p.bonus)}</b></div>
@@ -1181,14 +1442,27 @@ function renderTrade() {
     <p class="note">A rough check. The team getting a player takes on his salary; the team sending him keeps this season's bonus slice and the rest of his bonus becomes 2027 dead money. Real in-season trades only move the salary for the weeks left, so actual numbers will be smaller.</p>`;
 }
 document.addEventListener('change', e => { const c = e.target; if (c.matches('.trade-list input')) { const s = st.trade.out[c.dataset.side]; c.checked ? s.add(+c.value) : s.delete(+c.value); renderTrade(); } });
+function radarSVG(a, b) {
+  const R = 100, cx = 140, cy = 128, N = P_DEFS.length;
+  const pt = (i, v) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(ang) * R * v, cy + Math.sin(ang) * R * v]; };
+  let g = '';
+  [0.25, 0.5, 0.75, 1].forEach(r => { g += `<polygon points="${P_DEFS.map((_, i) => pt(i, r).join(',')).join(' ')}" fill="none" stroke="var(--line)"></polygon>`; });
+  P_DEFS.forEach((d, i) => { const [x, y] = pt(i, 1), [lx, ly] = pt(i, 1.2); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"></line><text x="${lx}" y="${ly + 3}" text-anchor="${lx < cx - 5 ? 'end' : lx > cx + 5 ? 'start' : 'middle'}">${d[1]}</text>`; });
+  const poly = (p, c) => `<polygon points="${P_DEFS.map((d, i) => pt(i, Math.max(.03, p[d[0]])).join(',')).join(' ')}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="2"></polygon>`;
+  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="0 0 280 256" style="max-width:340px" role="img" aria-label="Percentile radar comparing ${esc(a.name)} and ${esc(b.name)}">${g}${poly(a, 'var(--brand)')}${poly(b, 'var(--c-def)')}</svg>
+    <ul class="legend" style="grid-template-columns:repeat(2,max-content)"><li><i class="swatch" style="background:var(--brand)"></i><span>${esc(a.name)}</span></li><li><i class="swatch" style="background:var(--c-def)"></i><span>${esc(b.name)}</span></li></ul>
+    <span class="note">Percentiles at each player's own position.</span></div>`;
+}
 function renderCompare() {
   const [a, b] = st.cmp.map(i => (i == null ? null : PL[i]));
   if (a) $('#cmp-a').value = a.name; if (b) $('#cmp-b').value = b.name;
   if (!a || !b) { $('#cmp-out').innerHTML = `<p class="empty">${a ? 'Now pick a second player.' : 'Pick two players to line their contracts up.'}</p>`; return; }
-  const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Runs through', 'end', v => v]];
+  const radar = radarSVG(a, b);
+  const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
   $('#cmp-out').innerHTML = `<div class="cmprow"><div class="l">${badge(a.team)}<b style="font-family:var(--body)">${esc(a.name)}</b></div><span></span><div class="rgt">${badge(b.team)}<b style="font-family:var(--body)">${esc(b.name)}</b></div></div>` +
     rowsDef.map(([l, k, f]) => { const va = a[k] || 0, vb = b[k] || 0, m = Math.max(va, vb, 1e-9); const bar = k !== 'age' && k !== 'end';
       return `<div class="cmprow"><div class="l"><b>${f(a[k])}</b>${bar ? `<i class="b" style="width:${(va / m * 60).toFixed(0)}%;background:var(--brand)"></i>` : ''}</div><span class="lab">${l}</span><div class="rgt">${bar ? `<i class="b" style="width:${(vb / m * 60).toFixed(0)}%;background:var(--c-def)"></i>` : ''}<b>${f(b[k])}</b></div></div>`; }).join('');
+  $('#cmp-out').insertAdjacentHTML('afterbegin', `<div class="vs" style="align-items:center">${radar}<div class="fcs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${faceCard(a)}${faceCard(b)}</div></div>`);
 }
 
 /* ===== learn ===== */
@@ -1207,8 +1481,10 @@ function tipFor(el) {
   if (d[0] === 'p') { const p = PL[+d[1]]; return `<b>${esc(p.name)}</b>${esc(posTag(p.pos))} · ${esc(TB[p.team].name)} · age ${p.age || '—'}<br>${mon(p.apy)} a year · ${pct(p.gtdp)} guaranteed`; }
   if (d[0] === 'seg') return `<b>${esc(d[1])}</b>${mon(+d[2])} · ${pct(+d[2] / +d[3])}`;
   if (d[0] === 'g') { const g = d[1], ts = [...TEAMS].sort((a, b) => b.g[g] - a.g[g]); return `<b>${GROUP_NAME[g]}</b>Most: ${esc(ts[0].name)} ${mon(ts[0].g[g])}<br>Least: ${esc(ts[31].name)} ${mon(ts[31].g[g])}`; }
+  if (d[0] === 'hm') { const t = TB[d[1]], g = d[2]; return `<b>${esc(t.name)} · ${GROUP_NAME[g]}</b>${mon(t.g[g])} in 2026 cap hits<br>${ord(TEAMS.filter(x => x.g[g] > t.g[g]).length + 1)} most of 32 teams`; }
+  if (d[0] === 'hh') { const t = TB[d[1]]; return `<b>${esc(t.city)} ${esc(t.name)} · ${t.health}</b>Cap room ${Math.round(t.hp[0] * 100)}<br>Low dead money ${Math.round(t.hp[1] * 100)}<br>Coming off the books ${Math.round(t.hp[2] * 100)}<br>Pay spread out ${Math.round(t.hp[3] * 100)}`; }
   if (d[0] === 'tg') return `<b>${GROUP_NAME[d[1]]}</b>This team ${mon(+d[2])}<br>League average ${mon(+d[3])}`;
-  if (d[0] === 'end') return `<b>${d[1] === '2031' ? '2031 and later' : 'Deals ending ' + d[1]}</b>${d[2]} players · ${mon(+d[3])} in 2026 cap hits${d[4] ? '<br>' + esc(d[4]) : ''}`;
+  if (d[0] === 'end') return `<b>${d[1] === '2032' ? 'Free agents 2032 and later' : 'Free agents in ' + d[1]}</b>${d[2]} players · ${mon(+d[3])} in 2026 cap hits${d[4] ? '<br>' + esc(d[4]) : ''}`;
   if (d[1] && TEAMS.length) { const t = TEAMS.find(x => x.city + ' ' + x.name === d[0]); if (t) return teamTip(t); }
   return '';
 }
@@ -1234,9 +1510,13 @@ function boot(d, mv) {
   $('#stamp').textContent = 'Updated ' + ds;
   $('#news-asof').textContent = `Contract news · updated ${ds}`;
   $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
+  analyze();
+  renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
   renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); renderNews(); renderTeamGrid();
   buildContractControls(); renderDeals(); renderMarket(); renderTable();
   bindSearch($('#q-home'), $('#r-home'), it => it.type === 'team' ? go('team-' + it.t.id) : openPlayer(it.p.i));
+  bindSearch($('#dg-q'), $('#dg-r'), it => { dgPick = it.p.i; renderDG(); }, false);
+  if (dgPick == null) { const j = PL.find(p => p.name === 'Jahmyr Gibbs'); dgPick = j ? j.i : 0; renderDG(); }
   bindSearch($('#cut-q'), $('#cut-r'), it => { st.cut = it.p.i; renderCut(); }, false);
   bindSearch($('#cmp-a'), $('#cmp-ar'), it => { st.cmp[0] = it.p.i; renderCompare(); }, false);
   bindSearch($('#cmp-b'), $('#cmp-br'), it => { st.cmp[1] = it.p.i; renderCompare(); }, false);

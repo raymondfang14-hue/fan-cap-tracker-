@@ -10,7 +10,7 @@ Every NFL contract and team salary cap in plain English, for everyday fans.
 - `data/contracts.csv` is the starting data for the Airtable `Contracts` table.
 
 ## Vercel settings
-Add `AIRTABLE_TOKEN`, `AIRTABLE_BASE_ID` and, if your table has another name, `AIRTABLE_TABLE`. Without them the page shows its built-in breakdowns.
+Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Cap Tracker base). The function already points at the Cap Tracker base and its deals table; set `AIRTABLE_BASE_ID` or `AIRTABLE_TABLE` only to use a different one. Without them the page shows its built-in breakdowns.
 
 ## Views
 Open a view directly with its anchor: `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.

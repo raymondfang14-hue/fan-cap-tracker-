@@ -35,10 +35,10 @@ function toContract(f) {
 
 async function handler(req, res) {
   const token = process.env.AIRTABLE_TOKEN;
-  const base = process.env.AIRTABLE_BASE_ID;
-  const table = process.env.AIRTABLE_TABLE || 'Contracts';
-  if (!token || !base) {
-    res.status(500).json({ error: 'Set AIRTABLE_TOKEN and AIRTABLE_BASE_ID in the Vercel project settings.' });
+  const base = process.env.AIRTABLE_BASE_ID || 'app7vEpDdwBT0xCUr'; // Cap Tracker base
+  const table = process.env.AIRTABLE_TABLE || 'tblMvDcAIUpr9Zuor'; // the deals table
+  if (!token) {
+    res.status(500).json({ error: 'Set AIRTABLE_TOKEN in the Vercel project settings.' });
     return;
   }
   try {
