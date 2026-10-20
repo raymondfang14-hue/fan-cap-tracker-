@@ -1,0 +1,1062 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Plain Cap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: ledger and scoreboard. One column up to 1040px, condensed uppercase labels, mono numerals, square corners, a heavy rule under the masthead. The orange accent is kept for the mark, focus rings and primary buttons. */
+:root{
+  --bg:#F1F4EF;
+  --surface:#FFFFFF;
+  --surface-2:#E7ECE4;
+  --fg:#13201A;
+  --muted:#55645B;
+  --line:#D3DACF;
+  --accent:#D9480F;
+  --accent-ink:#FFFFFF;
+  --good:#17694A;
+  --bad:#B3261E;
+  --locked:#17694A;
+  --vest:#7DB89B;
+  --open:#C9D1C6;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1411;--surface:#141E19;--surface-2:#1B2822;--fg:#E5EDE7;--muted:#9DABA3;--line:#283731;
+    --accent:#FF8A4C;--accent-ink:#1A0D05;--good:#5CC796;--bad:#FF8F86;
+    --locked:#4DB88A;--vest:#2F6A52;--open:#2B3A33;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1411;--surface:#141E19;--surface-2:#1B2822;--fg:#E5EDE7;--muted:#9DABA3;--line:#283731;
+  --accent:#FF8A4C;--accent-ink:#1A0D05;--good:#5CC796;--bad:#FF8F86;
+  --locked:#4DB88A;--vest:#2F6A52;--open:#2B3A33;color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:20px 56px;
+}
+h1,h2,h3,h4,p,dl,dd,ul{margin:0;padding:0}
+ul{list-style:none}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:22px}
+
+/* masthead */
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:6px 18px;flex-wrap:wrap;padding-bottom:14px;border-bottom:3px solid var(--fg)}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{display:block;width:14px;height:14px;background:var(--accent);transform:skewX(-12deg)}
+.word{font-family:var(--display);font-weight:700;font-size:2.1rem;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+.tag{color:var(--muted)}
+
+/* tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font:600 1.05rem/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:11px 12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;white-space:nowrap;border-radius:2px}
+.tab[aria-selected="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tab:focus-visible,.btn:focus-visible,.chip-btn:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.panel{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;min-width:0}
+.ptitle{font:700 1.7rem/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;text-wrap:balance}
+.intro{color:var(--muted);max-width:68ch}
+
+/* glossary */
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.terms>div{background:var(--surface);padding:14px 16px}
+.terms dt{font:700 1.1rem/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.terms dd{color:var(--muted);font-size:.92rem}
+
+/* filter chips, preset chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{font:500 .85rem/1 var(--mono);padding:9px 12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;border-radius:2px}
+.chip-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.note{font-size:.88rem;color:var(--muted);max-width:68ch}
+
+/* contract cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);padding:18px;display:grid;gap:14px;align-content:start;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px 16px;flex-wrap:wrap}
+.tagline{display:inline-block;font:600 .74rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;background:var(--surface-2);color:var(--muted)}
+.card h3{font:700 1.75rem/1.05 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-top:8px;text-wrap:balance}
+.team{color:var(--muted);font-size:.9rem}
+.headline{min-width:0}
+.big{display:block;font:700 2.4rem/1 var(--display);letter-spacing:.02em}
+.sub{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.bar{display:flex;height:22px;border:1px solid var(--line);background:var(--open);overflow:hidden}
+.seg{display:block;height:100%}
+.seg.locked,.sw.locked{background:var(--locked)}
+.seg.vest,.sw.vest{background:var(--vest)}
+.seg.open,.sw.open{background:repeating-linear-gradient(135deg,var(--open) 0 6px,var(--surface-2) 6px 12px)}
+.legend{display:grid;gap:5px;font-size:.86rem}
+.legend li{display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:center}
+.legend b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.sw{display:block;width:14px;height:14px;border:1px solid var(--line)}
+.scale{font-size:.78rem;color:var(--muted)}
+.facts{display:grid}
+.facts>div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line)}
+.facts dt{color:var(--muted)}
+.facts dd{font-family:var(--mono);font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.plain{max-width:65ch}
+.watch{background:var(--surface-2);padding:10px 12px;max-width:65ch}
+.watch b{font:700 .8rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:4px}
+.yearly summary{cursor:pointer;font:600 .95rem/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;padding:4px 0}
+.src{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* tables */
+.tablewrap{overflow-x:auto;max-width:100%}
+.ledger{width:100%;border-collapse:collapse;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.88rem}
+.ledger th{font:600 .72rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 8px;border-bottom:2px solid var(--fg);white-space:nowrap}
+.ledger td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.ledger .r{text-align:right}
+.ledger input[type="text"]{min-width:9rem}
+.ledger input[type="number"]{min-width:5.2rem}
+.ledger input[type="checkbox"]{width:1.15rem;height:1.15rem;accent-color:var(--accent)}
+.x{font:600 1.1rem/1 var(--mono);border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px 8px}
+
+/* forms and results */
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px}
+.field{display:grid;gap:5px;min-width:0;align-content:start}
+.lab{font-weight:600;font-size:.9rem}
+.hint{font-size:.78rem;color:var(--muted)}
+input[type="number"],input[type="text"]{
+  font:500 1rem/1.2 var(--mono);padding:9px 10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);
+  width:100%;min-width:0;border-radius:2px;font-variant-numeric:tabular-nums;
+}
+input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.stack{display:grid;gap:14px;min-width:0}
+.seg-radio{display:inline-flex;border:1.5px solid var(--line);width:fit-content;max-width:100%;flex-wrap:wrap}
+.seg-radio label{position:relative;cursor:pointer}
+.seg-radio input{position:absolute;opacity:0;pointer-events:none}
+.seg-radio span{display:block;padding:10px 14px;font:600 .98rem/1 var(--display);letter-spacing:.07em;text-transform:uppercase}
+.seg-radio input:checked+span{background:var(--fg);color:var(--bg)}
+.seg-radio input:focus-visible+span{outline:2px solid var(--accent);outline-offset:-3px}
+.btn{font:600 1rem/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;background:var(--accent);color:var(--accent-ink);border:0;cursor:pointer;border-radius:2px;width:fit-content}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.out{background:var(--surface);border:1px solid var(--line);padding:18px;display:grid;gap:12px;min-width:0}
+.k{display:block;font:600 .76rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.v{display:block;font:700 2.7rem/1.05 var(--display);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.v.good{color:var(--good)}
+.v.bad{color:var(--bad)}
+.rows>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.rows span{color:var(--muted)}
+.rows b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums;text-align:right}
+.mini{display:flex;height:16px;border:1px solid var(--line);background:var(--surface-2);overflow:hidden}
+.mini i{display:block;height:100%}
+.mini .dead{background:var(--bad)}
+.mini .saved{background:var(--good)}
+.mini .used{background:var(--fg)}
+.mini .free{background:var(--good)}
+.mini-cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.alert{color:var(--bad);font-size:.9rem;font-weight:500}
+.banner{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;background:var(--surface-2);padding:10px 12px;font-size:.88rem}
+
+footer{border-top:3px solid var(--fg);padding-top:14px;display:grid;gap:8px;font-size:.82rem;color:var(--muted)}
+footer ul{display:flex;flex-wrap:wrap;gap:4px 14px}
+footer a{color:var(--fg)}
+
+@media (max-width:780px){
+  .split{grid-template-columns:minmax(0,1fr)}
+  .word{font-size:1.8rem}
+}
+ol{margin:0;padding:0;list-style:none}
+.filters{display:grid;gap:12px;max-width:520px}
+.search{display:grid;gap:5px}
+.subnav{padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sub-h{font:700 1.25rem/1.1 var(--display);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.sw.nfl{background:var(--locked)}
+.sw.nba{background:var(--accent)}
+.keyline{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:10px;font-size:.84rem;color:var(--muted)}
+.keyline span{display:inline-flex;align-items:center;gap:6px}
+.rank{border:1px solid var(--line);background:var(--surface)}
+.rank li{display:grid;grid-template-columns:1.6rem minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.rank li:first-child{border-top:0}
+.rank .n{font:600 .9rem/1 var(--mono);color:var(--muted)}
+.rank .who{min-width:0}
+.rank .who b{display:block;font:700 1.2rem/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.rank .who span{color:var(--muted);font-size:.84rem}
+.rank .pc{font:700 1.5rem/1 var(--display);text-align:right;font-variant-numeric:tabular-nums}
+.rank .track{grid-column:2 / 4;height:8px;background:var(--surface-2)}
+.rank .track i{display:block;height:100%;background:var(--locked)}
+.rank .track i.nba{background:var(--accent)}
+.deals{display:grid}
+.deals li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--line)}
+.deals b{font-weight:600}
+.deals .pc{font:600 1rem/1.2 var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.deals small{grid-column:1 / 3;color:var(--muted);font-size:.84rem}
+.faq{display:grid;border:1px solid var(--line);background:var(--surface)}
+.faq details{border-top:1px solid var(--line);padding:0 16px}
+.faq details:first-child{border-top:0}
+.faq summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;padding:14px 0;font:700 1.15rem/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 1.1rem/1 var(--mono);color:var(--muted)}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{padding-bottom:14px;color:var(--muted);max-width:65ch}
+.ledger.text{font-family:var(--body);font-size:.92rem}
+.ledger.text td:first-child{font-weight:600;white-space:nowrap}
+.ledger.text td{vertical-align:top}
+.pill{display:inline-block;font:600 .74rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 7px;background:var(--surface-2);color:var(--muted)}
+.steps{display:grid;gap:12px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:12px;background:var(--surface);border:1px solid var(--line);padding:14px}
+.steps li::before{counter-increment:s;content:counter(s);font:700 1.7rem/1 var(--display);color:var(--accent)}
+.steps h3{font:700 1.2rem/1.1 var(--display);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.steps p{color:var(--muted);max-width:65ch}
+.steps p+p{margin-top:6px}
+code{font:500 .85rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px;overflow-wrap:anywhere}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--fg);text-decoration:underline;cursor:pointer}
+@media (prefers-reduced-motion:no-preference){
+  .tab,.chip-btn,.btn{transition:background-color .12s,color .12s}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true"></span><span class="word">Plain Cap</span></div>
+    <p class="tag">NFL and NBA contracts in plain English.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="t-contracts" data-tab="contracts" aria-selected="true">Deals</button>
+    <button class="tab" role="tab" id="t-teams" data-tab="teams" aria-selected="false">Teams</button>
+    <button class="tab" role="tab" id="t-learn" data-tab="learn" aria-selected="false">Learn</button>
+    <button class="tab" role="tab" id="t-tools" data-tab="tools" aria-selected="false">Tools</button>
+  </nav>
+
+  <main>
+    <!-- CONTRACTS -->
+    <section class="panel" id="p-contracts" role="tabpanel" aria-labelledby="t-contracts">
+      <div>
+        <h1 class="ptitle">Recent deals, read for you</h1>
+        <p class="intro">The headline number is only the start. Each card shows how much of the money is locked, how much vests later, and what the cap does year by year.</p>
+      </div>
+      <dl class="terms">
+        <div><dt>Guaranteed</dt><dd>Money the team owes even if the player is cut. Some is guaranteed at signing. Some only vests later, if he is still on the roster.</dd></div>
+        <div><dt>Cap hit</dt><dd>What a player counts against the salary cap in one season. It is not the same as what he is paid that year.</dd></div>
+        <div><dt>Dead money</dt><dd>Cap space still used by a player the team no longer has, mostly the part of a signing bonus not yet counted.</dd></div>
+      </dl>
+      <div class="filters">
+        <label class="search"><span class="lab">Find a player or team</span><input id="q" type="text" inputmode="search" autocomplete="off" placeholder="Olave, Lions, NBA"></label>
+        <div class="chips" role="group" aria-label="Filter by league">
+          <button class="chip-btn flt" data-f="all" aria-pressed="true" type="button">All</button>
+          <button class="chip-btn flt" data-f="NFL" aria-pressed="false" type="button">NFL</button>
+          <button class="chip-btn flt" data-f="NBA" aria-pressed="false" type="button">NBA</button>
+        </div>
+      </div>
+      <p class="note" id="nomatch" hidden>No deals match that search.</p>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <!-- DECODER -->
+    <section class="panel" id="p-decoder" role="tabpanel" aria-labelledby="t-tools" hidden>
+      <div>
+        <h2 class="ptitle">Contract decoder</h2>
+        <p class="intro">Type the numbers from a news report to see the real average, how much is guaranteed, and what the deal costs the cap each year. Amounts are in millions of dollars.</p>
+      </div>
+      <div class="chips" id="d-presets" role="group" aria-label="Load a contract"></div>
+      <div class="split">
+        <div class="form">
+          <label class="field"><span class="lab">Total value ($M)</span><input id="d-total" type="number" inputmode="decimal" step="0.01" min="0" value="149.97"><span class="hint">The headline figure.</span></label>
+          <label class="field"><span class="lab">Years</span><input id="d-years" type="number" inputmode="numeric" step="1" min="1" value="5"></label>
+          <label class="field"><span class="lab">Guaranteed ($M)</span><input id="d-guar" type="number" inputmode="decimal" step="0.01" min="0" value="100"></label>
+          <label class="field"><span class="lab">Signing bonus ($M)</span><input id="d-bonus" type="number" inputmode="decimal" step="0.01" min="0" value="20"><span class="hint">Leave at 0 for NBA deals.</span></label>
+          <label class="field"><span class="lab">Bonus spread over (seasons)</span><input id="d-spread" type="number" inputmode="numeric" step="1" min="0" value="5"><span class="hint">NFL teams spread a bonus over up to five seasons, counting the current one.</span></label>
+          <label class="field"><span class="lab">Salary cap ($M, optional)</span><input id="d-cap" type="number" inputmode="decimal" step="0.01" min="0" value=""><span class="hint">Adds a share-of-cap line.</span></label>
+        </div>
+        <div class="out" aria-live="polite">
+          <div><span class="k">Average a year</span><span class="v" id="d-aav">—</span></div>
+          <div class="rows">
+            <div><span>Share guaranteed</span><b id="d-share">—</b></div>
+            <div><span>Guaranteed per year</span><b id="d-gpy">—</b></div>
+            <div><span>Bonus counted per season</span><b id="d-bpy">—</b></div>
+            <div id="d-caprow"><span>Average as share of cap</span><b id="d-capshare">—</b></div>
+          </div>
+          <p class="note" id="d-note"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUT -->
+    <section class="panel" id="p-cut" role="tabpanel" aria-labelledby="t-tools" hidden>
+      <div>
+        <h2 class="ptitle">Cut calculator</h2>
+        <p class="intro">See what releasing a player frees up under NFL cap rules. Amounts are in millions of dollars. Load an example, then change any number.</p>
+      </div>
+      <div class="chips" id="c-presets" role="group" aria-label="Load an example"></div>
+      <p class="note" id="c-presetnote"></p>
+      <div class="split">
+        <div class="stack">
+          <div class="form">
+            <label class="field"><span class="lab">Cap hit this season ($M)</span><input id="c-capHit" type="number" inputmode="decimal" step="0.01" min="0" value="37.1"><span class="hint">His total cap charge for the year.</span></label>
+            <label class="field"><span class="lab">Bonus counted this season ($M)</span><input id="c-prorThis" type="number" inputmode="decimal" step="0.01" min="0" value="4"><span class="hint">The slice of signing bonus inside that cap hit.</span></label>
+            <label class="field"><span class="lab">Bonus left for later seasons ($M)</span><input id="c-prorFuture" type="number" inputmode="decimal" step="0.01" min="0" value="0"><span class="hint">Bonus not yet counted after this season.</span></label>
+            <label class="field"><span class="lab">Guaranteed pay this season ($M)</span><input id="c-gThis" type="number" inputmode="decimal" step="0.01" min="0" value="0"><span class="hint">Salary the team owes this year even if he is cut.</span></label>
+            <label class="field"><span class="lab">Guaranteed pay later ($M)</span><input id="c-gFuture" type="number" inputmode="decimal" step="0.01" min="0" value="0"><span class="hint">Guaranteed salary in future seasons.</span></label>
+          </div>
+          <div class="seg-radio" role="radiogroup" aria-label="When the player is cut">
+            <label><input type="radio" name="c-timing" id="c-pre" checked><span>Before June 1</span></label>
+            <label><input type="radio" name="c-timing" id="c-post"><span>After June 1</span></label>
+          </div>
+        </div>
+        <div class="out" aria-live="polite">
+          <div id="c-verdict"></div>
+          <div class="mini" id="c-mini" aria-hidden="true"></div>
+          <div class="mini-cap"><span>Dead money</span><span>Cap freed</span></div>
+          <div class="rows">
+            <div><span>Cap hit removed</span><b id="c-hit">—</b></div>
+            <div><span>Dead money this season</span><b id="c-dead">—</b></div>
+            <div id="c-nextrow"><span>Dead money next season</span><b id="c-next">—</b></div>
+          </div>
+          <p class="note" id="c-note"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRADE -->
+    <section class="panel" id="p-trade" role="tabpanel" aria-labelledby="t-tools" hidden>
+      <div>
+        <h2 class="ptitle">Trade calculator</h2>
+        <p class="intro">The team that trades a player keeps the bonus money that has not counted yet. The team that receives him takes on the rest. Amounts are in millions of dollars.</p>
+      </div>
+      <div class="chips" id="tr-presets" role="group" aria-label="Load an example"></div>
+      <p class="note" id="tr-presetnote"></p>
+      <div class="split">
+        <div class="stack">
+          <div class="form">
+            <label class="field"><span class="lab">Cap hit this season ($M)</span><input id="tr-capHit" type="number" inputmode="decimal" step="0.01" min="0" value="31.36"></label>
+            <label class="field"><span class="lab">Bonus counted this season ($M)</span><input id="tr-prorThis" type="number" inputmode="decimal" step="0.01" min="0" value="7"></label>
+            <label class="field"><span class="lab">Bonus left for later seasons ($M)</span><input id="tr-prorFuture" type="number" inputmode="decimal" step="0.01" min="0" value="14"></label>
+            <label class="field"><span class="lab">Sending team cap space ($M, sample)</span><input id="tr-sendSpace" type="number" inputmode="decimal" step="0.01" value="12"></label>
+            <label class="field"><span class="lab">Receiving team cap space ($M, sample)</span><input id="tr-recvSpace" type="number" inputmode="decimal" step="0.01" value="30"></label>
+          </div>
+          <div class="seg-radio" role="radiogroup" aria-label="When the trade happens">
+            <label><input type="radio" name="tr-timing" id="tr-pre" checked><span>Before June 1</span></label>
+            <label><input type="radio" name="tr-timing" id="tr-post"><span>After June 1</span></label>
+          </div>
+        </div>
+        <div class="out" aria-live="polite">
+          <div><span class="k">Sending team cap space</span><span class="v" id="tr-send">—</span></div>
+          <div class="rows">
+            <div><span>Dead money kept this season</span><b id="tr-dead">—</b></div>
+            <div id="tr-nextrow"><span>Dead money kept next season</span><b id="tr-next">—</b></div>
+            <div><span>Sending team space after</span><b id="tr-sendafter">—</b></div>
+          </div>
+          <div><span class="k">Receiving team cap charge</span><span class="v" id="tr-recv">—</span></div>
+          <div class="rows">
+            <div><span>Receiving team space after</span><b id="tr-recvafter">—</b></div>
+          </div>
+          <p class="alert" id="tr-alert" hidden></p>
+          <p class="note">The receiving team also takes on his later cap hits and any pay that vests.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAP ROOM -->
+    <section class="panel" id="p-room" role="tabpanel" aria-labelledby="t-tools" hidden>
+      <div>
+        <h2 class="ptitle">Cap room</h2>
+        <p class="intro">List a team's contracts, check the players you would cut, and watch the cap space change. Your rows are saved in this browser.</p>
+      </div>
+      <div class="banner" id="room-banner">
+        <span>These are sample numbers. Replace them with your team's.</span>
+        <button class="btn ghost" type="button" id="room-reset">Reset to sample</button>
+      </div>
+      <div class="split">
+        <div class="stack">
+          <div class="form">
+            <label class="field"><span class="lab">Team</span><input id="room-team" type="text" value=""></label>
+            <label class="field"><span class="lab">Cap ceiling ($M)</span><input id="room-ceiling" type="number" inputmode="decimal" step="0.01" min="0" value=""></label>
+            <label class="field"><span class="lab">Carryover ($M)</span><input id="room-carry" type="number" inputmode="decimal" step="0.01" min="0" value=""></label>
+          </div>
+          <div class="tablewrap">
+            <table class="ledger">
+              <thead><tr><th>Cut</th><th>Player</th><th class="r">Cap hit</th><th class="r">Dead if cut</th><th><span class="sr" style="position:absolute;left:-9999px">Remove</span></th></tr></thead>
+              <tbody id="room-body"></tbody>
+            </table>
+          </div>
+          <button class="btn" type="button" id="room-add">Add player</button>
+        </div>
+        <div class="out" aria-live="polite">
+          <div id="room-verdict"></div>
+          <div class="mini" id="room-bar" aria-hidden="true"></div>
+          <div class="mini-cap"><span>Committed</span><span>Space</span></div>
+          <div class="rows">
+            <div><span>Cap available</span><b id="room-avail">—</b></div>
+            <div><span>Committed</span><b id="room-committed">—</b></div>
+            <div><span>Space now</span><b id="room-space">—</b></div>
+            <div><span>Freed by checked cuts</span><b id="room-freed">—</b></div>
+            <div><span>Space after cuts</span><b id="room-after">—</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- TEAMS -->
+    <section class="panel" id="p-teams" role="tabpanel" aria-labelledby="t-teams" hidden>
+      <div>
+        <h2 class="ptitle">Teams and the cap</h2>
+        <p class="intro">Every team in a league plays under the same cap, so the simplest way to size a contract is as a share of it. These are the deals on this site, ranked that way, then grouped by team.</p>
+      </div>
+      <div>
+        <h3 class="sub-h">Biggest deals by share of the cap</h3>
+        <ol class="rank" id="rank"></ol>
+        <p class="keyline" id="rank-key"></p>
+      </div>
+      <div>
+        <h3 class="sub-h">By team</h3>
+        <div class="cards" id="teamcards"></div>
+      </div>
+      <p class="note">Share of the cap uses this year's cap for every deal, so it shows scale, not what a team will actually owe in a later season. For a full roster, open Over The Cap or Spotrac.</p>
+    </section>
+
+    <!-- LEARN -->
+    <section class="panel" id="p-learn" role="tabpanel" aria-labelledby="t-learn" hidden>
+      <div>
+        <h2 class="ptitle">Cap basics</h2>
+        <p class="intro">Short answers to the questions that come up every time a big contract is reported. Start with how the two leagues differ, then open any term.</p>
+      </div>
+      <div class="tablewrap">
+        <table class="ledger text">
+          <thead><tr><th></th><th>NFL</th><th>NBA</th></tr></thead>
+          <tbody>
+            <tr><td>The cap</td><td>Hard. A team cannot go over it.</td><td>Soft. A team can go over it in set ways, and may pay a tax.</td></tr>
+            <tr><td>Guaranteed pay</td><td>Often only part of the deal.</td><td>Usually all of it.</td></tr>
+            <tr><td>Cutting a player</td><td>Leftover bonus becomes dead money.</td><td>His salary stays on the books.</td></tr>
+            <tr><td>Signing bonus</td><td>Spread over up to five seasons for the cap.</td><td>Rare.</td></tr>
+            <tr><td>Roster</td><td>53 players.</td><td>15 standard spots.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 class="sub-h">NBA lines for 2026-27</h3>
+        <div class="tablewrap">
+          <table class="ledger text">
+            <thead><tr><th>Line</th><th class="r">Amount</th><th>What changes</th></tr></thead>
+            <tbody>
+              <tr><td>Minimum team salary</td><td class="r">$148.465M</td><td>Below it, the team pays the gap to its players.</td></tr>
+              <tr><td>Salary cap</td><td class="r">$164.961M</td><td>Above it, a team needs a special rule to add salary.</td></tr>
+              <tr><td>Tax line</td><td class="r">$200.428M</td><td>Above it, the team pays luxury tax.</td></tr>
+              <tr><td>First apron</td><td class="r">$209.015M</td><td>Some ways to add players close.</td></tr>
+              <tr><td>Second apron</td><td class="r">$221.686M</td><td>More ways close.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="src">Source: NBA release on the 2026-27 salary cap. The NFL cap for 2026 is $301.2M per team.</p>
+      </div>
+      <div class="chips" id="l-flt" role="group" aria-label="Choose a league">
+        <button class="chip-btn" data-l="NFL" aria-pressed="true" type="button">NFL terms</button>
+        <button class="chip-btn" data-l="NBA" aria-pressed="false" type="button">NBA terms</button>
+      </div>
+      <div class="faq" id="faq"></div>
+    </section>
+
+    <!-- SETUP -->
+    <section class="panel" id="p-setup" role="tabpanel" aria-label="Site setup" hidden>
+      <div>
+        <h2 class="ptitle">Site setup</h2>
+        <p class="intro">For whoever runs the site. Contract numbers live in Airtable, the page and its rules live in code, and Vercel puts it online. This preview shows built-in data. On Vercel the same page reads Airtable every few minutes and falls back to the built-in data if Airtable is unreachable.</p>
+      </div>
+      <ol class="steps">
+        <li><div><h3>Airtable holds the numbers</h3><p>Make a base with a table named <code>Contracts</code> and import <code>data/contracts.csv</code> from the project folder. Importing is easiest in a browser at airtable.com. After that the Airtable app is fine for edits.</p><p>Create a personal access token with the <code>data.records:read</code> scope for that base. Copy the base ID from the base's API page.</p></div></li>
+        <li><div><h3>Working Copy keeps the code</h3><p>Create a repository, import the project files, commit, and push to a new GitHub repository. Every later change is a commit and a push from Working Copy.</p></div></li>
+        <li><div><h3>Vercel publishes it</h3><p>Import the GitHub repository as a project and add three environment variables: <code>AIRTABLE_TOKEN</code>, <code>AIRTABLE_BASE_ID</code> and, if your table is not named Contracts, <code>AIRTABLE_TABLE</code>. Deploy. The Vercel app then shows each deploy as it finishes.</p></div></li>
+        <li><div><h3>Koder edits the page</h3><p>Working Copy shares its repositories in the Files app, so Koder can open <code>index.html</code> from there. Change wording, add a glossary term, then commit and push in Working Copy. Vercel redeploys on its own.</p></div></li>
+      </ol>
+      <div>
+        <h3 class="sub-h">Contracts table fields</h3>
+        <div class="tablewrap">
+          <table class="ledger text">
+            <thead><tr><th>Field</th><th>Type</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Name, Team, Position</td><td>Text</td><td>Chris Olave, New Orleans Saints, WR</td></tr>
+              <tr><td>League</td><td>Text</td><td>NFL or NBA</td></tr>
+              <tr><td>Headline, Subhead</td><td>Text</td><td>$124M, 4 years</td></tr>
+              <tr><td>NewMoneyPerYear</td><td>Number</td><td>31</td></tr>
+              <tr><td>ThisSeasonCapHit</td><td>Number</td><td>9.57 (optional)</td></tr>
+              <tr><td>Scale, ScaleNote</td><td>Number, text</td><td>124</td></tr>
+              <tr><td>Bar</td><td>Long text</td><td>One line each: kind | amount | label | shown</td></tr>
+              <tr><td>Facts</td><td>Long text</td><td>One line each: label | value</td></tr>
+              <tr><td>Plain, Watch</td><td>Long text</td><td>The plain-English read and the caution</td></tr>
+              <tr><td>TableTitle, TableCols, TableRows, TableNote</td><td>Text</td><td>Optional year-by-year table</td></tr>
+              <tr><td>Sort</td><td>Number</td><td>1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">In Bar, kind is <code>locked</code>, <code>vest</code> or <code>open</code>.</p>
+      </div>
+      <p><button class="btn ghost" type="button" data-go="contracts">Back to the deals</button></p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Figures come from press reports and contract trackers as of October 19, 2026, and can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA, or any team.</p>
+    <ul>
+      <li><a href="https://nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-new-jeffery-simmons-deal" target="_blank" rel="noopener">PFT: Simmons</a></li>
+      <li><a href="https://nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-chris-olave-deal" target="_blank" rel="noopener">PFT: Olave</a></li>
+      <li><a href="https://www.playerprofiler.com/nfl/chris-olave/contract/" target="_blank" rel="noopener">PlayerProfiler: Olave</a></li>
+      <li><a href="https://www.playerprofiler.com/?p=150729" target="_blank" rel="noopener">PlayerProfiler: Gibbs</a></li>
+      <li><a href="https://www.detroitfootball.net/p/breaking-down-the-structure-of-jahmyr" target="_blank" rel="noopener">Detroit Football Network</a></li>
+      <li><a href="https://atozsports.com/nfl/tennessee-titans-news/titans-jeffery-simmons-contract-details-revealed-signing-bonus-salary-cap-potential-out/" target="_blank" rel="noopener">A to Z Sports</a></li>
+      <li><a href="https://www.ksl.com/article/51631386/pistons-jalen-duren-agree-on-5-year-200m-contract-ap-source-says" target="_blank" rel="noopener">AP: Duren</a></li>
+      <li><a href="https://www.clickondetroit.com/sports/2026/10/02/jalen-duren-agrees-to-5-year-200-million-contract-with-detroit-pistons/" target="_blank" rel="noopener">ClickOnDetroit</a></li>
+      <li><a href="https://www.tsn.ca/nba/article/celtics-to-extend-pritchard-on-two-year-442m-deal-n1-50176173/" target="_blank" rel="noopener">TSN: Pritchard</a></li>
+      <li><a href="https://www.si.com/nba/celtics/payton-pritchard-earned-chance-prove-himself-long-term-celtics-starter" target="_blank" rel="noopener">SI: Pritchard</a></li>
+      <li><a href="https://www.basketball-reference.com/contracts/players.html" target="_blank" rel="noopener">Basketball-Reference</a></li>
+      <li><a href="https://amp.nfl.com/news/nfl-announces-2026-salary-cap-set-at-301-2-million-per-team" target="_blank" rel="noopener">NFL: 2026 cap</a></li>
+      <li><a href="https://pr.nba.com/2026-27-salary-cap/" target="_blank" rel="noopener">NBA: 2026-27 cap</a></li>
+    </ul>
+    <p><span class="pill" id="src">Built-in data</span> <a href="#setup" data-go="setup">Site setup</a></p>
+  </footer>
+</div>
+
+<script>window.PLAINCAP_API='/api/contracts';</script>
+<script>
+/* CALC-START */
+const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+
+function cutCalc(i) {
+  const post = !!i.post;
+  const deadNow = post ? i.prorThis + i.gThis : i.prorThis + i.prorFuture + i.gThis + i.gFuture;
+  const deadNext = post ? i.prorFuture + i.gFuture : 0;
+  const savings = i.capHit - deadNow;
+  return { deadNow, deadNext, savings };
+}
+
+function tradeCalc(i) {
+  const post = !!i.post;
+  const deadNow = post ? i.prorThis : i.prorThis + i.prorFuture;
+  const deadNext = post ? i.prorFuture : 0;
+  const sendChange = i.capHit - deadNow;
+  const recvCharge = i.capHit - i.prorThis;
+  return {
+    deadNow, deadNext, sendChange, recvCharge,
+    sendAfter: i.sendSpace + sendChange,
+    recvAfter: i.recvSpace - recvCharge
+  };
+}
+
+function decode(i) {
+  const years = Math.max(1, Math.round(i.years || 1));
+  const aav = i.total / years;
+  const gShare = i.total > 0 ? i.guaranteed / i.total : 0;
+  const gPerYear = i.guaranteed / years;
+  const spread = i.spread > 0 ? i.spread : Math.min(years, 5);
+  const bonusPerYear = i.bonus > 0 ? i.bonus / spread : 0;
+  const capShare = i.cap > 0 ? aav / i.cap : null;
+  return { aav, gShare, gPerYear, bonusPerYear, capShare, spread };
+}
+
+function roomCalc(s) {
+  const avail = s.ceiling + s.carry;
+  const committed = s.rows.reduce((a, r) => a + r.hit, 0);
+  const space = avail - committed;
+  const cuts = s.rows.filter(r => r.cut);
+  const freed = cuts.reduce((a, r) => a + (r.hit - r.dead), 0);
+  return { avail, committed, space, freed, after: space + freed, cuts: cuts.length };
+}
+/* CALC-END */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const fmt = (n, d = 2) => {
+  if (!Number.isFinite(n)) return '—';
+  const v = +Math.abs(n).toFixed(d);
+  return (n < 0 && v !== 0 ? '−' : '') + '$' + v + 'M';
+};
+const pct = (n, d = 1) => Number.isFinite(n) ? (+(n * 100).toFixed(d)) + '%' : '—';
+
+/* ---------- contract data ---------- */
+let CONTRACTS = [
+  {
+    league: 'NFL', pos: 'DT', name: 'Jeffery Simmons', team: 'Tennessee Titans', aav: 35.2,
+    head: '$105.8M', sub: '3 new years, through 2030',
+    scale: 149.97,
+    scaleNote: 'Bar scale: $149.97M, the full five-year total, including the two years he was already signed for.',
+    bar: [
+      ['locked', 60.2, 'Locked at signing', '$60.2M'],
+      ['vest', 39.8, 'Vests in March 2027 and March 2028', '$39.8M'],
+      ['open', 49.97, 'Not guaranteed', '$49.97M']
+    ],
+    facts: [
+      ['New money a year', '$35.2M'],
+      ['Signing bonus', '$20M'],
+      ['Total guarantees', '$100M'],
+      ['Exit after 2029', 'About $4M dead cap']
+    ],
+    plain: `The Titans added three years to a deal that already ran through 2027. The $100M in guarantees arrives in stages. $60.2M is locked now. His 2028 pay turns guaranteed in March 2027, and part of his 2029 pay does in March 2028, if he is still on the roster. That timing is how Tennessee limits its risk.`,
+    watch: `"$100M guaranteed" counts pay he was already owed. Measured against the five-year total, about two-thirds is guaranteed. If the Titans move on after 2029, the dead money is only the last $4M slice of the bonus.`
+  },
+  {
+    league: 'NFL', pos: 'WR', name: 'Chris Olave', team: 'New Orleans Saints', aav: 31, hit: 9.57,
+    head: '$124M', sub: '4 years, up to $132M with escalators',
+    scale: 124,
+    scaleNote: 'Bar scale: $124M of new money. The guarantees include 2026 pay he was already owed.',
+    bar: [
+      ['locked', 52.65, 'Locked at signing', '$52.65M'],
+      ['vest', 37.36, 'Vests by 2027 and 2028', '$37.36M'],
+      ['open', 33.99, 'Not guaranteed', '$33.99M']
+    ],
+    facts: [
+      ['New money a year', '$31M'],
+      ['Signing bonus', '$35M'],
+      ['Guaranteed by 2027', '$77.0M'],
+      ['Guaranteed by 2028', '$90.0M']
+    ],
+    plain: `The Saints guaranteed money in layers. $52.65M is locked at signing: the $35M bonus plus 2026 and 2027 pay. The guarantee climbs to $77M in 2027 and $90M in 2028 if he stays on the roster. His cap hit starts low, about $9.6M this season, and reaches $41.1M in 2030.`,
+    watch: `$1.36M a year in per-game roster bonuses pays only when he plays. His injury history was a factor in how the deal was built.`,
+    table: {
+      title: 'Cap hit by year',
+      cols: ['Year', 'Base salary', 'Cap hit'],
+      rows: [['2026', '$1.29M', '$9.57M'], ['2027', '$13.64M', '$22.00M'], ['2028', '$23.00M', '$31.36M'], ['2029', '$27.00M', '$35.36M'], ['2030', '$29.76M', '$41.12M']],
+      note: 'Source: PlayerProfiler. Cap hit includes the $7M a year signing bonus slice.'
+    }
+  },
+  {
+    league: 'NFL', pos: 'RB', name: 'Jahmyr Gibbs', team: 'Detroit Lions', aav: 22.5, hit: 8.68,
+    head: '$67.5M', sub: '3 years, up to $75.75M with incentives',
+    scale: 67.5,
+    scaleNote: 'Bar scale: $67.5M of new money. Reports give the guarantee total but not its vesting dates.',
+    bar: [
+      ['locked', 51.5, 'Guaranteed (as reported)', '$51.5M'],
+      ['open', 16.0, 'Not guaranteed', '$16.0M']
+    ],
+    facts: [
+      ['New money a year', '$22.5M'],
+      ['Signing bonus', '$15M'],
+      ['Guaranteed', '$51.5M'],
+      ['Exit in 2030', 'About $3M dead cap']
+    ],
+    plain: `The Lions kept the early cap hits small. His $15M signing bonus is spread evenly for cap purposes, so $3M of it counts each season. His 2027 cap hit drops to about $6.3M, down from the $14.3M the fifth-year option would have cost. Then it climbs to $27.5M in 2029 and 2030.`,
+    watch: `The "up to $75.75M" figure includes incentives he has to earn. The base value is $67.5M.`,
+    table: {
+      title: 'Cap hit by year',
+      cols: ['Year', 'Base salary', 'Cap hit'],
+      rows: [['2026', '$1.15M', '$8.68M'], ['2027', '$1.26M', '$6.27M'], ['2028', '$10.25M', '$15.51M'], ['2029', '$22.25M', '$27.51M'], ['2030', '$21.25M', '$27.51M']],
+      note: 'Source: PlayerProfiler and Detroit Football Network.'
+    }
+  },
+  {
+    league: 'NBA', pos: 'C', name: 'Jalen Duren', team: 'Detroit Pistons', aav: 40,
+    head: '$200M', sub: '5 years, fully guaranteed',
+    scale: 200,
+    scaleNote: 'Bar scale: $200M. NBA deals like this are guaranteed up front, so there is no vesting schedule.',
+    bar: [
+      ['locked', 200, 'Fully guaranteed', '$200M']
+    ],
+    facts: [
+      ['Average a year', '$40M'],
+      ['Reported ask', '$287M max'],
+      ['Detroit\'s offer', '$87M below the ask'],
+      ['Alternative', '$9.6M qualifying offer']
+    ],
+    plain: `Duren was a restricted free agent. He signed shortly before a deadline that would have left him with a one-year, $9.6M qualifying offer. At $40M a year the deal takes up roughly a quarter of this season's $165M salary cap. He made All-NBA third team averaging 19.5 points and 10.5 rebounds on 65% shooting.`,
+    watch: `He reportedly wanted the five-year max, about $57M a year. Detroit held at $200M. His playoff scoring dropped to 10.2 points a game.`
+  },
+  {
+    league: 'NBA', pos: 'G', name: 'Payton Pritchard', team: 'Boston Celtics', aav: 22.1, hit: 7.8,
+    head: '$44.2M', sub: '2 years starting 2028-29, plus a mutual option',
+    scale: 44.2,
+    scaleNote: 'Bar scale: $44.2M. Reported as fully guaranteed.',
+    bar: [
+      ['locked', 44.2, 'Fully guaranteed (as reported)', '$44.2M']
+    ],
+    facts: [
+      ['2028-29 salary', 'About $21.2M'],
+      ['2029-30 mutual option', 'Nearly $23M'],
+      ['Current deal, this season', '$7.8M'],
+      ['Current deal, next season', '$8.3M']
+    ],
+    plain: `Boston extended him early. His current four-year, $30M deal runs through 2027-28, so the new money starts in 2028-29. NBA rules limit how big the first-year raise on an extension can be, and the Celtics paid the most they could, about $21.2M.`,
+    watch: `Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.`
+  }
+];
+
+const CAPS = { NFL: 301.2, NBA: 164.961 };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const capShare = c => (c.aav > 0 && CAPS[c.league]) ? c.aav / CAPS[c.league] : null;
+
+function renderCards() {
+  $('#cards').innerHTML = CONTRACTS.map(c => {
+    const scale = Number(c.scale) || 1;
+    const segs = c.bar.map(([k, v, l, a]) => `<span class="seg ${esc(k)}" style="width:${(Number(v) / scale * 100).toFixed(2)}%" title="${esc(l)}: ${esc(a)}"></span>`).join('');
+    const legend = c.bar.map(([k, v, l, a]) => `<li><i class="sw ${esc(k)}"></i><span>${esc(l)}</span><b>${esc(a)}</b></li>`).join('');
+    const facts = c.facts.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join('');
+    const aria = c.bar.map(([k, v, l, a]) => `${l} ${a}`).join(', ');
+    const sh = capShare(c);
+    const shareLine = sh === null ? '' : `<span class="sub">${pct(sh)} of the ${esc(c.league)} cap, per year</span>`;
+    let table = '';
+    if (c.table && c.table.rows && c.table.rows.length) {
+      table = `<details class="yearly"><summary>${esc(c.table.title)}</summary><div class="tablewrap"><table class="ledger"><thead><tr>${c.table.cols.map((x, n) => `<th class="${n ? 'r' : ''}">${esc(x)}</th>`).join('')}</tr></thead><tbody>${c.table.rows.map(r => `<tr>${r.map((x, n) => `<td class="${n ? 'r' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="src">${esc(c.table.note)}</p></details>`;
+    }
+    const text = [c.name, c.team, c.pos, c.league].join(' ').toLowerCase();
+    return `<article class="card" data-league="${esc(c.league)}" data-text="${esc(text)}">
+      <div class="card-head">
+        <div><span class="tagline">${esc(c.league)} · ${esc(c.pos)}</span><h3>${esc(c.name)}</h3><p class="team">${esc(c.team)}</p></div>
+        <div class="headline"><span class="big">${esc(c.head)}</span><span class="sub">${esc(c.sub)}</span>${shareLine}</div>
+      </div>
+      <div class="bar" role="img" aria-label="${esc(aria)}">${segs}</div>
+      <ul class="legend">${legend}</ul>
+      <p class="scale">${esc(c.scaleNote)}</p>
+      <dl class="facts">${facts}</dl>
+      <p class="plain">${esc(c.plain)}</p>
+      <div class="watch"><b>Watch for</b>${esc(c.watch)}</div>
+      ${table}
+    </article>`;
+  }).join('');
+}
+
+/* ---------- teams ---------- */
+function teamsOf() {
+  const m = new Map();
+  CONTRACTS.forEach(c => {
+    const k = c.league + '|' + c.team;
+    if (!m.has(k)) m.set(k, { league: c.league, team: c.team, deals: [] });
+    m.get(k).deals.push(c);
+  });
+  return Array.from(m.values()).sort((a, b) => a.league.localeCompare(b.league) || a.team.localeCompare(b.team));
+}
+function renderTeams() {
+  const rows = CONTRACTS.filter(c => capShare(c) !== null).sort((a, b) => capShare(b) - capShare(a));
+  const max = rows.length ? capShare(rows[0]) : 1;
+  $('#rank').innerHTML = rows.map((c, i) => `<li><span class="n">${i + 1}</span><div class="who"><b>${esc(c.name)}</b><span>${esc(c.team)} · ${esc(c.pos)} · ${fmt(c.aav, 1)} a year</span></div><span class="pc">${pct(capShare(c))}</span><span class="track"><i class="${c.league === 'NBA' ? 'nba' : ''}" style="width:${(capShare(c) / max * 100).toFixed(1)}%"></i></span></li>`).join('');
+  $('#rank-key').innerHTML = `<span><i class="sw nfl"></i>NFL, of ${fmt(CAPS.NFL, 1)}</span><span><i class="sw nba"></i>NBA, of ${fmt(CAPS.NBA, 3)}</span>`;
+  $('#teamcards').innerHTML = teamsOf().map(t => {
+    const deals = t.deals.map(c => {
+      const sh = capShare(c);
+      const hit = c.hit > 0 ? ` · counts ${fmt(c.hit)} this season` : '';
+      return `<li><b>${esc(c.name)} <span class="tagline">${esc(c.pos)}</span></b><span class="pc">${sh === null ? '' : pct(sh)}</span><small>${esc(c.head)}${hit}</small></li>`;
+    }).join('');
+    return `<article class="card"><div class="card-head"><div><span class="tagline">${esc(t.league)}</span><h3>${esc(t.team)}</h3></div><div class="headline"><span class="big">${fmt(CAPS[t.league] || 0, 3)}</span><span class="sub">${esc(t.league)} salary cap</span></div></div><ul class="deals">${deals}</ul></article>`;
+  }).join('');
+}
+function renderAll() { renderCards(); renderTeams(); applyFilter(); }
+
+/* ---------- learn ---------- */
+const LEARN = {
+  NFL: [
+    ['Salary cap', 'The most a team can carry on its books in a season. For 2026 it is $301.2M for every team. It is a hard cap, so a team cannot go over it.'],
+    ['Cap hit', 'What one player counts against the cap in one year. It adds his salary, a slice of any signing bonus and some other bonuses. It is not the same as what he is paid that year.'],
+    ['Signing bonus', 'Paid in cash when the contract is signed, but for the cap it is split evenly over the length of the deal, up to five seasons. A $20M bonus on a five-year deal counts $4M a year.'],
+    ['Dead money', 'Cap space used by a player who is no longer on the team. It is mostly bonus money that has not counted against the cap yet.'],
+    ['Cut before or after June 1', 'Cut before June 1 and all the leftover bonus counts this season. A post-June 1 cut splits the dead money over two seasons, and the savings show up after June 1.'],
+    ['Guarantees', 'Most NFL contracts are not fully guaranteed. Pay can be guaranteed at signing, or it can vest on a date if the player is still on the roster. Headlines often add every type together, so read the breakdown.'],
+    ['Restructure', 'A team turns some of a player\'s salary into a signing bonus. He is paid the same this year, but the cap hit drops now because the bonus is spread out. The cost moves to later years.'],
+    ['Void years', 'Extra years added to the end of a contract that exist only on paper. They let a team spread a bonus over more seasons. When the contract voids, whatever has not counted yet lands as dead money.'],
+    ['Franchise tag', 'A one-year contract a team can use to keep a player who is about to hit free agency. The price is based on what the top-paid players at his position earn.'],
+    ['Cap carryover', 'Cap space a team does not use can roll into the next season.'],
+    ['Rookie deals and the fifth-year option', 'Draft picks sign contracts with pay set by where they were picked. For first-round picks, the team can add a fifth year at a price based on what top players at the position are paid.'],
+    ['The top 51', 'From the offseason until the season starts, only the 51 largest cap hits count. Once the season starts, every player on the roster counts.']
+  ],
+  NBA: [
+    ['Soft cap', 'A team can go over the cap in some ways: re-signing its own players, using exceptions, and taking back salary in trades. So the cap is a line that limits some moves, not a wall.'],
+    ['Luxury tax', 'Teams over the tax line pay a penalty on each dollar over it. The rate climbs the further over a team goes, and repeat payers pay more. In 2026-27 the line is $200.428M.'],
+    ['The aprons', 'Two lines sit above the tax line. Above the first apron ($209.015M) a team loses some ways to add players. Above the second ($221.686M) the limits are tighter still.'],
+    ['Minimum team salary', 'The floor. A team under $148.465M in 2026-27 still has to pay the difference to its players.'],
+    ['Bird rights', 'A team\'s right to go over the cap to re-sign its own player. It is why a team with no cap room can still keep a star.'],
+    ['Restricted free agent', 'A player whose team can match any offer from another team. The team makes a one-year qualifying offer to keep that right. Duren\'s was $9.6M.'],
+    ['Rookie scale', 'First-round picks get a set salary based on where they were drafted. After the rookie contract, the team can extend them or they become restricted free agents.'],
+    ['Max contract', 'A player\'s top salary depends on his years in the league: 25% of the cap for most players, 30% with seven or more years, and 35% with ten or more.'],
+    ['Guaranteed pay', 'NBA contracts are usually fully guaranteed. A waived player still gets paid, and his salary stays on the team\'s books.'],
+    ['Extensions and options', 'An extension adds years to a deal a player is already on, as with Pritchard. A mutual option needs both sides to agree before that year happens.'],
+    ['Trade matching', 'Over the cap, a team generally has to send out salary close to what it takes in. That is why trades often send big contracts both ways.']
+  ]
+};
+function renderLearn(lg) {
+  $('#faq').innerHTML = LEARN[lg].map(([t, b], i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(t)}</summary><p>${esc(b)}</p></details>`).join('');
+  $$('#l-flt .chip-btn').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.l === lg)));
+}
+$$('#l-flt .chip-btn').forEach(b => b.addEventListener('click', () => renderLearn(b.dataset.l)));
+
+/* ---------- tabs ---------- */
+const PANELS = ['contracts', 'teams', 'learn', 'decoder', 'cut', 'trade', 'room', 'setup'];
+const CALCS = ['decoder', 'cut', 'trade', 'room'];
+const NAVS = ['contracts', 'teams', 'learn', 'tools'];
+const CALC_NAMES = { decoder: 'Decoder', cut: 'Cut', trade: 'Trade', room: 'Cap room' };
+let lastCalc = 'decoder';
+const navOf = id => CALCS.includes(id) ? 'tools' : id;
+function showTab(id) {
+  if (id === 'tools') id = lastCalc;
+  if (!PANELS.includes(id)) id = 'contracts';
+  if (CALCS.includes(id)) lastCalc = id;
+  PANELS.forEach(t => { $('#p-' + t).hidden = t !== id; });
+  NAVS.forEach(t => {
+    const b = $('#t-' + t);
+    const on = t === navOf(id);
+    b.setAttribute('aria-selected', String(on));
+    b.tabIndex = on ? 0 : -1;
+  });
+  $$('.sub-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.go === id)));
+}
+function go(id) {
+  showTab(id);
+  try { history.replaceState(null, '', '#' + (id === 'tools' ? lastCalc : id)); } catch (e) { /* hash updates are optional */ }
+  try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-go]');
+  if (a) { e.preventDefault(); go(a.dataset.go); return; }
+  const t = e.target.closest('.tab');
+  if (t) go(t.dataset.tab);
+});
+$('.tabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const cur = NAVS.findIndex(t => $('#t-' + t).getAttribute('aria-selected') === 'true');
+  const next = NAVS[(Math.max(cur, 0) + (e.key === 'ArrowRight' ? 1 : NAVS.length - 1)) % NAVS.length];
+  go(next);
+  $('#t-' + next).focus();
+});
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+
+/* ---------- search and filter ---------- */
+let leagueFilter = 'all';
+function applyFilter() {
+  const q = $('#q').value.trim().toLowerCase();
+  let shown = 0;
+  $$('#cards .card').forEach(c => {
+    const ok = (leagueFilter === 'all' || c.dataset.league === leagueFilter) && (!q || c.dataset.text.includes(q));
+    c.hidden = !ok;
+    if (ok) shown++;
+  });
+  $('#nomatch').hidden = shown > 0;
+}
+$$('.flt').forEach(b => b.addEventListener('click', () => {
+  leagueFilter = b.dataset.f;
+  $$('.flt').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  applyFilter();
+}));
+$('#q').addEventListener('input', applyFilter);
+
+/* ---------- optional live data (Vercel build sets window.PLAINCAP_API) ---------- */
+function setSource(t) { $('#src').textContent = t; }
+function loadRemote() {
+  const url = window.PLAINCAP_API;
+  if (!url) return;
+  fetch(url)
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('status ' + r.status)))
+    .then(d => {
+      if (!d || !Array.isArray(d.contracts) || !d.contracts.length) throw new Error('empty');
+      CONTRACTS = d.contracts;
+      renderAll();
+      setSource('Live from Airtable · ' + new Date(d.updated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
+    })
+    .catch(() => { /* keep the built-in data */ });
+}
+
+/* ---------- decoder ---------- */
+const DECODE_PRESETS = [
+  { label: 'Simmons', v: { total: 149.97, years: 5, guar: 100, bonus: 20, spread: 5, cap: '' } },
+  { label: 'Olave', v: { total: 124, years: 4, guar: 90.01, bonus: 35, spread: 5, cap: '' } },
+  { label: 'Gibbs', v: { total: 67.5, years: 3, guar: 51.5, bonus: 15, spread: 5, cap: '' } },
+  { label: 'Duren', v: { total: 200, years: 5, guar: 200, bonus: 0, spread: 0, cap: 164.961 } },
+  { label: 'Pritchard', v: { total: 44.2, years: 2, guar: 44.2, bonus: 0, spread: 0, cap: '' } }
+];
+function renderDecoder() {
+  const r = decode({
+    total: num($('#d-total').value), years: num($('#d-years').value), guaranteed: num($('#d-guar').value),
+    bonus: num($('#d-bonus').value), spread: num($('#d-spread').value), cap: num($('#d-cap').value)
+  });
+  $('#d-aav').textContent = fmt(r.aav);
+  $('#d-share').textContent = pct(r.gShare);
+  $('#d-gpy').textContent = fmt(r.gPerYear);
+  $('#d-bpy').textContent = r.bonusPerYear > 0 ? fmt(r.bonusPerYear) : 'None';
+  $('#d-caprow').hidden = r.capShare === null;
+  if (r.capShare !== null) $('#d-capshare').textContent = pct(r.capShare);
+  $('#d-note').textContent = r.bonusPerYear > 0
+    ? `The signing bonus counts ${fmt(r.bonusPerYear)} against the cap in each of ${r.spread} seasons. If the player is gone early, what has not counted yet becomes dead money.`
+    : '';
+}
+function buildDecoderPresets() {
+  $('#d-presets').innerHTML = DECODE_PRESETS.map((p, n) => `<button class="chip-btn" type="button" data-n="${n}">${p.label}</button>`).join('');
+  $$('#d-presets .chip-btn').forEach(b => b.addEventListener('click', () => {
+    const v = DECODE_PRESETS[+b.dataset.n].v;
+    $('#d-total').value = v.total; $('#d-years').value = v.years; $('#d-guar').value = v.guar;
+    $('#d-bonus').value = v.bonus; $('#d-spread').value = v.spread; $('#d-cap').value = v.cap;
+    renderDecoder();
+  }));
+  $$('#p-decoder input').forEach(i => i.addEventListener('input', renderDecoder));
+}
+
+/* ---------- cut and trade ---------- */
+const PRESETS = [
+  { label: 'Simmons, 2030 exit', note: 'Reported: a $37.1M cap hit with about $4M of dead money.', v: { capHit: 37.1, prorThis: 4, prorFuture: 0, gThis: 0, gFuture: 0 } },
+  { label: 'Gibbs, 2030 exit', note: 'Reported: about $3M of dead money on a $27.5M cap hit.', v: { capHit: 27.5, prorThis: 3, prorFuture: 0, gThis: 0, gFuture: 0 } },
+  { label: 'Olave, before March 2028', note: 'Illustration: assumes he is healthy, the $35M bonus counts $7M a year over five seasons, and his 2028 pay has not yet become guaranteed.', v: { capHit: 31.36, prorThis: 7, prorFuture: 14, gThis: 0, gFuture: 0 } }
+];
+
+function renderCut() {
+  const i = {
+    capHit: num($('#c-capHit').value), prorThis: num($('#c-prorThis').value), prorFuture: num($('#c-prorFuture').value),
+    gThis: num($('#c-gThis').value), gFuture: num($('#c-gFuture').value), post: $('#c-post').checked
+  };
+  const r = cutCalc(i);
+  const good = r.savings >= 0;
+  $('#c-verdict').innerHTML = good
+    ? `<span class="k">Cap space freed this season</span><span class="v good">${fmt(r.savings)}</span>`
+    : `<span class="k">Extra cap used this season</span><span class="v bad">${fmt(-r.savings)}</span>`;
+  const total = Math.max(i.capHit, r.deadNow, 0.0001);
+  const deadW = Math.min(100, r.deadNow / total * 100);
+  const savedW = good ? Math.min(100 - deadW, r.savings / total * 100) : 0;
+  $('#c-mini').innerHTML = `<i class="dead" style="width:${deadW.toFixed(2)}%"></i><i class="saved" style="width:${savedW.toFixed(2)}%"></i>`;
+  $('#c-hit').textContent = fmt(i.capHit);
+  $('#c-dead').textContent = fmt(r.deadNow);
+  $('#c-nextrow').hidden = !i.post;
+  $('#c-next').textContent = fmt(r.deadNext);
+  $('#c-note').textContent = i.post
+    ? 'A post-June 1 cut spreads the dead money over two seasons. The savings show up in your cap space after June 1.'
+    : 'A cut before June 1 puts all the leftover bonus on this season\'s cap.';
+}
+function renderTrade() {
+  const i = {
+    capHit: num($('#tr-capHit').value), prorThis: num($('#tr-prorThis').value), prorFuture: num($('#tr-prorFuture').value),
+    sendSpace: num($('#tr-sendSpace').value), recvSpace: num($('#tr-recvSpace').value), post: $('#tr-post').checked
+  };
+  const r = tradeCalc(i);
+  $('#tr-send').textContent = (r.sendChange >= 0 ? '+' : '') + fmt(r.sendChange);
+  $('#tr-send').className = 'v ' + (r.sendChange >= 0 ? 'good' : 'bad');
+  $('#tr-dead').textContent = fmt(r.deadNow);
+  $('#tr-nextrow').hidden = !i.post;
+  $('#tr-next').textContent = fmt(r.deadNext);
+  $('#tr-sendafter').textContent = fmt(r.sendAfter);
+  $('#tr-recv').textContent = fmt(r.recvCharge);
+  $('#tr-recvafter').textContent = fmt(r.recvAfter);
+  const over = r.recvAfter < 0;
+  $('#tr-alert').hidden = !over;
+  if (over) $('#tr-alert').textContent = `The receiving team would be ${fmt(-r.recvAfter)} over the cap and would have to clear room first.`;
+}
+function buildPresets(hostId, noteId, fields, render) {
+  $(hostId).innerHTML = PRESETS.map((p, n) => `<button class="chip-btn" type="button" data-n="${n}">${p.label}</button>`).join('');
+  $$(hostId + ' .chip-btn').forEach(b => b.addEventListener('click', () => {
+    const p = PRESETS[+b.dataset.n];
+    fields.forEach(f => { $('#' + f.id).value = p.v[f.key]; });
+    $(noteId).textContent = p.note;
+    render();
+  }));
+}
+
+/* ---------- cap room ---------- */
+function defaultRoom() {
+  return {
+    sample: true, team: 'Sample team', ceiling: 301, carry: 0,
+    rows: [
+      { name: 'Sample: starting QB', hit: 48, dead: 12, cut: false },
+      { name: 'Sample: top WR', hit: 31.4, dead: 21, cut: false },
+      { name: 'Sample: veteran DT', hit: 24.5, dead: 4, cut: true },
+      { name: 'Sample: backup OL', hit: 11.2, dead: 0, cut: false },
+      { name: 'Sample: rest of roster', hit: 168, dead: 0, cut: false }
+    ]
+  };
+}
+function loadRoom() {
+  try {
+    const s = localStorage.getItem('plaincap-room');
+    if (s) { const o = JSON.parse(s); if (o && Array.isArray(o.rows)) return o; }
+  } catch (e) { /* storage may be unavailable */ }
+  return defaultRoom();
+}
+let room = loadRoom();
+function saveRoom() { try { localStorage.setItem('plaincap-room', JSON.stringify(room)); } catch (e) { /* ignore */ } }
+
+function renderRoomRows() {
+  const body = $('#room-body');
+  body.innerHTML = '';
+  room.rows.forEach((r, idx) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input type="checkbox" data-i="${idx}" data-f="cut" aria-label="Cut this player"></td>
+      <td><input type="text" data-i="${idx}" data-f="name" aria-label="Player"></td>
+      <td><input type="number" step="0.01" min="0" inputmode="decimal" data-i="${idx}" data-f="hit" aria-label="Cap hit in millions"></td>
+      <td><input type="number" step="0.01" min="0" inputmode="decimal" data-i="${idx}" data-f="dead" aria-label="Dead money if cut, in millions"></td>
+      <td><button class="x" type="button" data-i="${idx}" aria-label="Remove row">×</button></td>`;
+    const q = f => tr.querySelector(`[data-f="${f}"]`);
+    q('cut').checked = !!r.cut; q('name').value = r.name; q('hit').value = r.hit; q('dead').value = r.dead;
+    body.appendChild(tr);
+  });
+}
+function syncRoomFields() {
+  $('#room-team').value = room.team; $('#room-ceiling').value = room.ceiling; $('#room-carry').value = room.carry;
+}
+function updateRoom() {
+  room.team = $('#room-team').value;
+  room.ceiling = num($('#room-ceiling').value);
+  room.carry = num($('#room-carry').value);
+  const r = roomCalc(room);
+  $('#room-banner').hidden = !room.sample;
+  const name = room.team.trim() || 'Team';
+  $('#room-verdict').innerHTML = r.space >= 0
+    ? `<span class="k">${name.replace(/[<>&]/g, '')} cap space</span><span class="v good">${fmt(r.space)}</span>`
+    : `<span class="k">${name.replace(/[<>&]/g, '')} over the cap by</span><span class="v bad">${fmt(-r.space)}</span>`;
+  const used = r.avail > 0 ? Math.min(100, r.committed / r.avail * 100) : 100;
+  $('#room-bar').innerHTML = `<i class="used" style="width:${used.toFixed(2)}%"></i><i class="free" style="width:${(100 - used).toFixed(2)}%"></i>`;
+  $('#room-avail').textContent = fmt(r.avail);
+  $('#room-committed').textContent = fmt(r.committed);
+  $('#room-space').textContent = fmt(r.space);
+  $('#room-freed').textContent = r.cuts ? `${fmt(r.freed)} (${r.cuts} cut${r.cuts > 1 ? 's' : ''})` : fmt(0);
+  $('#room-after').textContent = fmt(r.after);
+  saveRoom();
+}
+function onRoomEdit(e) {
+  const t = e.target, f = t.dataset && t.dataset.f;
+  if (!f) return;
+  const r = room.rows[+t.dataset.i];
+  if (!r) return;
+  if (f === 'cut') r.cut = t.checked;
+  else if (f === 'name') r.name = t.value;
+  else r[f] = num(t.value);
+  room.sample = false;
+  updateRoom();
+}
+$('#room-body').addEventListener('input', onRoomEdit);
+$('#room-body').addEventListener('change', onRoomEdit);
+$('#room-body').addEventListener('click', e => {
+  const b = e.target.closest('.x');
+  if (!b) return;
+  room.rows.splice(+b.dataset.i, 1);
+  room.sample = false;
+  renderRoomRows(); updateRoom();
+});
+$('#room-add').addEventListener('click', () => {
+  room.rows.push({ name: '', hit: 0, dead: 0, cut: false });
+  room.sample = false;
+  renderRoomRows(); updateRoom();
+  const last = $$('#room-body tr:last-child input[type="text"]')[0];
+  if (last) last.focus();
+});
+$('#room-reset').addEventListener('click', () => {
+  room = defaultRoom(); syncRoomFields(); renderRoomRows(); updateRoom();
+});
+['#room-team', '#room-ceiling', '#room-carry'].forEach(s => $(s).addEventListener('input', () => { room.sample = false; updateRoom(); }));
+
+/* ---------- boot ---------- */
+renderAll(); renderLearn('NFL');
+buildDecoderPresets(); renderDecoder();
+buildPresets('#c-presets', '#c-presetnote', [
+  { id: 'c-capHit', key: 'capHit' }, { id: 'c-prorThis', key: 'prorThis' }, { id: 'c-prorFuture', key: 'prorFuture' },
+  { id: 'c-gThis', key: 'gThis' }, { id: 'c-gFuture', key: 'gFuture' }
+], renderCut);
+buildPresets('#tr-presets', '#tr-presetnote', [
+  { id: 'tr-capHit', key: 'capHit' }, { id: 'tr-prorThis', key: 'prorThis' }, { id: 'tr-prorFuture', key: 'prorFuture' }
+], renderTrade);
+$('#c-presetnote').textContent = PRESETS[0].note;
+$('#tr-presetnote').textContent = PRESETS[2].note;
+$$('#p-cut input').forEach(i => i.addEventListener('input', renderCut));
+$$('#p-cut input[type="radio"]').forEach(i => i.addEventListener('change', renderCut));
+$$('#p-trade input').forEach(i => i.addEventListener('input', renderTrade));
+$$('#p-trade input[type="radio"]').forEach(i => i.addEventListener('change', renderTrade));
+renderCut(); renderTrade();
+syncRoomFields(); renderRoomRows(); updateRoom();
+CALCS.forEach(id => {
+  const d = document.createElement('div');
+  d.className = 'chips subnav'; d.setAttribute('role', 'group'); d.setAttribute('aria-label', 'Tools');
+  d.innerHTML = CALCS.map(c => `<button class="chip-btn sub-btn" type="button" data-go="${c}" aria-pressed="false">${CALC_NAMES[c]}</button>`).join('');
+  const p = $('#p-' + id); p.insertBefore(d, p.firstChild);
+});
+showTab(location.hash.slice(1));
+loadRemote();
+</script>
+
+
+</body></html>
