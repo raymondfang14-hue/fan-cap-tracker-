@@ -1534,7 +1534,7 @@ function boot(d, mv) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), getJSON('data/espn_assets.json').catch(() => null)])
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), getJSON('data/espn_assets.json').catch(() => (API ? getJSON('/api/espn-csv?format=json') : null)).catch(() => null)])
   .then(([d, mv, as]) => { if (as && as.teams) ASSETS = as; boot(d, mv); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
