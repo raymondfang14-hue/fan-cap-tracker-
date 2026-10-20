@@ -1,0 +1,1256 @@
+<meta charset="utf-8">
+<title>Plain Cap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Every NFL contract and team salary cap, explained in plain English for everyday fans.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Public+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: front-office app shell. Blue command bar, then a hub of tools and charts on a cool grey field; cards only where an object can be opened. */
+:root{
+  --bg:#EEF2F7;
+  --surface:#FFFFFF;
+  --surface-2:#E3E9F2;
+  --fg:#0E1A2B;
+  --muted:#4F5E73;
+  --line:#D2DBE7;
+  --brand:#1565C0;
+  --brand-ink:#FFFFFF;
+  --brand-soft:#DCE8F8;
+  --bar:#0D47A1;
+  --good:#1B7A47;
+  --bad:#B3261E;
+  --warn:#9A5B00;
+  --c-off:#2A78D6;
+  --c-def:#E0602C;
+  --c-st:#169C6E;
+  --c-dead:#B3261E;
+  --c-space:#9FB4CF;
+  --gtd:#1B7A47;
+  --gtd2:#7FC29B;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Roboto Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A111C;--surface:#111B2B;--surface-2:#1A2638;--fg:#E6EDF6;--muted:#9AA9BD;--line:#263449;
+    --brand:#5FA2EE;--brand-ink:#06111F;--brand-soft:#16294A;--bar:#0F2A52;
+    --good:#4FC489;--bad:#FF8A80;--warn:#F2B357;
+    --c-off:#4A92EA;--c-def:#EE7A47;--c-st:#2BB886;--c-dead:#E5675C;--c-space:#3D5170;
+    --gtd:#3FB57A;--gtd2:#24603F;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A111C;--surface:#111B2B;--surface-2:#1A2638;--fg:#E6EDF6;--muted:#9AA9BD;--line:#263449;
+  --brand:#5FA2EE;--brand-ink:#06111F;--brand-soft:#16294A;--bar:#0F2A52;
+  --good:#4FC489;--bad:#FF8A80;--warn:#F2B357;
+  --c-off:#4A92EA;--c-def:#EE7A47;--c-st:#2BB886;--c-dead:#E5675C;--c-space:#3D5170;
+  --gtd:#3FB57A;--gtd2:#24603F;color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]:not([hidden=until-found i]){display:none!important}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 120px)}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bar)}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0;padding:0}
+ul,ol{list-style:none}
+a{color:var(--brand)}
+button,input,select{font:inherit;color:inherit}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1160px;margin:0 auto}
+
+/* command bar */
+.cmd{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bar);color:#fff}
+.cmd .wrap{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding-block:10px 0}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;margin-right:auto}
+.logo{width:30px;height:30px;display:grid;place-items:center;background:#fff;color:#0D47A1;border-radius:5px;font:800 1rem/1 var(--display);font-stretch:75%}
+.brand b{font:800 1.45rem/1 var(--display);font-stretch:80%;letter-spacing:.02em;text-transform:uppercase}
+.brand small{display:block;font:500 .72rem/1.2 var(--body);opacity:.82;letter-spacing:.02em}
+.stamp{display:inline-flex;align-items:center;gap:7px;font:500 .74rem/1 var(--mono);color:#D6E4F7}
+.stamp i{width:8px;height:8px;border-radius:50%;background:#5BD08F;box-shadow:0 0 0 3px rgba(91,208,143,.25)}
+.nav{flex-basis:100%;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin-inline:-6px}
+.nav::-webkit-scrollbar{display:none}
+.nav a{padding:10px 12px 12px;color:#C9DAF2;text-decoration:none;font:700 .95rem/1 var(--display);font-stretch:85%;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;border-bottom:3px solid transparent}
+.nav a:hover{color:#fff}
+.nav a[aria-current="page"]{color:#fff;border-bottom-color:#fff}
+.nav a:focus-visible,.btn:focus-visible,.chip:focus-visible,.seg button:focus-visible,.row-btn:focus-visible,summary:focus-visible,th button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.nav a:focus-visible{outline-color:#fff}
+
+main{padding-block:22px 64px}
+.view{display:grid;gap:22px}
+.view>*{min-width:0}
+.eyebrow{font:600 .74rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1.title{font:800 clamp(1.9rem,4.2vw,2.9rem)/1.02 var(--display);font-stretch:78%;letter-spacing:.005em;text-transform:uppercase;text-wrap:balance}
+h2.sec{font:800 1.35rem/1.1 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance}
+.lede{color:var(--muted);max-width:64ch}
+.note{font-size:.84rem;color:var(--muted);max-width:70ch}
+.sechead{display:flex;align-items:end;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
+.sechead>div:not(.seg){display:grid;gap:4px;min-width:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;align-content:start;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:end}
+.hero .copy{display:grid;gap:12px}
+.search{position:relative;display:grid;gap:6px}
+.search input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:1rem}
+.search input:focus{outline:2px solid var(--brand);outline-offset:0;border-color:var(--brand)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2}
+.results{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 10px 30px rgba(10,20,40,.18);max-height:340px;overflow:auto}
+.results button{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer}
+.results button:first-child{border-top:0}
+.results button:hover,.results button.on{background:var(--brand-soft)}
+.results small{color:var(--muted)}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:grid;gap:3px;align-content:start;min-width:0;text-decoration:none;color:inherit}
+a.kpi:hover{background:var(--brand-soft)}
+.kpi .k{font:600 .7rem/1.2 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:800 2rem/1.05 var(--display);font-stretch:80%;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:.82rem;color:var(--muted)}
+.kpi .v.good{color:var(--good)} .kpi .v.bad{color:var(--bad)}
+
+/* chips and segmented controls */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 11px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font:600 .8rem/1 var(--body);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;max-width:100%;flex-wrap:nowrap;flex:none;background:var(--surface)}
+.seg button{border:0;background:none;padding:8px 12px;cursor:pointer;font:700 .8rem/1 var(--display);font-stretch:85%;letter-spacing:.06em;text-transform:uppercase}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--r);border:0;background:var(--brand);color:var(--brand-ink);font:700 .9rem/1 var(--display);font-stretch:85%;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;width:fit-content}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+select,input[type="text"],input[type="search"],input[type="number"]{padding:9px 10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+select:focus-visible,input:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+label.f{display:grid;gap:4px;font-size:.8rem;font-weight:600;color:var(--muted);min-width:0}
+
+/* team badge */
+.badge{display:inline-grid;place-items:center;width:34px;height:24px;border-radius:4px;font:700 .68rem/1 var(--mono);letter-spacing:.02em;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.badge.lg{width:58px;height:42px;font-size:1rem;border-radius:6px}
+
+/* horizontal team bars */
+.hbars{display:grid}
+.hb{display:grid;grid-template-columns:2.4rem 34px minmax(0,1fr) 5.6rem;gap:10px;align-items:center;padding:5px 4px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:4px}
+.hb:hover,.hb:focus-visible{background:var(--brand-soft);outline:none}
+.hb .rk{font:500 .8rem/1 var(--mono);color:var(--muted);text-align:right}
+.hb .track{height:16px;background:var(--surface-2);border-radius:3px;overflow:hidden;position:relative}
+.hb .fill{display:block;height:100%;border-radius:3px}
+.hb .val{font:600 .86rem/1 var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.hb.me .rk{color:var(--brand);font-weight:700}
+.axis{display:grid;grid-template-columns:2.4rem 34px minmax(0,1fr) 5.6rem;gap:10px;font:500 .7rem/1 var(--mono);color:var(--muted);padding:6px 4px 0}
+.axis .ticks{display:flex;justify-content:space-between}
+
+/* stacked cap bar */
+.stack{display:flex;height:34px;border-radius:4px;overflow:hidden;background:var(--surface-2)}
+.stack i{display:block;height:100%;min-width:2px}
+.stack.sm{height:12px;border-radius:2px}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;flex:none}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px 14px;font-size:.85rem}
+.legend li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.legend li>span:nth-child(2){min-width:0}
+.legend b{display:block;font:600 .95rem/1.2 var(--mono);font-variant-numeric:tabular-nums}
+.hatch{background:repeating-linear-gradient(135deg,var(--c-space) 0 5px,var(--surface-2) 5px 10px)}
+
+/* group spend bars */
+.gbars{display:grid;gap:2px}
+.gb{display:grid;grid-template-columns:6.6rem minmax(0,1fr) 5.6rem;gap:10px;align-items:center;padding:6px 4px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:4px;font-size:.88rem}
+.gb:hover,.gb:focus-visible{background:var(--brand-soft);outline:none}
+.gb .track{position:relative;height:14px;background:var(--surface-2);border-radius:3px}
+.gb .fill{position:absolute;inset:0 auto 0 0;border-radius:3px}
+.gb .avg{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--fg);border-radius:1px}
+.gb .val{font:600 .84rem/1 var(--mono);text-align:right}
+.gb .diff{font-size:.68rem;display:block;font-weight:500;white-space:nowrap}
+.up{color:var(--bad)} .down{color:var(--good)}
+
+/* columns (end years) */
+.cols{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;align-items:end;height:170px;padding-top:18px}
+.col{display:grid;grid-template-rows:auto 1fr auto;height:100%;gap:4px;text-align:center;min-width:0}
+.col .bx{align-self:end;background:var(--brand);border-radius:3px 3px 0 0;min-height:2px}
+.col .lab{font:600 .78rem/1 var(--mono)}
+.col .amt{font:500 .72rem/1.1 var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* tables */
+.tw{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:.88rem}
+table.t th{position:sticky;top:0;background:var(--surface-2);text-align:left;padding:0;font:600 .7rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+table.t th button,table.t th span{display:block;width:100%;padding:9px 10px;border:0;background:none;text-align:inherit;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}
+table.t th span{cursor:default}
+table.t th[aria-sort] button{color:var(--fg)}
+table.t th[aria-sort="descending"] button::after{content:" \2193"}
+table.t th[aria-sort="ascending"] button::after{content:" \2191"}
+table.t td{padding:8px 10px;border-top:1px solid var(--line);white-space:nowrap}
+table.t .r{text-align:right}
+table.t td.r{font-family:var(--mono);font-variant-numeric:tabular-nums}
+table.t tbody tr{cursor:pointer}
+table.t tbody tr:hover{background:var(--brand-soft)}
+.pn{display:flex;align-items:center;gap:8px;font-weight:600}
+.pos{display:inline-block;min-width:2.6rem;text-align:center;padding:3px 5px;border-radius:3px;font:600 .68rem/1 var(--mono);background:var(--surface-2);color:var(--muted)}
+.gbar{display:inline-flex;width:70px;height:8px;border-radius:2px;overflow:hidden;background:var(--surface-2);vertical-align:middle}
+.gbar i{display:block;height:100%}
+.more{justify-self:center}
+
+/* news */
+.feed{display:grid;gap:10px}
+.mv{display:grid;grid-template-columns:5.2rem minmax(0,1fr);gap:4px 14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.mv .when{font:600 .78rem/1.3 var(--mono);color:var(--muted)}
+.mv .body{display:grid;gap:6px;min-width:0}
+.mv h3{font:700 1.08rem/1.25 var(--body);text-wrap:balance}
+.mv p{color:var(--muted);font-size:.92rem;max-width:72ch}
+.mv .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.8rem}
+.kind{display:inline-block;padding:3px 7px;border-radius:3px;font:700 .66rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.kind.Trade{background:#FDE7DC;color:#8A3410}
+.kind.Extension{background:#DCF1E5;color:#145C36}
+.kind.Restructure{background:#E2E9F8;color:#1F3F80}
+.kind.Release{background:#F9DEDC;color:#8C1D18}
+.kind.Signing{background:#EDE3F7;color:#4E2A84}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kind{background:var(--surface-2);color:var(--fg)}}
+:root[data-theme="dark"] .kind{background:var(--surface-2);color:var(--fg)}
+.tlink{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:0;cursor:pointer;font:600 .8rem/1 var(--body);color:var(--brand)}
+
+/* tool tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.tile{display:grid;gap:6px;align-content:start;padding:16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);text-decoration:none;color:inherit}
+.tile:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tile b{font:800 1.15rem/1.1 var(--display);font-stretch:85%;letter-spacing:.03em;text-transform:uppercase;color:var(--brand)}
+.tile span{color:var(--muted);font-size:.88rem}
+.countdown{background:var(--bar);color:#fff;border-color:var(--bar)}
+.countdown b{color:#fff}
+.countdown span{color:#C9DAF2}
+.countdown .big{font:800 2.6rem/1 var(--display);font-stretch:78%;color:#fff}
+
+/* team cards grid */
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.tc{display:grid;gap:10px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);text-decoration:none;color:inherit;cursor:pointer;text-align:left}
+.tc:hover{border-color:var(--brand)}
+.tc .hd{display:flex;align-items:center;gap:10px}
+.tc .hd b{font:800 1.1rem/1.1 var(--display);font-stretch:85%;text-transform:uppercase;letter-spacing:.02em}
+.tc .hd small{display:block;color:var(--muted);font-size:.78rem}
+.tc .row{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted)}
+.tc .row b{font:600 .9rem/1 var(--mono);color:var(--fg)}
+.tc .row b.good{color:var(--good)} .tc .row b.bad{color:var(--bad)}
+
+/* deal cards */
+.deals{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,255px),1fr));gap:14px}
+.deal{display:grid;gap:12px;align-content:start;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.deal h3{font:800 1.4rem/1.05 var(--display);font-stretch:80%;text-transform:uppercase;letter-spacing:.02em}
+.deal .top{display:flex;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
+.deal .amt{font:800 2rem/1 var(--display);font-stretch:78%}
+.deal .amt small{display:block;font:500 .78rem/1.3 var(--body);color:var(--muted);font-stretch:100%}
+.dbar{display:flex;height:16px;border-radius:3px;overflow:hidden;background:var(--surface-2)}
+.dbar i{display:block;height:100%}
+.facts{display:grid;font-size:.88rem}
+.facts div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--line)}
+.facts dt{color:var(--muted)}
+.facts dd{font-family:var(--mono);font-weight:500;text-align:right}
+.watch{background:var(--surface-2);padding:10px 12px;border-radius:4px;font-size:.9rem}
+.watch b{display:block;font:700 .7rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;color:var(--muted)}
+details.yearly summary{cursor:pointer;font:700 .85rem/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+
+/* scatter */
+.chartbox{position:relative;min-width:0}
+svg.chart{display:block;width:100%;height:auto;overflow:visible}
+svg.chart text{fill:var(--muted);font:500 11px var(--mono)}
+svg.chart .grid{stroke:var(--line);stroke-width:1}
+svg.chart .dot{cursor:pointer;stroke:var(--surface);stroke-width:1}
+svg.chart .dot:hover,svg.chart .dot.hl{stroke:var(--fg);stroke-width:2}
+
+/* tooltip */
+#tip{position:fixed;z-index:40;pointer-events:none;background:var(--fg);color:var(--bg);padding:8px 10px;border-radius:5px;font-size:.8rem;line-height:1.35;max-width:240px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#tip b{display:block;font-size:.86rem}
+
+/* player sheet */
+dialog#sheet{border:0;padding:0;border-radius:10px;width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 40px);background:var(--surface);color:var(--fg);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog#sheet::backdrop{background:rgba(6,12,24,.55)}
+.sh{display:grid;gap:14px;padding:18px}
+.sh-hd{display:flex;gap:12px;align-items:flex-start}
+.sh-hd>div{min-width:0;flex:1}
+.sh-hd h3{font:800 1.7rem/1 var(--display);font-stretch:78%;text-transform:uppercase}
+.sh-hd p{color:var(--muted);font-size:.88rem}
+.x{border:0;background:var(--surface-2);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1.1rem;flex:none}
+.bigrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.bigrow>div{background:var(--surface);padding:10px 12px;min-width:0}
+.bigrow .v{font:800 1.5rem/1.05 var(--display);font-stretch:80%;font-variant-numeric:tabular-nums}
+.bigrow .k{font:600 .66rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.meter{position:relative;height:10px;background:var(--surface-2);border-radius:5px}
+.meter i{position:absolute;inset:0 auto 0 0;background:var(--brand);border-radius:5px}
+.story{display:grid;gap:8px;font-size:.94rem;max-width:66ch}
+
+/* tools */
+.toolnav{display:flex;gap:8px;flex-wrap:wrap}
+.pick{position:relative}
+.pick .results{max-height:260px}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.out{display:grid;gap:10px;padding:14px;border-radius:var(--r);background:var(--surface-2)}
+.out .v{font:800 2.2rem/1 var(--display);font-stretch:78%;font-variant-numeric:tabular-nums}
+.out .v.good{color:var(--good)} .out .v.bad{color:var(--bad)}
+.rows>div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line);font-size:.9rem}
+.rows span{color:var(--muted)}
+.rows b{font-family:var(--mono);font-weight:500;text-align:right}
+.trade-list{display:grid;gap:2px;max-height:330px;overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.trade-list label{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 10px;border-top:1px solid var(--line);cursor:pointer;font-size:.86rem}
+.trade-list label:first-child{border-top:0}
+.trade-list input{width:1.05rem;height:1.05rem;accent-color:var(--brand)}
+.cmp{display:grid;gap:10px}
+.cmprow{display:grid;grid-template-columns:minmax(0,1fr) 7rem minmax(0,1fr);gap:10px;align-items:center;font-size:.86rem}
+.cmprow .l{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.cmprow .rgt{display:flex;align-items:center;gap:8px}
+.cmprow .lab{text-align:center;font:600 .68rem/1.2 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cmprow .b{height:12px;border-radius:2px}
+.cmprow b{font:600 .82rem/1 var(--mono);white-space:nowrap}
+
+/* learn */
+.faq{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.faq details{border-top:1px solid var(--line);padding:0 16px}
+.faq details:first-child{border-top:0}
+.faq summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;padding:14px 0;font:700 1.05rem/1.2 var(--display);font-stretch:85%;letter-spacing:.03em;text-transform:uppercase}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 1.1rem/1 var(--mono);color:var(--muted)}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{padding-bottom:14px;color:var(--muted);max-width:68ch}
+
+footer{border-top:1px solid var(--line);padding-block:20px 40px;font-size:.8rem;color:var(--muted)}
+footer .wrap{display:grid;gap:8px}
+footer ul{display:flex;flex-wrap:wrap;gap:4px 14px}
+code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+
+@media (max-width:800px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .vs{grid-template-columns:minmax(0,1fr)}
+  .hb,.axis{grid-template-columns:1.8rem 34px minmax(0,1fr) 4.8rem;gap:8px}
+  .mv{grid-template-columns:minmax(0,1fr)}
+  .bigrow .v{font-size:1.25rem}
+  .cmprow{grid-template-columns:minmax(0,1fr) 4.6rem minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hb .fill,.gb .fill,.col .bx,.meter i{transition:width .35s ease,height .35s ease}
+  .chip,.seg button,.nav a,.tile{transition:background-color .12s,color .12s,border-color .12s}
+}
+</style>
+
+<header class="cmd gut">
+  <div class="wrap">
+    <a class="brand" href="#home"><span class="logo">PC</span><span><b>Plain Cap</b><small>NFL contracts in plain English</small></span></a>
+    <span class="stamp"><i></i><span id="stamp">Loading data</span></span>
+    <nav class="nav" aria-label="Sections">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#news" data-nav="news">News</a>
+      <a href="#teams" data-nav="teams">Teams</a>
+      <a href="#contracts" data-nav="contracts">Contracts</a>
+      <a href="#tools" data-nav="tools">Tools</a>
+      <a href="#learn" data-nav="learn">Learn</a>
+    </nav>
+  </div>
+</header>
+
+<main class="gut"><div class="wrap">
+
+<!-- HOME -->
+<section class="view" id="v-home" aria-labelledby="h-home">
+  <div class="hero">
+    <div class="copy">
+      <span class="eyebrow">2026 season · salary cap $301.2M per team</span>
+      <h1 class="title" id="h-home">See where every NFL dollar goes</h1>
+      <p class="lede">Look up any player or team. Each contract shows what is really guaranteed, what he counts against the cap, and what happens if his team cuts or trades him.</p>
+    </div>
+    <div class="search">
+      <label class="eyebrow" for="q-home">Find a player or team</label>
+      <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <input id="q-home" type="search" placeholder="Try Mahomes, Lions or edge" autocomplete="off" aria-controls="r-home"></span>
+      <div class="results" id="r-home" hidden></div>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="sechead">
+        <div><span class="eyebrow">All 32 teams</span><h2 class="sec" id="lb-title">Who has cap room</h2></div>
+        <div class="seg" id="lb-metric" role="group" aria-label="Measure">
+          <button type="button" data-m="space" aria-pressed="true">Room</button>
+          <button type="button" data-m="dead" aria-pressed="false">Dead</button>
+          <button type="button" data-m="active" aria-pressed="false">Spent</button>
+        </div>
+      </div>
+      <div class="chips" id="lb-div" role="group" aria-label="Division"></div>
+      <div class="hbars" id="lb"></div>
+      <p class="note" id="lb-note"></p>
+    </div>
+
+    <div style="display:grid;gap:16px;align-content:start;min-width:0">
+      <div class="panel">
+        <div class="sechead"><div><span class="eyebrow">Latest moves</span><h2 class="sec">Contract news</h2></div><a class="btn ghost" href="#news">All news</a></div>
+        <div class="feed" id="home-feed"></div>
+      </div>
+      <a class="tile countdown" href="#news" id="deadline-tile"></a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="sechead">
+      <div><span class="eyebrow">League-wide, 2026 cap hits</span><h2 class="sec">Where the money goes, by position</h2></div>
+      <span class="note">Tap a position to see its biggest contracts.</span>
+    </div>
+    <div class="gbars" id="league-groups"></div>
+    <ul class="legend" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),max-content))">
+      <li><i class="swatch" style="background:var(--c-off)"></i><span>Offense</span></li>
+      <li><i class="swatch" style="background:var(--c-def)"></i><span>Defense</span></li>
+      <li><i class="swatch" style="background:var(--c-st)"></i><span>Special teams</span></li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Front office tools</span><h2 class="sec">Play GM for a minute</h2></div></div>
+    <div class="tiles">
+      <a class="tile" href="#tools" data-tool="cut"><b>Cut or keep</b><span>Pick a player and see the dead money and the cap space a release would free.</span></a>
+      <a class="tile" href="#tools" data-tool="trade"><b>Trade checker</b><span>Swap players between two teams and see each team's cap room after the deal.</span></a>
+      <a class="tile" href="#tools" data-tool="compare"><b>Compare players</b><span>Put two contracts side by side: pay, guarantees and cap hit.</span></a>
+      <a class="tile" href="#learn"><b>Cap 101</b><span>Dead money, void years and restructures, each in two sentences.</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="view" id="v-news" hidden aria-labelledby="h-news">
+  <div class="sechead">
+    <div><span class="eyebrow" id="news-asof">Contract news</span><h1 class="title" id="h-news">What changed and why it matters</h1></div>
+    <div class="chips" id="news-kinds" role="group" aria-label="Type of move"></div>
+  </div>
+  <p class="lede">Trades, extensions and restructures, each with a plain-English note on what it does to the cap. Tap a team to open its cap page.</p>
+  <div class="feed" id="news-feed"></div>
+</section>
+
+<!-- TEAMS -->
+<section class="view" id="v-teams" hidden aria-labelledby="h-teams">
+  <div class="sechead">
+    <div><span class="eyebrow">2026 salary cap</span><h1 class="title" id="h-teams">All 32 teams</h1></div>
+    <div class="controls">
+      <label class="f" for="t-sort">Sort by
+        <select id="t-sort">
+          <option value="space">Most cap room</option>
+          <option value="dead">Most dead money</option>
+          <option value="active">Most spent on roster</option>
+          <option value="name">Team name</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div class="chips" id="t-div" role="group" aria-label="Division"></div>
+  <ul class="legend" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),max-content))">
+    <li><i class="swatch" style="background:var(--c-off)"></i><span>Offense</span></li>
+    <li><i class="swatch" style="background:var(--c-def)"></i><span>Defense</span></li>
+    <li><i class="swatch" style="background:var(--c-st)"></i><span>Special teams</span></li>
+    <li><i class="swatch" style="background:var(--c-dead)"></i><span>Dead money</span></li>
+    <li><i class="swatch hatch"></i><span>Cap room</span></li>
+  </ul>
+  <div class="teams" id="team-grid"></div>
+</section>
+
+<!-- TEAM -->
+<section class="view" id="v-team" hidden aria-labelledby="h-team">
+  <div id="team-body"></div>
+</section>
+
+<!-- CONTRACTS -->
+<section class="view" id="v-contracts" hidden aria-labelledby="h-contracts">
+  <div class="sechead">
+    <div><span class="eyebrow" id="c-count">Every contract</span><h1 class="title" id="h-contracts">Contracts</h1></div>
+  </div>
+
+  <div>
+    <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Read for you</span><h2 class="sec">Recent deals, broken down</h2></div></div>
+    <div class="deals" id="deals"></div>
+    <p class="note" id="deals-src" style="margin-top:10px"></p>
+  </div>
+
+  <div class="panel">
+    <div class="sechead">
+      <div><span class="eyebrow">Position market</span><h2 class="sec" id="mkt-title">Top quarterback contracts</h2></div>
+      <label class="f" for="mkt-pos">Position
+        <select id="mkt-pos"></select>
+      </label>
+    </div>
+    <div class="grid2" style="gap:22px">
+      <div class="hbars" id="mkt-bars"></div>
+      <div class="chartbox"><div id="scatter"></div><p class="note" id="scatter-note"></p></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow">Search the database</span><h2 class="sec">All players under contract</h2></div></div>
+    <div class="controls">
+      <label class="f" for="c-q" style="flex:1 1 220px">Name<input id="c-q" type="search" placeholder="Player name" autocomplete="off"></label>
+      <label class="f" for="c-team">Team<select id="c-team"></select></label>
+      <label class="f" for="c-group">Position<select id="c-group"></select></label>
+    </div>
+    <div class="tw">
+      <table class="t" id="c-table">
+        <thead><tr>
+          <th><span>Player</span></th>
+          <th><span>Team</span></th>
+          <th class="r" data-k="age"><button type="button">Age</button></th>
+          <th class="r" data-k="apy" aria-sort="descending"><button type="button">Per year</button></th>
+          <th class="r" data-k="total"><button type="button">Total</button></th>
+          <th class="r" data-k="gtdp"><button type="button">Guaranteed</button></th>
+          <th class="r" data-k="cap"><button type="button">2026 cap hit</button></th>
+          <th class="r" data-k="end"><button type="button">Ends</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="btn ghost more" id="c-more" type="button">Show 50 more</button>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="view" id="v-tools" hidden aria-labelledby="h-tools">
+  <div class="sechead">
+    <div><span class="eyebrow">Front office tools</span><h1 class="title" id="h-tools">Play general manager</h1></div>
+    <div class="seg" id="toolnav" role="group" aria-label="Tool">
+      <button type="button" data-t="cut" aria-pressed="true">Cut or keep</button>
+      <button type="button" data-t="trade" aria-pressed="false">Trade</button>
+      <button type="button" data-t="compare" aria-pressed="false">Compare</button>
+      <button type="button" data-t="decode" aria-pressed="false">Decode</button>
+    </div>
+  </div>
+
+  <div id="tool-cut" class="grid2">
+    <div class="panel">
+      <h2 class="sec">Cut or keep</h2>
+      <p class="note">Cutting a player clears his pay, but any signing bonus not yet counted lands at once as dead money. A post-June 1 release splits that hit over two seasons.</p>
+      <div class="pick"><label class="f" for="cut-q">Player<input id="cut-q" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cut-r" hidden></div></div>
+      <div class="seg" id="cut-when" role="group" aria-label="When he is cut">
+        <button type="button" data-w="post" aria-pressed="true">After June 1</button>
+        <button type="button" data-w="pre" aria-pressed="false">Before June 1</button>
+      </div>
+    </div>
+    <div class="panel" id="cut-out"></div>
+  </div>
+
+  <div id="tool-trade" hidden>
+    <div class="vs">
+      <div class="panel" id="tr-a"></div>
+      <div class="panel" id="tr-b"></div>
+    </div>
+    <div class="panel" id="tr-out" style="margin-top:16px"></div>
+  </div>
+
+  <div id="tool-decode" hidden class="grid2">
+    <div class="panel">
+      <h2 class="sec">Decode a headline</h2>
+      <p class="note">Type the numbers from a news report, in millions, to see the real yearly average, how much is guaranteed and what the bonus counts each season.</p>
+      <div class="chips" id="dc-presets" role="group" aria-label="Load a reported deal"></div>
+      <div class="grid3" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px">
+        <label class="f" for="dc-total">Total value ($M)<input id="dc-total" type="number" inputmode="decimal" step="0.01" min="0" value="149.97"></label>
+        <label class="f" for="dc-years">Years<input id="dc-years" type="number" inputmode="numeric" step="1" min="1" value="5"></label>
+        <label class="f" for="dc-guar">Guaranteed ($M)<input id="dc-guar" type="number" inputmode="decimal" step="0.01" min="0" value="100"></label>
+        <label class="f" for="dc-bonus">Signing bonus ($M)<input id="dc-bonus" type="number" inputmode="decimal" step="0.01" min="0" value="20"></label>
+      </div>
+    </div>
+    <div class="panel" id="dc-out" aria-live="polite"></div>
+  </div>
+
+  <div id="tool-compare" hidden class="panel">
+    <h2 class="sec">Compare two contracts</h2>
+    <div class="vs">
+      <div class="pick"><label class="f" for="cmp-a">First player<input id="cmp-a" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-ar" hidden></div></div>
+      <div class="pick"><label class="f" for="cmp-b">Second player<input id="cmp-b" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-br" hidden></div></div>
+    </div>
+    <div class="cmp" id="cmp-out"></div>
+  </div>
+</section>
+
+<!-- LEARN -->
+<section class="view" id="v-learn" hidden aria-labelledby="h-learn">
+  <div><span class="eyebrow">Cap 101</span><h1 class="title" id="h-learn">The words on every contract page</h1></div>
+  <p class="lede">Short answers to the terms you see in contract news. Start with cap hit and dead money; most of the rest builds on those two.</p>
+  <div class="grid2" style="align-items:start">
+    <div class="faq" id="faq-nfl"></div>
+    <div style="display:grid;gap:10px">
+      <h2 class="sec">NBA basics</h2>
+      <p class="note">Plain Cap covers the NFL first. These notes explain how the NBA's softer cap differs.</p>
+      <div class="faq" id="faq-nba"></div>
+    </div>
+  </div>
+  <div>
+    <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">NBA, read for you</span><h2 class="sec">Two recent NBA deals</h2></div></div>
+    <div class="deals" id="nba-deals"></div>
+    <p class="note" style="margin-top:10px">Every NBA team and contract comes next, built the same way as the NFL pages.</p>
+  </div>
+</section>
+
+</div></main>
+
+<footer class="gut"><div class="wrap">
+  <p id="foot-asof">Figures come from Over The Cap, Spotrac and press reports and can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.</p>
+  <ul id="foot-src">
+    <li><a href="https://overthecap.com/salary-cap-space" target="_blank" rel="noopener">Over The Cap: cap space</a></li>
+    <li><a href="https://www.spotrac.com/nfl/" target="_blank" rel="noopener">Spotrac</a></li>
+    <li><a href="https://amp.nfl.com/news/nfl-announces-2026-salary-cap-set-at-301-2-million-per-team" target="_blank" rel="noopener">NFL: 2026 cap</a></li>
+    <li><a href="https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league" target="_blank" rel="noopener">SI trade tracker</a></li>
+    <li><a href="https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/" target="_blank" rel="noopener">CBS: Kraft</a></li>
+    <li><a href="https://www.nfl.com/news/jonathan-taylor-colts-contract-extension" target="_blank" rel="noopener">NFL.com: Taylor</a></li>
+    <li><a href="https://www.yardbarker.com/nfl/articles/five_key_contract_extensions_signed_ahead_of_the_2026_nfl_season/s1_13132_44020297" target="_blank" rel="noopener">Yardbarker: extensions</a></li>
+    <li><a href="https://frontofficesports.com/article/mahomes-reworks-deal-clears-43-6m-for-cap-strapped-chiefs/" target="_blank" rel="noopener">Front Office Sports: Mahomes</a></li>
+    <li><a href="https://nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-new-jeffery-simmons-deal" target="_blank" rel="noopener">PFT: Simmons</a></li>
+    <li><a href="https://nbcsports.com/nfl/profootballtalk/rumor-mill/news/inside-the-chris-olave-deal" target="_blank" rel="noopener">PFT: Olave</a></li>
+    <li><a href="https://www.playerprofiler.com/nfl/chris-olave/contract/" target="_blank" rel="noopener">PlayerProfiler: Olave</a></li>
+    <li><a href="https://www.playerprofiler.com/?p=150729" target="_blank" rel="noopener">PlayerProfiler: Gibbs</a></li>
+    <li><a href="https://www.detroitfootball.net/p/breaking-down-the-structure-of-jahmyr" target="_blank" rel="noopener">Detroit Football Network</a></li>
+    <li><a href="https://atozsports.com/nfl/tennessee-titans-news/titans-jeffery-simmons-contract-details-revealed-signing-bonus-salary-cap-potential-out/" target="_blank" rel="noopener">A to Z Sports</a></li>
+    <li><a href="https://www.ksl.com/article/51631386/pistons-jalen-duren-agree-on-5-year-200m-contract-ap-source-says" target="_blank" rel="noopener">AP: Duren</a></li>
+    <li><a href="https://www.tsn.ca/nba/article/celtics-to-extend-pritchard-on-two-year-442m-deal-n1-50176173/" target="_blank" rel="noopener">TSN: Pritchard</a></li>
+    <li><a href="https://pr.nba.com/2026-27-salary-cap/" target="_blank" rel="noopener">NBA: 2026-27 cap</a></li>
+  </ul>
+  <details id="setup" class="faq" style="margin-top:8px"><summary style="padding-inline:16px">Site setup</summary>
+    <div style="padding:0 16px 14px;display:grid;gap:8px;max-width:70ch">
+      <p>For whoever runs the site. Contract and cap figures live in <code>data/nfl.json</code> and the news feed in <code>data/moves.json</code>. A daily task refreshes both each morning.</p>
+      <p>Airtable holds the featured deal breakdowns. Set <code>AIRTABLE_TOKEN</code> and <code>AIRTABLE_BASE_ID</code> (and <code>AIRTABLE_TABLE</code> if the table is not named Contracts) in Vercel, and the page reads them through <code>/api/contracts</code>. Without them, the built-in breakdowns show.</p>
+      <p>Working Copy keeps the code. Edit <code>src.html</code> in Koder, run <code>build.sh</code> or copy it into <code>index.html</code>, then commit and push. Vercel redeploys on its own.</p>
+    </div>
+  </details>
+</div></footer>
+
+<div id="tip" hidden></div>
+<dialog id="sheet" aria-labelledby="sh-name"><div class="sh" id="sheet-body"></div></dialog>
+
+<script>
+/* ===== helpers ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const mon = (n, d) => {
+  if (n == null || !Number.isFinite(n)) return '—';
+  const a = Math.abs(n), s = n < 0 ? '−' : '';
+  if (a >= 1e9) return s + '$' + (a / 1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return s + '$' + (a / 1e6).toFixed(d == null ? (a >= 1e8 ? 0 : 1) : d) + 'M';
+  if (a >= 1e3) return s + '$' + Math.round(a / 1e3) + 'K';
+  return s + '$' + Math.round(a);
+};
+const pct = (x, d = 0) => Number.isFinite(x) ? (x * 100).toFixed(d) + '%' : '—';
+const ord = n => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const store = {
+  get(k, f) { try { const v = localStorage.getItem('pc.' + k); return v == null ? f : JSON.parse(v); } catch (e) { return f; } },
+  set(k, v) { try { localStorage.setItem('pc.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ===== constants ===== */
+const CAP = 301.2e6;
+const COLORS = { ARI: '#97233F', ATL: '#A71930', BAL: '#241773', BUF: '#00338D', CAR: '#0085CA', CHI: '#0B162A', CIN: '#FB4F14', CLE: '#311D00', DAL: '#003594', DEN: '#FB4F14', DET: '#0076B6', GB: '#203731', HOU: '#03202F', IND: '#002C5F', JAX: '#006778', KC: '#E31837', LV: '#000000', LAC: '#0080C6', LAR: '#003594', MIA: '#008E97', MIN: '#4F2683', NE: '#002244', NO: '#D3BC8D', NYG: '#0B2265', NYJ: '#125740', PHI: '#004C54', PIT: '#FFB612', SF: '#AA0000', SEA: '#002244', TB: '#D50A0A', TEN: '#4B92DB', WAS: '#5A1414' };
+const inkFor = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#111' : '#fff'; };
+const badge = (id, lg) => `<span class="badge${lg ? ' lg' : ''}" style="background:${COLORS[id] || '#555'};color:${inkFor(COLORS[id] || '#555')}" aria-hidden="true">${esc(id)}</span>`;
+const POSGROUP = { QB: 'QB', RB: 'RB', FB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', IDL: 'DT', EDGE: 'EDGE', LB: 'LB', CB: 'CB', S: 'S', K: 'ST', P: 'ST', LS: 'ST' };
+const GROUP_ORDER = ['QB', 'RB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'ST'];
+const GROUP_NAME = { QB: 'Quarterback', RB: 'Running back', WR: 'Receiver', TE: 'Tight end', OL: 'Off. line', EDGE: 'Edge rusher', DT: 'Def. tackle', LB: 'Linebacker', CB: 'Cornerback', S: 'Safety', ST: 'Kick & punt' };
+const GROUP_SIDE = { QB: 'off', RB: 'off', WR: 'off', TE: 'off', OL: 'off', EDGE: 'def', DT: 'def', LB: 'def', CB: 'def', S: 'def', ST: 'st' };
+const SIDE_VAR = { off: 'var(--c-off)', def: 'var(--c-def)', st: 'var(--c-st)' };
+const POS_WORD = { QB: 'quarterback', RB: 'running back', WR: 'wide receiver', TE: 'tight end', LT: 'left tackle', LG: 'left guard', C: 'center', RG: 'right guard', RT: 'right tackle', IDL: 'defensive tackle', EDGE: 'edge rusher', LB: 'linebacker', CB: 'cornerback', S: 'safety', K: 'kicker', P: 'punter', LS: 'long snapper', FB: 'fullback' };
+const POS_LIST = ['QB', 'RB', 'WR', 'TE', 'LT', 'RT', 'LG', 'RG', 'C', 'EDGE', 'IDL', 'LB', 'CB', 'S', 'K', 'P'];
+const posTag = p => (p === 'IDL' ? 'DT' : p);
+const DIVS = ['All', 'AFC East', 'AFC North', 'AFC South', 'AFC West', 'NFC East', 'NFC North', 'NFC South', 'NFC West'];
+
+/* Featured breakdowns. On Vercel these can come from Airtable through /api/contracts. */
+let DEALS = [
+  { league: 'NFL', pos: 'DT', name: 'Jeffery Simmons', team: 'Tennessee Titans', head: '$105.8M', sub: '3 new years, through 2030', scale: 149.97,
+    bar: [['locked', 60.2, 'Locked at signing', '$60.2M'], ['vest', 39.8, 'Vests in March 2027 and March 2028', '$39.8M'], ['open', 49.97, 'Not guaranteed', '$49.97M']],
+    facts: [['New money a year', '$35.2M'], ['Signing bonus', '$20M'], ['Total guarantees', '$100M'], ['Exit after 2029', 'About $4M dead cap']],
+    plain: 'The Titans added three years to a deal that already ran through 2027. $60.2M is locked now. His 2028 pay turns guaranteed in March 2027, and part of his 2029 pay does in March 2028, if he is still on the roster.',
+    watch: '"$100M guaranteed" counts pay he was already owed. Measured against the five-year total, about two-thirds is guaranteed.' },
+  { league: 'NFL', pos: 'WR', name: 'Chris Olave', team: 'New Orleans Saints', head: '$124M', sub: '4 years, up to $132M with escalators', scale: 124,
+    bar: [['locked', 52.65, 'Locked at signing', '$52.65M'], ['vest', 37.36, 'Vests by 2027 and 2028', '$37.36M'], ['open', 33.99, 'Not guaranteed', '$33.99M']],
+    facts: [['New money a year', '$31M'], ['Signing bonus', '$35M'], ['Guaranteed by 2027', '$77.0M'], ['Guaranteed by 2028', '$90.0M']],
+    plain: 'The Saints guaranteed money in layers. $52.65M is locked at signing: the $35M bonus plus 2026 and 2027 pay. His cap hit starts low, about $9.6M this season, and reaches $41.1M in 2030.',
+    watch: '$1.36M a year in per-game roster bonuses pays only when he plays.',
+    table: { title: 'Cap hit by year', cols: ['Year', 'Base salary', 'Cap hit'], rows: [['2026', '$1.29M', '$9.57M'], ['2027', '$13.64M', '$22.00M'], ['2028', '$23.00M', '$31.36M'], ['2029', '$27.00M', '$35.36M'], ['2030', '$29.76M', '$41.12M']], note: 'Source: PlayerProfiler.' } },
+  { league: 'NFL', pos: 'RB', name: 'Jahmyr Gibbs', team: 'Detroit Lions', head: '$67.5M', sub: '3 years, up to $75.75M with incentives', scale: 67.5,
+    bar: [['locked', 51.5, 'Guaranteed (as reported)', '$51.5M'], ['open', 16.0, 'Not guaranteed', '$16.0M']],
+    facts: [['New money a year', '$22.5M'], ['Signing bonus', '$15M'], ['Guaranteed', '$51.5M'], ['Exit in 2030', 'About $3M dead cap']],
+    plain: 'The Lions kept the early cap hits small. His 2027 cap hit drops to about $6.3M, down from the $14.3M the fifth-year option would have cost. Then it climbs to $27.5M in 2029 and 2030.',
+    watch: 'The "up to $75.75M" figure includes incentives he has to earn. The base value is $67.5M.',
+    table: { title: 'Cap hit by year', cols: ['Year', 'Base salary', 'Cap hit'], rows: [['2026', '$1.15M', '$8.68M'], ['2027', '$1.26M', '$6.27M'], ['2028', '$10.25M', '$15.51M'], ['2029', '$22.25M', '$27.51M'], ['2030', '$21.25M', '$27.51M']], note: 'Source: PlayerProfiler and Detroit Football Network.' } },
+  { league: 'NFL', pos: 'TE', name: 'Tucker Kraft', team: 'Green Bay Packers', head: '$75M', sub: '4 years, up to $92M with incentives', scale: 75,
+    bar: [['locked', 26.5, 'Signing bonus, paid now', '$26.5M'], ['open', 48.5, 'Rest of the deal', '$48.5M']],
+    facts: [['New money a year', '$18.75M'], ['Signing bonus', '$26.5M'], ['Rank among TEs', '3rd'], ['Signed', 'Sep 12, 2026']],
+    plain: 'Green Bay locked him up a day before the opener. At $18.75M a year he trails only George Kittle and Trey McBride among tight ends. The bonus is spread over the deal, so it counts about $5.6M a season.',
+    watch: 'Reports did not give a total guarantee, so the bar shows only the bonus as locked.' }
+];
+DEALS.push(
+  { league: 'NBA', pos: 'C', name: 'Jalen Duren', team: 'Detroit Pistons', head: '$200M', sub: '5 years, fully guaranteed', scale: 200,
+    bar: [['locked', 200, 'Fully guaranteed', '$200M']],
+    facts: [['Average a year', '$40M'], ['Reported ask', '$287M max'], ['Detroit\'s offer', '$87M below the ask'], ['Alternative', '$9.6M qualifying offer']],
+    plain: 'Duren was a restricted free agent and signed shortly before a deadline that would have left him with a one-year, $9.6M qualifying offer. At $40M a year the deal takes up roughly a quarter of this season\'s $165M cap.',
+    watch: 'He reportedly wanted the five-year max, about $57M a year. Detroit held at $200M.' },
+  { league: 'NBA', pos: 'G', name: 'Payton Pritchard', team: 'Boston Celtics', head: '$44.2M', sub: '2 years starting 2028-29, plus a mutual option', scale: 44.2,
+    bar: [['locked', 44.2, 'Fully guaranteed (as reported)', '$44.2M']],
+    facts: [['2028-29 salary', 'About $21.2M'], ['2029-30 mutual option', 'Nearly $23M'], ['Current deal, this season', '$7.8M'], ['Current deal, next season', '$8.3M']],
+    plain: 'Boston extended him early. His current four-year, $30M deal runs through 2027-28, so the new money starts in 2028-29. NBA rules cap the first-year raise on an extension, and the Celtics paid the most they could.',
+    watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
+);
+const LEARN_NFL = [
+  ['Salary cap', 'The most a team can spend on players in a season. For 2026 it is $301.2M for every team, and it is a hard cap: no team can go over it.'],
+  ['Cap hit', 'What one player counts against the cap this year: his salary, a slice of his signing bonus and some other bonuses. It is often very different from the cash he is paid.'],
+  ['Signing bonus', 'Paid up front in cash, but split evenly over the contract for cap purposes, up to five seasons. A $20M bonus on a five-year deal counts $4M a year.'],
+  ['Dead money', 'Cap space taken up by players no longer on the team. It is mostly bonus money that had not been counted yet when he was cut or traded.'],
+  ['Before or after June 1', 'Cut a player before June 1 and all his leftover bonus counts this season. After June 1, the hit splits between this season and next.'],
+  ['Guarantees', 'Most NFL money is not fully guaranteed. Some is locked at signing, and some only becomes guaranteed on a later date if he is still on the roster. Headlines usually add every kind together.'],
+  ['Restructure', 'The team turns salary into a signing bonus. The player gets the same money, but the cap hit drops now because the bonus is spread out. The cost moves to later years.'],
+  ['Void years', 'Fake years added to the end of a deal so a bonus can be spread thinner. When the deal voids, whatever has not been counted lands as dead money.'],
+  ['Franchise tag', 'A one-year deal a team can use to keep a player about to hit free agency. The price is set by what the top players at his position earn.'],
+  ['Cap carryover', 'Cap room a team does not use can roll into next season. That is why some teams have more than $301.2M to spend.'],
+  ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
+  ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
+];
+const LEARN_NBA = [
+  ['Soft cap', 'NBA teams can go over the cap to re-sign their own players, use exceptions and take back salary in trades.'],
+  ['Luxury tax', 'Teams over the tax line pay a penalty on every dollar over it, and the rate climbs the further over they go. In 2026-27 the line is $200.428M.'],
+  ['The aprons', 'Two more lines sit above the tax. Above the first ($209.015M) a team loses some ways to add players; above the second ($221.686M) the limits get tighter.'],
+  ['Guaranteed pay', 'NBA contracts are usually fully guaranteed. A waived player still gets paid and stays on the books.'],
+  ['Bird rights', 'A team can go over the cap to re-sign its own player. It is why a team with no room can still keep its star.']
+];
+
+/* ===== state ===== */
+let D = null, TEAMS = [], TB = {}, PL = [], MOVES = [], DEADLINE = '2026-11-10';
+let favTeam = store.get('fav', null);
+const st = {
+  lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tSort: 'space', newsKind: 'All', mktPos: 'QB',
+  c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
+  roster: { sort: 'cap', dir: -1 }, tool: 'cut', cut: null, cutWhen: 'post',
+  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null]
+};
+
+/* ===== data ===== */
+function prepare(d, mv) {
+  D = d;
+  TEAMS = d.teams.map(t => Object.assign({}, t, { active: t.off + t.defn + t.st }));
+  TEAMS.forEach(t => { t.eff = t.active + t.dead + t.space; TB[t.id] = t; });
+  PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8], voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], group: POSGROUP[r[2]] || 'ST' }));
+  PL.forEach(p => { if (p.total > 0 && p.gtd > p.total) p.gtd = p.total; if (p.fg > p.gtd) p.fg = p.gtd; p.gtdp = p.total > 0 ? p.gtd / p.total : 0; p.yrs = p.apy > 0 ? Math.max(1, Math.round(p.total / p.apy)) : 1; p.key = (p.name + ' ' + p.team + ' ' + TB[p.team].name + ' ' + TB[p.team].city + ' ' + p.pos).toLowerCase(); });
+  const byPos = {};
+  PL.forEach(p => (byPos[p.pos] = byPos[p.pos] || []).push(p.apy));
+  Object.values(byPos).forEach(a => a.sort((x, y) => y - x));
+  PL.forEach(p => { p.rank = byPos[p.pos].filter(v => v > p.apy).length + 1; p.posCount = byPos[p.pos].length; p.posTop = byPos[p.pos][0]; });
+  MOVES = (mv && mv.moves) || [];
+  if (mv && mv.deadline) DEADLINE = mv.deadline;
+  const rk = k => [...TEAMS].sort((a, b) => b[k] - a[k]).forEach((t, n) => (t['r_' + k] = n + 1));
+  ['space', 'dead', 'active'].forEach(rk);
+  // group spend per team
+  TEAMS.forEach(t => { t.g = {}; GROUP_ORDER.forEach(g => (t.g[g] = 0)); });
+  PL.forEach(p => { if (p.cap) TB[p.team].g[p.group] += p.cap; });
+}
+const groupAvg = g => TEAMS.reduce((s, t) => s + t.g[g], 0) / TEAMS.length;
+
+/* ===== tooltip ===== */
+const tip = $('#tip');
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const x = (e.clientX ?? 0), y = (e.clientY ?? 0), w = tip.offsetWidth, h = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x + 14)) + 'px';
+  tip.style.top = Math.max(8, y - h - 12 < 60 ? y + 18 : y - h - 12) + 'px';
+}
+const hideTip = () => (tip.hidden = true);
+document.addEventListener('scroll', hideTip, { passive: true });
+
+/* ===== story ===== */
+function story(p) {
+  const t = TB[p.team], out = [];
+  out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year. It runs through the ${p.end} season.`);
+  if (p.total > 0 && p.gtd > 0) out.push(`${mon(p.gtd)} of it (${pct(p.gtdp)}) is guaranteed${p.fg > 0 && p.fg < p.gtd ? `, and ${mon(p.fg)} of that was locked in the day he signed` : ''}.`);
+  else out.push('None of the money is guaranteed, so the team could release him and owe nothing more.');
+  if (p.total > 1e6) out.push(`By yearly pay he is the ${p.rank === 1 ? 'highest-paid' : ord(p.rank) + ' highest-paid'} ${POS_WORD[p.pos] || 'player at his spot'} in the league.`);
+  if (p.cap != null) {
+    out.push(`He counts ${mon(p.cap)} against the cap this season, ${pct(p.cap / CAP, 1)} of the $301.2M limit.`);
+    if (p.dpost != null) {
+      const freed = p.cap - p.dpost;
+      out.push(freed > 1e4 ? `Releasing him now would leave ${mon(p.dpost)} of dead money this season and free ${mon(freed)} of room.` : 'Releasing him would free no room this season, because the money already owed matches his cap hit.');
+    }
+  }
+  if (p.voidy) out.push('His deal has void years at the end, so some of his bonus will land as dead money when it voids.');
+  return out;
+}
+
+/* ===== search ===== */
+function searchAll(q, withTeams = true) {
+  q = q.trim().toLowerCase(); if (q.length < 2) return [];
+  const teams = withTeams ? TEAMS.filter(t => (t.city + ' ' + t.name + ' ' + t.id).toLowerCase().includes(q)).slice(0, 3).map(t => ({ type: 'team', t })) : [];
+  const grp = Object.entries(POS_WORD).find(([k, w]) => w === q || w.startsWith(q) && q.length > 3 || k.toLowerCase() === q);
+  let players = PL.filter(p => p.key.includes(q));
+  if (grp && players.length < 3) players = PL.filter(p => p.pos === grp[0]);
+  players.sort((a, b) => b.apy - a.apy);
+  return teams.concat(players.slice(0, 8 - teams.length).map(p => ({ type: 'p', p })));
+}
+function bindSearch(input, box, onPick, withTeams = true) {
+  let items = [], on = -1;
+  const draw = () => {
+    items = searchAll(input.value, withTeams); on = -1;
+    if (!items.length) { box.hidden = true; return; }
+    box.innerHTML = items.map((it, n) => it.type === 'team'
+      ? `<button type="button" data-n="${n}">${badge(it.t.id)}<span><b>${esc(it.t.city)} ${esc(it.t.name)}</b><br><small>Team cap page</small></span><small class="num">${mon(it.t.space)} room</small></button>`
+      : `<button type="button" data-n="${n}">${badge(it.p.team)}<span><b>${esc(it.p.name)}</b><br><small>${esc(posTag(it.p.pos))} · ${esc(TB[it.p.team].name)}</small></span><small class="num">${mon(it.p.apy)}/yr</small></button>`).join('');
+    box.hidden = false;
+  };
+  input.addEventListener('input', draw);
+  input.addEventListener('focus', () => input.value && draw());
+  input.addEventListener('keydown', e => {
+    if (box.hidden) return;
+    const bs = $$('button', box);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); on = (on + (e.key === 'ArrowDown' ? 1 : bs.length - 1)) % bs.length; bs.forEach((b, n) => b.classList.toggle('on', n === on)); }
+    if (e.key === 'Enter') { e.preventDefault(); const it = items[on < 0 ? 0 : on]; if (it) { box.hidden = true; onPick(it); } }
+    if (e.key === 'Escape') box.hidden = true;
+  });
+  box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; box.hidden = true; onPick(items[+b.dataset.n]); });
+  document.addEventListener('click', e => { if (!box.contains(e.target) && e.target !== input) box.hidden = true; });
+}
+
+/* ===== routing ===== */
+const VIEWS = ['home', 'news', 'teams', 'team', 'contracts', 'tools', 'learn'];
+let curTeam = null;
+function route() {
+  let h = location.hash.slice(1) || 'home';
+  let v = h;
+  if (h.startsWith('team-')) { const id = h.slice(5).toUpperCase(); if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
+  if (h === 'deals') v = 'contracts';
+  if (['cut', 'trade', 'compare', 'decode', 'decoder'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h; v = 'tools'; }
+  if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
+  if (h === 'nba') v = 'learn';
+  if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
+  if (!VIEWS.includes(v)) v = 'home';
+  VIEWS.forEach(x => ($('#v-' + x).hidden = x !== v));
+  const navv = v === 'team' ? 'teams' : v;
+  $$('.nav a').forEach(a => a.dataset.nav === navv ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  if (D) {
+    if (v === 'team') renderTeam(curTeam);
+    if (v === 'tools') showTool(st.tool);
+  }
+  hideTip();
+}
+window.addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
+const go = h => { if (location.hash === '#' + h) route(); else location.hash = h; };
+
+/* ===== home ===== */
+function renderKPIs() {
+  const room = TEAMS.reduce((s, t) => s + t.space, 0);
+  const most = [...TEAMS].sort((a, b) => b.space - a.space)[0];
+  const dead = [...TEAMS].sort((a, b) => b.dead - a.dead)[0];
+  const top = [...PL].sort((a, b) => b.apy - a.apy)[0];
+  const deadAll = TEAMS.reduce((s, t) => s + t.dead, 0);
+  $('#kpis').innerHTML = `
+    <div class="kpi"><span class="k">League cap room</span><span class="v num">${mon(room, 0)}</span><span class="s">Unused space across all 32 teams</span></div>
+    <a class="kpi" href="#team-${most.id}"><span class="k">Most room</span><span class="v good num">${mon(most.space)}</span><span class="s">${esc(most.city)} ${esc(most.name)}</span></a>
+    <a class="kpi" href="#team-${dead.id}"><span class="k">Most dead money</span><span class="v bad num">${mon(dead.dead)}</span><span class="s">${esc(dead.city)} ${esc(dead.name)}, ${pct(dead.dead / CAP)} of the cap</span></a>
+    <button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Top yearly pay</span><span class="v num">${mon(top.apy)}</span><span class="s">${esc(top.name)}, ${esc(TB[top.team].name)}</span></button>
+    <div class="kpi"><span class="k">Dead money, league</span><span class="v num">${mon(deadAll, 0)}</span><span class="s">Owed to players no longer on the team</span></div>`;
+}
+function divChips(el, cur, cb) {
+  el.innerHTML = DIVS.map(d => `<button type="button" class="chip" data-d="${d}" aria-pressed="${d === cur}">${d === 'All' ? 'All teams' : d}</button>`).join('');
+  el.onclick = e => { const b = e.target.closest('.chip'); if (b) cb(b.dataset.d); };
+}
+const METRIC = {
+  space: { title: 'Who has cap room', color: 'var(--good)', note: 'Room left under the 2026 cap after carryover. Tap a team for its full cap page.' },
+  dead: { title: 'Who is paying players who left', color: 'var(--c-dead)', note: 'Dead money: cap space still used by players a team cut or traded.' },
+  active: { title: 'Who spends most on its roster', color: 'var(--brand)', note: 'Cap hits of players on the active roster, practice squad and injured list.' }
+};
+function renderLeaderboard() {
+  const m = st.lbMetric, cfg = METRIC[m];
+  $('#lb-title').textContent = cfg.title;
+  $$('#lb-metric button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+  divChips($('#lb-div'), st.lbDiv, d => { st.lbDiv = d; renderLeaderboard(); });
+  const all = [...TEAMS].sort((a, b) => b[m] - a[m]);
+  const list = all.filter(t => st.lbDiv === 'All' || t.div === st.lbDiv);
+  const max = Math.max(...all.map(t => t[m]));
+  const step = m === 'active' ? 1e8 : m === 'dead' ? 5e7 : 1e7;
+  const axMax = Math.ceil(max / step) * step;
+  $('#lb').innerHTML = list.map(t => `<button type="button" class="hb${t.id === favTeam ? ' me' : ''}" data-team="${t.id}" data-tip="${esc(t.city + ' ' + t.name)}|${m}">
+      <span class="rk">${all.indexOf(t) + 1}</span>${badge(t.id)}
+      <span class="track"><i class="fill" style="width:${(t[m] / axMax * 100).toFixed(2)}%;background:${cfg.color}"></i></span>
+      <span class="val">${mon(t[m])}</span></button>`).join('') +
+    `<div class="axis" aria-hidden="true"><span></span><span></span><span class="ticks"><span>$0</span><span>${mon(axMax / 2, 0)}</span><span>${mon(axMax, 0)}</span></span><span></span></div>`;
+  $('#lb-note').textContent = cfg.note + (favTeam ? ` Your team, the ${TB[favTeam].name}, is highlighted.` : '');
+}
+function teamTip(t) {
+  return `<b>${esc(t.city)} ${esc(t.name)}</b>Room ${mon(t.space)} (${ord(t.r_space)})<br>Dead ${mon(t.dead)} (${ord(t.r_dead)})<br>Spent ${mon(t.active)}`;
+}
+function renderLeagueGroups() {
+  const tot = {}; GROUP_ORDER.forEach(g => (tot[g] = TEAMS.reduce((s, t) => s + t.g[g], 0)));
+  const sum = Object.values(tot).reduce((a, b) => a + b, 0), max = Math.max(...Object.values(tot));
+  $('#league-groups').innerHTML = GROUP_ORDER.map(g => `<button type="button" class="gb" data-group="${g}" data-tip="g|${g}">
+      <span>${GROUP_NAME[g]}</span>
+      <span class="track"><i class="fill" style="width:${(tot[g] / max * 100).toFixed(1)}%;background:${SIDE_VAR[GROUP_SIDE[g]]}"></i></span>
+      <span class="val">${mon(tot[g], 0)}<span class="diff" style="color:var(--muted)">${pct(tot[g] / sum)} of all</span></span></button>`).join('');
+}
+function moveHTML(m) {
+  const teams = (m.teams || []).filter(id => TB[id]).map(id => `<button type="button" class="tlink" data-team="${id}">${badge(id)}${esc(TB[id].name)}</button>`).join('');
+  return `<article class="mv"><span class="when">${esc(m.date)}</span><div class="body">
+    <div class="meta"><span class="kind ${esc(m.kind)}">${esc(m.kind)}</span>${teams}</div>
+    <h3>${esc(m.head)}</h3><p>${esc(m.plain)}</p>
+    ${m.url ? `<div class="meta"><a href="${esc(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a></div>` : ''}</div></article>`;
+}
+function renderHomeFeed() { $('#home-feed').innerHTML = MOVES.slice(0, 3).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>'; }
+function renderDeadline() {
+  const end = new Date(DEADLINE + 'T16:00:00-05:00'), now = new Date();
+  const days = Math.ceil((end - now) / 864e5);
+  const dstr = end.toLocaleDateString([], { month: 'long', day: 'numeric' });
+  $('#deadline-tile').innerHTML = days > 0
+    ? `<span class="eyebrow" style="color:#C9DAF2">Trade deadline · ${dstr}</span><span class="big num">${days} day${days === 1 ? '' : 's'}</span><span>Until teams have to stop dealing. Every trade lands in the news feed with what it does to both teams' caps.</span>`
+    : `<span class="eyebrow" style="color:#C9DAF2">Trade deadline</span><b>The ${dstr} deadline has passed</b><span>Teams can sign free agents but cannot trade until the new league year.</span>`;
+}
+
+/* ===== news ===== */
+function renderNews() {
+  const kinds = ['All', ...new Set(MOVES.map(m => m.kind))];
+  $('#news-kinds').innerHTML = kinds.map(k => `<button type="button" class="chip" data-k="${k}" aria-pressed="${k === st.newsKind}">${k === 'All' ? 'All moves' : k + 's'}</button>`).join('');
+  const list = MOVES.filter(m => st.newsKind === 'All' || m.kind === st.newsKind);
+  $('#news-feed').innerHTML = list.map(moveHTML).join('') || '<p class="empty">No moves of this type yet.</p>';
+}
+
+/* ===== teams ===== */
+function capStack(t, sm) {
+  const segs = [['off', t.off, 'var(--c-off)', 'Offense'], ['def', t.defn, 'var(--c-def)', 'Defense'], ['st', t.st, 'var(--c-st)', 'Special teams'], ['dead', t.dead, 'var(--c-dead)', 'Dead money'], ['space', Math.max(0, t.space), null, 'Cap room']];
+  return `<div class="stack${sm ? ' sm' : ''}" role="img" aria-label="${segs.map(s => s[3] + ' ' + mon(s[1])).join(', ')}">${segs.map(s => `<i class="${s[0] === 'space' ? 'hatch' : ''}" style="width:${(s[1] / t.eff * 100).toFixed(2)}%;${s[2] ? 'background:' + s[2] : ''}" data-tip="seg|${s[3]}|${s[1]}|${t.eff}"></i>`).join('')}</div>`;
+}
+function renderTeamGrid() {
+  divChips($('#t-div'), st.tDiv, d => { st.tDiv = d; renderTeamGrid(); });
+  const s = st.tSort;
+  const list = TEAMS.filter(t => st.tDiv === 'All' || t.div === st.tDiv).sort((a, b) => s === 'name' ? (a.city + a.name).localeCompare(b.city + b.name) : b[s] - a[s]);
+  $('#team-grid').innerHTML = list.map(t => `<a class="tc" href="#team-${t.id}">
+      <span class="hd">${badge(t.id)}<span><b>${esc(t.city)} ${esc(t.name)}</b><small>${esc(t.div)}${t.id === favTeam ? ' · your team' : ''}</small></span></span>
+      ${capStack(t, true)}
+      <span class="row"><span>Cap room</span><b class="good">${mon(t.space)}</b></span>
+      <span class="row"><span>Dead money</span><b class="${t.dead > 6e7 ? 'bad' : ''}">${mon(t.dead)}</b></span>
+      <span class="row"><span>Players signed</span><b>${t.roster}</b></span></a>`).join('');
+}
+function renderTeam(id) {
+  const t = TB[id]; if (!t) return;
+  const roster = PL.filter(p => p.team === id);
+  const r = st.roster;
+  const sorted = [...roster].sort((a, b) => { const x = a[r.sort] ?? -1, y = b[r.sort] ?? -1; return typeof x === 'string' ? x.localeCompare(y) * r.dir : (x - y) * r.dir; });
+  const top = [...roster].sort((a, b) => (b.cap || 0) - (a.cap || 0))[0];
+  // group comparison
+  const maxG = Math.max(...GROUP_ORDER.map(g => Math.max(t.g[g], groupAvg(g))));
+  const gHTML = GROUP_ORDER.map(g => {
+    const v = t.g[g], a = groupAvg(g), dif = v - a;
+    return `<button type="button" class="gb" data-group="${g}" data-team-filter="${id}" data-tip="tg|${g}|${v}|${a}">
+      <span>${GROUP_NAME[g]}</span>
+      <span class="track"><i class="fill" style="width:${(v / maxG * 100).toFixed(1)}%;background:${SIDE_VAR[GROUP_SIDE[g]]}"></i><i class="avg" style="left:${(a / maxG * 100).toFixed(1)}%"></i></span>
+      <span class="val">${mon(v)}<span class="diff ${dif > 0 ? 'up' : 'down'}">${dif > 0 ? '+' : '−'}${mon(Math.abs(dif))} vs avg</span></span></button>`;
+  }).join('');
+  // contract endings
+  const yrs = [2026, 2027, 2028, 2029, 2030, 2031];
+  const ends = yrs.map(y => { const ps = roster.filter(p => (y === 2031 ? p.end >= 2031 : p.end === y)); return { y, n: ps.length, cap: ps.reduce((s, p) => s + (p.cap || 0), 0), names: ps.sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 3).map(p => p.name) }; });
+  const maxE = Math.max(1, ...ends.map(e => e.cap));
+  const team_moves = MOVES.filter(m => (m.teams || []).includes(id));
+  const th = (k, l) => `<th class="${['name', 'pos'].includes(k) ? '' : 'r'}" data-k="${k}"${r.sort === k ? ` aria-sort="${r.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${l}</button></th>`;
+  $('#team-body').innerHTML = `
+  <div class="view">
+    <a href="#teams" class="note" style="text-decoration:none">← All teams</a>
+    <div class="sechead">
+      <div style="display:flex;gap:14px;align-items:center">${badge(id, true)}<div><span class="eyebrow">${esc(t.div)} · 2026 cap</span><h1 class="title" id="h-team">${esc(t.city)} ${esc(t.name)}</h1></div></div>
+      <button type="button" class="btn ${favTeam === id ? '' : 'ghost'}" id="fav-btn" aria-pressed="${favTeam === id}">${favTeam === id ? '★ Your team' : '☆ Make this my team'}</button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="k">Cap room</span><span class="v good num">${mon(t.space)}</span><span class="s">${ord(t.r_space)} most in the NFL</span></div>
+      <div class="kpi"><span class="k">Dead money</span><span class="v ${t.r_dead <= 8 ? 'bad' : ''} num">${mon(t.dead)}</span><span class="s">${ord(t.r_dead)} most · ${pct(t.dead / CAP)} of the cap</span></div>
+      <div class="kpi"><span class="k">Spent on roster</span><span class="v num">${mon(t.active)}</span><span class="s">${t.roster} players under contract</span></div>
+      ${top ? `<button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Biggest cap hit</span><span class="v num">${mon(top.cap)}</span><span class="s">${esc(top.name)}, ${esc(posTag(top.pos))}</span></button>` : ''}
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Total budget ${mon(t.eff)} with carryover</span><h2 class="sec">How the cap is split</h2></div></div>
+      ${capStack(t)}
+      <ul class="legend">
+        <li><i class="swatch" style="background:var(--c-off)"></i><span>Offense<b>${mon(t.off)}</b></span></li>
+        <li><i class="swatch" style="background:var(--c-def)"></i><span>Defense<b>${mon(t.defn)}</b></span></li>
+        <li><i class="swatch" style="background:var(--c-st)"></i><span>Special teams<b>${mon(t.st)}</b></span></li>
+        <li><i class="swatch" style="background:var(--c-dead)"></i><span>Dead money<b>${mon(t.dead)}</b></span></li>
+        <li><i class="swatch hatch"></i><span>Cap room<b>${mon(t.space)}</b></span></li>
+      </ul>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">2026 cap hits by position</span><h2 class="sec">Spending vs the league</h2></div>
+        <div class="gbars">${gHTML}</div>
+        <p class="note">The black tick is the league average for that position. Red means the team spends more than average; green means less. Tap a row to see those players.</p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Cap hits by final contract year</span><h2 class="sec">When deals run out</h2></div>
+        <div class="cols">${ends.map(e => `<div class="col" data-tip="end|${e.y}|${e.n}|${e.cap}|${esc(e.names.join(', '))}"><span class="amt">${mon(e.cap, 0)}</span><i class="bx" style="height:${(e.cap / maxE * 100).toFixed(1)}%"></i><span class="lab">${e.y === 2031 ? '2031+' : e.y}</span></div>`).join('')}</div>
+        <p class="note">Players whose deals end in 2026 can become free agents in March 2027. A tall bar means a lot of the roster needs a new contract that year.</p>
+        ${t.topDead && t.topDead.length ? `<div><span class="eyebrow">Biggest dead money</span><div class="rows">${t.topDead.map(([n, v]) => `<div><span>${esc(n)}</span><b>${mon(v)}</b></div>`).join('')}</div></div>` : ''}
+      </div>
+    </div>
+    ${team_moves.length ? `<div class="panel"><h2 class="sec">${esc(t.name)} moves</h2><div class="feed">${team_moves.map(moveHTML).join('')}</div></div>` : ''}
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
+      <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Ends')}</tr></thead>
+      <tbody>${sorted.map(p => `<tr data-p="${p.i}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
+    </div>
+  </div>`;
+  $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
+  $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos'].includes(k) ? 1 : -1; } renderTeam(id); });
+  document.title = `${t.name} cap · Plain Cap`;
+}
+function gtdBar(p) {
+  if (!p.total) return '';
+  return `<span class="gbar" aria-hidden="true"><i style="width:${(p.fg / p.total * 100).toFixed(1)}%;background:var(--gtd)"></i><i style="width:${((p.gtd - p.fg) / p.total * 100).toFixed(1)}%;background:var(--gtd2)"></i></span>`;
+}
+
+/* ===== contracts ===== */
+function renderDeals() {
+  $('#deals').innerHTML = dealCards(DEALS.filter(c => c.league !== 'NBA'));
+  $('#nba-deals').innerHTML = dealCards(DEALS.filter(c => c.league === 'NBA'));
+}
+function dealCards(list) {
+  return list.map(c => {
+    const scale = +c.scale || 1;
+    const col = { locked: 'var(--gtd)', vest: 'var(--gtd2)', open: 'var(--surface-2)' };
+    const pl = c.league === 'NBA' ? null : PL.find(p => p.name === c.name);
+    return `<article class="deal">
+      <div class="top"><div><span class="pos">${esc(c.pos)}</span><h3 style="margin-top:6px">${esc(c.name)}</h3><span class="note">${esc(c.team)}</span></div>
+      <div class="amt num">${esc(c.head)}<small>${esc(c.sub)}</small></div></div>
+      <div class="dbar" role="img" aria-label="${esc(c.bar.map(b => b[2] + ' ' + b[3]).join(', '))}">${c.bar.map(b => `<i class="${b[0] === 'open' ? 'hatch' : ''}" style="width:${(b[1] / scale * 100).toFixed(1)}%;${b[0] !== 'open' ? 'background:' + col[b[0]] : ''}" data-tip="seg|${esc(b[2])}|${b[1] * 1e6}|${scale * 1e6}"></i>`).join('')}</div>
+      <ul class="legend" style="grid-template-columns:1fr">${c.bar.map(b => `<li><i class="swatch ${b[0] === 'open' ? 'hatch' : ''}" style="${b[0] !== 'open' ? 'background:' + col[b[0]] : ''}"></i><span style="flex:1">${esc(b[2])}</span><b>${esc(b[3])}</b></li>`).join('')}</ul>
+      <dl class="facts">${c.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>
+      <p style="font-size:.92rem">${esc(c.plain)}</p>
+      <div class="watch"><b>Watch for</b>${esc(c.watch)}</div>
+      ${c.table ? `<details class="yearly"><summary>${esc(c.table.title)}</summary><div class="tw" style="margin-top:8px"><table class="t"><thead><tr>${c.table.cols.map((x, n) => `<th class="${n ? 'r' : ''}"><span>${esc(x)}</span></th>`).join('')}</tr></thead><tbody>${c.table.rows.map(rw => `<tr style="cursor:default">${rw.map((x, n) => `<td class="${n ? 'r' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="note">${esc(c.table.note)}</p></details>` : ''}
+      ${pl ? `<button type="button" class="btn ghost" data-p="${pl.i}">Open full contract</button>` : ''}
+    </article>`;
+  }).join('');
+}
+function renderMarket() {
+  const pos = st.mktPos;
+  const list = PL.filter(p => p.pos === pos).sort((a, b) => b.apy - a.apy);
+  const top = list.slice(0, 12), max = top[0] ? top[0].apy : 1;
+  $('#mkt-title').textContent = `Top ${POS_WORD[pos]} contracts`;
+  $('#mkt-bars').innerHTML = top.map((p, n) => `<button type="button" class="hb" data-p="${p.i}" data-tip="p|${p.i}">
+    <span class="rk">${n + 1}</span>${badge(p.team)}
+    <span style="display:grid;gap:3px;min-width:0"><span style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</span><span class="track"><i class="fill" style="width:${(p.apy / max * 100).toFixed(1)}%;background:var(--brand)"></i></span></span>
+    <span class="val">${mon(p.apy)}</span></button>`).join('');
+  drawScatter(list);
+}
+function drawScatter(list) {
+  const pts = list.filter(p => p.age && p.apy > 0);
+  if (!pts.length) { $('#scatter').innerHTML = ''; return; }
+  const W = 460, H = 300, L = 48, R = 12, T = 12, B = 34;
+  const ages = pts.map(p => p.age), a0 = Math.min(...ages) - 1, a1 = Math.max(...ages) + 1;
+  const maxY = Math.max(...pts.map(p => p.apy));
+  const stepY = maxY > 4e7 ? 1e7 : maxY > 1.5e7 ? 5e6 : maxY > 5e6 ? 2e6 : 1e6;
+  const y1 = Math.ceil(maxY / stepY) * stepY;
+  const sx = a => L + (a - a0) / (a1 - a0) * (W - L - R), sy = v => T + (1 - v / y1) * (H - T - B);
+  let g = '';
+  for (let v = 0; v <= y1 + 1; v += stepY) g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${sy(v)}" y2="${sy(v)}"></line><text x="${L - 6}" y="${sy(v) + 4}" text-anchor="end">${v === 0 ? '$0' : mon(v, 0)}</text>`;
+  const aStep = (a1 - a0) > 12 ? 4 : 2;
+  for (let a = Math.ceil(a0 / aStep) * aStep; a <= a1; a += aStep) g += `<text x="${sx(a)}" y="${H - B + 16}" text-anchor="middle">${a}</text>`;
+  g += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">Age</text>`;
+  const dots = pts.map(p => `<circle class="dot" cx="${sx(p.age + ((p.i % 7) - 3) * 0.05).toFixed(1)}" cy="${sy(p.apy).toFixed(1)}" r="${p.rank <= 5 ? 6 : 4.5}" fill="${p.team === favTeam ? 'var(--c-def)' : 'var(--brand)'}" fill-opacity="${p.rank <= 12 ? 0.95 : 0.45}" data-p="${p.i}" data-tip="p|${p.i}"></circle>`).join('');
+  $('#scatter').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Yearly pay against age for every ${POS_WORD[st.mktPos]} under contract">${g}${dots}</svg>`;
+  $('#scatter-note').textContent = `Every ${POS_WORD[st.mktPos]} under contract (${pts.length}), yearly pay against age. Bigger dots are the top five.${favTeam ? ` Orange dots play for the ${TB[favTeam].name}.` : ''} Tap a dot to open the contract.`;
+}
+function renderTable() {
+  const c = st.c, q = c.q.trim().toLowerCase();
+  let list = PL.filter(p => (c.team === 'all' || p.team === c.team) && (c.group === 'all' || p.group === c.group) && (!q || p.key.includes(q)));
+  list.sort((a, b) => ((a[c.sort] ?? -1) - (b[c.sort] ?? -1)) * c.dir);
+  $('#c-count').textContent = `${list.length.toLocaleString()} of ${PL.length.toLocaleString()} contracts`;
+  $$('#c-table th[data-k]').forEach(th => th.dataset.k === c.sort ? th.setAttribute('aria-sort', c.dir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
+  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="8" class="empty">No contracts match. Clear the name or pick another team.</td></tr>`;
+  $('#c-more').hidden = list.length <= c.limit;
+}
+function buildContractControls() {
+  $('#mkt-pos').innerHTML = POS_LIST.map(p => `<option value="${p}">${POS_WORD[p][0].toUpperCase() + POS_WORD[p].slice(1)}</option>`).join('');
+  $('#c-team').innerHTML = '<option value="all">All teams</option>' + [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(t => `<option value="${t.id}">${esc(t.city)} ${esc(t.name)}</option>`).join('');
+  $('#c-group').innerHTML = '<option value="all">All positions</option>' + GROUP_ORDER.map(g => `<option value="${g}">${GROUP_NAME[g]}</option>`).join('');
+  $('#mkt-pos').onchange = e => { st.mktPos = e.target.value; renderMarket(); };
+  $('#c-q').oninput = e => { st.c.q = e.target.value; st.c.limit = 50; renderTable(); };
+  $('#c-team').onchange = e => { st.c.team = e.target.value; st.c.limit = 50; renderTable(); };
+  $('#c-group').onchange = e => { st.c.group = e.target.value; st.c.limit = 50; renderTable(); };
+  $('#c-more').onclick = () => { st.c.limit += 50; renderTable(); };
+  $$('#c-table th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (st.c.sort === k) st.c.dir *= -1; else { st.c.sort = k; st.c.dir = k === 'age' || k === 'end' ? 1 : -1; } renderTable(); });
+}
+
+/* ===== player sheet ===== */
+const sheet = $('#sheet');
+function openPlayer(i) {
+  const p = PL[i]; if (!p) return; const t = TB[p.team];
+  const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
+  $('#sheet-body').innerHTML = `
+    <div class="sh-hd">${badge(p.team, true)}<div><span class="eyebrow">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · through ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><button class="x" type="button" aria-label="Close" id="sh-x">×</button></div>
+    <div class="bigrow">
+      <div><span class="k">Per year</span><div class="v">${mon(p.apy)}</div></div>
+      <div><span class="k">Total value</span><div class="v">${mon(p.total, 0)}</div></div>
+      <div><span class="k">2026 cap hit</span><div class="v">${mon(p.cap)}</div></div>
+    </div>
+    <div style="display:grid;gap:6px">
+      <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">How much is guaranteed</span><b class="num">${mon(p.gtd)} of ${mon(p.total)}</b></div>
+      <div class="dbar" role="img" aria-label="Locked at signing ${mon(p.fg)}, guaranteed later ${mon(p.gtd - p.fg)}, not guaranteed ${mon(p.total - p.gtd)}"><i style="width:${fgW.toFixed(1)}%;background:var(--gtd)"></i><i style="width:${ogW.toFixed(1)}%;background:var(--gtd2)"></i><i class="hatch" style="width:${(100 - fgW - ogW).toFixed(1)}%"></i></div>
+      <ul class="legend"><li><i class="swatch" style="background:var(--gtd)"></i><span>Locked at signing<b>${mon(p.fg)}</b></span></li><li><i class="swatch" style="background:var(--gtd2)"></i><span>Guaranteed later<b>${mon(p.gtd - p.fg)}</b></span></li><li><i class="swatch hatch"></i><span>Not guaranteed<b>${mon(p.total - p.gtd)}</b></span></li></ul>
+    </div>
+    <div style="display:grid;gap:6px">
+      <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Pay rank at ${esc(posTag(p.pos))}</span><b>${ord(p.rank)} of ${p.posCount}</b></div>
+      <div class="meter"><i style="width:${(p.apy / p.posTop * 100).toFixed(1)}%"></i></div>
+      <span class="note">${p.rank === 1 ? 'The top of the market at his position.' : `${pct(p.apy / p.posTop)} of the top ${POS_WORD[p.pos]} contract (${mon(p.posTop)} a year).`}</span>
+    </div>
+    <div class="story">${story(p).map(s => `<p>${esc(s)}</p>`).join('')}</div>
+    <div class="rows">
+      <div><span>Base salary 2026</span><b>${mon(p.base)}</b></div>
+      <div><span>Bonus counting in 2026</span><b>${mon(p.bonus)}</b></div>
+      <div><span>Dead money if cut before June 1</span><b>${mon(p.dpre)}</b></div>
+      <div><span>Dead money this season if cut after June 1</span><b>${mon(p.dpost)}</b></div>
+    </div>
+    <div class="controls">
+      ${p.cap != null && p.dpost != null ? `<button type="button" class="btn" data-act="cut">Try cutting him</button>` : ''}
+      <button type="button" class="btn ghost" data-act="cmp">Compare</button>
+      <a class="btn ghost" href="#team-${p.team}" data-act="team">${esc(t.name)} cap page</a>
+    </div>`;
+  if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
+  $('#sh-x').onclick = () => sheet.close();
+  $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
+    sheet.close();
+    if (b.dataset.act === 'cut') { st.cut = p.i; st.tool = 'cut'; go('tools'); renderCut(); }
+    if (b.dataset.act === 'cmp') { st.cmp[0] = p.i; st.tool = 'compare'; go('tools'); renderCompare(); }
+  });
+}
+sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); });
+
+/* ===== tools ===== */
+function showTool(t) {
+  st.tool = t;
+  $$('#toolnav button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
+  ['cut', 'trade', 'compare', 'decode'].forEach(x => ($('#tool-' + x).hidden = x !== t));
+  if (t === 'cut') renderCut(); if (t === 'trade') renderTrade(); if (t === 'compare') renderCompare(); if (t === 'decode') renderDecode();
+}
+const DC_PRESETS = [['Simmons', 149.97, 5, 100, 20], ['Olave', 124, 4, 90.01, 35], ['Gibbs', 67.5, 3, 51.5, 15], ['Kraft', 75, 4, 26.5, 26.5]];
+function renderDecode() {
+  const n = id => { const v = parseFloat($('#' + id).value); return Number.isFinite(v) && v > 0 ? v : 0; };
+  const total = n('dc-total'), years = Math.max(1, Math.round(n('dc-years') || 1)), guar = Math.min(n('dc-guar'), total || Infinity), bonus = n('dc-bonus');
+  const spread = Math.min(years, 5), aav = total / years, share = total ? guar / total : 0, bpy = bonus / spread;
+  $('#dc-out').innerHTML = `<div class="out"><span class="eyebrow">Real average a year</span><span class="v">${mon(aav * 1e6)}</span><span class="note">${pct(aav / 301.2, 1)} of this season's $301.2M cap.</span></div>
+    <div style="display:grid;gap:6px"><span class="eyebrow">Guaranteed share</span><div class="dbar"><i style="width:${(share * 100).toFixed(1)}%;background:var(--gtd)"></i><i class="hatch" style="width:${(100 - share * 100).toFixed(1)}%"></i></div><span class="note">${pct(share)} of the headline is guaranteed. The rest the team can walk away from.</span></div>
+    <div class="rows"><div><span>Guaranteed per year</span><b>${mon(guar / years * 1e6)}</b></div><div><span>Bonus counted each season</span><b>${bonus ? mon(bpy * 1e6) + ' for ' + spread + ' seasons' : 'None'}</b></div><div><span>Dead money if cut after one year</span><b>${bonus ? mon(bpy * (spread - 1) * 1e6) + ' or more' : '—'}</b></div></div>
+    <p class="note">NFL teams spread a signing bonus over the contract, up to five seasons. Any part not yet counted becomes dead money if the player leaves early, plus any guaranteed salary still owed.</p>`;
+}
+$('#dc-presets').innerHTML = DC_PRESETS.map((p, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="${i === 0}">${p[0]}</button>`).join('');
+$('#dc-presets').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; const p = DC_PRESETS[+b.dataset.i]; ['dc-total', 'dc-years', 'dc-guar', 'dc-bonus'].forEach((id, k) => ($('#' + id).value = p[k + 1])); $$('#dc-presets .chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderDecode(); };
+['dc-total', 'dc-years', 'dc-guar', 'dc-bonus'].forEach(id => $('#' + id).addEventListener('input', () => { $$('#dc-presets .chip').forEach(x => x.setAttribute('aria-pressed', 'false')); renderDecode(); }));
+function renderCut() {
+  const p = PL[st.cut]; const box = $('#cut-out');
+  $$('#cut-when button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.w === st.cutWhen)));
+  if (!p) { box.innerHTML = '<p class="empty">Pick a player to see what a release would do.</p>'; return; }
+  $('#cut-q').value = p.name;
+  const t = TB[p.team], post = st.cutWhen === 'post';
+  const deadNow = post ? p.dpost : p.dpre, deadNext = post ? Math.max(0, p.dpre - p.dpost) : 0, saved = p.cap - deadNow;
+  const max = Math.max(p.cap, deadNow, 1);
+  box.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center">${badge(p.team)}<div><b>${esc(p.name)}</b><div class="note">${esc(posTag(p.pos))} · ${esc(t.city)} ${esc(t.name)}</div></div></div>
+    <div class="out"><span class="eyebrow">Cap space freed this season</span><span class="v ${saved > 0 ? 'good' : 'bad'}">${saved >= 0 ? '' : '−'}${mon(Math.abs(saved))}</span>
+      <span class="note">${saved > 0 ? `The ${t.name} would go from ${mon(t.space)} to ${mon(t.space + saved)} of room.` : `Cutting him would cost the ${t.name} room this season. Teams rarely do that unless they need the roster spot.`}</span></div>
+    <div style="display:grid;gap:8px">
+      ${[['Keep him: cap hit', p.cap, 'var(--brand)'], ['Cut him: dead money this season', deadNow, 'var(--c-dead)'], ['Dead money pushed to 2027', deadNext, 'var(--warn)']].map(([l, v, c]) => `<div style="display:grid;gap:4px"><div style="display:flex;justify-content:space-between;font-size:.86rem"><span>${l}</span><b class="num">${mon(v)}</b></div><div class="meter"><i style="width:${(v / max * 100).toFixed(1)}%;background:${c}"></i></div></div>`).join('')}
+    </div>
+    <p class="note">Uses Over The Cap's 2026 figures. ${post ? 'A post-June 1 release counts this season’s bonus slice now and pushes the rest to 2027.' : 'A release before June 1 counts all remaining bonus money this season.'} Teams also owe any guaranteed salary, which this tool does not add.</p>`;
+}
+function tradeSide(side) {
+  const id = st.trade[side], t = TB[id], set = st.trade.out[side];
+  const roster = PL.filter(p => p.team === id && p.cap).sort((a, b) => b.cap - a.cap).slice(0, 40);
+  $('#tr-' + side).innerHTML = `
+    <label class="f" for="tr-${side}-sel">${side === 'a' ? 'Team one' : 'Team two'}<select id="tr-${side}-sel">${[...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(x => `<option value="${x.id}"${x.id === id ? ' selected' : ''}>${esc(x.city)} ${esc(x.name)}</option>`).join('')}</select></label>
+    <div style="display:flex;gap:10px;align-items:center">${badge(id)}<span class="note">${mon(t.space)} of room now · pick who they send away</span></div>
+    <div class="trade-list">${roster.map(p => `<label><input type="checkbox" data-side="${side}" value="${p.i}"${set.has(p.i) ? ' checked' : ''}><span class="pos">${esc(posTag(p.pos))}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</span><span class="num">${mon(p.cap)}</span></label>`).join('')}</div>`;
+  $(`#tr-${side}-sel`).onchange = e => { const v = e.target.value; const other = side === 'a' ? 'b' : 'a'; if (v === st.trade[other]) return (e.target.value = id); st.trade[side] = v; st.trade.out[side] = new Set(); renderTrade(); };
+}
+function renderTrade() {
+  tradeSide('a'); tradeSide('b');
+  const sal = p => Math.max(0, (p.cap || 0) - (p.bonus || 0));
+  const sum = (s, f) => [...s].reduce((a, i) => a + f(PL[i]), 0);
+  const A = TB[st.trade.a], B = TB[st.trade.b], oa = st.trade.out.a, ob = st.trade.out.b;
+  const aAfter = A.space + sum(oa, sal) - sum(ob, sal), bAfter = B.space + sum(ob, sal) - sum(oa, sal);
+  const deadA = sum(oa, p => Math.max(0, (p.dpre || 0) - (p.dpost || 0))), deadB = sum(ob, p => Math.max(0, (p.dpre || 0) - (p.dpost || 0)));
+  const names = s => [...s].map(i => PL[i].name).join(', ') || 'nobody yet';
+  const card = (T, after, gets, sends, deadLater) => `<div class="out">
+      <div style="display:flex;gap:10px;align-items:center">${badge(T.id)}<b>${esc(T.city)} ${esc(T.name)}</b></div>
+      <span class="eyebrow">Cap room after the trade</span><span class="v ${after >= 0 ? 'good' : 'bad'}">${after < 0 ? '−' : ''}${mon(Math.abs(after))}</span>
+      <div class="rows"><div><span>Room now</span><b>${mon(T.space)}</b></div><div><span>Gets</span><b style="white-space:normal">${esc(gets)}</b></div><div><span>Sends</span><b style="white-space:normal">${esc(sends)}</b></div><div><span>Dead money moved to 2027</span><b>${mon(deadLater)}</b></div></div>
+      ${after < 0 ? '<p style="color:var(--bad);font-size:.88rem;font-weight:600">Over the cap. This team would have to clear room before the trade could go through.</p>' : ''}</div>`;
+  $('#tr-out').innerHTML = `<h2 class="sec">What the trade does to each cap</h2>
+    <div class="vs">${card(A, aAfter, names(ob), names(oa), deadA)}${card(B, bAfter, names(oa), names(ob), deadB)}</div>
+    <p class="note">A rough check. The team getting a player takes on his salary; the team sending him keeps this season's bonus slice and the rest of his bonus becomes 2027 dead money. Real in-season trades only move the salary for the weeks left, so actual numbers will be smaller.</p>`;
+}
+document.addEventListener('change', e => { const c = e.target; if (c.matches('.trade-list input')) { const s = st.trade.out[c.dataset.side]; c.checked ? s.add(+c.value) : s.delete(+c.value); renderTrade(); } });
+function renderCompare() {
+  const [a, b] = st.cmp.map(i => (i == null ? null : PL[i]));
+  if (a) $('#cmp-a').value = a.name; if (b) $('#cmp-b').value = b.name;
+  if (!a || !b) { $('#cmp-out').innerHTML = `<p class="empty">${a ? 'Now pick a second player.' : 'Pick two players to line their contracts up.'}</p>`; return; }
+  const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Runs through', 'end', v => v]];
+  $('#cmp-out').innerHTML = `<div class="cmprow"><div class="l">${badge(a.team)}<b style="font-family:var(--body)">${esc(a.name)}</b></div><span></span><div class="rgt">${badge(b.team)}<b style="font-family:var(--body)">${esc(b.name)}</b></div></div>` +
+    rowsDef.map(([l, k, f]) => { const va = a[k] || 0, vb = b[k] || 0, m = Math.max(va, vb, 1e-9); const bar = k !== 'age' && k !== 'end';
+      return `<div class="cmprow"><div class="l"><b>${f(a[k])}</b>${bar ? `<i class="b" style="width:${(va / m * 60).toFixed(0)}%;background:var(--brand)"></i>` : ''}</div><span class="lab">${l}</span><div class="rgt">${bar ? `<i class="b" style="width:${(vb / m * 60).toFixed(0)}%;background:var(--c-def)"></i>` : ''}<b>${f(b[k])}</b></div></div>`; }).join('');
+}
+
+/* ===== learn ===== */
+const faq = (el, list) => (el.innerHTML = list.map(([t, b], i) => `<details${i < 2 ? ' open' : ''}><summary>${esc(t)}</summary><p>${esc(b)}</p></details>`).join(''));
+
+/* ===== global delegation: tooltips, opens ===== */
+document.addEventListener('click', e => {
+  const tb = e.target.closest('[data-team]'); if (tb && !tb.closest('#sheet')) { e.preventDefault(); go('team-' + tb.dataset.team); return; }
+  const pb = e.target.closest('[data-p]'); if (pb && !pb.closest('#sheet-body .controls')) { openPlayer(+pb.dataset.p); return; }
+  const gb = e.target.closest('[data-group]');
+  if (gb) { st.c.group = gb.dataset.group; st.c.team = gb.dataset.teamFilter || 'all'; st.c.q = ''; $('#c-q').value = ''; $('#c-team').value = st.c.team; $('#c-group').value = st.c.group; st.c.sort = 'apy'; st.c.dir = -1; renderTable(); go('contracts'); setTimeout(() => $('#c-table').scrollIntoView({ block: 'start' }), 30); return; }
+  const tl = e.target.closest('[data-tool]'); if (tl) { st.tool = tl.dataset.tool; }
+});
+function tipFor(el) {
+  const d = el.dataset.tip.split('|');
+  if (d[0] === 'p') { const p = PL[+d[1]]; return `<b>${esc(p.name)}</b>${esc(posTag(p.pos))} · ${esc(TB[p.team].name)} · age ${p.age || '—'}<br>${mon(p.apy)} a year · ${pct(p.gtdp)} guaranteed`; }
+  if (d[0] === 'seg') return `<b>${esc(d[1])}</b>${mon(+d[2])} · ${pct(+d[2] / +d[3])}`;
+  if (d[0] === 'g') { const g = d[1], ts = [...TEAMS].sort((a, b) => b.g[g] - a.g[g]); return `<b>${GROUP_NAME[g]}</b>Most: ${esc(ts[0].name)} ${mon(ts[0].g[g])}<br>Least: ${esc(ts[31].name)} ${mon(ts[31].g[g])}`; }
+  if (d[0] === 'tg') return `<b>${GROUP_NAME[d[1]]}</b>This team ${mon(+d[2])}<br>League average ${mon(+d[3])}`;
+  if (d[0] === 'end') return `<b>${d[1] === '2031' ? '2031 and later' : 'Deals ending ' + d[1]}</b>${d[2]} players · ${mon(+d[3])} in 2026 cap hits${d[4] ? '<br>' + esc(d[4]) : ''}`;
+  if (d[1] && TEAMS.length) { const t = TEAMS.find(x => x.city + ' ' + x.name === d[0]); if (t) return teamTip(t); }
+  return '';
+}
+document.addEventListener('pointerover', e => { const el = e.target.closest('[data-tip]'); if (el && e.pointerType !== 'touch') { const h = tipFor(el); h ? showTip(e, h) : hideTip(); } });
+document.addEventListener('pointermove', e => { if (!tip.hidden && e.pointerType !== 'touch') { const el = e.target.closest('[data-tip]'); el ? showTip(e, tip.innerHTML) : hideTip(); } });
+document.addEventListener('pointerout', e => { if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('[data-tip]')) hideTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) { const r = el.getBoundingClientRect(); const h = tipFor(el); if (h) showTip({ clientX: r.left + r.width / 2, clientY: r.top }, h); } });
+document.addEventListener('focusout', hideTip);
+
+/* ===== static wiring ===== */
+$('#lb-metric').onclick = e => { const b = e.target.closest('button'); if (b) { st.lbMetric = b.dataset.m; renderLeaderboard(); } };
+$('#t-sort').onchange = e => { st.tSort = e.target.value; renderTeamGrid(); };
+$('#news-kinds').onclick = e => { const b = e.target.closest('.chip'); if (b) { st.newsKind = b.dataset.k; renderNews(); } };
+$('#toolnav').onclick = e => { const b = e.target.closest('button'); if (b) showTool(b.dataset.t); };
+$('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { st.cutWhen = b.dataset.w; renderCut(); } };
+faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
+
+/* ===== boot ===== */
+function boot(d, mv) {
+  prepare(d, mv);
+  const dt = new Date(d.asOf + 'T12:00:00');
+  const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+  $('#stamp').textContent = 'Updated ' + ds;
+  $('#news-asof').textContent = `Contract news · updated ${ds}`;
+  $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
+  renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); renderNews(); renderTeamGrid();
+  buildContractControls(); renderDeals(); renderMarket(); renderTable();
+  bindSearch($('#q-home'), $('#r-home'), it => it.type === 'team' ? go('team-' + it.t.id) : openPlayer(it.p.i));
+  bindSearch($('#cut-q'), $('#cut-r'), it => { st.cut = it.p.i; renderCut(); }, false);
+  bindSearch($('#cmp-a'), $('#cmp-ar'), it => { st.cmp[0] = it.p.i; renderCompare(); }, false);
+  bindSearch($('#cmp-b'), $('#cmp-br'), it => { st.cmp[1] = it.p.i; renderCompare(); }, false);
+  if (st.cut == null) { const c = PL.filter(p => p.cap && p.dpost != null).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost))[0]; st.cut = c ? c.i : null; }
+  const pm = PL.find(p => p.name === 'Patrick Mahomes'), jb = PL.find(p => p.name === 'Josh Allen' && p.pos === 'QB');
+  st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
+  if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
+  route();
+}
+const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
+const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
+route();
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] }))])
+  .then(([d, mv]) => boot(d, mv))
+  .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
+if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
+</script>
