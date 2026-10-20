@@ -20,7 +20,7 @@ Note: ESPN's images are owned by ESPN, the NFL and its clubs. Check you may use
 them on your site before publishing; Plain Cap hot-links nothing unless this
 file exists.
 """
-import argparse, difflib, json, re, sys, unicodedata, urllib.request
+import argparse, csv, difflib, json, re, sys, unicodedata, urllib.request
 from pathlib import Path
 
 BASE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
@@ -29,6 +29,9 @@ OUT = ROOT / "data" / "espn"
 ASSETS = ROOT / "data" / "espn_assets.json"
 # ESPN abbreviation -> Plain Cap team id (only where they differ)
 ID_FIX = {"WSH": "WAS", "JAC": "JAX"}
+
+
+ROWS = []
 
 
 def get(url, binary=False):
@@ -100,6 +103,8 @@ def run_team(t, assets):
         "\n".join(f"{p['name']} | {p['headshot']}" for p in players) + "\n", encoding="utf-8")
     assets["teams"][pc_id] = {"logo": logo, "name": t["displayName"]}
     for p in players:
+        ROWS.append([pc_id, t["displayName"], logo, p["name"], p["pos"], p["headshot"]])
+    for p in players:
         assets["players"][f"{pc_id}|{norm(p['name'])}"] = p["headshot"]
     print(f"{t['displayName']}: logo saved, {len(players)} players -> {folder.relative_to(ROOT)}/roster.txt")
 
@@ -107,6 +112,7 @@ def run_team(t, assets):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("team", nargs="*", help="team name, city or abbreviation")
+    ap.add_argument("--csv", action="store_true", help="also write data/plaincap_espn_assets.csv")
     ap.add_argument("--all", action="store_true", help="fetch all 32 teams")
     args = ap.parse_args()
 
@@ -125,6 +131,11 @@ def main():
             run_team(t, assets)
         except Exception as e:  # keep going on --all
             print(f"{t['displayName']}: failed ({e})", file=sys.stderr)
+    if args.csv:
+        with open(ROOT / "data" / "plaincap_espn_assets.csv", "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(["team_id", "team_name", "logo_url", "player", "position", "headshot_url"])
+            w.writerows(ROWS)
     ASSETS.write_text(json.dumps(assets, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote {ASSETS.relative_to(ROOT)} ({len(assets['teams'])} teams, {len(assets['players'])} players)")
 

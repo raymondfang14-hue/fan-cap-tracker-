@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Plain Cap: ESPN CSV builder</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:560px;margin:0 auto;padding:20px 16px;color:#111}button{font:600 1rem system-ui;padding:14px 18px;border:0;border-radius:10px;background:#0b5fff;color:#fff;width:100%;margin:8px 0}button:disabled{opacity:.5}#log{font:13px/1.4 ui-monospace,monospace;background:#f3f3f3;border-radius:8px;padding:10px;white-space:pre-wrap;max-height:260px;overflow:auto}</style></head><body>
+<h1>ESPN CSV builder</h1>
+<p>Runs in your browser: reads ESPN's public team and roster lists and gives you a CSV (team, logo URL, player, position, headshot URL).</p>
+<button id="go">Build CSV for all 32 teams</button>
+<button id="dl" disabled>Download CSV</button>
+<button id="dj" disabled style="background:#444">Download espn_assets.json (for the site)</button>
+<div id="log">Ready.</div>
+<script>
+const B='https://site.api.espn.com/apis/site/v2/sports/football/nfl',FIX={WSH:'WAS',JAC:'JAX'},$=s=>document.querySelector(s);
+const log=m=>{const l=$('#log');l.textContent+='\n'+m;l.scrollTop=l.scrollHeight};
+const norm=n=>n.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b/g,'').replace(/[^a-z]/g,'');
+const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+let csv='',json='';
+function save(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+$('#go').onclick=async()=>{
+  $('#go').disabled=true;$('#log').textContent='Loading team list...';
+  try{
+    const tr=await fetch(B+'/teams');if(!tr.ok)throw new Error('teams '+tr.status);
+    const teams=(await tr.json()).sports[0].leagues[0].teams.map(t=>t.team);
+    const rows=[['team_id','team_name','logo_url','player','position','headshot_url']],assets={teams:{},players:{}};
+    for(const t of teams){
+      const id=FIX[t.abbreviation]||t.abbreviation,logo=((t.logos||[]).find(l=>(l.rel||[]).includes('default'))||(t.logos||[])[0]||{}).href||`https://a.espncdn.com/i/teamlogos/nfl/500/${t.abbreviation.toLowerCase()}.png`;
+      assets.teams[id]={logo,name:t.displayName};
+      try{
+        const r=await fetch(`${B}/teams/${t.id}/roster`);if(!r.ok)throw new Error(r.status);
+        let n=0;for(const g of (await r.json()).athletes||[])for(const a of g.items||[]){
+          const name=a.fullName||a.displayName;if(!name)continue;
+          const hs=(a.headshot&&a.headshot.href)||`https://a.espncdn.com/i/headshots/nfl/players/full/${a.id}.png`;
+          rows.push([id,t.displayName,logo,name,(a.position||{}).abbreviation||'',hs]);assets.players[id+'|'+norm(name)]=hs;n++}
+        log(`${t.displayName}: ${n} players`);
+      }catch(e){log(`${t.displayName}: failed (${e.message})`)}
+    }
+    csv=rows.map(r=>r.map(q).join(',')).join('\n')+'\n';json=JSON.stringify(assets);
+    log(`Done: ${rows.length-1} players.`);$('#dl').disabled=$('#dj').disabled=rows.length<2;
+  }catch(e){log('Could not reach ESPN: '+e.message+'. Try again on a different network or without a VPN or content blocker.')}
+  $('#go').disabled=false};
+$('#dl').onclick=()=>save('plaincap_espn_assets.csv',csv,'text/csv');
+$('#dj').onclick=()=>save('espn_assets.json',json,'application/json');
+</script></body></html>
