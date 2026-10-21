@@ -1834,7 +1834,7 @@ const ROLES = {
     ['Fill-in starter', 'u', p => (p.st.opg || 0) >= .6 && p.st.g < (p.st.tg || THRU) - 1],
     ['Every-snap starter', 'u', p => (p.st.osh || 0) >= .97 && (p.st.opg || 0) >= .6],
     ['Rotational starter', 'u', p => (p.st.opg || 0) >= .6 && (p.st.opg || 0) < .85],
-    ['Jumbo package', 'u', p => (p.st.opg || 0) > 0 && (p.st.opg || 0) < .2 && p.st.g >= 2], ['Reserve', 'u', () => true]]),
+    ['Jumbo package', 'u', p => (p.st.opg || 0) > 0 && (p.st.opg || 0) < .2 && p.st.g >= 2], ['Reserve', 'u', p => (p.st.opg || 0) < .6]], 'Starter'),
   EDGE: mkRoles([
     ['Three-down edge', 'e', Qd(p => pcv(p, 'prsr') >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6)],
     ['Every-down rusher', 'e', Qd(p => (p.st.dpg || 0) >= .7 && pcv(p, 'prsr') >= .5)],
