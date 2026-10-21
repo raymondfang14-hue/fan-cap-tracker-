@@ -694,6 +694,48 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .boards>div{display:grid;grid-template-columns:8.4rem minmax(0,1fr) 5.6rem;gap:10px;align-items:center;font-size:.84rem}
 .boards b{text-align:right;font-weight:600}
 #dr-otable td .pn small{white-space:nowrap}
+/* shareable links */
+.cplink{border:0;border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.85);color:#111;font:700 .66rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.cpbox{width:min(220px,60vw);padding:5px 8px;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:500 .7rem/1.2 var(--mono)}
+/* season stats */
+.hsls{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.hsl{display:grid;gap:2px;align-content:start;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.hsr{display:grid;grid-template-columns:1.2rem auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 2px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:4px}
+.hsr:hover:not([disabled]){background:var(--brand-soft)}
+.hsr[disabled]{cursor:default}
+.hsr .rk{font:600 .76rem/1 var(--mono);color:var(--muted)}
+.hsr .nm{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hsr b{font-weight:700}
+tr.hs-tot td{background:var(--surface-2);font-weight:600}
+/* contract value */
+.cvl{display:grid;gap:2px}
+.cvr{display:grid;grid-template-columns:1.6rem auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:6px;width:100%}
+.cvr:hover{background:var(--brand-soft)}
+.cvr .rk{font:600 .78rem/1 var(--mono);color:var(--muted);text-align:right}
+.cvr .av{box-shadow:0 0 0 2px var(--c2);font-size:.8rem}
+.cvr .nm{display:grid;min-width:0}
+.cvr .nm b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cvr .nm small,.cvr .vv small{font-size:.74rem;color:var(--muted)}
+.cvr .vv{display:grid;justify-items:end;text-align:right}
+.cvr .vv b{font:700 .98rem/1.1 var(--mono)}
+.vl.warn{color:var(--warn)}
+/* offseason simulator */
+.osim{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.ossum{position:sticky;top:calc(env(safe-area-inset-top,0px) + 108px)}
+@media (max-width:960px){.osim{grid-template-columns:minmax(0,1fr)}.ossum{position:static;order:-1}}
+.osl{display:grid;gap:2px}
+.osr{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) auto;gap:10px;align-items:center;padding:7px 4px;border-top:1px solid var(--line)}
+.osl>.osr:first-child,.osl>div>.osr:first-of-type{border-top:0}
+.osr .nm{display:flex;gap:10px;align-items:center;min-width:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:0}
+.osr .nm .av{box-shadow:0 0 0 2px var(--c2);font-size:.8rem}
+.osr .nm>span{display:grid;min-width:0}
+.osr .nm b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.osr small{font-size:.74rem;color:var(--muted)}
+.osr .nums{display:grid;min-width:0}
+.osr .nums b{font:700 .92rem/1.2 var(--mono)}
+.seg.sm button{padding:6px 8px;font-size:.66rem}
+@media (max-width:640px){.osr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.osr .seg{grid-column:1/-1;justify-self:start;flex-wrap:wrap}}
+
 #dr-owners .gb{grid-template-columns:6.6rem minmax(0,1fr) 6.4rem}#dr-owners .gb .diff{white-space:normal}
 @media (max-width:560px){.dumb{grid-template-columns:minmax(0,7.2rem) minmax(0,1fr) 2rem}.boards>div{grid-template-columns:6.6rem minmax(0,1fr) 4.6rem}}
 </style>
@@ -809,6 +851,8 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <div>
     <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Front office tools</span><h2 class="sec">Play GM for a minute</h2></div></div>
     <div class="tiles">
+      <a class="tile" href="#offseason"><b>Offseason simulator</b><span>Cut, re-sign, tag and sign free agents, add the draft class, and watch your 2027 cap and team rating change.</span></a>
+      <a class="tile" href="#value"><b>Best and worst contracts</b><span>Who is paid far below or above what his play is worth on today's market, plus every team's surplus.</span></a>
       <a class="tile" href="#tools" data-tool="build"><b>Roster builder</b><span>Pick a starting lineup from any team and see how it rates against the league.</span></a>
       <a class="tile" href="#teams"><b>Team ratings</b><span>Power ratings, starting lineups, depth charts and team traits for all 32 teams.</span></a>
       <a class="tile" href="#tools" data-tool="cut"><b>Cut or keep</b><span>Pick a player and see the dead money and the cap space a release would free.</span></a>
@@ -947,7 +991,13 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 <section class="view" id="v-contracts" hidden aria-labelledby="h-contracts">
   <div class="sechead">
     <div><span class="eyebrow" id="c-count">Every contract</span><h1 class="title" id="h-contracts">Contracts</h1></div>
+    <div class="seg" id="c-tab" role="group" aria-label="Contracts view">
+      <button type="button" data-ct="all" aria-pressed="true">All contracts</button>
+      <button type="button" data-ct="value" aria-pressed="false">Best &amp; worst</button>
+      <button type="button" data-ct="rookies" aria-pressed="false">Rookie deals</button>
+    </div>
   </div>
+  <div id="c-all" style="display:grid;gap:22px;min-width:0">
 
   <div>
     <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Read for you</span><h2 class="sec">Recent deals, broken down</h2></div></div>
@@ -995,6 +1045,56 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     </div>
     <button class="btn ghost more" id="c-more" type="button">Show 50 more</button>
   </div>
+  </div>
+
+  <div id="c-value" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Which contracts are paying off. Every player with enough snaps gets a market value: what teams pay today for a player who ranks where he ranks on the field at his position. Surplus is that value minus his yearly pay. Green means a team is getting more than it pays for.</p>
+    <div class="kpis" id="cv-kpis"></div>
+    <div class="seg" id="cv-deal" role="group" aria-label="Which contracts"><button type="button" data-cvd="all" aria-pressed="true">All deals</button><button type="button" data-cvd="vet" aria-pressed="false">Veteran deals</button><button type="button" data-cvd="rookie" aria-pressed="false">Rookie deals</button></div>
+    <div class="grid2">
+      <div class="panel"><div><span class="eyebrow">Biggest surplus</span><h2 class="sec">Best value contracts</h2></div><div class="cvl" id="cv-best"></div></div>
+      <div class="panel"><div><span class="eyebrow">Paid well above how they play so far</span><h2 class="sec">Most overpaid</h2></div><div class="cvl" id="cv-worst"></div></div>
+    </div>
+    <div class="panel">
+      <div><span class="eyebrow">Surplus added up across every rated player</span><h2 class="sec">Best-run cap sheets</h2></div>
+      <div id="cv-tbox"></div>
+      <div class="tw"><table class="t" id="cv-teams"></table></div>
+      <p class="note">Bargains and overpaid count players $5M or more above or below their market value.</p>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="cv-count"></span><h2 class="sec">Every rated contract</h2></div></div>
+      <div class="chips posseg" id="cv-pos" role="group" aria-label="Position"></div>
+      <div id="cv-fbox"></div>
+      <div class="tw"><table class="t" id="cv-table"></table></div>
+      <button class="btn ghost more" id="cv-more" type="button">Show more</button>
+      <p class="note" id="cv-note"></p>
+    </div>
+  </div>
+
+  <div id="c-rookies" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Every player still on the contract he signed as a draft pick, from the 2022 to 2026 classes. First-round picks have a fifth-year team option, and any pick can sign an extension once he has played three seasons. Tap a player for his full page.</p>
+    <div class="kpis" id="rk-kpis"></div>
+    <div class="panel">
+      <div><span class="eyebrow">2024 first-round picks · teams decide by early May 2027</span><h2 class="sec">Fifth-year option decisions</h2></div>
+      <div id="rk-obox"></div>
+      <div class="tw"><table class="t" id="rk-opt"></table></div>
+      <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. Plain Cap's read compares that price with what his play is worth on today's market.</p>
+    </div>
+    <div class="panel">
+      <div><span class="eyebrow">Best play rating first</span><h2 class="sec">Extension watch</h2></div>
+      <div id="rk-ebox"></div>
+      <div class="tw"><table class="t" id="rk-ext"></table></div>
+      <p class="note" id="rk-ext-note"></p>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="rk-count"></span><h2 class="sec">All rookie contracts</h2></div></div>
+      <div class="chips" id="rk-cls" role="group" aria-label="Draft class"></div>
+      <div id="rk-tbox"></div>
+      <div class="tw"><table class="t" id="rk-table"></table></div>
+      <button class="btn ghost more" id="rk-more" type="button">Show more</button>
+      <p class="note">Draft data: nflverse draft picks, matched to contracts by name and team. A contract that runs one year longer than the rookie deal is treated as a picked-up fifth-year option; longer than that is an extension.</p>
+    </div>
+  </div>
 </section>
 
 <!-- TOOLS -->
@@ -1002,11 +1102,33 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <div class="sechead">
     <div><span class="eyebrow">Front office tools</span><h1 class="title" id="h-tools">Play general manager</h1></div>
     <div class="seg" id="toolnav" role="group" aria-label="Tool">
+      <button type="button" data-t="offseason" aria-pressed="false">Offseason</button>
       <button type="button" data-t="build" aria-pressed="false">Roster builder</button>
       <button type="button" data-t="cut" aria-pressed="true">Cut or keep</button>
       <button type="button" data-t="trade" aria-pressed="false">Trade</button>
       <button type="button" data-t="compare" aria-pressed="false">Compare</button>
       <button type="button" data-t="decode" aria-pressed="false">Decode</button>
+    </div>
+  </div>
+
+  <div id="tool-offseason" hidden>
+    <div class="osim">
+      <div style="display:grid;gap:16px;min-width:0;align-content:start">
+        <div class="panel">
+          <div class="sechead"><div><span class="eyebrow">Offseason simulator · 2027</span><h2 class="sec">Plan your team's offseason</h2></div><label class="f" for="os-team">Team<select id="os-team"></select></label></div>
+          <p class="note">Release or restructure contracts, keep or tag your free agents, sign other teams' free agents and add your draft class. The cap math and the team rating update as you go, and your moves are saved in this browser for each team.</p>
+        </div>
+        <div class="panel"><div><span class="eyebrow" id="os-fa-n"></span><h2 class="sec">Your free agents</h2></div><div class="osl" id="os-fa-body"></div></div>
+        <div class="panel"><div><span class="eyebrow">2027 contracts of $2M or more · biggest savings first</span><h2 class="sec">Releases and restructures</h2></div><div class="osl" id="os-cut-body"></div>
+          <p class="note">A release before June 1 counts all of his leftover signing bonus in 2027; after June 1 the rest moves to 2028. A restructure turns 2027 salary above the minimum into bonus spread over up to five years, lowering 2027 and adding to later years. Estimates use each contract's bonus proration and do not include guaranteed salary, which some deals have.</p></div>
+        <div class="panel"><div><span class="eyebrow">Players on other teams whose deals end after 2026</span><h2 class="sec">Sign free agents</h2></div>
+          <label class="f" for="os-q">Search<input id="os-q" type="search" placeholder="Player, team or position" autocomplete="off"></label>
+          <div class="chips posseg" id="os-pos" role="group" aria-label="Position"></div>
+          <div class="osl" id="os-sign-body"></div>
+          <p class="note">Costs are a first-year cap hit, about 85% of the Est. next deal yearly average, since new contracts usually start low.</p></div>
+        <div class="panel"><div><span class="eyebrow">Projected picks</span><h2 class="sec">Draft class</h2></div><div id="os-draft-body"></div></div>
+      </div>
+      <div class="panel ossum" id="os-sum"><div><span class="eyebrow">Your 2027 cap</span><h2 class="sec">Where you stand</h2></div><div id="os-sum-body" style="display:grid;gap:14px"></div></div>
     </div>
   </div>
 
@@ -1082,7 +1204,22 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 <section class="view" id="v-onfield" hidden aria-labelledby="h-onfield">
   <div class="sechead">
     <div><span class="eyebrow" id="of-eyebrow">2026 season stats</span><h1 class="title" id="h-onfield">Players on the field</h1></div>
+    <div class="seg" id="of-tab" role="group" aria-label="Players view"><button type="button" data-ot2="ratings" aria-pressed="true">Ratings</button><button type="button" data-ot2="stats" aria-pressed="false">Season stats</button></div>
   </div>
+  <div id="of-stats" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Box-score stats for every player, this season and the three before it. Pick a season and a position; tap a column to sort. Tap a player under contract for his full page, including his season-by-season line and this year's game log.</p>
+    <div class="chips" id="hs-seasons" role="group" aria-label="Season"></div>
+    <div class="seg posseg" id="hs-groups" role="group" aria-label="Position"></div>
+    <div class="hsls" id="hs-leaders"></div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="hs-eb"></span><h2 class="sec" id="hs-title">Season stats</h2></div></div>
+      <div id="hs-tbox"></div>
+      <div class="tw"><table class="t" id="hs-table"></table></div>
+      <button class="btn ghost more" id="hs-more" type="button">Show more</button>
+      <p class="note">Regular season only, from nflverse weekly player stats. Fantasy points use PPR scoring. Offensive linemen are left out because box scores do not track blocking.</p>
+    </div>
+  </div>
+  <div id="of-ratings" style="display:grid;gap:22px;min-width:0">
   <p class="lede">How each player is actually playing, set next to what he is paid. Every player gets a role, a play rating from 40 to 99, a rank at his position and trait badges, all built from this season's stats.</p>
   <div class="seg posseg" id="of-pos" role="group" aria-label="Position"></div>
   <div class="panel">
@@ -1119,6 +1256,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     <p class="note" id="of-tdesc"></p>
     <div class="tholders" id="of-tcards"></div>
     <p class="note">Gold is the top 6% of qualified players at the position in that skill, silver the top 16%, bronze the top 28%. Iron man, Clean sheet and Big leg are earned outright.</p>
+  </div>
   </div>
 </section>
 
@@ -2839,15 +2977,16 @@ const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools',
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
+  if (/^[pd]-/.test(h)) { PEND = h; h = LASTV; } else { LASTV = h; if (sheet.open) sheet.close(); }
   let v = h;
   if (h.startsWith('team-')) { const id = h.slice(5).toUpperCase(); if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
-  if (h === 'deals') v = 'contracts';
-  if (['cut', 'trade', 'compare', 'decode', 'decoder', 'builder', 'build'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h === 'builder' ? 'build' : h; v = 'tools'; }
+  if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
+  if (['cut', 'trade', 'compare', 'decode', 'decoder', 'builder', 'build', 'offseason'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h === 'builder' ? 'build' : h; v = 'tools'; }
   if (['ratings-teams', 'power', 'lineups', 'depth'].includes(h)) v = 'teams';
   if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
   if (h === 'nba') v = 'learn';
   if (h === 'awards' || h === 'rankings') { v = 'awards'; st.aw.tab = h === 'rankings' ? 'power' : 'awards'; }
-  if (['stats', 'ratings', 'roles', 'traits'].includes(h)) v = 'onfield';
+  if (['stats', 'ratings', 'roles', 'traits', 'onfield'].includes(h)) { v = 'onfield'; of.tab = h === 'stats' ? 'stats' : 'ratings'; }
   if (['mock', 'bigboard', 'prospects', 'rookie-pay'].includes(h)) { v = 'draft'; dr.tab = h === 'mock' ? 'order' : h === 'rookie-pay' ? 'pay' : 'board'; }
   if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
   if (!VIEWS.includes(v)) v = 'home';
@@ -2860,8 +2999,11 @@ function route() {
     if (v === 'awards') renderAwards();
     if (v === 'freeagency') renderFA();
     if (v === 'draft') renderDraft();
+    if (v === 'contracts') renderCTab();
+    if (v === 'onfield') renderOFTab();
   }
   hideTip();
+  if (PEND) setTimeout(openPending, 0);
 }
 window.addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
 const go = h => { if (location.hash === '#' + h) route(); else location.hash = h; };
@@ -3164,8 +3306,9 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · free agent ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
-    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button></div>
+    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-years" ${st.shTab === 'years' ? '' : 'hidden'}>${yearsHTML(p)}</div>
+    <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
     <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'contract' ? '' : 'hidden'}>
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
@@ -3201,7 +3344,7 @@ function openPlayer(i) {
     </div>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
-  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab !== 'contract'; $('#sh-years').hidden = st.shTab !== 'years'; };
+  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab !== 'contract'; $('#sh-years').hidden = st.shTab !== 'years'; $('#sh-stats').hidden = st.shTab !== 'stats'; };
   $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
     sheet.close();
     if (b.dataset.act === 'cut') { st.cut = p.i; st.tool = 'cut'; go('tools'); renderCut(); }
@@ -3214,7 +3357,8 @@ sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); })
 function showTool(t) {
   st.tool = t;
   $$('#toolnav button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
-  ['build', 'cut', 'trade', 'compare', 'decode'].forEach(x => ($('#tool-' + x).hidden = x !== t));
+  ['offseason', 'build', 'cut', 'trade', 'compare', 'decode'].forEach(x => ($('#tool-' + x).hidden = x !== t));
+  if (t === 'offseason') renderSim();
   if (t === 'build') renderBuilder(); if (t === 'cut') renderCut(); if (t === 'trade') renderTrade(); if (t === 'compare') renderCompare(); if (t === 'decode') renderDecode();
 }
 const DC_PRESETS = [['Simmons', 149.97, 5, 100, 20], ['Olave', 124, 4, 90.01, 35], ['Gibbs', 67.5, 3, 51.5, 15], ['Kraft', 75, 4, 26.5, 26.5]];
@@ -4435,12 +4579,432 @@ function wireDraft() {
   document.addEventListener('click', e => { const b = e.target.closest('[data-dp]'); if (b && DX) { e.stopPropagation(); openProspect(+b.dataset.dp); } }, true);
 }
 function loadDraft() {
-  getJSON('data/draft.json').then(dx => { DX = dx; prepDraft(); wireDraft(); renderDraft(); renderHomeDraft(); })
+  getJSON('data/draft.json').then(dx => { DX = dx; prepDraft(); wireDraft(); renderDraft(); renderHomeDraft(); openPending(); })
     .catch(() => { const k = $('#dr-kpis'); if (k) k.innerHTML = '<p class="empty" style="background:var(--surface)">The draft data did not load. Reload the page to try again.</p>'; });
 }
 function renderHomeDraft() {
   const box = $('#home-draft'); if (!box || !DP.length) return;
   box.innerHTML = [...DP].sort((a, b) => a.crank - b.crank).slice(0, 8).map(pCard).join('');
+}
+
+/* ===== shareable links: #p-<name>-<team> opens a player, #d-<id> a draft prospect ===== */
+const SITE_URL = 'https://fan-cap-tracker.vercel.app/';
+const slugify = s => String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[.'’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const pSlug = p => 'p-' + slugify(p.name) + '-' + p.team.toLowerCase();
+const dSlug = p => 'd-' + p.id;
+let LASTV = 'home', PEND = null;
+function sheetLink(h) {
+  const cur = location.hash.slice(1);
+  if (cur !== h) { try { if (/^[pd]-/.test(cur)) history.replaceState(null, '', '#' + h); else history.pushState(null, '', '#' + h); } catch (e) {} }
+  const box = $('#sheet-body .sh-top > div:last-child');
+  if (box && !box.querySelector('.cplink')) box.insertAdjacentHTML('beforeend', `<button type="button" class="cplink" data-link="${esc(h)}">Copy link</button>`);
+}
+function openPending() {
+  if (!PEND) return;
+  if (PEND.startsWith('p-')) {
+    if (!D) return;
+    const base = s => s.replace(/-[a-z]{2,3}$/, ''), h = PEND;
+    const p = PL.find(q => pSlug(q) === h) || PL.find(q => base(pSlug(q)) === base(h));
+    PEND = null; if (p) openPlayer(p.i);
+  } else {
+    if (!DX) return;
+    const p = DP.find(q => dSlug(q) === PEND); PEND = null; if (p) openProspect(p.i);
+  }
+}
+const _openPlayerBase = openPlayer;
+openPlayer = function (i) {
+  _openPlayerBase(i); const p = PL[i]; if (!p) return;
+  sheetLink(pSlug(p));
+  const tabs = $('#sh-tabs');
+  if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b && b.dataset.tab === 'stats') fillStats(p); });
+  if (st.shTab === 'stats') fillStats(p);
+};
+const _openProspectBase = openProspect;
+openProspect = function (i) { _openProspectBase(i); const p = DP[i]; if (p) sheetLink(dSlug(p)); };
+sheet.addEventListener('close', () => { if (/^[pd]-/.test(location.hash.slice(1))) { try { history.replaceState(null, '', '#' + (LASTV || 'home')); } catch (e) {} } });
+document.addEventListener('click', e => {
+  const b = e.target.closest('.cplink'); if (!b) return; e.stopPropagation();
+  const url = SITE_URL + '#' + b.dataset.link;
+  const fail = () => { b.textContent = 'Copy this link'; if (!b.nextElementSibling || !b.nextElementSibling.classList.contains('cpbox')) b.insertAdjacentHTML('afterend', `<input class="cpbox" readonly value="${esc(url)}" aria-label="Link to this page">`); const i = b.nextElementSibling; i.focus(); i.select(); };
+  try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => (b.textContent = 'Copy link'), 2200); }, fail); } catch (err) { fail(); }
+}, true);
+
+/* ===== season stats: data/history.json (2023 on, regular season) ===== */
+let HIST = null, HIDX = null, HISTP = null;
+const loadHist = () => HISTP || (HISTP = getJSON('data/history.json').then(h => { HIST = h; indexHist(); return h; }));
+const HG = { QB: 'QB', RB: 'RB', FB: 'RB', HB: 'RB', WR: 'WR', TE: 'TE', T: 'OL', G: 'OL', C: 'OL', OT: 'OL', OG: 'OL', OL: 'OL', DE: 'DL', DT: 'DL', NT: 'DL', DL: 'DL', EDGE: 'DL', OLB: 'LB', ILB: 'LB', MLB: 'LB', LB: 'LB', CB: 'DB', DB: 'DB', S: 'DB', FS: 'DB', SS: 'DB', SAF: 'DB', K: 'K', PK: 'K', P: 'P' };
+const HG_NAME = { QB: 'Quarterbacks', RB: 'Running backs', WR: 'Wide receivers', TE: 'Tight ends', DL: 'Defensive line', LB: 'Linebackers', DB: 'Defensive backs', K: 'Kickers', P: 'Punters', OL: 'Offensive line' };
+const hgOfP = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.pos === 'LS' ? 'X' : ({ QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', EDGE: 'DL', DT: 'DL', LB: 'LB', CB: 'DB', S: 'DB' }[p.group] || 'X');
+const hv = (l, k) => (l && l[k]) || 0;
+const hInt = v => (v == null ? '—' : Math.round(v).toLocaleString());
+const hF1 = v => (v == null ? '—' : v.toFixed(1));
+const hPc = v => (v == null ? '—' : (v * 100).toFixed(1) + '%');
+const hHalf = v => (v == null ? '—' : String(Math.round(v * 2) / 2));
+// [key, short label, value(line), format, full name]
+const HC = {
+  g: ['g', 'G', l => hv(l, 'g'), hInt, 'Games'], fp: ['fp', 'Fantasy', l => hv(l, 'fp'), hF1, 'PPR fantasy points'],
+  cmpp: ['cmpp', 'Cmp%', l => (l.att ? hv(l, 'cmp') / l.att : null), hPc, 'Completion rate'], pyd: ['pyd', 'Pass yds', l => hv(l, 'pyd'), hInt, 'Passing yards'],
+  ptd: ['ptd', 'Pass TD', l => hv(l, 'ptd'), hInt, 'Passing touchdowns'], int: ['int', 'INT', l => hv(l, 'int'), hInt, 'Interceptions thrown'],
+  ypa: ['ypa', 'Y/A', l => (l.att ? hv(l, 'pyd') / l.att : null), hF1, 'Yards per pass attempt'], sk: ['sk', 'Sacked', l => hv(l, 'sk'), hInt, 'Times sacked'],
+  car: ['car', 'Carries', l => hv(l, 'car'), hInt, 'Carries'], ryd: ['ryd', 'Rush yds', l => hv(l, 'ryd'), hInt, 'Rushing yards'],
+  ypc: ['ypc', 'YPC', l => (l.car ? hv(l, 'ryd') / l.car : null), hF1, 'Yards per carry'], rtd: ['rtd', 'Rush TD', l => hv(l, 'rtd'), hInt, 'Rushing touchdowns'],
+  tgt: ['tgt', 'Targets', l => hv(l, 'tgt'), hInt, 'Targets'], rec: ['rec', 'Rec', l => hv(l, 'rec'), hInt, 'Receptions'],
+  reyd: ['reyd', 'Rec yds', l => hv(l, 'reyd'), hInt, 'Receiving yards'], ypr: ['ypr', 'Y/Rec', l => (l.rec ? hv(l, 'reyd') / l.rec : null), hF1, 'Yards per catch'],
+  retd: ['retd', 'Rec TD', l => hv(l, 'retd'), hInt, 'Receiving touchdowns'], ctch: ['ctch', 'Catch%', l => (l.tgt ? hv(l, 'rec') / l.tgt : null), hPc, 'Catch rate'],
+  fl: ['fl', 'Fum lost', l => hv(l, 'fl'), hInt, 'Fumbles lost'], tk: ['tk', 'Tackles', l => hv(l, 'tk'), hInt, 'Total tackles'],
+  tfl: ['tfl', 'TFL', l => hv(l, 'tfl'), hInt, 'Tackles for loss'], dsk: ['dsk', 'Sacks', l => hv(l, 'dsk'), hHalf, 'Sacks'],
+  qbh: ['qbh', 'QB hits', l => hv(l, 'qbh'), hInt, 'Quarterback hits'], dint: ['dint', 'INT', l => hv(l, 'dint'), hInt, 'Interceptions'],
+  pd: ['pd', 'PD', l => hv(l, 'pd'), hInt, 'Passes defended'], ff: ['ff', 'FF', l => hv(l, 'ff'), hInt, 'Forced fumbles'],
+  dtd: ['dtd', 'Def TD', l => hv(l, 'dtd'), hInt, 'Defensive touchdowns'], fgm: ['fgm', 'FGM', l => hv(l, 'fgm'), hInt, 'Field goals made'],
+  fga: ['fga', 'FGA', l => hv(l, 'fga'), hInt, 'Field goals tried'], fgp: ['fgp', 'FG%', l => (l.fga ? hv(l, 'fgm') / l.fga : null), hPc, 'Field goal rate'],
+  fgl: ['fgl', 'Long', l => hv(l, 'fgl') || null, hInt, 'Longest field goal'], xpm: ['xpm', 'XPM', l => hv(l, 'xpm'), hInt, 'Extra points made'],
+  xpa: ['xpa', 'XPA', l => hv(l, 'xpa'), hInt, 'Extra points tried'], pun: ['pun', 'Punts', l => hv(l, 'pun'), hInt, 'Punts'],
+  pavg: ['pavg', 'Avg', l => (l.pun ? hv(l, 'puy') / l.pun : null), hF1, 'Gross yards per punt'], pi20: ['pi20', 'In 20', l => hv(l, 'pi20'), hInt, 'Punts inside the 20']
+};
+const HCOLS = {
+  QB: ['g', 'cmpp', 'pyd', 'ptd', 'int', 'ypa', 'sk', 'ryd', 'rtd', 'fp'], RB: ['g', 'car', 'ryd', 'ypc', 'rtd', 'rec', 'reyd', 'retd', 'fl', 'fp'],
+  WR: ['g', 'tgt', 'rec', 'reyd', 'ypr', 'retd', 'ctch', 'fp'], TE: ['g', 'tgt', 'rec', 'reyd', 'ypr', 'retd', 'ctch', 'fp'],
+  DL: ['g', 'tk', 'tfl', 'dsk', 'qbh', 'ff', 'pd'], LB: ['g', 'tk', 'tfl', 'dsk', 'qbh', 'dint', 'pd', 'ff'], DB: ['g', 'tk', 'dint', 'pd', 'tfl', 'ff', 'dtd'],
+  K: ['g', 'fgm', 'fga', 'fgp', 'fgl', 'xpm', 'xpa'], P: ['g', 'pun', 'pavg', 'pi20'], OL: ['g'], X: ['g']
+};
+const HKEY = { QB: 'pyd', RB: 'ryd', WR: 'reyd', TE: 'reyd', DL: 'dsk', LB: 'tk', DB: 'pd', K: 'fgm', P: 'pun', OL: 'g', X: 'g' };
+const HLEAD = { QB: ['pyd', 'ptd', 'ryd'], RB: ['ryd', 'rtd', 'reyd'], WR: ['reyd', 'rec', 'retd'], TE: ['reyd', 'rec', 'retd'], DL: ['dsk', 'tfl', 'qbh'], LB: ['tk', 'dsk', 'tfl'], DB: ['dint', 'pd', 'tk'], K: ['fgm', 'fgp', 'fgl'], P: ['pun', 'pavg', 'pi20'] };
+function indexHist() {
+  HIDX = { kt: {}, n: {}, pl: new Map() };
+  const cur = String(HIST.current);
+  HIST.players.forEach(r => {
+    r.hg = HG[r.pos] || 'X'; const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r);
+    Object.values(r.s).forEach(l => [l.t].concat(l.tt || []).forEach(t => { if (!HIDX.kt[k + '|' + t]) HIDX.kt[k + '|' + t] = r; }));
+  });
+  HIST.players.forEach(r => { const l = r.s[cur]; if (l) HIDX.kt[nkey(r.n) + '|' + l.t] = r; });
+  PL.forEach(p => { p._h = undefined; const r = histOf(p); if (r && !HIDX.pl.has(r)) HIDX.pl.set(r, p); });
+}
+function histOf(p) {
+  if (!HIDX) return null; if (p._h !== undefined) return p._h;
+  const k0 = nkey(p.name), w = k0.split(' '), ks = [k0];
+  if (ALIAS[k0]) ks.push(ALIAS[k0]); if (NICK[w[0]]) ks.push([NICK[w[0]]].concat(w.slice(1)).join(' '));
+  const g = hgOfP(p); let r = null;
+  for (const k of ks) { const x = HIDX.kt[k + '|' + p.team]; if (x && (x.hg === g || g === 'X' || x.hg === 'X')) { r = x; break; } }
+  if (!r) for (const k of ks) { const L = (HIDX.n[k] || []).filter(x => x.hg === g); if (L.length === 1) { r = L[0]; break; } }
+  return (p._h = r || null);
+}
+const hsSum = lines => { const t = {}; lines.forEach(l => Object.entries(l).forEach(([k, v]) => { if (typeof v === 'number' && k !== 'fgl') t[k] = (t[k] || 0) + v; })); t.fgl = Math.max(0, ...lines.map(l => l.fgl || 0)) || undefined; return t; };
+function fillStats(p) {
+  const box = $('#sh-stats'); if (!box) return;
+  if (!HIST) box.innerHTML = '<p class="empty">Loading season stats…</p>';
+  loadHist().then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
+}
+function statsHTML(p) {
+  const r = histOf(p), g = hgOfP(p), cols = HCOLS[g].map(k => HC[k]), cur = String(HIST.current);
+  if (!r) return `<p class="empty">No NFL regular-season stats on file since ${HIST.seasons[0]}. He may be a rookie who has not played, injured all of that time, or listed under a different name.</p>`;
+  const yrs = Object.keys(r.s).sort((a, b) => b - a), lines = yrs.map(y => r.s[y]);
+  const tot = hsSum(lines);
+  const th = cols.map(c => `<th class="r"><span title="${esc(c[4])}">${esc(c[1])}</span></th>`).join('');
+  const row = (lab, l, team, cls = '') => `<tr class="${cls}" style="cursor:default"><td><b>${esc(lab)}</b></td><td>${team ? `<span class="pn">${crest(team, 18)}${esc(team)}${l.tt ? ' <small class="note">+' + (l.tt.length - 1) + '</small>' : ''}</span>` : ''}</td>${cols.map(c => `<td class="r">${c[3](c[2](l))}</td>`).join('')}</tr>`;
+  const key = HC[HKEY[g]], vals = yrs.map(y => key[2](r.s[y]) || 0), mx = Math.max(1, ...vals);
+  const games = r.w || [];
+  const pace = r.s[cur] && r.s[cur].g ? (key[2](r.s[cur]) || 0) / r.s[cur].g * 17 : null;
+  const gl = games.length ? `<div style="display:grid;gap:6px"><span class="eyebrow">${cur} game log · regular season</span><div class="tw"><table class="t"><thead><tr><th><span>Wk</span></th><th><span>Opp</span></th>${th}</tr></thead><tbody>${[...games].reverse().map(([wk, opp, t, l]) => `<tr style="cursor:default"><td>${wk}</td><td><span class="pn">${opp ? crest(opp, 18) : ''}${t !== p.team ? `<small class="note">(${esc(t)})</small>` : ''}${esc(opp || '')}</span></td>${cols.map(c => `<td class="r">${c[0] === 'g' ? '1' : c[3](c[2](l))}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>` : '';
+  return `<div class="field">
+    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline"><span class="eyebrow">Season by season · regular season · ${HIST.seasons[0]} to ${cur}</span><span class="note">${cur} through Week ${HIST.thru}</span></div>
+    ${g === 'OL' ? '<p class="note">Box scores do not track blocking, so linemen show games played. His play rating on the first tab uses snaps, penalties and how his line protects.</p>' : ''}
+    <div class="tw"><table class="t"><thead><tr><th><span>Season</span></th><th><span>Team</span></th>${th}</tr></thead><tbody>${yrs.map(y => row(y, r.s[y], r.s[y].t)).join('')}${yrs.length > 1 ? row(`${yrs.length} seasons`, tot, '', 'hs-tot') : ''}</tbody></table></div>
+    ${g !== 'OL' && g !== 'X' ? `<div style="display:grid;gap:6px"><span class="eyebrow">${esc(key[4])} by season</span><div class="cols" style="height:150px">${[...yrs].reverse().map(y => { const v = key[2](r.s[y]) || 0; return `<div class="col"><span class="amt">${key[3](v)}</span><i class="bx" style="height:${(v / mx * 100).toFixed(1)}%;${y === cur ? 'background:var(--c-off)' : ''}"></i><span class="lab">${y}${y === cur ? '*' : ''}</span></div>`; }).join('')}</div>${pace != null ? `<span class="note">*${cur} so far. At this rate he finishes with about ${key[3](pace)} over 17 games.</span>` : ''}</div>` : ''}
+    ${gl}
+    <p class="note">Source: nflverse weekly player stats. Fantasy points use PPR scoring.</p>
+  </div>`;
+}
+/* players page: season stats tab */
+of.tab = 'ratings';
+const hsx = { season: null, g: 'QB', sort: null, dir: -1, limit: 60 };
+function renderOFTab() {
+  $$('#of-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ot2 === of.tab)));
+  $('#of-ratings').hidden = of.tab !== 'ratings'; $('#of-stats').hidden = of.tab !== 'stats';
+  $('#h-onfield').textContent = of.tab === 'stats' ? 'Season stats' : 'Players on the field';
+  if (of.tab === 'stats') { if (!HIST) $('#hs-body').innerHTML = '<p class="empty">Loading season stats…</p>'; loadHist().then(renderHS).catch(() => { $('#hs-body').innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; }); }
+}
+function renderHS() {
+  const cur = HIST.current; if (hsx.season == null) hsx.season = cur;
+  const S = String(hsx.season), g = hsx.g, cols = HCOLS[g].map(k => HC[k]);
+  if (!hsx.sort || !HCOLS[g].includes(hsx.sort)) { hsx.sort = HKEY[g]; hsx.dir = -1; }
+  $('#hs-seasons').innerHTML = [...HIST.seasons].reverse().map(y => `<button type="button" class="chip" data-hss="${y}" aria-pressed="${y === hsx.season}">${y}${y === cur ? ` · thru Week ${HIST.thru}` : ''}</button>`).join('');
+  $('#hs-groups').innerHTML = ['QB', 'RB', 'WR', 'TE', 'DL', 'LB', 'DB', 'K', 'P'].map(x => `<button type="button" data-hsg="${x}" aria-pressed="${x === g}">${x}</button>`).join('');
+  const rows = HIST.players.filter(r => r.hg === g && r.s[S] && r.s[S].g > 0).map(r => ({ r, l: r.s[S], p: HIDX.pl.get(r) }));
+  const c = HC[hsx.sort];
+  rows.sort((a, b) => ((c[2](a.l) ?? -1e9) - (c[2](b.l) ?? -1e9)) * hsx.dir || hv(b.l, 'g') - hv(a.l, 'g'));
+  // leaders
+  const minVol = { cmpp: l => hv(l, 'att') >= 10 * hv(l, 'g') && hv(l, 'g') >= 2, fgp: l => hv(l, 'fga') >= 8, pavg: l => hv(l, 'pun') >= 15 };
+  $('#hs-leaders').innerHTML = (HLEAD[g] || []).map(k => { const C = HC[k], ok = minVol[k] || (() => true); const top = rows.filter(x => ok(x.l) && C[2](x.l) != null).sort((a, b) => C[2](b.l) - C[2](a.l)).slice(0, 3);
+    return `<div class="hsl"><span class="eyebrow">${esc(C[4])}</span>${top.map((x, n) => `<button type="button" class="hsr" ${x.p ? `data-hp="${x.p.i}"` : 'disabled'}><span class="rk">${n + 1}</span>${crest(x.l.t, 20)}<span class="nm">${esc(x.r.n)}</span><b class="num">${C[3](C[2](x.l))}</b></button>`).join('') || '<span class="note">No one yet.</span>'}</div>`; }).join('');
+  $('#hs-eb').textContent = `${hsx.season} regular season${hsx.season === cur ? ` · through Week ${HIST.thru}` : ''} · ${rows.length} ${HG_NAME[g].toLowerCase()}`;
+  $('#hs-title').textContent = `${HG_NAME[g]}, ${hsx.season}`;
+  const th = C => `<th class="r"${hsx.sort === C[0] ? ` aria-sort="${hsx.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-hsk="${C[0]}" title="${esc(C[4])}">${esc(C[1])}</button></th>`;
+  $('#hs-table').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Player</span></th><th><span>Team</span></th>${cols.map(th).join('')}</tr></thead><tbody>${rows.slice(0, hsx.limit).map((x, n) => `<tr ${x.p ? `data-hp="${x.p.i}"` : 'style="cursor:default"'} data-s="${esc((x.r.n + ' ' + x.l.t + ' ' + (TB[x.l.t] ? TB[x.l.t].city + ' ' + TB[x.l.t].name : '') + ' ' + x.r.pos).toLowerCase())}"><td class="r">${n + 1}</td><td><span class="pn">${esc(x.r.n)}<span class="pos" style="min-width:0">${esc(x.r.pos)}</span></span></td><td><span class="pn" style="font-weight:500">${crest(x.l.t, 18)}${esc(x.l.t)}${x.l.tt ? ` <small class="note">+${x.l.tt.length - 1}</small>` : ''}</span></td>${cols.map(C => `<td class="r">${C[3](C[2](x.l))}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  applyTF($('#hs-table'));
+  $('#hs-more').hidden = rows.length <= hsx.limit;
+}
+function wireHS() {
+  $('#of-tab').onclick = e => { const b = e.target.closest('[data-ot2]'); if (b) go(b.dataset.ot2 === 'stats' ? 'stats' : 'onfield'); };
+  $('#hs-seasons').onclick = e => { const b = e.target.closest('[data-hss]'); if (b) { hsx.season = +b.dataset.hss; hsx.limit = 60; renderHS(); } };
+  $('#hs-groups').onclick = e => { const b = e.target.closest('[data-hsg]'); if (b) { hsx.g = b.dataset.hsg; hsx.limit = 60; hsx.sort = null; renderHS(); } };
+  $('#hs-more').onclick = () => { hsx.limit += 60; renderHS(); };
+  $('#hs-table').addEventListener('click', e => { const b = e.target.closest('[data-hsk]'); if (b) { e.stopPropagation(); const k = b.dataset.hsk; if (hsx.sort === k) hsx.dir *= -1; else { hsx.sort = k; hsx.dir = -1; } renderHS(); } });
+  $('#hs-tbox').outerHTML = tfBox('hs-table', 'Filter by player, team or position');
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-hp]'); if (!b || b.disabled) return; e.stopPropagation(); st.shTab = 'stats'; openPlayer(+b.dataset.hp); }, true);
+
+/* ===== contract value: what each player's on-field play is worth on today's market vs what he is paid ===== */
+function cvWorth(p) {
+  if (!MKT || !p.fq || p.playPct == null || !(p.apy > 0)) return null;
+  const k = mktKey(p); if (!MKT.ladder[k]) return null;
+  const S = MKT.slots[k] || 32, rank = 1 + (1 - p.playPct) * (S - 1);
+  return (mktPrice(k, rank) || 0) * 1e6;
+}
+let CV_READY = false;
+function cvPrep() { if (CV_READY) return; PL.forEach(p => { p.worth = cvWorth(p); p.surplus = p.worth != null ? p.worth - p.apy : null; }); CV_READY = true; }
+const sgn$ = v => (v >= 0 ? '+' : '−') + mon(Math.abs(v));
+const cvs = { pos: 'all', deal: 'all', sort: 'surplus', dir: -1, limit: 60, tsort: 'tot' };
+function cvRow(p, n) {
+  const t = TB[p.team];
+  return `<button type="button" class="cvr" data-p="${p.i}"><span class="rk">${n}</span>${avatar(p, 34)}<span class="nm"><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))} · ${esc(t.name)} · play ${p.play}</small></span><span class="vv"><b class="${p.surplus >= 0 ? 'down' : 'up'}">${sgn$(p.surplus)}</b><small>paid ${mon(p.apy)} · plays like ${mon(p.worth)}</small></span></button>`;
+}
+function renderCValue() {
+  cvPrep();
+  const isRk = p => p.draft && ['rookie', 'option'].includes(rkStatus(p).k);
+  let all = PL.filter(p => p.surplus != null);
+  if (cvs.deal !== 'all') all = all.filter(p => (cvs.deal === 'rookie') === isRk(p));
+  const best = [...all].sort((a, b) => b.surplus - a.surplus), worst = [...all].sort((a, b) => a.surplus - b.surplus);
+  const teams = TEAMS.map(t => { const ps = PL.filter(p => p.team === t.id && p.surplus != null); const s = [...ps].sort((a, b) => b.surplus - a.surplus); return { t, tot: ps.reduce((x, p) => x + p.surplus, 0), n: ps.length, bar: ps.filter(p => p.surplus >= 5e6).length, ovr: ps.filter(p => p.surplus <= -5e6).length, best: s[0], worst: s[s.length - 1] }; }).sort((a, b) => b.tot - a.tot);
+  $('#cv-kpis').innerHTML = `
+    ${best[0] ? `<button class="kpi" type="button" data-p="${best[0].i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best value contract</span><span class="v good num">${sgn$(best[0].surplus)}</span><span class="s">${esc(best[0].name)}, ${esc(TB[best[0].team].name)}</span></button>` : ''}
+    ${worst[0] ? `<button class="kpi" type="button" data-p="${worst[0].i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Most overpaid so far</span><span class="v bad num">${sgn$(worst[0].surplus)}</span><span class="s">${esc(worst[0].name)}, ${esc(TB[worst[0].team].name)}</span></button>` : ''}
+    <a class="kpi" href="#team-${teams[0].t.id}"><span class="k">Best-run cap sheet</span><span class="v good num">${sgn$(teams[0].tot)}</span><span class="s">${esc(teams[0].t.city)} ${esc(teams[0].t.name)}, total surplus</span></a>
+    <a class="kpi" href="#team-${teams[31].t.id}"><span class="k">Most dead weight</span><span class="v bad num">${sgn$(teams[31].tot)}</span><span class="s">${esc(teams[31].t.city)} ${esc(teams[31].t.name)}</span></a>`;
+  $$('#cv-deal button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cvd === cvs.deal)));
+  $('#cv-best').innerHTML = best.slice(0, 12).map((p, n) => cvRow(p, n + 1)).join('') || '<p class="empty">No rated players yet.</p>';
+  $('#cv-worst').innerHTML = worst.slice(0, 12).map((p, n) => cvRow(p, n + 1)).join('') || '<p class="empty">No rated players yet.</p>';
+  $('#cv-teams').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Team</span></th><th class="r"><span>Total surplus</span></th><th class="r"><span>Bargains</span></th><th class="r"><span>Overpaid</span></th><th><span>Best contract</span></th><th><span>Worst contract</span></th></tr></thead><tbody>${teams.map((x, n) => `<tr data-team="${x.t.id}" data-s="${esc(teamHay(x.t))}"><td class="r">${n + 1}</td><td><span class="pn">${crest(x.t.id, 20)}${esc(x.t.city)} ${esc(x.t.name)}</span></td><td class="r"><b class="${x.tot >= 0 ? 'down' : 'up'}">${sgn$(x.tot)}</b></td><td class="r">${x.bar}</td><td class="r">${x.ovr}</td><td>${x.best ? `<button type="button" class="tlink" data-p="${x.best.i}">${esc(x.best.name)}</button> <span class="note">${sgn$(x.best.surplus)}</span>` : '—'}</td><td>${x.worst ? `<button type="button" class="tlink" data-p="${x.worst.i}">${esc(x.worst.name)}</button> <span class="note">${sgn$(x.worst.surplus)}</span>` : '—'}</td></tr>`).join('')}</tbody>`;
+  applyTF($('#cv-teams'));
+  // full table
+  $('#cv-pos').innerHTML = ['all'].concat(GROUP_ORDER.filter(g => g !== 'ST')).map(g => `<button type="button" class="chip" data-cvp="${g}" aria-pressed="${cvs.pos === g}">${g === 'all' ? 'All positions' : g}</button>`).join('');
+  const list = all.filter(p => cvs.pos === 'all' || p.group === cvs.pos);
+  const V = { surplus: p => p.surplus, apy: p => p.apy, worth: p => p.worth, play: p => p.play, age: p => p.age || 0, name: p => p.name };
+  list.sort((a, b) => { const x = V[cvs.sort](a), y = V[cvs.sort](b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * cvs.dir; });
+  const th = (k, l, cls = 'r') => `<th class="${cls}"${cvs.sort === k ? ` aria-sort="${cvs.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-cvs="${k}">${l}</button></th>`;
+  $('#cv-count').textContent = `${list.length} rated players${cvs.pos !== 'all' ? ' · ' + GROUP_NAME[cvs.pos] : ''}`;
+  $('#cv-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}<th><span>Pos</span></th><th><span>Team</span></th>${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Paid a year')}${th('worth', 'Plays like')}${th('surplus', 'Surplus')}<th class="r"><span>Signed through</span></th></tr></thead><tbody>${list.slice(0, cvs.limit).map(p => `<tr data-p="${p.i}" data-s="${esc(p.key)}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${isRk(p) ? ' <span class="rookie">Rookie deal</span>' : ''}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${esc(TB[p.team].name)}</td><td class="r">${p.age || '—'}</td><td class="r"><span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span></td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.worth)}</td><td class="r"><b class="${p.surplus >= 0 ? 'down' : 'up'}">${sgn$(p.surplus)}</b></td><td class="r">${(p.end || 2027) - 1}</td></tr>`).join('')}</tbody>`;
+  applyTF($('#cv-table'));
+  $('#cv-more').hidden = list.length <= cvs.limit;
+  $('#cv-note').textContent = `Through Week ${THRU}. "Plays like" is what today's market pays a ${'player'} who ranks where he ranks on the field at his position, read off Over The Cap's contract rankings (data/market.json). Surplus is that figure minus his yearly pay. Six or seven games can swing a rating, so treat early-season gaps as a signal, not a verdict.`;
+}
+
+/* ===== rookie contracts: draft classes from data/drafted.json ===== */
+let DRAFTED = null, DRAFTEDP = null, RKT = null;
+const loadDrafted = () => DRAFTEDP || (DRAFTEDP = getJSON('data/drafted.json').then(d => { DRAFTED = d; rktPrep(); CV_READY = false; return d; }));
+function rktPrep() {
+  const byN = {}; PL.forEach(p => { const k = nkey(p.name); (byN[k] = byN[k] || []).push(p); });
+  DRAFTED.picks.forEach(([gsis, name, y, r, pick, team, pos, col]) => {
+    let k = nkey(name); k = ALIAS[k] || k; let L = byN[k] || [];
+    if (!L.length) { const w = k.split(' '); if (NICK[w[0]]) L = byN[[NICK[w[0]]].concat(w.slice(1)).join(' ')] || []; }
+    if (L.length > 1) { const same = L.filter(p => p.team === team); L = same.length ? same : L; }
+    if (L.length !== 1 || L[0].draft) return;
+    L[0].draft = { y, r, pick, team, college: col };
+  });
+  RKT = PL.filter(p => p.draft);
+}
+function rkStatus(p) {
+  const d = p.draft, Y = d.y, e = p.end || 0;
+  if (d.r === 1 && e === Y + 5 && Y <= 2023) return Y === 2022 ? { k: 'option', l: 'Fifth-year option season', c: 'warn' } : { k: 'option', l: 'Option picked up for 2027', c: '' };
+  if (e === Y + 4) {
+    if (d.r === 1 && Y === 2023) return { k: 'rookie', l: 'Final year · option not on file', c: 'warn' };
+    if (Y + 4 === 2027) return { k: 'rookie', l: 'Final year of rookie deal', c: 'warn' };
+    if (d.r === 1 && Y === 2024) return { k: 'rookie', l: 'Option decision by May 2027', c: '' };
+    return { k: 'rookie', l: 'Rookie deal', c: '' };
+  }
+  if (e > Y + 4) return { k: 'extended', l: 'Extended', c: 'good' };
+  return { k: 'other', l: 'New deal since the draft', c: '' };
+}
+const extWhen = p => p.draft.y <= 2023 ? 'Now' : p.draft.y === 2024 ? 'After 2026 season' : `After ${p.draft.y + 2} season`;
+function optPrice(p) {
+  // CBA rules, roughly: picks 1-10 get the average of the top 10 salaries at the position, picks 11-32 the average of the 3rd to 25th.
+  // Pro Bowl escalators are ignored. Uses yearly averages, grown to the year before the option season.
+  const fam = OL_G.includes(p.group) ? OL_G : [p.group];
+  const A = PL.filter(q => fam.includes(q.group) && q.apy > 0).map(q => q.apy).sort((a, b) => b - a);
+  const s = p.draft.pick <= 10 ? A.slice(0, 10) : A.slice(2, 25);
+  return s.length ? s.reduce((a, b) => a + b, 0) / s.length * capOfYear(p.draft.y + 3) / CAP : null;
+}
+const rks = { cls: 'all', limit: 60 };
+function rkRead(p, price) {
+  if (!p.fq || p.worth == null) return ['Too early to tell', ''];
+  const w = p.worth * capOfYear(2027) / CAP;
+  if (w >= price * 0.9) return ['Likely picks it up', 'good'];
+  if (p.play >= 62) return ['On the fence', 'warn'];
+  return ['Likely declines', 'bad'];
+}
+function renderRookies() {
+  const box = $('#c-rookies');
+  if (!DRAFTED) { $('#rk-kpis').innerHTML = '<p class="empty" style="background:var(--surface)">Loading draft classes…</p>'; loadDrafted().then(renderRookies).catch(() => { $('#rk-kpis').innerHTML = '<p class="empty" style="background:var(--surface)">Draft data did not load. Reload the page to try again.</p>'; }); return; }
+  cvPrep();
+  const on = RKT.filter(p => ['rookie', 'option'].includes(rkStatus(p).k));
+  const opt = on.filter(p => p.draft.r === 1 && p.draft.y === 2024).sort((a, b) => a.draft.pick - b.draft.pick);
+  const elig = on.filter(p => p.draft.y <= 2024).sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy);
+  const bestR = on.filter(p => p.surplus != null).sort((a, b) => b.surplus - a.surplus)[0];
+  const ext = RKT.filter(p => rkStatus(p).k === 'extended' && p.draft.y >= 2022).sort((a, b) => b.apy - a.apy);
+  $('#rk-kpis').innerHTML = `
+    <div class="kpi"><span class="k">On rookie contracts</span><span class="v num">${on.length}</span><span class="s">Drafted 2022 to 2026, under contract</span></div>
+    <div class="kpi"><span class="k">Option decisions, May 2027</span><span class="v num">${opt.length}</span><span class="s">2024 first-round picks</span></div>
+    <div class="kpi"><span class="k">Extension watch</span><span class="v num">${elig.filter(p => p.draft.y <= 2023).length}</span><span class="s">Eligible now; ${elig.filter(p => p.draft.y === 2024).length} more after this season</span></div>
+    ${bestR ? `<button class="kpi" type="button" data-p="${bestR.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best rookie-deal value</span><span class="v good num">${sgn$(bestR.surplus)}</span><span class="s">${esc(bestR.name)}, ${esc(TB[bestR.team].name)}</span></button>` : ''}`;
+  $('#rk-opt').innerHTML = `<thead><tr><th class="r"><span>Pick</span></th><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th class="r"><span>Play</span></th><th class="r"><span>Paid now</span></th><th class="r"><span>Est. 2028 option</span></th><th class="r"><span>Plays like</span></th><th><span>Plain Cap read</span></th></tr></thead><tbody>${opt.map(p => { const pr = optPrice(p), [rd, rc] = rkRead(p, pr);
+    return `<tr data-p="${p.i}" data-s="${esc(p.key)}"><td class="r">${p.draft.pick}</td><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${esc(TB[p.team].name)}${p.team !== p.draft.team && TB[p.draft.team] ? ` <small class="note">drafted by ${esc(TB[p.draft.team].name)}</small>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(pr)}</td><td class="r">${p.worth != null ? mon(p.worth) : '—'}</td><td><span class="vl ${rc}">${esc(rd)}</span></td></tr>`; }).join('') || '<tr><td colspan="9" class="empty">No 2024 first-round picks matched.</td></tr>'}</tbody>`;
+  applyTF($('#rk-opt'));
+  $('#rk-ext').innerHTML = `<thead><tr><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th><span>Drafted</span></th><th class="r"><span>Play</span></th><th class="r"><span>Paid now</span></th><th class="r"><span>Est. extension</span></th><th><span>Eligible</span></th><th><span>Status</span></th></tr></thead><tbody>${elig.slice(0, 40).map(p => { const s = rkStatus(p);
+    return `<tr data-p="${p.i}" data-s="${esc(p.key)}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${esc(TB[p.team].name)}</td><td>${p.draft.y} · Rd ${p.draft.r}, No. ${p.draft.pick}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(estNext(p))}/yr</td><td>${esc(extWhen(p))}</td><td><span class="vl ${s.c}">${esc(s.l)}</span></td></tr>`; }).join('')}</tbody>`;
+  applyTF($('#rk-ext'));
+  $('#rk-ext-note').textContent = `Players drafted in 2024 or earlier and still on their rookie deals, best play rating first. Draft picks can sign an extension after three seasons. Already extended from the 2022 to 2024 classes: ${ext.slice(0, 8).map(p => `${p.name} (${mon(p.apy)}/yr)`).join(', ') || 'none matched'}${ext.length > 8 ? ' and more' : ''}.`;
+  const years = [2026, 2025, 2024, 2023, 2022];
+  $('#rk-cls').innerHTML = ['all'].concat(years).map(y => `<button type="button" class="chip" data-rkc="${y}" aria-pressed="${String(rks.cls) === String(y)}">${y === 'all' ? 'All classes' : y + ' class'} <span class="num" style="opacity:.7">${y === 'all' ? on.length : on.filter(p => p.draft.y === y).length}</span></button>`).join('');
+  const list = on.filter(p => rks.cls === 'all' || p.draft.y === +rks.cls).sort((a, b) => a.draft.y - b.draft.y || a.draft.pick - b.draft.pick);
+  $('#rk-count').textContent = `${list.length} players on rookie contracts`;
+  $('#rk-table').innerHTML = `<thead><tr><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th><span>Class</span></th><th class="r"><span>Pick</span></th><th class="r"><span>Paid a year</span></th><th class="r"><span>2026 cap hit</span></th><th class="r"><span>Play</span></th><th class="r"><span>Surplus</span></th><th class="r"><span>Free agent</span></th><th><span>Status</span></th></tr></thead><tbody>${list.slice(0, rks.limit).map(p => { const s = rkStatus(p);
+    return `<tr data-p="${p.i}" data-s="${esc(p.key + ' ' + p.draft.y + ' ' + (p.draft.college || '').toLowerCase())}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${esc(TB[p.team].name)}</td><td>${p.draft.y}</td><td class="r">${p.draft.r}-${p.draft.pick}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.surplus != null ? `<b class="${p.surplus >= 0 ? 'down' : 'up'}">${sgn$(p.surplus)}</b>` : '—'}</td><td class="r">${p.end}</td><td><span class="vl ${s.c}">${esc(s.l)}</span></td></tr>`; }).join('')}</tbody>`;
+  applyTF($('#rk-table'));
+  $('#rk-more').hidden = list.length <= rks.limit;
+}
+
+/* contracts page tabs */
+st.ctab = 'all';
+function renderCTab() {
+  $$('#c-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ct === st.ctab)));
+  ['all', 'value', 'rookies'].forEach(k => ($('#c-' + k).hidden = k !== st.ctab));
+  $('#h-contracts').textContent = { all: 'Contracts', value: 'Best and worst contracts', rookies: 'Rookie contracts' }[st.ctab];
+  if (st.ctab === 'value') { if (!DRAFTED) loadDrafted().then(() => { if (st.ctab === 'value') renderCValue(); }).catch(() => {}); renderCValue(); }
+  if (st.ctab === 'rookies') renderRookies();
+}
+function wireCTabs() {
+  $('#c-tab').onclick = e => { const b = e.target.closest('[data-ct]'); if (b) go(b.dataset.ct === 'all' ? 'contracts' : b.dataset.ct); };
+  $('#cv-deal').onclick = e => { const b = e.target.closest('[data-cvd]'); if (b) { cvs.deal = b.dataset.cvd; renderCValue(); } };
+  $('#cv-pos').onclick = e => { const b = e.target.closest('[data-cvp]'); if (b) { cvs.pos = b.dataset.cvp; cvs.limit = 60; renderCValue(); } };
+  $('#cv-more').onclick = () => { cvs.limit += 60; renderCValue(); };
+  $('#cv-table').addEventListener('click', e => { const b = e.target.closest('[data-cvs]'); if (b) { e.stopPropagation(); const k = b.dataset.cvs; if (cvs.sort === k) cvs.dir *= -1; else { cvs.sort = k; cvs.dir = k === 'name' ? 1 : -1; } renderCValue(); } });
+  $('#rk-cls').onclick = e => { const b = e.target.closest('[data-rkc]'); if (b) { rks.cls = b.dataset.rkc; rks.limit = 60; renderRookies(); } };
+  $('#rk-more').onclick = () => { rks.limit += 60; renderRookies(); };
+  ['cv-tbox:cv-teams:Filter teams by name, city or division', 'cv-fbox:cv-table:Filter by player, team or position', 'rk-obox:rk-opt:Filter by player or team', 'rk-ebox:rk-ext:Filter by player, team or position', 'rk-tbox:rk-table:Filter by player, team, position or college'].forEach(s => { const [b, t, l] = s.split(':'); $('#' + b).outerHTML = tfBox(t, l); });
+}
+
+/* ===== offseason simulator: a team's 2027 cap after cuts, restructures, re-signings, tags, free agents and the rookie class ===== */
+const OS_YEAR = 2027;
+const os = { team: null, m: null, pos: 'all', q: '', fa: 12, cut: 12 };
+const osKey = id => 'osim.' + id;
+const osBlank = () => ({ cut: {}, rst: {}, keep: {}, add: [], rookies: true });
+function osLoad(id) { os.team = id; const s = store.get(osKey(id), null); os.m = s && s.cut ? Object.assign(osBlank(), s) : osBlank(); }
+const osSave = () => store.set(osKey(os.team), os.m);
+const capY = () => capOfYear(OS_YEAR);
+const hit27 = p => capAt(p, OS_YEAR) || 0;
+const under27 = p => (p.end || 0) > OS_YEAR;
+const fa27 = p => p.end === OS_YEAR;
+const left27 = p => Math.max(1, (p.end || OS_YEAR + 1) - OS_YEAR);
+function bonus27(p) { const r = p.yr && p.yr.find(x => x.y === OS_YEAR); const b = r ? Math.min(r.bonus || 0, r.cap) : (p.bonus || 0); return Math.max(0, Math.min(b, hit27(p))); }
+function base27(p) { const r = p.yr && p.yr.find(x => x.y === OS_YEAR); return r ? Math.max(0, r.base || 0) : Math.max(0, hit27(p) - bonus27(p)); }
+function cutCost(p, when) {
+  const b = bonus27(p), n = left27(p), h = hit27(p);
+  const dead = when === 'pre' ? Math.min(h, b) + b * (n - 1) : Math.min(h, b), later = when === 'pre' ? 0 : b * (n - 1);
+  return { dead, later, save: h - dead, gtdRisk: p.gtdp >= 0.6 && n >= 2 };
+}
+function rstSave(p) { const n = Math.min(5, left27(p)), conv = Math.max(0, base27(p) - 1.25e6); return n >= 2 ? { save: conv * (n - 1) / n, conv, n } : { save: 0, conv: 0, n }; }
+const reCost = p => 0.85 * estNext(p);
+const tagCost = p => (TAGP[p.group] ? TAGP[p.group].est : estNext(p)) * capY() / CAP;
+function osPicks() {
+  const out = [], id = os.team;
+  const own = DR_ORDER.find(o => o.orig === id), slot = own ? own.pick : 16;
+  DR_ORDER.filter(o => o.own === id).forEach(o => out.push({ r: 1, n: o.pick, via: o.via, p: o.p, est: false }));
+  for (let r = 2; r <= 7; r++) out.push({ r, n: 32 * (r - 1) + slot, est: true });
+  out.forEach(x => (x.cost = slotVal(x.n) / 4));
+  return out;
+}
+function osCalc() {
+  const t = TB[os.team], m = os.m, ty = TY && TY.years && TY.years[OS_YEAR] && TY.years[OS_YEAR].teams[os.team];
+  const start = ty ? ty.space : teamYear(t, OS_YEAR).space;
+  const ros = PL.filter(p => p.team === os.team);
+  let cuts = 0, dead = 0, rst = 0, keep = 0, adds = 0, rook = 0; const lines = [];
+  Object.entries(m.cut).forEach(([i, w]) => { const p = PL[i]; if (!p) return; const c = cutCost(p, w); cuts += c.save; dead += c.dead; lines.push([`Release ${p.name}${w === 'post' ? ' (after June 1)' : ''}`, c.save]); });
+  Object.keys(m.rst).forEach(i => { const p = PL[i]; if (!p || m.cut[i]) return; const r = rstSave(p); rst += r.save; lines.push([`Restructure ${p.name}`, r.save]); });
+  Object.entries(m.keep).forEach(([i, w]) => { const p = PL[i]; if (!p) return; const c = w === 'tag' ? tagCost(p) : reCost(p); keep += c; lines.push([`${w === 'tag' ? 'Franchise tag' : 'Re-sign'} ${p.name}`, -c]); });
+  m.add.forEach(i => { const p = PL[i]; if (!p) return; const c = reCost(p); adds += c; lines.push([`Sign ${p.name} (${TB[p.team].name})`, -c]); });
+  const picks = osPicks(); if (m.rookies) { rook = picks.reduce((s, x) => s + x.cost, 0); lines.push([`Draft class (${picks.length} picks)`, -rook]); }
+  const room = start + cuts + rst - keep - adds - rook;
+  const pool = ros.filter(p => under27(p) && !m.cut[p.i]).concat(ros.filter(p => fa27(p) && m.keep[p.i])).concat(m.add.map(i => PL[i]).filter(Boolean));
+  const L = buildLineup(pool, 'best'), u = unitRaw(L), rt = rateAll(u), rk = rankAll(u);
+  const gone = Object.values(t.L).filter(p => !pool.includes(p));
+  return { start, cuts, dead, rst, keep, adds, rook, room, lines, rt, rk, gone, picks, ty: !!ty };
+}
+function osRow(p, nums, btns, extra = '') {
+  return `<div class="osr"><button type="button" class="nm" data-p="${p.i}">${avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))} · ${p.age ? 'age ' + p.age + ' · ' : ''}${p.play != null ? 'play ' + p.play : 'not rated'}${extra}</small></span></button><span class="nums">${nums}</span><span class="seg sm" role="group" aria-label="Move for ${esc(p.name)}">${btns}</span></div>`;
+}
+const osBtn = (act, i, val, label, on) => `<button type="button" data-osa="${act}" data-i="${i}" data-v="${val}" aria-pressed="${!!on}">${label}</button>`;
+function renderSim() {
+  if (!D) return;
+  if (!os.team || !TB[os.team]) osLoad(favTeam && TB[favTeam] ? favTeam : (DR_ORDER[0] ? DR_ORDER[0].own : 'KC'));
+  const t = TB[os.team], m = os.m, sel = $('#os-team');
+  if (!sel.options.length) sel.innerHTML = [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(x => `<option value="${x.id}">${esc(x.city)} ${esc(x.name)}</option>`).join('');
+  sel.value = os.team;
+  const R = osCalc(), ros = PL.filter(p => p.team === os.team);
+  // summary
+  $('#os-sum-body').innerHTML = `
+    <div class="out"><span class="eyebrow">${OS_YEAR} cap room after your moves</span><span class="v ${R.room >= 0 ? 'good' : 'bad'}">${R.room < 0 ? '−' : ''}${mon(Math.abs(R.room))}</span><span class="note">${OS_YEAR} cap ${mon(capY())} (projected). ${R.room < 0 ? 'Over the cap: make more room before the new league year on March 11.' : 'Room left to spend.'}</span></div>
+    <div class="rows">
+      <div><span>Room with contracts already signed${R.ty ? ' (Over The Cap)' : ' (estimate)'}</span><b>${mon(R.start)}</b></div>
+      <div><span>Saved by releases</span><b class="down">+${mon(R.cuts)}</b></div>
+      <div><span>Saved by restructures</span><b class="down">+${mon(R.rst)}</b></div>
+      <div><span>Re-signings and tags</span><b class="up">−${mon(R.keep)}</b></div>
+      <div><span>Outside free agents</span><b class="up">−${mon(R.adds)}</b></div>
+      <div><span>Rookie class</span><b class="up">−${mon(R.rook)}</b></div>
+      ${R.dead ? `<div><span>Dead money from releases</span><b>${mon(R.dead)}</b></div>` : ''}
+    </div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">Projected ${OS_YEAR} roster rating · best players at each spot</span>${rtilesHTML(R.rt, R.rk, 'Would rank ')}${ubarsHTML(R.rt, R.rk, { label: t.city + ' ' + t.name + ' now', rt: t.rt })}<span class="note">Black tick: today's ${esc(t.name)}. Uses 2026 play ratings; rookies are not rated yet and players do not age.</span></div>
+    ${R.gone.length ? `<div style="display:grid;gap:4px"><span class="eyebrow">Current starters not on the ${OS_YEAR} roster</span><span class="note">${R.gone.map(p => esc(p.name)).join(', ')}</span></div>` : ''}
+    ${R.lines.length ? `<div style="display:grid;gap:4px"><span class="eyebrow">Your moves</span><div class="rows">${R.lines.map(([l, v]) => `<div><span>${esc(l)}</span><b class="${v >= 0 ? 'down' : 'up'}">${v >= 0 ? '+' : '−'}${mon(Math.abs(v))}</b></div>`).join('')}</div></div>` : ''}
+    <button type="button" class="btn ghost" id="os-reset">Reset ${esc(t.name)} moves</button>`;
+  // own free agents
+  const fas = ros.filter(fa27).sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy);
+  $('#os-fa-body').innerHTML = (fas.slice(0, os.fa).map(p => { const k = m.keep[p.i];
+    return osRow(p, `<b>${mon(reCost(p))}</b><small>re-sign, first-year cap · tag ${mon(tagCost(p))}</small>`, osBtn('keep', p.i, '', 'Let go', !k) + osBtn('keep', p.i, 're', 'Re-sign', k === 're') + osBtn('keep', p.i, 'tag', 'Tag', k === 'tag'), ` · paid ${mon(p.apy)} now`); }).join('') || '<p class="empty">No players with deals ending after 2026.</p>') + (fas.length > os.fa ? `<button type="button" class="btn ghost more" data-osmore="fa">Show all ${fas.length}</button>` : '');
+  $('#os-fa-n').textContent = `${fas.length} players whose deals end after the 2026 season`;
+  // cuts and restructures
+  const cutl = ros.filter(p => under27(p) && hit27(p) >= 2e6).map(p => ({ p, c: cutCost(p, 'post'), r: rstSave(p) })).sort((a, b) => b.c.save - a.c.save);
+  $('#os-cut-body').innerHTML = (cutl.slice(0, os.cut).map(({ p, c, r }) => { const w = m.cut[p.i], pre = cutCost(p, 'pre');
+    return osRow(p, `<b>${mon(hit27(p))}</b><small>${OS_YEAR} cap hit · cut saves ${mon(pre.save)}, after June 1 ${mon(c.save)}${r.save >= 1e6 ? ` · restructure saves ${mon(r.save)}` : ''}${c.gtdRisk ? ' · <span class="up">may have guaranteed 2027 pay</span>' : ''}</small>`,
+      osBtn('cut', p.i, '', 'Keep', !w && !m.rst[p.i]) + osBtn('cut', p.i, 'pre', 'Cut', w === 'pre') + osBtn('cut', p.i, 'post', 'Cut after June 1', w === 'post') + (r.save >= 1e6 ? osBtn('rst', p.i, '1', 'Restructure', !!m.rst[p.i] && !w) : '')); }).join('') || '<p class="empty">No contracts of $2M or more for 2027.</p>') + (cutl.length > os.cut ? `<button type="button" class="btn ghost more" data-osmore="cut">Show all ${cutl.length}</button>` : '');
+  // free agent market
+  const q = os.q.trim().toLowerCase();
+  const pool = PL.filter(p => fa27(p) && p.team !== os.team && (os.pos === 'all' || p.group === os.pos) && (!q || p.key.includes(q))).sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy);
+  $('#os-pos').innerHTML = ['all'].concat(GROUP_ORDER).map(g => `<button type="button" class="chip" data-osp="${g}" aria-pressed="${os.pos === g}">${g === 'all' ? 'All' : g}</button>`).join('');
+  const added = m.add.map(i => PL[i]).filter(Boolean);
+  $('#os-sign-body').innerHTML = (added.length ? `<div style="display:grid;gap:2px"><span class="eyebrow">Signed</span>${added.map(p => osRow(p, `<b>${mon(reCost(p))}</b><small>first-year cap hit</small>`, osBtn('add', p.i, '0', 'Remove', false), ` · from ${esc(TB[p.team].name)}`)).join('')}</div>` : '') +
+    `<div style="display:grid;gap:2px"><span class="eyebrow">Best available</span>${pool.filter(p => !m.add.includes(p.i)).slice(0, 10).map(p => osRow(p, `<b>${mon(reCost(p))}</b><small>est. first-year cap · ${esc(TB[p.team].name)}</small>`, osBtn('add', p.i, '1', 'Sign', false))).join('') || '<p class="empty">No one matches.</p>'}</div>`;
+  // draft
+  const picks = R.picks;
+  $('#os-draft-body').innerHTML = `<label style="display:flex;gap:8px;align-items:center;font-size:.9rem"><input type="checkbox" id="os-rook" ${m.rookies ? 'checked' : ''}> Count the ${OS_YEAR} rookie class against the cap</label>
+    <div class="rows">${picks.map(x => `<div><span>Round ${x.r}, No. ${x.n}${x.est ? ' (est.)' : ''}${x.via ? ` · via ${esc(TB[x.via].name)}` : ''}${x.p ? ` · model pick: <button type="button" class="tlink" data-dp="${x.p.i}">${esc(x.p.name)}</button>` : ''}</span><b>${mon(x.cost)}</b></div>`).join('')}</div>
+    <p class="note">First-round slots come from today's projected order on the Draft page. Rounds 2 to 7 assume the team keeps its own pick in each round. Costs are the rookie scale's yearly average, grown with the cap.</p>`;
+}
+function wireSim() {
+  const box = $('#tool-offseason');
+  $('#os-team').onchange = e => { osLoad(e.target.value); renderSim(); };
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-osa]');
+    if (b) { e.stopPropagation(); const i = b.dataset.i, v = b.dataset.v, m = os.m, a = b.dataset.osa;
+      if (a === 'keep') { if (v) m.keep[i] = v; else delete m.keep[i]; }
+      if (a === 'cut') { if (v) { m.cut[i] = v; delete m.rst[i]; } else { delete m.cut[i]; delete m.rst[i]; } }
+      if (a === 'rst') { delete m.cut[i]; if (m.rst[i]) delete m.rst[i]; else m.rst[i] = 1; }
+      if (a === 'add') { const n = +i; m.add = m.add.filter(x => x !== n); if (v === '1') m.add.push(n); }
+      osSave(); renderSim(); return; }
+    const mo = e.target.closest('[data-osmore]'); if (mo) { os[mo.dataset.osmore] = 999; renderSim(); return; }
+    const ps = e.target.closest('[data-osp]'); if (ps) { os.pos = ps.dataset.osp; renderSim(); return; }
+    if (e.target.closest('#os-reset')) { os.m = osBlank(); osSave(); renderSim(); }
+  });
+  box.addEventListener('change', e => { if (e.target.id === 'os-rook') { os.m.rookies = e.target.checked; osSave(); renderSim(); } });
+  $('#os-q').addEventListener('input', e => { os.q = e.target.value; renderSim(); });
 }
 
 /* ===== boot ===== */
@@ -4475,6 +5039,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   const pm = PL.find(p => p.name === 'Patrick Mahomes'), jb = PL.find(p => p.name === 'Josh Allen' && p.pos === 'QB');
   st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
   if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
+  wireHS(); wireCTabs(); wireSim();
   route();
   loadDraft();
 }
