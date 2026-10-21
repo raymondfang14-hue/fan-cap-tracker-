@@ -1360,7 +1360,7 @@ DEALS.push(
     watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
 );
 const LEARN_NFL = [
-  ['How PFF data is used', 'PFF\'s full player grades are a paid product, so Plain Cap uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 15% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
+  ['How PFF data is used', 'PFF\'s full player grades are a paid product, so Plain Cap uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 25% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
   ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. Plain Cap estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
@@ -1886,7 +1886,7 @@ function attachStats(sd) {
 
 /* ===== PFF public in-season data: weekly QB/WR rankings, top game grades, Team of the Week, rookie rankings (weighted lightly) ===== */
 let PFF = null;
-const PFF_W = 0.15;
+const PFF_W = 0.25;
 const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: ['OL'], EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
 const PFF_FAC = { pb: 'pass block', rb: 'run block', pas: 'passing', rec: 'receiving', cov: 'coverage', rd: 'run defense', pr: 'pass rush', rush: 'rushing' };
 function attachPFF(px) {
