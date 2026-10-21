@@ -570,6 +570,64 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .pkrow .av{width:34px;height:34px;font-size:.8rem}
 .pkrow b{display:block;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pkrow small{display:block;font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* awards and power rankings */
+.awboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,215px),1fr));gap:10px}
+.awc{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;align-items:center;text-align:left;padding:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);cursor:pointer;color:inherit;font:inherit;min-width:0}
+.awc:hover{background:var(--brand-soft)}
+.awc[aria-pressed="true"]{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand);background:var(--brand-soft)}
+.awc .aw-k{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;font:700 .7rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.awc b{display:block;font:700 .95rem/1.2 var(--body);overflow-wrap:anywhere}
+.awc small{display:block;color:var(--muted);font-size:.78rem;line-height:1.3}
+.awc .od{grid-column:1/-1;display:flex;align-items:center;gap:8px;font:600 .74rem/1 var(--mono)}
+.odbar{flex:1;height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.odbar i{display:block;height:100%;background:var(--brand);border-radius:3px}
+.awhero{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:760px){.awhero{grid-template-columns:minmax(0,1fr)}.awhero .winner{max-width:260px;margin-inline:auto;width:100%}}
+.awhero .winner{display:grid;gap:8px;min-width:0}
+.coachcard{display:grid;gap:8px;justify-items:center;text-align:center;padding:16px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;color:inherit;font:inherit;min-width:0}
+.coachcard:hover{border-color:var(--brand)}
+.coachcard b{font:800 1.25rem/1.1 var(--display);font-stretch:85%;letter-spacing:.02em;text-transform:uppercase}
+.coachcard small{color:var(--muted);font-size:.82rem}
+.coachcard .cc-rec{font:800 2rem/1 var(--display);font-stretch:78%}
+.whys{display:grid;gap:8px;min-width:0}
+.why{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:.92rem}
+.why i{width:8px;height:8px;margin-top:.5em;border-radius:2px;background:var(--brand);transform:rotate(45deg);flex:none}
+.pace{display:grid;gap:2px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2)}
+.pace .k{font:600 .68rem/1.2 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pace .v{font:700 1rem/1.3 var(--body)}
+.obars{display:grid;gap:4px;min-width:0}
+.ob{display:grid;grid-template-columns:1.6rem minmax(0,10.5rem) minmax(0,1fr) 3.4rem;gap:10px;align-items:center;padding:5px 4px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:4px;color:inherit;font:inherit}
+.ob:hover,.ob:focus-visible{background:var(--brand-soft);outline:none}
+.ob .rk{font:500 .8rem/1 var(--mono);color:var(--muted);text-align:right}
+.ob .nm{display:flex;align-items:center;gap:7px;min-width:0;font-weight:600;font-size:.88rem}
+.ob .nm span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ob .track{height:14px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.ob .track i{display:block;height:100%;border-radius:3px;background:var(--brand)}
+.ob:first-child .track i{background:var(--good)}
+.ob .val{font:600 .86rem/1 var(--mono);text-align:right}
+@media (max-width:560px){.ob{grid-template-columns:1.4rem minmax(0,1fr) 3rem}.ob .track{display:none}}
+.mini{display:inline-flex;align-items:center;gap:6px;font:600 .78rem/1 var(--mono)}
+.mini i{display:block;position:relative;width:40px;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.mini i b{position:absolute;inset:0 auto 0 0;background:var(--pc);border-radius:3px}
+.rookie{display:inline-block;padding:2px 6px;border-radius:3px;font:700 .62rem/1.1 var(--mono);letter-spacing:.05em;text-transform:uppercase;background:var(--brand-soft);color:var(--fg)}
+.mvup{color:var(--good);font:700 .74rem/1 var(--mono)} .mvdn{color:var(--bad);font:700 .74rem/1 var(--mono)} .mvfl{color:var(--muted);font:700 .74rem/1 var(--mono)}
+.outlook{display:inline-block;padding:3px 7px;border-radius:3px;font:700 .66rem/1.1 var(--mono);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;background:var(--surface-2);color:var(--muted)}
+.outlook.up{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.outlook.dn{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.tier{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;padding:8px 12px;border-left:4px solid var(--brand);background:var(--surface-2);border-radius:0 var(--r) var(--r) 0}
+.tier b{font:800 .95rem/1 var(--display);font-stretch:85%;letter-spacing:.05em;text-transform:uppercase}
+.tier span{color:var(--muted);font-size:.84rem}
+.aw-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.hawlist{display:grid;gap:2px}
+.haw{display:grid;grid-template-columns:3.6rem minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 6px;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;color:inherit;font:inherit;width:100%}
+.haw:first-child{border-top:0}
+.haw:hover,.haw:focus-visible{background:var(--brand-soft);outline:none}
+.haw .k{font:700 .68rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.haw .n{display:flex;align-items:center;gap:8px;min-width:0;font-weight:600;font-size:.9rem}
+.haw .n span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.haw .o{font:600 .8rem/1 var(--mono);color:var(--muted)}
+.haw .pw{font:800 1.05rem/1 var(--display);font-stretch:80%}
+
 </style>
 
 <header class="cmd gut">
@@ -580,6 +638,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <a href="#home" data-nav="home">Home</a>
       <a href="#news" data-nav="news">News</a>
       <a href="#teams" data-nav="teams">Teams</a>
+      <a href="#awards" data-nav="awards">Awards</a>
       <a href="#onfield" data-nav="onfield">Players</a>
       <a href="#contracts" data-nav="contracts">Contracts</a>
       <a href="#tools" data-nav="tools">Tools</a>
@@ -608,6 +667,17 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   </div>
 
   <div class="kpis" id="kpis"></div>
+
+  <div class="grid2" id="home-aw" hidden>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="haw-asof">Model favorites</span><h2 class="sec">Awards watch</h2></div><a class="btn ghost" href="#awards">All awards</a></div>
+      <div class="hawlist" id="haw-list"></div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Results, margin and roster</span><h2 class="sec">Power rankings</h2></div><a class="btn ghost" href="#rankings">Full rankings</a></div>
+      <div class="hawlist" id="hpw-list"></div>
+    </div>
+  </div>
 
   <div class="panel">
     <div class="sechead">
@@ -741,6 +811,53 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <li><i class="swatch hatch"></i><span>Cap room</span></li>
     </ul>
     <div class="teams" id="team-grid"></div>
+  </div>
+</section>
+
+<!-- AWARDS + POWER RANKINGS: scored in the script (awards and power rankings section) from player stats, team ratings and data/season.json -->
+<section class="view" id="v-awards" hidden aria-labelledby="h-awards">
+  <div class="sechead">
+    <div><span class="eyebrow" id="aw-eyebrow">Awards watch and team power rankings</span><h1 class="title" id="h-awards">Awards and power rankings</h1></div>
+    <div class="seg" id="aw-tab" role="group" aria-label="Awards or power rankings">
+      <button type="button" data-at="awards" aria-pressed="true">Awards</button>
+      <button type="button" data-at="power" aria-pressed="false">Power rankings</button>
+    </div>
+  </div>
+
+  <div id="aw-awards" style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Plain Cap ranks every player and coach for the big awards using the same play ratings, stats and team ratings you see across the site, then turns the scores into odds. Tap an award to see the full race. Everything recalculates when a new week of stats lands.</p>
+    <div class="awboard" id="aw-board"></div>
+    <div class="panel" id="aw-detail"></div>
+    <details class="panel" id="aw-how">
+      <summary style="cursor:pointer;font:800 1.1rem/1.2 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase">How the scores work</summary>
+      <div id="aw-how-body" style="display:grid;gap:10px;margin-top:12px"></div>
+    </details>
+  </div>
+
+  <div id="aw-power" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">All 32 teams ranked by a blend of results, scoring margin, roster strength and efficiency. Wins count, but so does how a team wins and how good its starters are, so a team can rank above or below its record.</p>
+    <div class="kpis" id="pw-kpis"></div>
+    <div class="aw-two">
+      <div class="panel">
+        <div><span class="eyebrow">Tap a crest to open the team</span><h2 class="sec">Results vs. roster</h2></div>
+        <div id="pw-scatter"></div>
+        <p class="note">Up is better results (record and scoring margin). Right is a stronger roster and more efficient play. Teams below the diagonal are winning less than their talent suggests.</p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Biggest gaps between record and roster</span><h2 class="sec">Risers and fallers</h2></div>
+        <div id="pw-gaps" style="display:grid;gap:12px"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="pw-asof">Power rankings</span><h2 class="sec">Team power rankings</h2></div></div>
+      <div class="chips" id="pw-div" role="group" aria-label="Division"></div>
+      <div id="pw-table" style="display:grid;gap:10px;min-width:0"></div>
+      <p class="note" id="pw-note"></p>
+    </div>
+    <details class="panel">
+      <summary style="cursor:pointer;font:800 1.1rem/1.2 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase">How the power score works</summary>
+      <div id="pw-how-body" style="display:grid;gap:10px;margin-top:12px"></div>
+    </details>
   </div>
 </section>
 
@@ -1118,6 +1235,8 @@ const LEARN_NFL = [
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
   ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
+  ['Awards watch', 'Plain Cap scores every qualified player and coach for MVP, Offensive and Defensive Player of the Year, the two Rookie awards, Comeback Player and Coach of the Year. A score blends his play rating, his production per game, how his team is doing and a few award-specific pieces. The scores turn into odds, which are the model\'s share of the race, not betting lines.'],
+  ['Power rankings', 'All 32 teams ranked by a 0 to 100 power score: results 28%, scoring margin 28%, roster rating 24% and efficiency 20%. A team ranked above its record is playing better than it is winning; one ranked below it has been winning more than its roster or play suggests. Projected wins assume the current score holds.'],
   ['Lineups and depth charts', 'Plain Cap builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
   ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and names the real team it most resembles.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
@@ -2204,7 +2323,7 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'learn'];
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
@@ -2215,6 +2334,7 @@ function route() {
   if (['ratings-teams', 'power', 'lineups', 'depth'].includes(h)) v = 'teams';
   if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
   if (h === 'nba') v = 'learn';
+  if (h === 'awards' || h === 'rankings') { v = 'awards'; st.aw.tab = h === 'rankings' ? 'power' : 'awards'; }
   if (['stats', 'ratings', 'roles', 'traits'].includes(h)) v = 'onfield';
   if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
   if (!VIEWS.includes(v)) v = 'home';
@@ -2224,6 +2344,7 @@ function route() {
   if (D) {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
+    if (v === 'awards') renderAwards();
   }
   hideTip();
 }
@@ -2680,6 +2801,328 @@ document.addEventListener('pointerout', e => { if (!e.relatedTarget || !e.relate
 document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) { const r = el.getBoundingClientRect(); const h = tipFor(el); if (h) showTip({ clientX: r.left + r.width / 2, clientY: r.top }, h); } });
 document.addEventListener('focusout', hideTip);
 
+/* ===== awards and power rankings =====
+   Scores come from the site's own data: play ratings and stats (data/stats.json), team ratings, and
+   results, coaches, rookies and comeback candidates (data/season.json). Nothing here is hard-coded to a week. */
+let SEASON = null, AW = null;
+const AW_GAMES = 17;
+const awC = v => Math.max(0, Math.min(1, v));
+const awRec = s => `${s.w}-${s.l}${s.t ? '-' + s.t : ''}`;
+const awPD = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+const AW_PLURAL = { QB: 'quarterbacks', RB: 'running backs', WR: 'receivers', TE: 'tight ends', EDGE: 'edge rushers', DT: 'defensive tackles', LB: 'linebackers', CB: 'cornerbacks', S: 'safeties' };
+const AW_GROUPS = new Set(Object.keys(AW_PLURAL));
+const AW_LABEL = { eff: 'On field', prod: 'Production', team: 'Team', pos: 'Position', role: 'Role', avail: 'Games played', rec: 'Record', mar: 'Margin', beat: 'Beat the talent', imp: 'Vs. 2025' };
+const AW_HOW = { eff: 'his play rating, the percentile of his position-specific stats among qualified players at his spot', prod: 'box-score production per game, ranked against his position (fantasy-style points for offense; sacks, pressures, tackles for loss, takeaways and tackles for defense)', team: 'how well his team is doing, from record and scoring margin', pos: 'a fixed value for his position, because voters lean toward some spots', role: 'his share of team snaps', avail: 'the share of his team\'s games he has played' };
+const AW_DEFS = [
+  { id: 'mvp', short: 'MVP', name: 'Most Valuable Player', kind: 'p', groups: ['QB', 'RB', 'WR', 'TE'], W: { eff: .35, prod: .25, team: .25, pos: .15 }, posVal: { QB: 1, RB: .55, WR: .5, TE: .35 },
+    blurb: 'The best offensive player on a winning team. Voters lean heavily toward quarterbacks, so the model gives them a head start. Defenders almost never win it, so they compete for Defensive Player of the Year.' },
+  { id: 'opoy', short: 'OPOY', name: 'Offensive Player of the Year', kind: 'p', groups: ['QB', 'RB', 'WR', 'TE'], W: { eff: .35, prod: .35, team: .15, pos: .15 }, posVal: { QB: .75, RB: 1, WR: 1, TE: .7 },
+    blurb: 'The most dominant offensive player. Quarterbacks, backs, receivers and tight ends all compete.' },
+  { id: 'dpoy', short: 'DPOY', name: 'Defensive Player of the Year', kind: 'p', groups: ['EDGE', 'DT', 'LB', 'CB', 'S'], def: true, W: { eff: .35, prod: .35, team: .15, pos: .15 }, posVal: { EDGE: 1, DT: .85, LB: .85, S: .7, CB: .7 },
+    blurb: 'The most disruptive defender. Sacks, pressures, tackles for loss and takeaways drive it, and a strong team defense helps.' },
+  { id: 'oroy', short: 'OROY', name: 'Offensive Rookie of the Year', kind: 'p', rookie: true, groups: ['QB', 'RB', 'WR', 'TE'], W: { eff: .38, prod: .38, role: .12, team: .12 },
+    blurb: 'The best first-year offensive player. Only rookies are eligible, and playing time counts.' },
+  { id: 'droy', short: 'DROY', name: 'Defensive Rookie of the Year', kind: 'p', rookie: true, def: true, groups: ['EDGE', 'DT', 'LB', 'CB', 'S'], W: { eff: .38, prod: .38, role: .12, team: .12 },
+    blurb: 'The best first-year defender. Only rookies are eligible, and playing time counts.' },
+  { id: 'cpoy', short: 'Comeback', name: 'Comeback Player of the Year', kind: 'p', comeback: true, groups: ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DT', 'LB', 'CB', 'S'], W: { eff: .32, prod: .32, team: .12, avail: .24 },
+    blurb: 'A player bouncing back from injury, retirement or a lost year. The list of candidates comes from the weekly update; the scores come from how he is playing now.' },
+  { id: 'coy', short: 'Coach', name: 'Coach of the Year', kind: 'c', W: { rec: .30, mar: .20, beat: .25, imp: .25 },
+    blurb: 'The coach doing the most with his team. Wins and scoring margin matter, and so does beating what the roster rating says is likely and improving on last season.' }
+];
+
+/* team model: results + roster + efficiency */
+function awTeamModel() {
+  TEAMS.forEach(t => { t.pw = null; t.sr = null; });
+  const ok = SEASON && SEASON.teams && TEAMS.every(t => SEASON.teams[t.id]);
+  if (!ok) return false;
+  TEAMS.forEach(t => {
+    const s = Object.assign({}, SEASON.teams[t.id]);
+    s.g = Math.max(1, s.w + s.l + s.t); s.wp = (s.w + .5 * s.t) / s.g; s.pd = (s.pf - s.pa) / s.g;
+    const g25 = (s.w25 || 0) + (s.l25 || 0) + (s.t25 || 0);
+    s.wp25 = g25 ? (s.w25 + .5 * (s.t25 || 0)) / g25 : null;
+    t.sr = s;
+  });
+  const WP = TEAMS.map(t => t.sr.wp), PD = TEAMS.map(t => t.sr.pd), TAL = TEAMS.map(t => t.u.ovr);
+  TEAMS.forEach(t => {
+    const s = t.sr, res = pctRank(WP, s.wp), mar = pctRank(PD, s.pd), tal = pctRank(TAL, t.u.ovr);
+    const eff = SD && t.tp ? .4 * t.tp.epa + .2 * t.tp.pra + .2 * t.tp.sckg + .2 * t.tp.tovg : tal;
+    const raw = .28 * res + .28 * mar + .24 * tal + .20 * eff;
+    t.pw = { res, mar, tal, eff, raw, score: Math.round(raw * 100), ts: (res + mar) / 2, ros: .55 * tal + .45 * eff };
+  });
+  const rk = (key, dir) => { const a = [...TEAMS].sort((x, y) => (y.pw[key] - x.pw[key]) * dir || x.id.localeCompare(y.id)); a.forEach((t, n) => (t.pw['rk_' + key] = n + 1)); };
+  rk('raw', 1); rk('ts', 1); rk('ros', 1);
+  TEAMS.forEach(t => {
+    const s = t.sr, p = t.pw, rem = Math.max(0, (SEASON.seasonGames || AW_GAMES) - s.g);
+    p.rank = p.rk_raw; p.gap = p.rk_ts - p.rk_ros;
+    const pm = Math.max(.1, Math.min(.88, 1 / (1 + Math.exp(-(p.raw * 100 - 50) / 20))));
+    p.proj = s.w + .5 * s.t + rem * pm;
+    p.tier = p.rank <= 4 ? 'Contender' : p.rank <= 10 ? 'Strong' : p.rank <= 18 ? 'In the mix' : p.rank <= 26 ? 'Shaky' : 'Rebuilding';
+    p.outlook = p.gap >= 6 ? 'Better than record' : p.gap <= -6 ? 'Record flatters' : 'On track';
+    const best = [...UNITS].sort((a, b) => t.rk[a[0]] - t.rk[b[0]])[0];
+    p.best = best ? `${best[1]} (${ord(t.rk[best[0]])})` : '';
+    const prev = SEASON.prevRanks && SEASON.prevRanks[t.id];
+    p.move = prev ? prev - p.rank : null;
+  });
+  return true;
+}
+
+/* player model */
+const awComp = p => { const cfg = GCFG[p.sg]; let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return w ? s / w : .5; };
+function awProd(p) {
+  const m = sm(p), g = gp(p);
+  const s = GROUP_SIDE[p.group] === 'def'
+    ? (m.sck || 0) * 3.5 + (m.prs || 0) * .25 + (m.tfl || 0) * 1.5 + (m.dint || 0) * 4 + (m.pd || 0) + (m.ff || 0) * 3 + (m.tk || 0) * .3 + (m.dtd2 || 0) * 6
+    : (m.pyd || 0) * .04 + (m.ptd || 0) * 4 - (m.int || 0) * 2 + (m.ryd || 0) * .1 + (m.rtd || 0) * 6 + (m.ryds || 0) * .1 + (m.rec || 0) * .5 + (m.rectd || 0) * 6 - (m.fum || 0) * 2;
+  return s / g;
+}
+function awPlayers() {
+  const comp = {}, prod = {};
+  PL.forEach(p => { if (!p.fq || !AW_GROUPS.has(p.sg)) return; (comp[p.sg] = comp[p.sg] || []).push(p.comp); (prod[p.sg] = prod[p.sg] || []).push(awProd(p)); });
+  PL.forEach(p => {
+    p.aw = null;
+    if (!p.st || !AW_GROUPS.has(p.sg) || (p.st.g || 0) < 2) return;
+    const full = !!p.fq, conf = full ? 1 : awC(gp(p) / Math.max(2, W() * .75)), t = TB[p.team];
+    const effRaw = full ? p.playPct : pctRank(comp[p.sg] || [], awComp(p));
+    p.aw = {
+      full, eff: .5 + (effRaw - .5) * conf, prod: .5 + (pctRank(prod[p.sg] || [], awProd(p)) - .5) * conf,
+      team: t.pw ? t.pw.ts : .5, dteam: .6 * pctRank(TR.def, t.u.def) + .4 * (t.pw ? t.pw.ts : .5),
+      role: awC(Math.max(p.st.osh || 0, p.st.dsh || 0) / .8), avail: awC((p.st.g || 0) / Math.max(1, p.st.tg || W()))
+    };
+  });
+}
+function awMatch(list) {
+  const out = new Map();
+  (list || []).forEach(e => {
+    const k = nkey(e.n), c = PL.filter(p => nkey(p.name) === k);
+    const p = c.find(x => !e.t || x.team === e.t) || c[0];
+    if (p) out.set(p, e);
+  });
+  return out;
+}
+function awOdds(list) {
+  if (!list.length) return;
+  // early in the season stats are noisy, so the odds are spread out; they sharpen as weeks pass
+  const T = 4 + 7 * awC(1 - W() / 14);
+  const top = list.slice(0, 15), mx = top[0].score, ex = top.map(r => Math.exp((r.score - mx) / T)), sum = ex.reduce((a, b) => a + b, 0);
+  list.forEach(r => (r.odds = 0)); top.forEach((r, i) => (r.odds = ex[i] / sum));
+  const CAP_ODDS = .82;
+  if (top.length > 1 && top[0].odds > CAP_ODDS) { const rest = 1 - top[0].odds, k = (1 - CAP_ODDS) / rest; top.slice(1).forEach(r => (r.odds *= k)); top[0].odds = CAP_ODDS; }
+}
+function awCoachRows(def) {
+  const rows = TEAMS.map(t => {
+    const s = t.sr, p = t.pw;
+    const parts = { rec: p.res, mar: p.mar, beat: awC(.5 + (p.res - p.tal) * .5), imp: s.wp25 == null ? .5 : awC(.5 + (s.wp - s.wp25) * .9) };
+    let sc = 0; Object.entries(def.W).forEach(([k, w]) => (sc += w * parts[k]));
+    return { kind: 'c', t, parts, score: sc * 100 };
+  }).sort((a, b) => b.score - a.score);
+  awOdds(rows); return rows;
+}
+function awBuild() {
+  const okTeams = awTeamModel();
+  awPlayers();
+  const rookies = awMatch(SEASON && SEASON.rookies), comebacks = awMatch(SEASON && SEASON.comeback);
+  const rows = {};
+  AW_DEFS.forEach(def => {
+    if (def.kind === 'c') { rows[def.id] = okTeams ? awCoachRows(def) : []; return; }
+    let pool = PL.filter(p => p.aw && def.groups.includes(p.sg));
+    if (def.rookie) pool = pool.filter(p => rookies.has(p));
+    else if (def.comeback) pool = pool.filter(p => comebacks.has(p));
+    else pool = pool.filter(p => p.aw.full);
+    const list = pool.map(p => {
+      const parts = {}; let s = 0;
+      Object.entries(def.W).forEach(([k, w]) => { const v = k === 'pos' ? (def.posVal[p.sg] || 0) : k === 'team' ? (def.def ? p.aw.dteam : p.aw.team) : p.aw[k]; parts[k] = v; s += w * v; });
+      return { kind: 'p', p, t: TB[p.team], parts, score: s * 100 };
+    }).sort((a, b) => b.score - a.score);
+    awOdds(list); rows[def.id] = list;
+  });
+  AW = { rows, okTeams, rookies, comebacks };
+}
+
+/* text pieces */
+function awKey(p) {
+  const m = sm(p), g = p.sg;
+  if (g === 'QB') return `${i0(m.pyd || 0)} pass yds · ${m.ptd || 0} TD · ${m.int || 0} INT${(m.ryd || 0) >= 100 ? ' · ' + i0(m.ryd) + ' rush' : ''}`;
+  if (g === 'RB') return `${i0(m.ryd || 0)} rush yds · ${(m.rtd || 0) + (m.rectd || 0)} TD · ${i0(m.ryds || 0)} rec yds`;
+  if (g === 'WR' || g === 'TE') return `${m.rec || 0} rec · ${i0(m.ryds || 0)} yds · ${m.rectd || 0} TD`;
+  if (g === 'EDGE' || g === 'DT' || g === 'LB') return `${h1(m.sck || 0)} ${(m.sck || 0) === 1 ? 'sack' : 'sacks'} · ${m.tfl || 0} TFL · ${m.tk || 0} tackles`;
+  return `${m.dint || 0} INT · ${m.pd || 0} PD · ${m.tk || 0} tackles`;
+}
+function awPace(p) {
+  const m = sm(p), f = AW_GAMES / gp(p), g = p.sg;
+  if (g === 'QB') return `${i0((m.pyd || 0) * f)} pass yards, ${Math.round((m.ptd || 0) * f)} TD, ${Math.round((m.int || 0) * f)} INT`;
+  if (g === 'RB') return `${i0((m.scr || 0) * f)} scrimmage yards, ${Math.round(((m.rtd || 0) + (m.rectd || 0)) * f)} TD`;
+  if (g === 'WR' || g === 'TE') return `${i0((m.ryds || 0) * f)} receiving yards, ${Math.round((m.rectd || 0) * f)} TD`;
+  if (g === 'EDGE' || g === 'DT' || g === 'LB') return `${((m.sck || 0) * f).toFixed(1)} sacks, ${Math.round((m.tfl || 0) * f)} tackles for loss`;
+  return `${Math.round((m.dint || 0) * f)} interceptions, ${Math.round((m.pd || 0) * f)} passes defended`;
+}
+const awTeamLine = t => { const s = t.sr; return s ? `The ${t.name} are ${awRec(s)} and ${s.pd >= 0 ? 'outscoring' : 'being outscored by'} opponents by ${Math.abs(s.pd).toFixed(1)} points a game.` : ''; };
+function awWhyP(p, def) {
+  const out = [], t = TB[p.team];
+  if (def.comeback) { const e = AW.comebacks.get(p); if (e && e.why) out.push(e.why + '.'); }
+  if (p.fq && GCFG[p.sg]) GCFG[p.sg].bars.map(([k]) => [k, p.rk[k]]).filter(x => x[1]).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 3)
+    .forEach(([k, x]) => out.push(`${ord(x[0])} of ${x[1]} ${AW_PLURAL[p.sg]} in ${awLab(MET[k][0])} (${fmtMet(p, k)})`));
+  else out.push(`Only ${p.st.g} games so far, so his rating leans toward average until he plays more.`);
+  const tl = awTeamLine(t); if (tl) out.push(tl);
+  return out;
+}
+function awWhyC(r) {
+  const t = r.t, s = t.sr, p = t.pw, out = [];
+  const wr = 1 + TEAMS.filter(x => x.sr.wp > s.wp).length;
+  out.push(`${awRec(s)}, which is ${ord(wr)} best in the league by win rate, with a ${awPD(s.pd)} point margin a game.`);
+  out.push(`Plain Cap rates the roster ${ord(t.rk.ovr)} of 32 overall (${t.rt.ovr}), so ${p.res - p.tal > .15 ? 'the team is winning more than its talent suggests' : p.res - p.tal < -.15 ? 'the record trails the talent' : 'the record matches the talent'}.`);
+  if (s.w25 != null) out.push(`${s.since >= 2026 ? 'First year with the team. ' : ''}Last season: ${s.w25}-${s.l25}${s.t25 ? '-' + s.t25 : ''}.`);
+  return out;
+}
+const awLab = s => (/^[A-Z]{2,}/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
+const awFace = (r, px) => r.kind === 'p' ? avatar(r.p, px) : crest(r.t.id, Math.round(px * .8));
+const awName = r => r.kind === 'p' ? r.p.name : r.t.sr.coach;
+const awSub = r => r.kind === 'p' ? `${posTag(r.p.pos)} · ${r.t.name}` : `${r.t.city} ${r.t.name} · ${awRec(r.t.sr)}`;
+const awAttr = r => r.kind === 'p' ? `data-p="${r.p.i}"` : `data-team="${r.t.id}"`;
+
+/* awards view */
+function renderAwBoard() {
+  $('#aw-board').innerHTML = AW_DEFS.map(def => {
+    const r = (AW.rows[def.id] || [])[0], on = st.aw.id === def.id;
+    if (!r) return `<button type="button" class="awc" data-aw="${def.id}" aria-pressed="${on}"><span class="aw-k"><span>${esc(def.short)}</span></span><small style="grid-column:1/-1">No contenders yet</small></button>`;
+    return `<button type="button" class="awc" data-aw="${def.id}" aria-pressed="${on}"><span class="aw-k"><span>${esc(def.short)}</span><span>Favorite</span></span>${awFace(r, 42)}<span style="min-width:0"><b>${esc(awName(r))}</b><small>${esc(awSub(r))}</small></span><span class="od"><span class="odbar"><i style="width:${Math.min(100, r.odds * 100 * 1.6).toFixed(0)}%"></i></span>${Math.round(r.odds * 100)}%</span></button>`;
+  }).join('');
+}
+function awRowHTML(r, i, def) {
+  const parts = Object.keys(def.W).filter(k => k !== 'pos').map(k => `<td><span class="mini" style="--pc:${pColor(r.parts[k])}"><i><b style="width:${Math.round(r.parts[k] * 100)}%"></b></i>${Math.round(r.parts[k] * 100)}</span></td>`).join('');
+  const sc = `<span class="pscore" style="--pc:${pColor(awC((r.score - 35) / 55))}">${Math.round(r.score)}</span>`;
+  if (r.kind === 'p') {
+    const p = r.p, t = r.t, tag = AW.rookies.has(p) && !def.rookie ? ' <span class="rookie">Rookie</span>' : '';
+    return `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + t.city + ' ' + t.name + ' ' + t.id + ' ' + posTag(p.pos) + ' ' + (p.role || '')).toLowerCase())}"><td class="r">${i + 1}</td><td><span class="pn">${avatar(p, 28)}<span>${esc(p.name)}${tag}</span></span></td><td><span class="pn">${crest(p.team, 18)}${esc(t.name)}</span></td><td>${esc(posTag(p.pos))}</td><td class="r">${t.sr ? awRec(t.sr) : '—'}</td><td class="r">${sc}</td><td class="r">${(r.odds * 100).toFixed(r.odds >= .095 ? 0 : 1)}%</td>${parts}<td>${esc(awKey(p))}</td></tr>`;
+  }
+  const t = r.t, s = t.sr;
+  return `<tr data-team="${t.id}" data-s="${esc((s.coach + ' ' + t.city + ' ' + t.name + ' ' + t.id + ' ' + t.div).toLowerCase())}"><td class="r">${i + 1}</td><td><span class="pn">${crest(t.id, 20)}<span>${esc(s.coach)}</span></span></td><td>${esc(t.city)} ${esc(t.name)}</td><td class="r">${awRec(s)}</td><td class="r">${sc}</td><td class="r">${(r.odds * 100).toFixed(r.odds >= .095 ? 0 : 1)}%</td>${parts}<td>${esc(awPD(s.pd))} a game · ${s.since >= 2026 ? 'first year' : 'since ' + s.since}${s.w25 != null ? ' · was ' + s.w25 + '-' + s.l25 + (s.t25 ? '-' + s.t25 : '') : ''}</td></tr>`;
+}
+function renderAwDetail() {
+  const def = AW_DEFS.find(d => d.id === st.aw.id) || AW_DEFS[0], rows = AW.rows[def.id] || [], box = $('#aw-detail');
+  if (!rows.length) {
+    box.innerHTML = `<div><span class="eyebrow">${esc(def.name)}</span><h2 class="sec">No contenders yet</h2></div><p class="empty">${def.kind === 'c' ? 'Standings did not load, so coaches cannot be ranked. Reload the page to try again.' : SD ? 'No eligible players have enough games yet.' : 'Season stats did not load. Reload the page to try again.'}</p>`;
+    return;
+  }
+  const w = rows[0], p = w.p;
+  const card = w.kind === 'p' ? fieldCard(p) : `<button type="button" class="coachcard" data-team="${w.t.id}" style="${teamVars(w.t.id)}">${crest(w.t.id, 56)}<b>${esc(w.t.sr.coach)}</b><small>${esc(w.t.city)} ${esc(w.t.name)}</small><span class="cc-rec num">${awRec(w.t.sr)}</span><small>${awPD(w.t.sr.pd)} points a game · ${w.t.sr.since >= 2026 ? 'first year' : 'since ' + w.t.sr.since}</small></button>`;
+  const whys = (w.kind === 'p' ? awWhyP(p, def) : awWhyC(w)).map(x => `<div class="why"><i aria-hidden="true"></i><span>${esc(x)}</span></div>`).join('');
+  const pace = w.kind === 'p' ? `<div class="pace"><span class="k">${AW_GAMES}-game pace at this rate</span><span class="v">${esc(awPace(p))}</span></div>` : `<div class="pace"><span class="k">Projected finish</span><span class="v">${w.t.pw.proj.toFixed(1)} wins at the current power score</span></div>`;
+  const maxO = rows[0].odds || 1;
+  const odds = rows.slice(0, 6).map((r, i) => `<button type="button" class="ob" ${awAttr(r)}><span class="rk">${i + 1}</span><span class="nm">${r.kind === 'p' ? crest(r.p.team, 18) : crest(r.t.id, 18)}<span>${esc(awName(r))}</span></span><span class="track"><i style="width:${(r.odds / maxO * 100).toFixed(1)}%"></i></span><span class="val">${Math.round(r.odds * 100)}%</span></button>`).join('');
+  const lim = Math.min(st.aw.limit, rows.length);
+  const heads = def.kind === 'c' ? ['#', 'Coach', 'Team', 'Record', 'Score', 'Odds'] : ['#', 'Player', 'Team', 'Pos', 'Record', 'Score', 'Odds'];
+  const pk = Object.keys(def.W).filter(k => k !== 'pos').map(k => AW_LABEL[k]);
+  const th = (l, i) => `<th class="${['#', 'Record', 'Score', 'Odds'].includes(l) ? 'r' : ''}"><span>${esc(l)}</span></th>`;
+  const missing = def.comeback ? Array.from(AW.comebacks.entries()).filter(([pl]) => !pl.aw).map(([pl]) => `${pl.name} (${pl.team})`) : [];
+  box.innerHTML = `
+    <div class="sechead"><div><span class="eyebrow">${esc(def.name)} · model pick through Week ${THRU}</span><h2 class="sec">${esc(awName(w))} leads the race</h2></div><span class="rkpill">${Math.round(w.odds * 100)}% odds</span></div>
+    <p class="note">${esc(def.blurb)}</p>
+    <div class="awhero">
+      <div class="winner">${card}</div>
+      <div style="display:grid;gap:14px;min-width:0;align-content:start">
+        <div style="display:grid;gap:8px"><span class="eyebrow">Why the model likes ${w.kind === 'p' ? 'him' : 'him'}</span><div class="whys">${whys}</div></div>
+        ${pace}
+        <div style="display:grid;gap:6px"><span class="eyebrow">The race · share of the model's odds</span><div class="obars">${odds}</div></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:10px;min-width:0">
+      <div class="sechead"><div><span class="eyebrow">Tap a row to open ${def.kind === 'c' ? 'the team' : 'the player'}</span><h2 class="sec">Full rankings</h2></div></div>
+      ${tfBox('aw-t', def.kind === 'c' ? 'Filter coaches by name, team or division' : 'Filter by player, team or position')}
+      <div class="tw"><table class="t" id="aw-table"><thead><tr>${heads.map(th).join('')}${pk.map(l => `<th><span>${esc(l)}</span></th>`).join('')}<th><span>${def.kind === 'c' ? 'Notes' : 'Season so far'}</span></th></tr></thead><tbody>${rows.slice(0, lim).map((r, i) => awRowHTML(r, i, def)).join('')}</tbody></table></div>
+      ${lim < rows.length ? `<button type="button" class="btn ghost more" id="aw-more">Show more · ${rows.length - lim} left</button>` : ''}
+      ${missing.length ? `<p class="note">Not back on the field yet, so not ranked: ${esc(missing.join(', '))}.</p>` : ''}
+      <p class="note">Score is 0 to 100. The small bars are the pieces of the score, each 0 to 99. Odds are the model's share of the race, not betting lines, and early-season stats can swing a lot week to week.</p>
+    </div>`;
+  applyTF($('#aw-table'));
+}
+function renderAwHow() {
+  const w = def => Object.entries(def.W).map(([k, v]) => `${AW_LABEL[k]} ${Math.round(v * 100)}%`).join(' · ');
+  const pieces = ['eff', 'prod', 'team', 'pos', 'role', 'avail'].map(k => `<li><b>${AW_LABEL[k]}:</b> ${esc(AW_HOW[k])}.</li>`).join('');
+  $('#aw-how-body').innerHTML = `<p class="note">Every player score blends a few pieces, each from 0 to 99. Players need the site's minimum playing time to be ranked (rookies and comeback players get a looser minimum and their ratings lean toward average until they play more). Odds turn the gap between scores into shares of the race.</p>
+    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px">${pieces}</ul>
+    <div class="rows">${AW_DEFS.map(def => `<div><span>${esc(def.name)}</span><b style="font-family:var(--body);font-size:.82rem;text-align:right">${w(def)}</b></div>`).join('')}</div>
+    <p class="note">Coach of the Year pieces: Record is win rate against the league, Margin is points scored minus allowed per game, Beat the talent compares results with the Plain Cap roster rating, and Vs. 2025 is the change in win rate from last season.</p>`;
+}
+
+/* power rankings view */
+const AW_PCOLS = [['rank', '#', 'r', 1], ['name', 'Team', '', 1], ['rec', 'Record', 'r', -1], ['pd', 'Margin', 'r', -1], ['score', 'Power', 'r', -1], ['off', 'OFF', 'r', -1], ['def', 'DEF', 'r', -1], ['proj', 'Proj. wins', 'r', -1], ['tier', 'Tier', '', 1], ['out', 'Outlook', '', 1]];
+function awPVal(t, k) {
+  const p = t.pw, s = t.sr;
+  return { rank: p.rank, name: t.city + t.name, rec: s.wp, pd: s.pd, score: p.raw, off: t.rt.off, def: t.rt.def, proj: p.proj, tier: p.rank, out: p.gap }[k];
+}
+function renderPowerRank() {
+  const all = TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank);
+  if (!all.length) { ['#pw-kpis', '#pw-scatter', '#pw-gaps', '#pw-table'].forEach(s => ($(s).innerHTML = '')); $('#pw-table').innerHTML = '<p class="empty">Standings or season stats did not load, so power rankings are not available. Reload the page to try again.</p>'; return; }
+  const top = all[0], bo = [...TEAMS].sort((a, b) => b.rt.off - a.rt.off)[0], bd = [...TEAMS].sort((a, b) => b.rt.def - a.rt.def)[0];
+  const up = [...all].sort((a, b) => b.pw.gap - a.pw.gap)[0];
+  $('#pw-kpis').innerHTML = `
+    <a class="kpi" href="#team-${top.id}"><span class="k">No. 1 team</span><span class="v num">${top.pw.score}</span><span class="s">${esc(top.city)} ${esc(top.name)}, ${awRec(top.sr)}</span></a>
+    <a class="kpi" href="#team-${bo.id}"><span class="k">Best offense</span><span class="v num">${bo.rt.off}</span><span class="s">${esc(bo.city)} ${esc(bo.name)}</span></a>
+    <a class="kpi" href="#team-${bd.id}"><span class="k">Best defense</span><span class="v num">${bd.rt.def}</span><span class="s">${esc(bd.city)} ${esc(bd.name)}</span></a>
+    <a class="kpi" href="#team-${up.id}"><span class="k">Most underrated by record</span><span class="v good num">${ord(up.pw.rank)}</span><span class="s">${esc(up.city)} ${esc(up.name)}, ${awRec(up.sr)}</span></a>`;
+  $('#pw-asof').textContent = `Through Week ${THRU} · updated ${new Date((SEASON.asOf || D.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
+  // scatter: results (y) against roster and efficiency (x)
+  const W2 = 560, H = 400, l = 44, r = 18, tp = 18, b = 40, x = v => l + v * (W2 - l - r), y = v => tp + (1 - v) * (H - tp - b);
+  let g = [0, .25, .5, .75, 1].map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${tp}" y2="${H - b}"></line><line class="gl" x1="${l}" x2="${W2 - r}" y1="${y(v)}" y2="${y(v)}"></line><text x="${x(v)}" y="${H - b + 16}" text-anchor="middle">${Math.round(v * 100)}</text><text x="${l - 8}" y="${y(v) + 3}" text-anchor="end">${Math.round(v * 100)}</text>`).join('');
+  g += `<line class="mid" x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}"></line>`;
+  g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Winning with talent</text><text class="q" x="${l + 6}" y="${tp + 14}">Beating the odds</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Under-delivering</text><text class="q" x="${l + 6}" y="${H - b - 8}">Struggling</text>`;
+  g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Roster and efficiency →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Results →</text>`;
+  g += all.map(t => `<g data-team="${t.id}" transform="translate(${(x(t.pw.ros) - 11).toFixed(1)} ${(y(t.pw.ts) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: ranked ${t.pw.rank}">${crest(t.id, 22)}</g>`).join('');
+  $('#pw-scatter').innerHTML = `<svg class="pvps" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Results against roster strength for each team">${g}</svg>`;
+  // gaps
+  const gapRow = t => `<button type="button" class="haw" data-team="${t.id}" style="grid-template-columns:minmax(0,1fr) auto"><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="o">Record ${ord(t.pw.rk_ts)} · roster ${ord(t.pw.rk_ros)}</span></button>`;
+  const rise = [...all].sort((a, b) => b.pw.gap - a.pw.gap).slice(0, 4), fall = [...all].sort((a, b) => a.pw.gap - b.pw.gap).slice(0, 4);
+  $('#pw-gaps').innerHTML = `<div><span class="eyebrow" style="color:var(--good)">Roster is better than the record</span><div class="hawlist">${rise.map(gapRow).join('')}</div></div><div><span class="eyebrow" style="color:var(--bad)">Record is ahead of the roster</span><div class="hawlist">${fall.map(gapRow).join('')}</div></div>`;
+  // table
+  divChips($('#pw-div'), st.aw.div, d => { st.aw.div = d; renderPowerRank(); });
+  const list = all.filter(t => st.aw.div === 'All' || t.div === st.aw.div), ps = st.aw.ps, pd = st.aw.pd;
+  const rows = [...list].sort((a, b) => { const va = awPVal(a, ps), vb = awPVal(b, ps); return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * pd || a.pw.rank - b.pw.rank; });
+  const th = ([k, lab, cls]) => `<th class="${cls}" data-awk="${k}"${ps === k ? ` aria-sort="${pd < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${lab}</button></th>`;
+  const mv = t => t.pw.move == null ? '' : t.pw.move > 0 ? `<span class="mvup">▲${t.pw.move}</span>` : t.pw.move < 0 ? `<span class="mvdn">▼${-t.pw.move}</span>` : '<span class="mvfl">–</span>';
+  $('#pw-table').innerHTML = tfBox('pw-t', 'Filter teams by name, city or division') + `<div class="tw"><table class="t" id="pw-t"><thead><tr>${AW_PCOLS.map(th).join('')}</tr></thead><tbody>` +
+    rows.map(t => { const p = t.pw, s = t.sr, ol = p.gap >= 6 ? 'up' : p.gap <= -6 ? 'dn' : '';
+      return `<tr data-team="${t.id}" data-s="${esc(teamHay(t) + ' ' + p.tier.toLowerCase())}"><td class="r">${p.rank} ${mv(t)}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r">${awRec(s)}</td><td class="r">${awPD(s.pd)}</td><td class="r"><span class="pscore" style="--pc:${pColor(p.raw)}">${p.score}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.off)}">${t.rt.off}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.def)}">${t.rt.def}</span></td><td class="r">${p.proj.toFixed(1)}</td><td>${esc(p.tier)}</td><td><span class="outlook ${ol}">${esc(p.outlook)}</span></td></tr>`; }).join('') + '</tbody></table></div>';
+  applyTF($('#pw-t'));
+  $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule itself.${all.some(t => t.pw.move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
+  $('#pw-how-body').innerHTML = `<p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
+    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the Plain Cap overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, passer rating allowed, sacks and takeaways.</li></ul>
+    <p class="note">Outlook compares where a team's results rank with where its roster and efficiency rank. A gap of six spots or more means the record is hiding something (Better than record) or flattering the team (Record flatters). Tiers are fixed by rank: 1 to 4 Contender, 5 to 10 Strong, 11 to 18 In the mix, 19 to 26 Shaky, 27 to 32 Rebuilding.</p>`;
+}
+
+/* page shell */
+function renderAwards() {
+  if (!D || !AW) return;
+  $$('#aw-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.at === st.aw.tab)));
+  $('#aw-awards').hidden = st.aw.tab !== 'awards'; $('#aw-power').hidden = st.aw.tab !== 'power';
+  $('#aw-eyebrow').textContent = SEASON ? `2026 season through Week ${THRU || SEASON.week} · updated ${new Date(SEASON.asOf + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}` : 'Awards watch and team power rankings';
+  $('#h-awards').textContent = st.aw.tab === 'power' ? 'Power rankings' : 'Awards watch';
+  if (st.aw.tab === 'power') renderPowerRank(); else { renderAwBoard(); renderAwDetail(); renderAwHow(); }
+}
+function renderHomeAwards() {
+  const box = $('#home-aw'); if (!box) return;
+  const all = TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank);
+  if (!AW || (!all.length && !SD)) { box.hidden = true; return; }
+  box.hidden = false;
+  $('#haw-list').innerHTML = AW_DEFS.map(def => { const r = (AW.rows[def.id] || [])[0]; if (!r) return '';
+    return `<button type="button" class="haw" data-awgo="${def.id}"><span class="k">${esc(def.short)}</span><span class="n">${awFace(r, 26)}<span>${esc(awName(r))}</span></span><span class="o">${Math.round(r.odds * 100)}%</span></button>`; }).join('');
+  $('#hpw-list').innerHTML = all.slice(0, 7).map(t => `<button type="button" class="haw" data-team="${t.id}"><span class="k">#${t.pw.rank}</span><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="pw">${t.pw.score}</span></button>`).join('') || '<p class="empty">Standings did not load.</p>';
+  $('#haw-asof').textContent = SEASON ? `Through Week ${THRU || SEASON.week}` : '';
+}
+function analyzeSeason(se) {
+  SEASON = se && se.teams ? se : null;
+  awBuild();
+  window.__pcSnapshot = () => ({ asOf: SEASON && SEASON.asOf, week: THRU,
+    power: TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank).map(t => ({ id: t.id, rank: t.pw.rank, score: t.pw.score, rec: awRec(t.sr), proj: +t.pw.proj.toFixed(1) })),
+    awards: Object.fromEntries(AW_DEFS.map(d => [d.id, (AW.rows[d.id] || []).slice(0, 5).map(r => ({ n: awName(r), team: r.t.id, score: +r.score.toFixed(1), odds: +(r.odds * 100).toFixed(1) }))])) });
+}
+st.aw = { tab: 'awards', id: 'mvp', limit: 10, div: 'All', ps: 'rank', pd: 1 };
+const awScroll = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
+$('#aw-tab').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.at === 'power' ? 'rankings' : 'awards'); };
+$('#aw-board').onclick = e => { const b = e.target.closest('[data-aw]'); if (!b) return; st.aw.id = b.dataset.aw; st.aw.limit = 10; TFQ['aw-t'] = ''; renderAwards(); awScroll('aw-detail'); };
+$('#aw-detail').addEventListener('click', e => { if (e.target.closest('#aw-more')) { st.aw.limit += 15; renderAwDetail(); } });
+$('#pw-table').addEventListener('click', e => { const b = e.target.closest('[data-awk]'); if (!b) return; const k = b.dataset.awk; if (st.aw.ps === k) st.aw.pd *= -1; else { st.aw.ps = k; st.aw.pd = (AW_PCOLS.find(c => c[0] === k) || [])[3] || 1; } renderPowerRank(); });
+document.addEventListener('click', e => { const g = e.target.closest('[data-awgo]'); if (g) { st.aw.id = g.dataset.awgo; st.aw.limit = 10; TFQ['aw-t'] = ''; go('awards'); } });
+
 /* ===== static wiring ===== */
 $('#lb-metric').onclick = e => { const b = e.target.closest('button'); if (b) { st.lbMetric = b.dataset.m; renderLeaderboard(); } };
 $('#t-sort').onchange = e => { st.tSort = e.target.value; renderTeamGrid(); };
@@ -2692,7 +3135,7 @@ $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { s
 faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
 
 /* ===== boot ===== */
-function boot(d, mv, sd) {
+function boot(d, mv, sd, se) {
   prepare(d, mv);
   const dt = new Date(d.asOf + 'T12:00:00');
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
@@ -2704,10 +3147,12 @@ function boot(d, mv, sd) {
   analyzeField();
   if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   analyzeTeams(); wireBuilder();
+  analyzeSeason(se);
   wireOnField(); renderOnField();
   renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
   renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); buildNewsControls(); renderNews(); renderTeamsView();
   buildContractControls(); renderDeals(); renderMarket(); renderTable();
+  renderHomeAwards();
   bindSearch($('#q-home'), $('#r-home'), it => it.type === 'team' ? go('team-' + it.t.id) : openPlayer(it.p.i));
   bindSearch($('#dg-q'), $('#dg-r'), it => { dgPick = it.p.i; renderDG(); }, false);
   if (dgPick == null) { const j = PL.find(p => p.name === 'Jahmyr Gibbs'); dgPick = j ? j.i : 0; renderDG(); }
@@ -2723,8 +3168,8 @@ function boot(d, mv, sd) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null)])
-  .then(([d, mv, as, sd]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd); })
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null)])
+  .then(([d, mv, as, sd, se]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd, se); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>
