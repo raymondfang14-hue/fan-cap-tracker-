@@ -1,0 +1,61 @@
+{
+ "asOf": "2026-10-21",
+ "capGrowth": 0.07,
+ "capByYear": {
+  "2027": 327000000,
+  "2028": 352000000
+ },
+ "capNote": "The league has not set the 2027 or 2028 cap. These are the projections Over The Cap uses for its future cap tables; later years grow by the rate shown.",
+ "calendar": [
+  {
+   "date": "2026-11-10",
+   "label": "Trade deadline",
+   "note": "Trading ends for 2026 at 4:00 p.m. ET.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  },
+  {
+   "date": "2027-02-17",
+   "label": "Franchise and transition tag window opens",
+   "note": "Teams can tag one pending free agent each.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  },
+  {
+   "date": "2027-03-01",
+   "label": "Scouting combine begins",
+   "note": "Runs about eight days, ending around March 8.",
+   "url": "https://www.buccaneers.com/news/nfl-moves-start-of-scouting-combine-to-march-in-2027"
+  },
+  {
+   "date": "2027-03-03",
+   "label": "Franchise tag deadline",
+   "note": "4:00 p.m. ET.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  },
+  {
+   "date": "2027-03-09",
+   "label": "Negotiating window opens",
+   "note": "Noon ET. Teams may talk with agents for other teams' pending free agents but cannot sign them yet.",
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/2027-free-agent-negotiating-window-will-open-a-day-after-the-combine-ends"
+  },
+  {
+   "date": "2027-03-11",
+   "label": "League year and free agency begin",
+   "note": "4:00 p.m. ET. Contracts can be signed and trades announced.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  },
+  {
+   "date": "2027-04-23",
+   "label": "Restricted free agent offer sheet deadline",
+   "note": "Restricted free agents can no longer sign offer sheets with other teams after this date.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  },
+  {
+   "date": "2027-04-29",
+   "label": "NFL Draft begins",
+   "note": "April 29 to May 1 in Washington, D.C.",
+   "url": "https://www.nfl.com/news/2026-27-national-football-league-important-dates"
+  }
+ ],
+ "tags": {},
+ "source": "Dates: NFL.com 2026-27 important dates, Pro Football Talk and the Buccaneers site. Future caps: Over The Cap."
+}

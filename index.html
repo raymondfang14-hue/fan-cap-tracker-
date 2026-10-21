@@ -629,6 +629,37 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .haw .o{font:600 .8rem/1 var(--mono);color:var(--muted)}
 .haw .pw{font:800 1.05rem/1 var(--display);font-stretch:80%}
 
+/* free agency and year by year */
+.ybars{display:grid;gap:2px}
+.yb{display:grid;grid-template-columns:3.2rem minmax(0,1fr) 5.2rem 3.6rem;gap:10px;align-items:center;padding:6px 4px;border-radius:4px;font-size:.86rem}
+.yb.fa{background:var(--surface-2)}
+.yb .y{font:700 .84rem/1 var(--mono)}
+.yb .st{display:flex;height:16px;border-radius:3px;overflow:hidden;background:var(--surface-2)}
+.yb .st i{display:block;height:100%}
+.yb .v{font:700 .9rem/1 var(--mono);text-align:right}
+.yb .s{font:500 .72rem/1 var(--mono);color:var(--muted);text-align:right}
+.srcb{display:inline-block;padding:2px 6px;border-radius:3px;font:700 .6rem/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.srcb.rep{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.est{font-style:italic;color:var(--muted)}
+.fa-pos{display:grid;gap:2px}
+.fap{display:grid;grid-template-columns:6.4rem minmax(0,1fr) 5.8rem;gap:10px;align-items:center;padding:6px 4px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:4px;font-size:.88rem;color:inherit;font:inherit}
+.fap:hover,.fap[aria-pressed="true"]{background:var(--brand-soft)}
+.fap .track{height:14px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.fap .track i{display:block;height:100%;border-radius:3px}
+.fap .val{font:600 .84rem/1 var(--mono);text-align:right}
+.fap .val small{display:block;font:500 .66rem/1.2 var(--mono);color:var(--muted)}
+.fa-heat td.neg i{background:var(--bad)}
+.fa-heat td.estc b{font-style:italic;font-weight:500}
+.cal{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cal a,.cal div{display:grid;grid-template-columns:6.4rem minmax(0,1fr);gap:4px 14px;padding:11px 14px;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.cal>:first-child{border-top:0}
+.cal .d{font:700 .8rem/1.3 var(--mono)}
+.cal b{display:block;font:700 .95rem/1.25 var(--body)}
+.cal small{color:var(--muted);font-size:.84rem}
+.cal .next{background:var(--brand-soft);box-shadow:inset 3px 0 0 var(--brand)}
+.cal .past{opacity:.55}
+@media (max-width:560px){.cal a,.cal div{grid-template-columns:minmax(0,1fr)}.yb{grid-template-columns:2.8rem minmax(0,1fr) 4.6rem}.yb .s{display:none}.fap{grid-template-columns:5rem minmax(0,1fr) 5rem}}
+
 </style>
 
 <header class="cmd gut">
@@ -644,6 +675,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <a href="#contracts" data-nav="contracts">Contracts</a>
       <a href="#tools" data-nav="tools">Tools</a>
       <a href="#analytics" data-nav="analytics">Analytics</a>
+      <a href="#freeagency" data-nav="freeagency">Free agency</a>
       <a href="#learn" data-nav="learn">Learn</a>
     </nav>
   </div>
@@ -909,6 +941,9 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
           <th class="r" data-k="total"><button type="button">Total</button></th>
           <th class="r" data-k="gtdp"><button type="button">Guaranteed</button></th>
           <th class="r" data-k="cap"><button type="button">2026 cap hit</button></th>
+          <th class="r" data-k="y2027"><button type="button" title="Estimated unless reported">2027</button></th>
+          <th class="r" data-k="y2028"><button type="button" title="Estimated unless reported">2028</button></th>
+          <th class="r" data-k="y2029"><button type="button" title="Estimated unless reported">2029</button></th>
           <th class="r" data-k="end"><button type="button">Free agent</button></th>
         </tr></thead>
         <tbody></tbody>
@@ -1079,6 +1114,107 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 </section>
 
 <!-- LEARN -->
+<!-- FREE AGENCY: classes, projected cap space by year, tags and key dates. Built in the script (free agency section) from data/nfl.json, data/teamyears.json, data/freeagency.json and data/years_exact.json -->
+<section class="view" id="v-freeagency" hidden aria-labelledby="h-freeagency">
+  <div class="sechead">
+    <div><span class="eyebrow" id="fa-eyebrow">Free agency tracker</span><h1 class="title" id="h-freeagency">Free agency</h1></div>
+    <div class="seg" id="fa-tab" role="group" aria-label="Free agency view">
+      <button type="button" data-ft="class" aria-pressed="true">Free agents</button>
+      <button type="button" data-ft="cap" aria-pressed="false">Cap space</button>
+      <button type="button" data-ft="tags" aria-pressed="false">Tags, cuts, dates</button>
+    </div>
+  </div>
+
+  <div id="fa-class" style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Every player whose contract ends after a given season, with how well he is playing and a Plain Cap estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
+    <div class="chips" id="fa-years" role="group" aria-label="Free agent class"></div>
+    <div class="kpis" id="fa-kpis"></div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="fa-board-eb">Best players with expiring deals</span><h2 class="sec" id="fa-board-t">Top of the class</h2></div></div>
+      <div class="fcs row" id="fa-board"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">Tap a position to filter the table</span><h2 class="sec">Where the money is</h2></div>
+        <div class="fa-pos" id="fa-posbars"></div>
+        <p class="note">Bars show the estimated yearly pay the players at each position could command on their next deals, for players earning at least the pay floor you pick below.</p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Which teams lose the most</span><h2 class="sec">Class by team</h2></div>
+        <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-teams" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
+        <div class="tw" style="max-height:420px;overflow:auto"><table class="t" id="fa-teams"></table></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="fa-tcount"></span><h2 class="sec" id="fa-tt">All pending free agents</h2></div></div>
+      <div class="controls">
+        <label class="f" for="fa-min">Pay floor<select id="fa-min"><option value="0">Any pay</option><option value="1000000">$1M+ a year</option><option value="5000000" selected>$5M+ a year</option><option value="10000000">$10M+ a year</option><option value="20000000">$20M+ a year</option></select></label>
+        <label class="f" for="fa-team">Team<select id="fa-team"></select></label>
+      </div>
+      <div class="chips posseg" id="fa-pos" role="group" aria-label="Position"></div>
+      <div id="fa-tbox"></div>
+      <div class="tw"><table class="t" id="fa-table"></table></div>
+      <button class="btn ghost more" id="fa-more" type="button">Show more</button>
+      <p class="note">Next-deal estimates blend his play rating, his pay rank at the position and his age, then read the result off today's pay scale for that position. They are Plain Cap estimates, not reports.</p>
+    </div>
+  </div>
+
+  <div id="fa-cap" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">What each team has left under the cap in future seasons after the contracts it has already signed. 2026 through 2028 come from Over The Cap; later years are built from every contract on this site.</p>
+    <div class="controls">
+      <div class="chips" id="fa-cyears" role="group" aria-label="Season"></div>
+      <label class="f" for="fa-growth">Cap growth after 2028<select id="fa-growth"><option value="0.04">+4% a year</option><option value="0.07">+7% a year</option><option value="0.09">+9% a year</option></select></label>
+    </div>
+    <div class="kpis" id="fa-ckpis"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="sechead"><div><span class="eyebrow" id="fa-cbar-eb">Room under the cap</span><h2 class="sec" id="fa-cbar-t">Projected cap space</h2></div></div>
+        <div class="chips" id="fa-cdiv" role="group" aria-label="Division"></div>
+        <div class="hbars" id="fa-cbars"></div>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Average team</span><h2 class="sec">Room by season</h2></div>
+        <div class="cols" id="fa-ccols"></div>
+        <p class="note" id="fa-cnote"></p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Tap a season to sort · tap a row to open the team</span><h2 class="sec">Cap space, every team, every year</h2></div><span class="scale-key">Less <i></i> More</span></div>
+      <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-heat" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
+      <div class="tw" style="border:0;background:none"><table class="heat fa-heat" id="fa-heat"></table></div>
+      <p class="note" id="fa-hnote"></p>
+    </div>
+  </div>
+
+  <div id="fa-tags" hidden style="display:grid;gap:16px;min-width:0">
+    <div class="grid2">
+      <div style="display:grid;gap:10px;align-content:start;min-width:0">
+        <div><span class="eyebrow" id="fa-cal-eb">The road to free agency</span><h2 class="sec">Key dates</h2></div>
+        <div class="cal" id="fa-cal"></div>
+        <p class="note" id="fa-cal-note"></p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Estimated from the top five pay at each position</span><h2 class="sec">Franchise tag prices</h2></div>
+        <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-tag" placeholder="Filter positions or players" aria-label="Filter positions or players" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
+        <div class="tw"><table class="t" id="fa-tag"></table></div>
+        <p class="note">The tag price is the average of the five biggest deals at a position. This estimate uses yearly pay; the league sets the official numbers in the spring. "Tag candidates" are pending 2027 free agents rated 85 or higher.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Players who could hit the market if their teams cut them</span><h2 class="sec">Cap casualty watch</h2></div></div>
+      <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-cuts" placeholder="Filter by player, team or position" aria-label="Filter by player, team or position" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
+      <div class="tw"><table class="t" id="fa-cuts"></table></div>
+      <button class="btn ghost more" id="fa-cuts-more" type="button">Show more</button>
+      <p class="note">Players whose teams would save at least 60% of his cap hit by releasing him after June 1. Sorted by cap space the release frees.</p>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Signings, releases and trades</span><h2 class="sec">Free agency news</h2></div><a class="btn ghost" href="#news">All news</a></div>
+      <div class="feed" id="fa-news"></div>
+    </div>
+  </div>
+</section>
+
+
 <section class="view" id="v-learn" hidden aria-labelledby="h-learn">
   <div><span class="eyebrow">Cap 101</span><h1 class="title" id="h-learn">The words on every contract page</h1></div>
   <p class="lede">Short answers to the terms you see in contract news. Start with cap hit and dead money; most of the rest builds on those two.</p>
@@ -1217,6 +1353,11 @@ DEALS.push(
     watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
 );
 const LEARN_NFL = [
+  ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
+  ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. Plain Cap estimates the price until the league announces it.'],
+  ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
+  ['Compensatory picks', 'Teams that lose more good free agents than they sign are awarded extra draft picks the next April. That is why some teams sit out the first week of free agency.'],
+  ['How year-by-year numbers work', 'The 2026 cap hit is reported. The years after that are Plain Cap estimates built from the contract (yearly average, length, bonus), except contracts marked Reported, which use published figures. The team totals for 2027 and 2028 are Over The Cap numbers.'],
   ['Salary cap', 'The most a team can spend on players in a season. For 2026 it is $301.2M for every team, and it is a hard cap: no team can go over it.'],
   ['Cap hit', 'What one player counts against the cap this year: his salary, a slice of his signing bonus and some other bonuses. It is often very different from the cash he is paid.'],
   ['Signing bonus', 'Paid up front in cash, but split evenly over the contract for cap purposes, up to five seasons. A $20M bonus on a five-year deal counts $4M a year.'],
@@ -2092,7 +2233,7 @@ function tstatsHTML(t, side) {
 let tpMode = 'snaps', tpSide = store.get('tpSide', 'off');
 function teamFieldHTML(t) {
   if (!SD) return '<div class="panel"><p class="empty">Season stats did not load, so team ratings, lineups and the depth chart are not available. Reload the page to try again.</p></div>';
-  return `<div class="jump" role="group" aria-label="Jump to section">${[['tp-rat', 'Ratings'], ['tp-line', 'Lineup'], ['tp-stats', 'Team stats'], ['tp-depth', 'Depth chart'], ['tp-cap', 'Salary cap'], ['tp-roster', 'Roster']].map(([id, l]) => `<button type="button" class="chip" data-jump="${id}">${l}</button>`).join('')}</div>
+  return `<div class="jump" role="group" aria-label="Jump to section">${[['tp-rat', 'Ratings'], ['tp-line', 'Lineup'], ['tp-stats', 'Team stats'], ['tp-depth', 'Depth chart'], ['tp-cap', 'Salary cap'], ['tp-years', 'Cap by year'], ['tp-roster', 'Roster']].map(([id, l]) => `<button type="button" class="chip" data-jump="${id}">${l}</button>`).join('')}</div>
   <div class="grid2" id="tp-rat">
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Through Week ${THRU} · from starters' play ratings</span><h2 class="sec">Team ratings</h2></div></div>
@@ -2324,7 +2465,7 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'learn'];
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
@@ -2346,6 +2487,7 @@ function route() {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
     if (v === 'awards') renderAwards();
+    if (v === 'freeagency') renderFA();
   }
   hideTip();
 }
@@ -2504,6 +2646,7 @@ function renderTeam(id) {
       ${top ? `<button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Biggest cap hit</span><span class="v num">${mon(top.cap)}</span><span class="s">${esc(top.name)}, ${esc(posTag(top.pos))}</span></button>` : ''}
     </div>
     ${teamFieldHTML(t)}
+    ${teamYearsHTML(t)}
     <div class="panel" id="tp-cap">
       <div class="sechead"><div><span class="eyebrow">Top six 2026 cap hits</span><h2 class="sec">Core contracts</h2></div>
         <div style="display:flex;gap:12px;align-items:center" data-tip="hh|${id}"><span class="eyebrow">Cap health</span><span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}" style="font-size:2rem">${t.health}</span><span class="note">${ord(t.r_health)} of 32</span></div></div>
@@ -2616,7 +2759,7 @@ function renderTable() {
   list.sort((a, b) => ((a[c.sort] ?? -1) - (b[c.sort] ?? -1)) * c.dir);
   $('#c-count').textContent = `${list.length.toLocaleString()} of ${PL.length.toLocaleString()} contracts`;
   $$('#c-table th[data-k]').forEach(th => th.dataset.k === c.sort ? th.setAttribute('aria-sort', c.dir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
-  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="8" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
+  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${yearCell(p, 2027)}</td><td class="r">${yearCell(p, 2028)}</td><td class="r">${yearCell(p, 2029)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="11" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
   $('#c-more').hidden = list.length <= c.limit;
 }
 function buildContractControls() {
@@ -2638,9 +2781,10 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · free agent ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
-    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab !== 'field'}">Contract</button></div>
+    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button></div>
+    <div id="sh-years" ${st.shTab === 'years' ? '' : 'hidden'}>${yearsHTML(p)}</div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
-    <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'field' ? 'hidden' : ''}>
+    <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'contract' ? '' : 'hidden'}>
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
     <div class="bigrow">
       <div><span class="k">Per year</span><div class="v">${mon(p.apy)}</div></div>
@@ -2674,7 +2818,7 @@ function openPlayer(i) {
     </div>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
-  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab === 'field'; };
+  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab !== 'contract'; $('#sh-years').hidden = st.shTab !== 'years'; };
   $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
     sheet.close();
     if (b.dataset.act === 'cut') { st.cut = p.i; st.tool = 'cut'; go('tools'); renderCut(); }
@@ -3135,19 +3279,244 @@ $('#toolnav').onclick = e => { const b = e.target.closest('button'); if (b) show
 $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { st.cutWhen = b.dataset.w; renderCut(); } };
 faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
 
+/* ===== free agency, projected cap by year, year by year contracts =====
+   Year by year cap hits: exact when data/years_exact.json has the contract, otherwise estimated from the contract's yearly
+   average, length, bonus and 2026 cap hit. Team cap space for 2027 and 2028 is Over The Cap's reported figure
+   (data/teamyears.json); later years add up the player-level numbers. Dates and cap projections live in data/freeagency.json. */
+const FY_R = 0.1, FY_FLOOR = 0.8e6, FY_MAX = 2035, FY_COLS = [2026, 2027, 2028, 2029, 2030];
+let TY = null, FAX = null, YX = null, PAYQ = {}, TAGP = {};
+const FA_YEARS = [2027, 2028, 2029, 2030, 2031];
+st.fa = { tab: store.get('faTab', 'class'), year: 2027, pos: 'all', min: 5e6, team: 'all', q: '', sort: 'play', dir: -1, limit: 60, cy: 2027, growth: null, div: 'All', hs: null };
+const qtile = (arr, q) => { if (!arr.length) return 0; const x = Math.max(0, Math.min(1, q)) * (arr.length - 1), i = Math.floor(x); return arr[i] + (arr[Math.min(arr.length - 1, i + 1)] - arr[i]) * (x - i); };
+
+function yearModel(p) {
+  const cap = p.cap || 0, bonus = Math.min(p.bonus || 0, cap), base = p.base != null ? Math.min(p.base, cap) : Math.max(0, cap - bonus);
+  const last = Math.max(2026, Math.min((p.end || 2027) - 1, FY_MAX)), n = last - 2025;
+  let rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
+  const ex = YX && YX.contracts && YX.contracts[p.name + '|' + p.team];
+  if (ex) {
+    rows = Object.keys(ex).map(Number).filter(y => y >= 2026 && y <= FY_MAX).sort((a, b) => a - b).map(y => ({ y, base: ex[y][0], bonus: ex[y][1], cap: ex[y][2], src: 'reported' }));
+    if (rows.length) { p.yr = rows; p.exact = true; p.yrLast = rows[rows.length - 1].y; return; }
+    rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
+  }
+  if (n > 1 && cap > 0) {
+    const yrs = p.apy ? Math.round(p.total / p.apy) : n, nn = p.voidy ? Math.min(n, yrs) : n, m = n - 1;
+    let Sf = p.apy * nn - cap;
+    if (!(Sf >= cap * 0.3 * m)) Sf = cap * m * 0.9;
+    const w = Array.from({ length: m }, (_, i) => Math.pow(1 + FY_R, i)), fl = bonus + FY_FLOOR, hit = new Array(m).fill(0);
+    let free = w.map((_, i) => i), rem = Sf;
+    for (let it = 0; it < 4 && free.length; it++) {
+      const sw = free.reduce((s, i) => s + w[i], 0); let clamped = false;
+      for (const i of [...free]) { const v = rem * w[i] / sw; if (v < fl) { hit[i] = fl; rem -= fl; free = free.filter(x => x !== i); clamped = true; } }
+      if (!clamped) { free.forEach(i => (hit[i] = Math.max(fl, rem * w[i] / sw))); break; }
+    }
+    for (let i = 0; i < m; i++) { const h = hit[i] || fl; rows.push({ y: 2027 + i, base: Math.max(0, h - bonus), bonus, cap: h, src: 'estimate' }); }
+  }
+  p.yr = rows; p.exact = false; p.yrLast = last;
+}
+const capAt = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? r.cap : 0; };
+const lastCap = p => (p.yr && p.yr.length ? p.yr[p.yr.length - 1].cap : p.cap || 0);
+function estNext(p) {
+  if (p._en != null) return p._en;
+  const arr = PAYQ[p.group] || [], q = p.play != null ? 0.65 * p.playPct + 0.35 * p.pApy : 0.85 * p.pApy;
+  let v = 0.75 * qtile(arr, q) + 0.25 * p.apy; const a = p.age || 27;
+  v *= a >= 34 ? 0.55 : a >= 32 ? 0.7 : a >= 30 ? 0.85 : a >= 28 ? 0.95 : a <= 25 ? 1.05 : 1;
+  return (p._en = Math.max(0.9e6, Math.round(v / 1e5) * 1e5));
+}
+function analyzeYears() {
+  PL.forEach(yearModel);
+  PAYQ = {}; TAGP = {};
+  GROUP_ORDER.forEach(g => {
+    PAYQ[g] = PL.filter(p => p.group === g && p.apy > 0).map(p => p.apy).sort((a, b) => a - b);
+    const top = PL.filter(p => p.group === g).sort((a, b) => b.apy - a.apy).slice(0, 5);
+    TAGP[g] = { est: top.reduce((s, p) => s + p.apy, 0) / Math.max(1, top.length), top };
+  });
+  PL.forEach(p => { [2027, 2028, 2029].forEach(y => (p['y' + y] = capAt(p, y))); });
+}
+const faGrowth = () => st.fa.growth != null ? st.fa.growth : (FAX && FAX.capGrowth) || 0.07;
+function capOfYear(y) {
+  if (y <= 2026) return CAP;
+  const r = TY && TY.years && TY.years[y]; if (r && r.cap) return r.cap;
+  if (FAX && FAX.capByYear && FAX.capByYear[y]) return FAX.capByYear[y];
+  return capOfYear(y - 1) * (1 + faGrowth());
+}
+function teamYear(t, y) {
+  if (y === 2026) return { cap: t.eff, space: t.space, committed: t.active + t.dead, dead: t.dead, n: t.roster, src: 'reported' };
+  const r = TY && TY.years && TY.years[y] && TY.years[y].teams && TY.years[y].teams[t.id], cap = capOfYear(y);
+  if (r) return { cap, space: r.space, committed: r.active + r.dead, dead: r.dead, n: r.n, src: 'reported' };
+  const live = t.ros.filter(p => p.yrLast >= y), hits = live.reduce((s, p) => s + capAt(p, y), 0);
+  return { cap, space: cap - hits, committed: hits, dead: 0, n: live.length, src: 'estimate' };
+}
+const faClass = y => PL.filter(p => (y >= 2031 ? p.end >= 2031 : p.end === y));
+const yLabel = y => (y >= 2031 ? '2031+' : String(y));
+const fmtRoom = v => (v < 0 ? '−' : '') + '$' + Math.abs(v / 1e6).toFixed(0) + 'M';
+const dayFmt = iso => new Date(iso + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+
+/* player sheet: year by year */
+function yearsHTML(p) {
+  if (!p.yr || !p.yr.length) return '<p class="empty">No contract years to show.</p>';
+  const rows = p.yr, maxc = Math.max(...rows.map(r => r.cap), 1), tot = rows.reduce((s, r) => s + r.cap, 0), est = rows.some(r => r.src === 'estimate');
+  const last = rows[rows.length - 1].y;
+  return `<div style="display:grid;gap:12px">
+    <div class="sechead" style="margin:0"><div><span class="eyebrow">Cap hit by season</span><h3 class="sec" style="font-size:1.15rem">Year by year</h3></div><span class="srcb ${p.exact ? 'rep' : ''}">${p.exact ? 'Reported figures' : est ? '2026 reported · later years estimated' : 'Reported'}</span></div>
+    <div class="ybars">${rows.map(r => `<div class="yb"><span class="y">${r.y}</span><span style="display:grid;gap:3px;min-width:0"><span class="st" role="img" aria-label="${r.y}: base salary ${mon(r.base)}, bonuses and other ${mon(r.bonus)}"><i style="width:${(r.base / maxc * 100).toFixed(1)}%;background:var(--c-off)"></i><i style="width:${(r.bonus / maxc * 100).toFixed(1)}%;background:var(--brand)"></i></span><small class="note">Base ${mon(r.base)} · bonuses ${mon(r.bonus)}</small></span><span class="v ${r.src === 'estimate' ? 'est' : ''}">${r.src === 'estimate' ? '~' : ''}${mon(r.cap)}</span><span class="s">${pct(r.cap / capOfYear(r.y), 1)}</span></div>`).join('')}
+      <div class="yb fa"><span class="y">${last + 1}</span><span class="note" style="grid-column:2/4">Free agent after the ${last} season${p.voidy ? ' (void years can add dead money)' : ''}</span><span class="s"></span></div></div>
+    <ul class="legend" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),max-content))"><li><i class="swatch" style="background:var(--c-off)"></i><span>Base salary</span></li><li><i class="swatch" style="background:var(--brand)"></i><span>Bonuses and other</span></li></ul>
+    <div class="rows"><div><span>Cap hits left, 2026 on</span><b>${mon(tot, 1)}</b></div><div><span>Share of the cap, 2026</span><b>${pct(p.cap / CAP, 1)}</b></div></div>
+    <p class="note">${p.exact ? 'These figures were reported by Over The Cap or Spotrac for this contract.' : 'The 2026 row is reported. Later years are a Plain Cap estimate built from his yearly average, contract length and bonus, and they assume pay rises toward the end of the deal. Exact figures replace the estimate when they are reported.'} The percentage is his cap hit divided by that season's cap.</p>
+  </div>`;
+}
+const yearCell = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? (r.src === 'estimate' ? `<span class="est">~${mon(r.cap)}</span>` : mon(r.cap)) : '<span style="color:var(--muted)">—</span>'; };
+
+/* team page: cap room by season */
+function teamYearsHTML(t) {
+  const ys = [2026, 2027, 2028, 2029, 2030].map(y => [y, teamYear(t, y)]);
+  const mx = Math.max(...ys.map(([, d]) => Math.max(d.committed, d.cap)));
+  return `<div class="panel" id="tp-years"><div class="sechead"><div><span class="eyebrow">Contracts already signed for each season</span><h2 class="sec">Cap room by year</h2></div><a class="btn ghost" href="#freeagency">Free agency</a></div>
+    <div class="cols" style="height:190px">${ys.map(([y, d]) => `<div class="col" data-tip="${esc(t.name)} ${y}|${d.space}"><span class="amt">${d.space < 0 ? '−' : ''}${mon(Math.abs(d.space), 0)}</span><i class="bx" style="height:${(d.committed / mx * 100).toFixed(1)}%;${d.space < 0 ? 'background:var(--bad)' : ''}"></i><span class="lab">${y}${d.src === 'estimate' ? '*' : ''}</span></div>`).join('')}</div>
+    <p class="note">Bars show money committed to players already under contract; the number above each bar is room left under that year's cap. 2026 to 2028 come from Over The Cap. *2029 and 2030 are estimated from player contracts. Teams add draft picks and free agents before every season, so real room ends up lower.</p></div>`;
+}
+
+/* ===== free agent classes ===== */
+function faRows() {
+  const f = st.fa, q = f.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  let list = faClass(f.year).filter(p => p.apy >= f.min && (f.pos === 'all' || p.group === f.pos) && (f.team === 'all' || p.team === f.team));
+  if (q.length) list = list.filter(p => { const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + p.pos + ' ' + (p.role || '')).toLowerCase(); return q.every(x => h.includes(x)); });
+  const V = { name: p => p.name, pos: p => p.group, age: p => p.age || 0, play: p => (p.play == null ? -1 : p.play), apy: p => p.apy, est: estNext, chg: p => estNext(p) - p.apy, cap: lastCap }[f.sort] || (p => p.apy);
+  return list.sort((a, b) => { const x = V(a), y = V(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * f.dir || b.apy - a.apy; });
+}
+function renderFAClass() {
+  const f = st.fa, all = faClass(f.year), floor = all.filter(p => p.apy >= f.min);
+  $('#fa-years').innerHTML = FA_YEARS.map(Y => `<button type="button" class="chip" data-fay="${Y}" aria-pressed="${Y === f.year}">${yLabel(Y)} class <span class="num" style="opacity:.7">${faClass(Y).filter(p => p.apy >= 5e6).length}</span></button>`).join('');
+  const best = [...all].filter(p => p.play != null).sort((a, b) => b.play - a.play || b.apy - a.apy)[0];
+  const money = all.reduce((s, p) => s + lastCap(p), 0), top80 = all.filter(p => p.play >= 80).length;
+  const rooms = TEAMS.map(t => teamYear(t, Math.min(f.year, 2031)));
+  $('#fa-kpis').innerHTML = `
+    <div class="kpi"><span class="k">${yLabel(f.year)} free agents</span><span class="v num">${all.length.toLocaleString()}</span><span class="s">${all.filter(p => p.apy >= 5e6).length} earn $5M+ a year</span></div>
+    <div class="kpi"><span class="k">Money coming off</span><span class="v num">${mon(money, 0)}</span><span class="s">Final-season cap hits of the class</span></div>
+    <div class="kpi"><span class="k">Rated 80 or better</span><span class="v good num">${top80}</span><span class="s">Players playing at a high level</span></div>
+    ${best ? `<button class="kpi" type="button" data-p="${best.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best player in class</span><span class="v num">${best.play}</span><span class="s">${esc(best.name)}, ${esc(TB[best.team].name)}</span></button>` : ''}
+    <div class="kpi"><span class="k">Teams with $50M+ room</span><span class="v num">${rooms.filter(r => r.space >= 50e6).length}</span><span class="s">${yLabel(f.year)} cap room${rooms[0].src === 'estimate' ? ' (estimated)' : ''}</span></div>`;
+  $('#fa-board-t').textContent = `Top of the ${yLabel(f.year)} class`;
+  const topList = [...all].filter(p => p.play != null).sort((a, b) => b.play - a.play || b.apy - a.apy).slice(0, 10);
+  $('#fa-board').innerHTML = (topList.length ? topList.map(fieldCard) : [...all].sort((a, b) => b.apy - a.apy).slice(0, 10).map(faceCard)).join('') || '<p class="empty">No players yet.</p>';
+  // positions
+  const rows = GROUP_ORDER.map(g => { const ps = floor.filter(p => p.group === g); return { g, n: ps.length, sum: ps.reduce((s, p) => s + estNext(p), 0) }; }).filter(r => r.n);
+  const mx = Math.max(1, ...rows.map(r => r.sum));
+  $('#fa-posbars').innerHTML = rows.map(r => `<button type="button" class="fap" data-fapos="${r.g}" aria-pressed="${f.pos === r.g}"><span>${GROUP_NAME[r.g]}</span><span class="track"><i style="width:${(r.sum / mx * 100).toFixed(1)}%;background:${SIDE_VAR[GROUP_SIDE[r.g]]}"></i></span><span class="val">${mon(r.sum, 0)}<small>${r.n} player${r.n === 1 ? '' : 's'}</small></span></button>`).join('') || '<p class="empty">No players at this pay floor.</p>';
+  // teams
+  const trows = TEAMS.map(t => { const ps = all.filter(p => p.team === t.id && p.apy >= 1e6), bestp = [...ps].sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy)[0]; return { t, n: ps.length, sum: ps.reduce((s, p) => s + lastCap(p), 0), best: bestp, room: teamYear(t, Math.min(f.year, 2031)) }; }).sort((a, b) => b.sum - a.sum);
+  $('#fa-teams').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Team</span></th><th class="r"><span>Players</span></th><th class="r"><span>Expiring $</span></th><th><span>Top pending free agent</span></th><th class="r"><span>Room ${yLabel(f.year)}</span></th></tr></thead><tbody>` +
+    trows.map((r, n) => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t) + ' ' + (r.best ? r.best.name.toLowerCase() : ''))}"><td class="r">${n + 1}</td><td><span class="pn">${crest(r.t.id, 20)}${esc(r.t.city)} ${esc(r.t.name)}</span></td><td class="r">${r.n}</td><td class="r">${mon(r.sum, 0)}</td><td>${r.best ? `<button type="button" class="tlink" data-p="${r.best.i}">${esc(r.best.name)}</button> <span class="note">${esc(posTag(r.best.pos))}${r.best.play != null ? ' · ' + r.best.play : ''}</span>` : '—'}</td><td class="r${r.room.src === 'estimate' ? ' est' : ''}">${r.room.src === 'estimate' ? '~' : ''}${fmtRoom(r.room.space)}</td></tr>`).join('') + '</tbody>';
+  applyTF($('#fa-teams'));
+  // controls
+  $('#fa-pos').innerHTML = ['all'].concat(GROUP_ORDER).map(g => `<button type="button" class="chip" data-fp="${g}" aria-pressed="${f.pos === g}">${g === 'all' ? 'All positions' : g}</button>`).join('');
+  renderFATable();
+}
+function renderFATable() {
+  const f = st.fa, list = faRows(), all = faClass(f.year);
+  const th = (k, l, cls = 'r', title = '') => `<th class="${cls}"${f.sort === k ? ` aria-sort="${f.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-fas="${k}"${title ? ` title="${esc(title)}"` : ''}>${l}</button></th>`;
+  $('#fa-tt').textContent = `${yLabel(f.year)} free agents`;
+  $('#fa-tcount').textContent = `${list.length.toLocaleString()} of ${all.length.toLocaleString()} players${f.pos !== 'all' ? ' · ' + GROUP_NAME[f.pos] : ''}`;
+  $('#fa-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}${th('pos', 'Pos', '')}${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Pay now', 'r', 'Yearly average of his current deal')}${th('est', 'Est. next deal', 'r', 'Plain Cap estimate of a new yearly average')}${th('chg', 'Change', 'r', 'Estimated next deal minus pay now')}${th('cap', 'Last cap hit', 'r', 'Cap hit in the last season of his deal')}</tr></thead><tbody>` +
+    (list.slice(0, f.limit).map(p => { const e = estNext(p), c = e - p.apy;
+      return `<tr data-p="${p.i}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${p.ot && p.ot.length ? `<span class="otdots">${p.ot.slice(0, 3).map(([k, t]) => `<i class="${t}" title="${esc(OTRAITS[k][0])}"></i>`).join('')}</span>` : ''}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(e)}</td><td class="r"><span class="vl ${c > 0.4e6 ? 'good' : c < -0.4e6 ? 'bad' : ''}">${c > 0 ? '+' : c < 0 ? '−' : ''}${mon(Math.abs(c))}</span></td><td class="r">${mon(lastCap(p))}</td></tr>`; }).join('') || `<tr style="cursor:default"><td colspan="8" class="empty">No players match. Lower the pay floor or clear the filter.</td></tr>`) + '</tbody>';
+  $('#fa-more').hidden = list.length <= f.limit;
+}
+
+/* ===== cap space by year ===== */
+function renderFACap() {
+  const f = st.fa, y = f.cy, g = $('#fa-growth'); g.value = String(faGrowth());
+  $('#fa-cyears').innerHTML = FY_COLS.map(Y => `<button type="button" class="chip" data-fcy="${Y}" aria-pressed="${Y === y}">${Y}${teamYear(TEAMS[0], Y).src === 'estimate' ? '*' : ''}</button>`).join('');
+  const rows = TEAMS.map(t => ({ t, d: teamYear(t, y) })), est = rows[0].d.src === 'estimate';
+  const sorted = [...rows].sort((a, b) => b.d.space - a.d.space), avg = rows.reduce((s, r) => s + r.d.space, 0) / rows.length, over = rows.filter(r => r.d.space < 0).length;
+  const most = sorted[0], least = sorted[sorted.length - 1];
+  $('#fa-ckpis').innerHTML = `
+    <div class="kpi"><span class="k">${y} salary cap</span><span class="v num">${mon(capOfYear(y), 1)}</span><span class="s">${y > 2026 ? (y <= 2028 ? 'Over The Cap projection' : 'Grows ' + pct(faGrowth()) + ' a year') : 'Set by the league'}</span></div>
+    <div class="kpi"><span class="k">Average room</span><span class="v num">${fmtRoom(avg)}</span><span class="s">Per team${est ? ', estimated' : ''}</span></div>
+    <a class="kpi" href="#team-${most.t.id}"><span class="k">Most room</span><span class="v good num">${fmtRoom(most.d.space)}</span><span class="s">${esc(most.t.city)} ${esc(most.t.name)}</span></a>
+    <a class="kpi" href="#team-${least.t.id}"><span class="k">Least room</span><span class="v ${least.d.space < 0 ? 'bad' : ''} num">${fmtRoom(least.d.space)}</span><span class="s">${esc(least.t.city)} ${esc(least.t.name)}</span></a>
+    <div class="kpi"><span class="k">Teams over the cap</span><span class="v ${over ? 'bad' : ''} num">${over}</span><span class="s">Before moves to clear room</span></div>`;
+  divChips($('#fa-cdiv'), f.div, d => { f.div = d; renderFACap(); });
+  const list = sorted.filter(r => f.div === 'All' || r.t.div === f.div), mx = Math.max(1, ...rows.map(r => Math.abs(r.d.space)));
+  $('#fa-cbar-t').textContent = `${y} cap space`;
+  $('#fa-cbar-eb').textContent = est ? 'Estimated from player contracts' : 'Reported by Over The Cap';
+  $('#fa-cbars').innerHTML = list.map(r => `<button type="button" class="hb${r.t.id === favTeam ? ' me' : ''}" data-team="${r.t.id}"><span class="rk">${sorted.indexOf(r) + 1}</span>${badge(r.t.id)}<span class="track"><i class="fill" style="width:${(Math.abs(r.d.space) / mx * 100).toFixed(2)}%;background:${r.d.space < 0 ? 'var(--bad)' : 'var(--good)'}"></i></span><span class="val" style="${r.d.space < 0 ? 'color:var(--bad)' : ''}">${r.d.space < 0 ? '−' : ''}${mon(Math.abs(r.d.space))}</span></button>`).join('');
+  const avgs = FY_COLS.map(Y => { const rs = TEAMS.map(t => teamYear(t, Y)); return [Y, rs.reduce((s, r) => s + r.space, 0) / rs.length, rs[0].src]; }), am = Math.max(1, ...avgs.map(a => Math.abs(a[1])));
+  $('#fa-ccols').innerHTML = avgs.map(([Y, v, s]) => `<div class="col"><span class="amt">${s === 'estimate' ? '~' : ''}${fmtRoom(v)}</span><i class="bx" style="height:${(Math.max(0, v) / am * 100).toFixed(1)}%"></i><span class="lab">${Y}</span></div>`).join('');
+  $('#fa-cnote').textContent = 'Average room per team in each season, after contracts already signed. Room grows in later years because few deals run that long; teams fill it with draft picks, extensions and free agents.';
+  // heatmap
+  const hs = f.hs, data = TEAMS.map(t => ({ t, y: Object.fromEntries(FY_COLS.map(Y => [Y, teamYear(t, Y)])) }));
+  data.sort((a, b) => hs ? b.y[hs].space - a.y[hs].space : (a.t.city + a.t.name).localeCompare(b.t.city + b.t.name));
+  $('#fa-heat').innerHTML = `<thead><tr><th style="text-align:left"><button type="button" data-fahs="" aria-pressed="${!hs}">Team</button></th>${FY_COLS.map(Y => `<th><button type="button" data-fahs="${Y}" aria-pressed="${hs === Y}">${Y}${data[0].y[Y].src === 'estimate' ? '*' : ''}</button></th>`).join('')}</tr></thead><tbody>` +
+    data.map(r => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t))}"><td class="tm"><span>${crest(r.t.id, 20)}${esc(r.t.name)}</span></td>${FY_COLS.map(Y => { const d = r.y[Y], v = d.space, k = v >= 0 ? Math.min(1, v / 100e6) : Math.min(1, -v / 60e6); return `<td class="${v < 0 ? 'neg ' : ''}${k > .55 ? 'hi' : ''}${d.src === 'estimate' ? ' estc' : ''}" data-tip="${esc(r.t.name)} ${Y}|${v}"><i style="opacity:${(0.08 + 0.92 * k).toFixed(2)}"></i><b>${(v / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
+  applyTF($('#fa-heat'));
+  $('#fa-hnote').textContent = `Cells show cap room in $M after contracts already signed. 2026 is current cap space. 2027 and 2028 are Over The Cap's tables${TY ? ' (updated ' + dayFmt(TY.asOf) + ')' : ''}. *Italic 2029 and 2030 cells are Plain Cap estimates built from each player's contract. Caps: ${FAX && FAX.capNote ? FAX.capNote : 'projected by Over The Cap.'}`;
+}
+
+/* ===== tags, cuts, dates, news ===== */
+function renderFATags() {
+  const cal = (FAX && FAX.calendar) || [], now = new Date(), next = cal.findIndex(c => new Date(c.date + 'T23:59:00') >= now);
+  const lg = cal.find(c => /league year/i.test(c.label)), days = lg ? Math.ceil((new Date(lg.date + 'T16:00:00-05:00') - now) / 864e5) : null;
+  $('#fa-cal-eb').textContent = days != null && days > 0 ? `${days} days until free agency opens` : 'The road to free agency';
+  $('#fa-cal').innerHTML = cal.map((c, n) => { const inner = `<span class="d">${dayFmt(c.date)}</span><span><b>${esc(c.label)}</b><small>${esc(c.note || '')}</small></span>`, cls = n === next ? 'next' : n < next || next < 0 ? 'past' : '';
+    return c.url ? `<a class="${cls}" href="${esc(c.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('') || '<p class="empty">Dates did not load.</p>';
+  $('#fa-cal-note').textContent = 'Source: NFL.com, Pro Football Talk and team sites. Dates can change.' + (FAX && FAX.asOf ? ' Updated ' + dayFmt(FAX.asOf) + '.' : '');
+  // tags
+  const offic = (FAX && FAX.tags) || {}, c27 = faClass(2027);
+  $('#fa-tag').innerHTML = `<thead><tr><th><span>Position</span></th><th class="r"><span>Tag price</span></th><th><span>Five biggest deals</span></th><th><span>Tag candidates (2027 class)</span></th></tr></thead><tbody>` +
+    GROUP_ORDER.map(g => { const t = TAGP[g], cand = c27.filter(p => p.group === g && p.play >= 85).sort((a, b) => b.play - a.play).slice(0, 4), o = offic[g];
+      return `<tr style="cursor:default" data-s="${esc((GROUP_NAME[g] + ' ' + t.top.map(p => p.name).join(' ') + ' ' + cand.map(p => p.name).join(' ')).toLowerCase())}"><td><b>${GROUP_NAME[g]}</b></td><td class="r${o ? '' : ' est'}">${o ? mon(o) : '~' + mon(t.est)}</td><td><span class="note">${t.top.map(p => esc(p.name)).join(', ')}</span></td><td>${cand.map(p => `<button type="button" class="tlink" data-p="${p.i}">${esc(p.name)} <span class="note">${p.play}</span></button>`).join(' ') || '<span class="note">None rated 85+</span>'}</td></tr>`; }).join('') + '</tbody>';
+  applyTF($('#fa-tag'));
+  // cap casualties
+  const cuts = PL.filter(p => p.traits.includes('cut')).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost));
+  $('#fa-cuts').innerHTML = `<thead><tr><th><span>Player</span></th><th><span>Pos</span></th><th class="r"><span>Age</span></th><th class="r"><span>Play</span></th><th><span>Value</span></th><th class="r"><span>2026 cap hit</span></th><th class="r"><span>Dead if cut</span></th><th class="r"><span>Room freed</span></th></tr></thead><tbody>` +
+    cuts.slice(0, 200).map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + TB[p.team].city + ' ' + TB[p.team].name + ' ' + p.team + ' ' + p.pos).toLowerCase())}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td><span class="vl ${vClass(p.vlab)}">${esc(p.vlab || '—')}</span></td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.dpost)}</td><td class="r"><b>${mon(p.cap - p.dpost)}</b></td></tr>`).join('') + '</tbody>';
+  applyTF($('#fa-cuts')); $('#fa-cuts-more').hidden = true;
+  $('#fa-news').innerHTML = MOVES.filter(m => ['Signing', 'Release', 'Trade', 'Extension', 'Restructure'].includes(m.kind)).slice(0, 8).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>';
+}
+
+function renderFA() {
+  if (!D || !PL.length || !PL[0].yr) return;
+  const f = st.fa;
+  $$('#fa-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ft === f.tab)));
+  $('#fa-class').hidden = f.tab !== 'class'; $('#fa-cap').hidden = f.tab !== 'cap'; $('#fa-tags').hidden = f.tab !== 'tags';
+  $('#fa-eyebrow').textContent = `Free agency tracker · ${TY ? 'cap tables updated ' + dayFmt(TY.asOf) : 'contract data through ' + dayFmt(D.asOf)}`;
+  $('#h-freeagency').textContent = { class: 'Upcoming free agents', cap: 'Cap space by year', tags: 'Tags, cuts and key dates' }[f.tab];
+  if (f.tab === 'class') renderFAClass(); else if (f.tab === 'cap') renderFACap(); else renderFATags();
+}
+function wireFA() {
+  const f = st.fa;
+  $('#fa-team').innerHTML = '<option value="all">All teams</option>' + [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(t => `<option value="${t.id}">${esc(t.city)} ${esc(t.name)}</option>`).join('');
+  $('#fa-tab').onclick = e => { const b = e.target.closest('button'); if (b) { f.tab = b.dataset.ft; store.set('faTab', f.tab); renderFA(); } };
+  $('#fa-years').onclick = e => { const b = e.target.closest('[data-fay]'); if (b) { f.year = +b.dataset.fay; f.limit = 60; renderFAClass(); } };
+  $('#fa-pos').onclick = e => { const b = e.target.closest('[data-fp]'); if (b) { f.pos = b.dataset.fp; f.limit = 60; renderFAClass(); } };
+  $('#fa-posbars').onclick = e => { const b = e.target.closest('[data-fapos]'); if (b) { f.pos = f.pos === b.dataset.fapos ? 'all' : b.dataset.fapos; f.limit = 60; renderFAClass(); $('#fa-table').scrollIntoView({ block: 'nearest' }); } };
+  $('#fa-min').onchange = e => { f.min = +e.target.value; f.limit = 60; renderFAClass(); };
+  $('#fa-team').onchange = e => { f.team = e.target.value; f.limit = 60; renderFATable(); };
+  $('#fa-tbox').outerHTML = tfBox('fa-table', 'Filter by player, team or position');
+  document.addEventListener('input', e => { const i = e.target.closest && e.target.closest('input[data-tf="fa-table"]'); if (i) { f.q = i.value; f.limit = 60; renderFATable(); } });
+  $('#fa-more').onclick = () => { f.limit += 60; renderFATable(); };
+  $('#fa-table').addEventListener('click', e => { const b = e.target.closest('[data-fas]'); if (b) { e.stopPropagation(); const k = b.dataset.fas; if (f.sort === k) f.dir *= -1; else { f.sort = k; f.dir = ['name', 'pos', 'age'].includes(k) ? 1 : -1; } renderFATable(); } });
+  $('#fa-cyears').onclick = e => { const b = e.target.closest('[data-fcy]'); if (b) { f.cy = +b.dataset.fcy; renderFACap(); } };
+  $('#fa-growth').onchange = e => { f.growth = +e.target.value; renderFACap(); };
+  $('#fa-heat').addEventListener('click', e => { const b = e.target.closest('[data-fahs]'); if (b) { e.stopPropagation(); f.hs = b.dataset.fahs ? +b.dataset.fahs : null; renderFACap(); } });
+}
+
 /* ===== boot ===== */
-function boot(d, mv, sd, se) {
+function boot(d, mv, sd, se, ty, fx, yx) {
+  TY = ty; FAX = fx; YX = yx;
   prepare(d, mv);
   const dt = new Date(d.asOf + 'T12:00:00');
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   $('#stamp').textContent = 'Updated ' + ds;
   $('#news-asof').textContent = `NFL news · updated ${new Date(((mv && mv.asOf) || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
+  $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Year-by-year figures after 2026 are estimates unless marked Reported. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
   analyzeField();
   if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
-  analyzeTeams(); wireBuilder();
+  analyzeTeams(); analyzeYears(); wireFA(); wireBuilder();
   analyzeSeason(se);
   wireOnField(); renderOnField();
   renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
@@ -3169,8 +3538,8 @@ function boot(d, mv, sd, se) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null)])
-  .then(([d, mv, as, sd, se]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd, se); })
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null)])
+  .then(([d, mv, as, sd, se, ty, fx, yx]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd, se, ty, fx, yx); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>

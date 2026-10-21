@@ -15,3 +15,8 @@ Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Ca
 
 ## Views
 Open a view directly with its anchor (`#teams` has the power ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
+
+## Free agency and year-by-year contracts (#freeagency)
+- `data/teamyears.json`: Over The Cap's reported cap room for 2027 and 2028, per team (refreshed daily).
+- `data/freeagency.json`: cap projections, cap growth rate, the offseason calendar and official franchise tag prices once announced.
+- `data/years_exact.json`: reported year-by-year cap hits for individual contracts. Every other player's later years are estimated in the browser from the contract terms and labeled as estimates. The daily task upgrades more contracts to exact each run.
