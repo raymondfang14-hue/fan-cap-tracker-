@@ -1711,70 +1711,174 @@ const ROLE_DESC = {
   'Rotational safety': 'Shares time at safety.',
   'Sub-package safety': 'Plays in certain packages.',
   'Depth safety': 'Rarely on the field on defense.',
-  'Big-leg kicker': 'Has made a 58-yarder, or three or more from 50 and out.',
+  'Big-leg kicker': 'Has made a 60-yarder, or four or more from 50 and out.',
   'Kicker': 'The team\'s kicker.',
   'Coffin-corner punter': 'Pins teams inside the 20 more than most.',
   'Field flipper': 'Big gross average, flips field position.',
-  'Punter': 'The team\'s punter.'
+  'Punter': 'The team\'s punter.',
+  'Gambler': 'Throws it downfield and pays for it: more interceptions than most passers.',
+  'Precision passer': 'Completes far more passes than the difficulty of his throws predicts.',
+  'Escape artist': 'Sees a lot of pressure but rarely goes down for a sack.',
+  'Game manager': 'Protects the ball and keeps throws short and safe.',
+  'Volume passer': 'Piles up passing yards: one of the top passing-yard totals a game at the position.',
+  'Home-run threat': 'Breaks long runs: one of the highest rates of 20+ yard carries.',
+  'Power runner': 'Keeps going after the first hit: one of the best at yards after contact.',
+  'Elusive back': 'Makes the first defender miss more than almost any other back.',
+  'Efficient runner': 'Adds expected points on carries, whatever the yardage.',
+  'Goal-line finisher': 'Scores touchdowns at a rate of more than one every two games.',
+  'Third-down back': 'A pass-game back who gets looks on passing downs without a big carry share.',
+  'Explosive playmaker': 'Hits big plays: one of the highest rates of 20+ yard catches.',
+  'Touchdown maker': 'Finds the end zone more often than almost any receiver.',
+  'Sure hands': 'Catches nearly everything thrown his way and rarely drops one.',
+  'Open-field runner': 'Gets the ball and breaks tackles: a high broken-tackle rate and big yards after the catch.',
+  'Efficiency target': 'Adds expected points on his targets at one of the best rates at the position.',
+  'Seam stretcher': 'A tight end who works the middle of the field downfield, 9.5+ air yards a target.',
+  'Red-zone weapon': 'A tight end who scores: two or more receiving touchdowns this season.',
+  'Safety valve': 'A short-area target who catches almost everything.',
+  'After-the-catch tight end': 'Turns short catches into bigger gains: six or more yards after the catch.',
+  'Line quarterback': 'A starting center who makes the protection calls up front.',
+  'Penalty-free starter': 'A starting lineman with no penalties through 30 or more snaps a game played.',
+  'Flag magnet': 'A starting lineman who draws more flags than almost any other at his spot.',
+  'Rotational starter': 'Starts but does not play every snap.',
+  'Edge protector': 'A starting tackle who guards the quarterback\'s edge.',
+  'Interior mauler': 'A starting guard who works in the middle of the line.',
+  'Three-down edge': 'Pressures the passer and stops the run: above average at both.',
+  'Sack artist': 'Finishes: one of the highest sack rates a game at the position.',
+  'Backfield disruptor': 'Lives in the opponent\'s backfield: one of the top tackle-for-loss rates.',
+  'Turnover creator': 'Forces fumbles and takes the ball away more than most.',
+  'Sack-hunting tackle': 'An interior lineman who finishes plays with sacks.',
+  'Backfield penetrator': 'Gets into the backfield on running plays: top tackle-for-loss rate for a tackle.',
+  'Gap plugger': 'Stops the run by clogging gaps and making tackles.',
+  'Space eater': 'Takes on blockers so others can make the play; stats come in tackles for others.',
+  'Ball-hawking linebacker': 'Makes plays on the ball: passes defended and interceptions.',
+  'Backfield hunter': 'Gets to the ball carrier behind the line more than most linebackers.',
+  'Tackle machine': 'One of the highest tackle totals a game among linebackers.',
+  'Sure tackler': 'Rarely misses: one of the lowest missed-tackle rates.',
+  'Shutdown corner': 'Allows one of the lowest passer ratings at the position when targeted.',
+  'Ball hawk': 'Makes plays on the ball: one of the top rates of passes defended and interceptions.',
+  'Physical corner': 'Tackles like a safety: one of the highest tackle totals a game for a corner.',
+  'Nickel playmaker': 'A part-time or slot corner who makes plays on the ball.',
+  'Blitz safety': 'A safety sent after the quarterback, with one of the top pressure totals.',
+  'Turnover machine': 'Takes the ball away: one of the highest takeaway rates at the position.',
+  'Lockdown safety': 'Allows one of the lowest passer ratings at the position when targeted.',
+  'Long-range specialist': 'Makes kicks from 40 and out at one of the best rates at the position.',
+  'Mr. Automatic': 'Has made at least 90% of his field goals on at least five tries.',
+  'Busy leg': 'His team asks him to kick a lot: two or more field goal tries a game.',
+  'Net master': 'Top net punting average: flips the field after returns.',
+  'Workhorse punter': 'Punts a lot: four or more punts a game.',
+  'Special teams ace': 'A depth player who earns his spot on special teams, 20+ snaps a game.'
 };
 const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
+const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
 const ROLES = {
-  QB: p => { const m = sm(p); if (!p.fq) return p.st.gs ? 'Spot starter' : 'Backup';
-    if ((m.car || 0) / gp(p) >= 6 || (m.ryd || 0) / gp(p) >= 30) return 'Dual threat';
+  QB: p => { const m = sm(p), g = gp(p); if (!p.fq) return p.st.gs ? 'Spot starter' : 'Backup';
+    if ((m.car || 0) / g >= 6 || (m.ryd || 0) / g >= 30) return 'Dual threat';
     if ((m.adot || 0) >= 9) return 'Gunslinger';
+    if ((m.adot || 0) >= 7.5 && pcv(p, 'intp') <= .3) return 'Gambler';
+    if (pcv(p, 'cpoe') >= .75) return 'Precision passer';
+    if (pcv(p, 'skp') >= .8 && (m.qprs || 0) >= .28) return 'Escape artist';
     if ((m.adot || 0) <= 7 && (m.cmpp || 0) >= .66) return 'Quick-game distributor';
+    if (pcv(p, 'intp') >= .7 && (m.adot || 0) <= 8.5) return 'Game manager';
+    if (pcv(p, 'pydg') >= .8) return 'Volume passer';
     return 'Pocket passer'; },
   RB: p => { const m = sm(p), o = p.st.opg || 0, t = tch(p) / gp(p), tg = (m.tgt || 0) / gp(p);
     if (t >= 17 && o >= .55) return 'Bell cow';
     if (tg >= 3.5 && o >= .3 && (m.rsh || 0) < .45) return 'Receiving back';
+    if (p.fq && (m.rsh || 0) >= .2) {
+      if (pcv(p, 'r20r') >= .8) return 'Home-run threat';
+      if (pcv(p, 'yco') >= .8) return 'Power runner';
+      if (pcv(p, 'btt') >= .8) return 'Elusive back';
+      if (pcv(p, 'repa') >= .8) return 'Efficient runner';
+      if ((m.rtd || 0) / gp(p) >= .5) return 'Goal-line finisher'; }
+    if (p.fq && tg >= 2 && (m.rsh || 0) < .3) return 'Third-down back';
     if ((m.rsh || 0) >= .45) return 'Lead back';
     if ((m.rsh || 0) >= .2) return 'Committee back';
     return o >= .1 ? 'Change of pace' : 'Depth back'; },
   WR: p => { const m = sm(p), o = p.st.opg || 0;
-    if (!m.tgt) return o >= .3 ? 'Blocking/decoy' : 'Depth receiver';
-    if (!p.fq) return o >= .4 ? 'Rotational receiver' : 'Depth receiver';
+    if (!m.tgt) return o >= .3 ? 'Blocking/decoy' : stAce(p) ? 'Special teams ace' : 'Depth receiver';
+    if (!p.fq) return o >= .4 ? 'Rotational receiver' : stAce(p) ? 'Special teams ace' : 'Depth receiver';
     if ((m.tsh || 0) >= .24) return 'Alpha target';
     if ((m.radot || 0) >= 13) return 'Field stretcher';
+    if (pcv(p, 'big') >= .85) return 'Explosive playmaker';
+    if (pcv(p, 'rtdg') >= .88 && (m.rectd || 0) >= 2) return 'Touchdown maker';
+    if (pcv(p, 'cat') >= .8 && pcv(p, 'drpp') >= .7) return 'Sure hands';
+    if (pcv(p, 'btt') >= .85 && (m.yac || 0) >= 5) return 'Open-field runner';
+    if (pcv(p, 'xepa') >= .85) return 'Efficiency target';
     if ((m.radot || 0) <= 7 && (m.yac || 0) >= 5) return 'YAC weapon';
     if ((m.radot || 0) <= 9.5) return 'Chain mover';
     return o >= .6 ? 'Every-down starter' : 'Rotational receiver'; },
   TE: p => { const m = sm(p), o = p.st.opg || 0, tg = (m.tgt || 0) / gp(p);
     if ((m.tsh || 0) >= .17 && p.fq) return 'Receiving weapon';
+    if (p.fq && (m.radot || 0) >= 9.5 && tg >= 2.5) return 'Seam stretcher';
+    if (p.fq && (m.rectd || 0) >= 2) return 'Red-zone weapon';
+    if (p.fq && (m.yac || 0) >= 6 && (m.rec || 0) >= 6) return 'After-the-catch tight end';
+    if (p.fq && tg >= 2.5 && (m.cat || 0) >= .75 && (m.radot || 0) <= 6.5) return 'Safety valve';
     if (o >= .55 && tg < 3) return 'In-line blocker';
     if (o >= .55) return 'Two-way tight end';
-    return o >= .2 ? 'Rotational tight end' : 'Depth tight end'; },
+    return o >= .2 ? 'Rotational tight end' : stAce(p) ? 'Special teams ace' : 'Depth tight end'; },
   OL: p => { const s = p.st, o = s.opg || 0, full = s.g >= (s.tg || THRU) - 1; const pr = pffRole(p); if (pr) return pr;
-    if (o >= .6) return !full ? 'Fill-in starter' : (s.osh || 0) >= .97 ? 'Every-snap starter' : 'Starter';
+    if (o >= .6) {
+      if (!full) return 'Fill-in starter';
+      if ((s.osh || 0) >= .97) return 'Every-snap starter';
+      if (p.fq && pcv(p, 'penr') <= .12) return 'Flag magnet';
+      if (!sm(p).pen && (s.osn || 0) >= 30 * W()) return 'Penalty-free starter';
+      if (p.sg === 'C') return 'Line quarterback';
+      if (o < .85) return 'Rotational starter';
+      return /^(LT|RT)$/.test(p.sg) ? 'Edge protector' : 'Interior mauler'; }
     return o > 0 && o < .2 && s.g >= 2 ? 'Jumbo package' : 'Reserve'; },
   EDGE: p => { const d = p.st.dpg || 0, pr = pcv(p, 'prsr');
-    if (!p.fq) return d >= .3 ? 'Rotational rusher' : 'Depth rusher';
+    if (!p.fq) return d >= .3 ? 'Rotational rusher' : stAce(p) ? 'Special teams ace' : 'Depth rusher';
+    if (pr >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6) return 'Three-down edge';
     if (d >= .7 && pr >= .5) return 'Every-down rusher';
+    if (pcv(p, 'sckg') >= .85) return 'Sack artist';
     if (pr >= .6) return 'Pass-rush specialist';
+    if (pcv(p, 'tflg') >= .85) return 'Backfield disruptor';
+    if (pcv(p, 'tov') >= .85) return 'Turnover creator';
     if (d >= .6 && pr < .4) return 'Edge setter';
     return 'Rotational rusher'; },
   DT: p => { const d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Rotational lineman' : 'Depth lineman';
+    if (!p.fq) return d >= .3 ? 'Rotational lineman' : stAce(p) ? 'Special teams ace' : 'Depth lineman';
     if (pcv(p, 'prsr') >= .65) return 'Interior disruptor';
+    if (pcv(p, 'sckg') >= .85) return 'Sack-hunting tackle';
+    if (pcv(p, 'tflg') >= .8) return 'Backfield penetrator';
+    if (pcv(p, 'tkg') >= .75 && pcv(p, 'prsr') < .4) return 'Gap plugger';
+    if (d >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'prsr') < .4) return 'Space eater';
     return d >= .6 ? 'Run anchor' : 'Rotational lineman'; },
   LB: p => { const m = sm(p), d = p.st.dpg || 0;
-    if (!p.fq) return d >= .25 ? 'Sub-package linebacker' : 'Special teams/depth';
+    if (!p.fq) return d >= .25 ? 'Sub-package linebacker' : stAce(p) ? 'Special teams ace' : 'Special teams/depth';
     if ((m.prs || 0) / gp(p) >= 1.3 || (m.blz || 0) / gp(p) >= 5) return 'Blitzer';
     if (d >= .9 && (m.tk || 0) / gp(p) >= 6.5) return 'Green-dot tackler';
     if ((m.dtg || 0) / gp(p) >= 4) return 'Coverage linebacker';
+    if (pcv(p, 'plyg') >= .85) return 'Ball-hawking linebacker';
+    if (pcv(p, 'tflg') >= .85) return 'Backfield hunter';
+    if (pcv(p, 'tkg') >= .85) return 'Tackle machine';
+    if (pcv(p, 'mtp') >= .85) return 'Sure tackler';
     return d < .7 ? 'Two-down thumper' : 'Box linebacker'; },
   CB: p => { const d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Sub-package corner' : 'Depth corner';
-    if (d < .75) return 'Nickel/rotational corner';
-    const t = pcv(p, 'tgr'); if (t <= .2) return 'No-fly zone'; if (t >= .8) return 'Targeted starter';
+    if (!p.fq) return d >= .3 ? 'Sub-package corner' : stAce(p) ? 'Special teams ace' : 'Depth corner';
+    if (d < .75) return pcv(p, 'plyg') >= .8 ? 'Nickel playmaker' : 'Nickel/rotational corner';
+    const t = pcv(p, 'tgr'); if (t <= .2) return 'No-fly zone';
+    if (pcv(p, 'pra') >= .85) return 'Shutdown corner';
+    if (pcv(p, 'plyg') >= .85) return 'Ball hawk';
+    if (pcv(p, 'tkg') >= .85) return 'Physical corner';
+    if (t >= .8) return 'Targeted starter';
     return 'Boundary starter'; },
   S: p => { const m = sm(p), d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Sub-package safety' : 'Depth safety';
+    if (!p.fq) return d >= .3 ? 'Sub-package safety' : stAce(p) ? 'Special teams ace' : 'Depth safety';
     const tk = (m.tk || 0) / gp(p);
+    if (pcv(p, 'prsg') >= .85) return 'Blitz safety';
+    if (pcv(p, 'tov') >= .85) return 'Turnover machine';
+    if (pcv(p, 'pra') >= .85) return 'Lockdown safety';
     if (tk >= 6 || pcv(p, 'tflg') >= .8) return 'Box safety';
     if (tk <= 4.5 && pcv(p, 'plyg') >= .5) return 'Center fielder';
     return d < .75 ? 'Rotational safety' : 'Hybrid safety'; },
-  K: p => (sm(p).lng || 0) >= 58 || (sm(p).fg50 || 0) >= 3 ? 'Big-leg kicker' : 'Kicker',
-  P: p => (p.fq && pcv(p, 'pi20') >= .7) ? 'Coffin-corner punter' : (p.fq && pcv(p, 'pavg') >= .7) ? 'Field flipper' : 'Punter'
+  K: p => { const m = sm(p);
+    if ((m.lng || 0) >= 60 || (m.fg50 || 0) >= 4) return 'Big-leg kicker';
+    if ((m.fg40a || 0) >= 4 && pcv(p, 'fg40') >= .8) return 'Long-range specialist';
+    if ((m.fga || 0) >= 5 && (m.fgp || 0) >= .9) return 'Mr. Automatic';
+    if ((m.fga || 0) / gp(p) >= 2) return 'Busy leg';
+    return 'Kicker'; },
+  P: p => (p.fq && pcv(p, 'pi20') >= .7) ? 'Coffin-corner punter' : (p.fq && pcv(p, 'pavg') >= .7) ? 'Field flipper' : (p.fq && pcv(p, 'pnet') >= .8) ? 'Net master' : (p.fq && (sm(p).pun || 0) / gp(p) >= 4) ? 'Workhorse punter' : 'Punter'
 };
 OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
 // On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
