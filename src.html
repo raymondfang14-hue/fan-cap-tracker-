@@ -4631,6 +4631,19 @@ document.addEventListener('click', e => {
 /* ===== season stats: data/history.json (2023 on, regular season) ===== */
 let HIST = null, HIDX = null, HISTP = null;
 const loadHist = () => HISTP || (HISTP = getJSON('data/history.json').then(h => { HIST = h; indexHist(); return h; }));
+/* older seasons (before 2023): season totals only, current-roster players, loaded when a Stats tab opens */
+let HOLDP = null;
+const loadHistOld = () => HOLDP || (HOLDP = loadHist().then(() => getJSON('data/history_old.json')).then(o => { mergeOld(o); return o; }).catch(() => null));
+function mergeOld(o) {
+  const byId = new Map(HIST.players.map(r => [r.id, r]));
+  o.players.forEach(x => {
+    let r = byId.get(x.id);
+    if (!r) { r = { id: x.id, n: x.n, pos: x.pos, s: {}, hg: HG[x.pos] || 'X' }; HIST.players.push(r); byId.set(x.id, r); const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r); if (!HIDX.kt[k + '|' + x.ct]) HIDX.kt[k + '|' + x.ct] = r; }
+    r.old = x.s;
+  });
+  HIST.oldFirst = o.seasons[0];
+  PL.forEach(p => { p._h = undefined; });
+}
 const HG = { QB: 'QB', RB: 'RB', FB: 'RB', HB: 'RB', WR: 'WR', TE: 'TE', T: 'OL', G: 'OL', C: 'OL', OT: 'OL', OG: 'OL', OL: 'OL', DE: 'DL', DT: 'DL', NT: 'DL', DL: 'DL', EDGE: 'DL', OLB: 'LB', ILB: 'LB', MLB: 'LB', LB: 'LB', CB: 'DB', DB: 'DB', S: 'DB', FS: 'DB', SS: 'DB', SAF: 'DB', K: 'K', PK: 'K', P: 'P' };
 const HG_NAME = { QB: 'Quarterbacks', RB: 'Running backs', WR: 'Wide receivers', TE: 'Tight ends', DL: 'Defensive line', LB: 'Linebackers', DB: 'Defensive backs', K: 'Kickers', P: 'Punters', OL: 'Offensive line' };
 const hgOfP = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.pos === 'LS' ? 'X' : ({ QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', EDGE: 'DL', DT: 'DL', LB: 'LB', CB: 'DB', S: 'DB' }[p.group] || 'X');
@@ -4691,24 +4704,24 @@ const hsSum = lines => { const t = {}; lines.forEach(l => Object.entries(l).forE
 function fillStats(p) {
   const box = $('#sh-stats'); if (!box) return;
   if (!HIST) box.innerHTML = '<p class="empty">Loading season stats…</p>';
-  loadHist().then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
+  loadHist().then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).then(() => loadHistOld()).then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
 }
 function statsHTML(p) {
   const r = histOf(p), g = hgOfP(p), cols = HCOLS[g].map(k => HC[k]), cur = String(HIST.current);
-  if (!r) return `<p class="empty">No NFL regular-season stats on file since ${HIST.seasons[0]}. He may be a rookie who has not played, injured all of that time, or listed under a different name.</p>`;
-  const yrs = Object.keys(r.s).sort((a, b) => b - a), lines = yrs.map(y => r.s[y]);
+  if (!r) return `<p class="empty">No NFL regular-season stats on file since ${HIST.oldFirst || HIST.seasons[0]}. He may be a rookie who has not played, injured all of that time, or listed under a different name.</p>`;
+  const SS = Object.assign({}, r.old || {}, r.s), yrs = Object.keys(SS).sort((a, b) => b - a), lines = yrs.map(y => SS[y]);
   const tot = hsSum(lines);
   const th = cols.map(c => `<th class="r"><span title="${esc(c[4])}">${esc(c[1])}</span></th>`).join('');
   const row = (lab, l, team, cls = '') => `<tr class="${cls}" style="cursor:default"><td><b>${esc(lab)}</b></td><td>${team ? `<span class="pn">${crest(team, 18)}${esc(team)}${l.tt ? ' <small class="note">+' + (l.tt.length - 1) + '</small>' : ''}</span>` : ''}</td>${cols.map(c => `<td class="r">${c[3](c[2](l))}</td>`).join('')}</tr>`;
-  const key = HC[HKEY[g]], vals = yrs.map(y => key[2](r.s[y]) || 0), mx = Math.max(1, ...vals);
+  const key = HC[HKEY[g]], cy = yrs.slice(0, 12), vals = cy.map(y => key[2](SS[y]) || 0), mx = Math.max(1, ...vals);
   const games = r.w || [];
   const pace = r.s[cur] && r.s[cur].g ? (key[2](r.s[cur]) || 0) / r.s[cur].g * 17 : null;
   const gl = games.length ? `<div style="display:grid;gap:6px"><span class="eyebrow">${cur} game log · regular season</span><div class="tw"><table class="t"><thead><tr><th><span>Wk</span></th><th><span>Opp</span></th>${th}</tr></thead><tbody>${[...games].reverse().map(([wk, opp, t, l]) => `<tr style="cursor:default"><td>${wk}</td><td><span class="pn">${opp ? crest(opp, 18) : ''}${t !== p.team ? `<small class="note">(${esc(t)})</small>` : ''}${esc(opp || '')}</span></td>${cols.map(c => `<td class="r">${c[0] === 'g' ? '1' : c[3](c[2](l))}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>` : '';
   return `<div class="field">
-    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline"><span class="eyebrow">Season by season · regular season · ${HIST.seasons[0]} to ${cur}</span><span class="note">${cur} through Week ${HIST.thru}</span></div>
+    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline"><span class="eyebrow">Season by season · regular season · ${yrs[yrs.length - 1]} to ${cur}</span><span class="note">${cur} through Week ${HIST.thru}</span></div>
     ${g === 'OL' ? '<p class="note">Box scores do not track blocking, so linemen show games played. His play rating on the first tab uses snaps, penalties and how his line protects.</p>' : ''}
-    <div class="tw"><table class="t"><thead><tr><th><span>Season</span></th><th><span>Team</span></th>${th}</tr></thead><tbody>${yrs.map(y => row(y, r.s[y], r.s[y].t)).join('')}${yrs.length > 1 ? row(`${yrs.length} seasons`, tot, '', 'hs-tot') : ''}</tbody></table></div>
-    ${g !== 'OL' && g !== 'X' ? `<div style="display:grid;gap:6px"><span class="eyebrow">${esc(key[4])} by season</span><div class="cols" style="height:150px">${[...yrs].reverse().map(y => { const v = key[2](r.s[y]) || 0; return `<div class="col"><span class="amt">${key[3](v)}</span><i class="bx" style="height:${(v / mx * 100).toFixed(1)}%;${y === cur ? 'background:var(--c-off)' : ''}"></i><span class="lab">${y}${y === cur ? '*' : ''}</span></div>`; }).join('')}</div>${pace != null ? `<span class="note">*${cur} so far. At this rate he finishes with about ${key[3](pace)} over 17 games.</span>` : ''}</div>` : ''}
+    <div class="tw"><table class="t"><thead><tr><th><span>Season</span></th><th><span>Team</span></th>${th}</tr></thead><tbody>${yrs.map(y => row(y, SS[y], SS[y].t)).join('')}${yrs.length > 1 ? row(`${yrs.length} seasons`, tot, '', 'hs-tot') : ''}</tbody></table></div>
+    ${g !== 'OL' && g !== 'X' ? `<div style="display:grid;gap:6px"><span class="eyebrow">${esc(key[4])} by season</span><div class="cols" style="height:150px">${[...cy].reverse().map(y => { const v = key[2](SS[y]) || 0; return `<div class="col"><span class="amt">${key[3](v)}</span><i class="bx" style="height:${(v / mx * 100).toFixed(1)}%;${y === cur ? 'background:var(--c-off)' : ''}"></i><span class="lab">${y}${y === cur ? '*' : ''}</span></div>`; }).join('')}</div>${pace != null ? `<span class="note">*${cur} so far. At this rate he finishes with about ${key[3](pace)} over 17 games.</span>` : ''}</div>` : ''}
     ${gl}
     <p class="note">Source: nflverse weekly player stats. Fantasy points use PPR scoring.</p>
   </div>`;
