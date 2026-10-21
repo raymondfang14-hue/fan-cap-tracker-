@@ -671,6 +671,31 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .pffg b{font:800 1.4rem/1 var(--display);font-stretch:80%}
 .pffg span{font-size:.78rem;color:var(--muted)}
 .pffl{display:grid;gap:3px;font-size:.84rem;color:var(--muted);padding-left:1.1rem;list-style:disc}
+/* draft page */
+.row-btn{border:0;background:none;padding:0;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.row-btn:hover b,.row-btn:hover{color:var(--brand)}
+.dumbs{display:grid;gap:2px}
+.dumb{display:grid;grid-template-columns:minmax(0,9.5rem) minmax(0,1fr) 2.2rem;gap:10px;align-items:center;padding:6px 4px;border:0;background:none;width:100%;text-align:left;cursor:pointer;border-radius:4px;color:inherit}
+.dumb:hover,.dumb:focus-visible{background:var(--brand-soft);outline:none}
+.dumb .dn{display:grid;min-width:0}
+.dumb .dn b{font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dumb .dn small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dumb .dg{font:700 .86rem/1 var(--mono);text-align:right;color:var(--warn)}
+.dumb-axis{cursor:default;padding-block:0 2px}
+.dumb-axis:hover{background:none}
+.dtrack{position:relative;height:16px;margin-inline:6px}
+.dtrack::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:var(--surface-2);border-radius:1px}
+.dumb-axis .dtrack::before{display:none}
+.dumb-axis .dtrack b{position:absolute;top:0;transform:translateX(-50%);font:500 .66rem/16px var(--mono);color:var(--muted)}
+.dline{position:absolute;top:50%;height:4px;margin-top:-2px;background:var(--c-space);border-radius:2px}
+.dot{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;box-shadow:0 0 0 2px var(--surface)}
+.dot.dw{background:var(--brand)} .dot.db{background:var(--c-def)}
+.boards{display:grid;gap:4px}
+.boards>div{display:grid;grid-template-columns:8.4rem minmax(0,1fr) 5.6rem;gap:10px;align-items:center;font-size:.84rem}
+.boards b{text-align:right;font-weight:600}
+#dr-otable td .pn small{white-space:nowrap}
+#dr-owners .gb{grid-template-columns:6.6rem minmax(0,1fr) 6.4rem}#dr-owners .gb .diff{white-space:normal}
+@media (max-width:560px){.dumb{grid-template-columns:minmax(0,7.2rem) minmax(0,1fr) 2rem}.boards>div{grid-template-columns:6.6rem minmax(0,1fr) 4.6rem}}
 </style>
 
 <header class="cmd gut">
@@ -687,6 +712,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <a href="#tools" data-nav="tools">Tools</a>
       <a href="#analytics" data-nav="analytics">Analytics</a>
       <a href="#freeagency" data-nav="freeagency">Free agency</a>
+      <a href="#draft" data-nav="draft">Draft</a>
       <a href="#learn" data-nav="learn">Learn</a>
     </nav>
   </div>
@@ -735,6 +761,12 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     </div>
     <div class="fcs row" id="home-cards"></div>
     <p class="note">Market ring: how his yearly pay ranks at his position (99 = top). Security ring: how safe his money is, from guarantees, dead money and years left. Play ring: his 2026 play rating, from 40 to 99. Scroll sideways for more.</p>
+  </div>
+
+  <div class="panel">
+    <div class="sechead"><div><span class="eyebrow">2027 NFL Draft · April 29 to May 1</span><h2 class="sec">Top of the draft board</h2></div><a class="btn ghost" href="#draft">Big board and mock</a></div>
+    <div class="fcs row" id="home-draft"></div>
+    <p class="note">Grade ring: Plain Cap's 40 to 99 prospect grade. 2026 ring: his college production this season against the other prospects at his position.</p>
   </div>
 
   <div class="grid2">
@@ -1232,6 +1264,94 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 </section>
 
 
+<!-- DRAFT: 2027 big board, prospect pages, projected order, model mock and rookie pay. Built in the script (draft section) from data/draft.json plus the season, contract and stats files. -->
+<section class="view" id="v-draft" hidden aria-labelledby="h-draft">
+  <div class="sechead">
+    <div><span class="eyebrow" id="dr-eyebrow">2027 NFL Draft</span><h1 class="title" id="h-draft">The draft room</h1></div>
+    <div class="seg" id="dr-tab" role="group" aria-label="Draft view">
+      <button type="button" data-dt="board" aria-pressed="true">Big board</button>
+      <button type="button" data-dt="order" aria-pressed="false">Order &amp; mock</button>
+      <button type="button" data-dt="pay" aria-pressed="false">Rookie pay</button>
+      <button type="button" data-dt="how" aria-pressed="false">How it works</button>
+    </div>
+  </div>
+  <div class="kpis" id="dr-kpis"><p class="empty" style="background:var(--surface)">Loading the draft class…</p></div>
+
+  <div id="dr-board" style="display:grid;gap:16px;min-width:0">
+    <p class="lede">The top college players for the April 2027 draft, ranked by combining public big boards. Each prospect gets the same treatment as an NFL player on Plain Cap: a grade, a role, trait badges and his 2026 college numbers, plus what his rookie contract would cost.</p>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="dr-cards-eb">Tap a prospect for his full page</span><h2 class="sec">Top of the board</h2></div>
+        <div class="seg" id="dr-sort" role="group" aria-label="Sort prospects"><button type="button" data-ds="rank" aria-pressed="true">Board rank</button><button type="button" data-ds="grade" aria-pressed="false">Grade</button><button type="button" data-ds="prod" aria-pressed="false">2026 production</button></div>
+      </div>
+      <div class="chips" id="dr-pos" role="group" aria-label="Position"></div>
+      <div class="fcs" id="dr-cards"></div>
+      <button class="btn ghost more" id="dr-more" type="button">Show more</button>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">Prospects by projected round · tap a bar to filter</span><h2 class="sec">Where the class is deep</h2></div>
+        <div class="gbars" id="dr-depth"></div>
+        <ul class="legend"><li><i class="swatch" style="background:var(--brand)"></i><span>Top 32 on the board</span></li><li><i class="swatch" style="background:var(--c-space)"></i><span>Ranked 33 and lower</span></li></ul>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Same player, two boards</span><h2 class="sec">Where the experts split</h2></div>
+        <p class="note">The biggest gaps between WalterFootball and NFL Draft Buzz. A wide gap means scouts disagree, so his draft spot is harder to call.</p>
+        <div class="dumbs" id="dr-split"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="dr-tcount"></span><h2 class="sec">Full big board</h2></div></div>
+      <div id="dr-tbox"></div>
+      <div class="tw"><table class="t" id="dr-table"></table></div>
+    </div>
+  </div>
+
+  <div id="dr-order" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is Plain Cap's best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">Picks in the projected first round</span><h2 class="sec">Who holds the picks</h2></div>
+        <div class="gbars" id="dr-owners"></div>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Traded first-round picks</span><h2 class="sec">Picks on the move</h2></div>
+        <div class="rows" id="dr-trades"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="dr-ord-eb">Projected 2027 first round</span><h2 class="sec">Draft order and model mock</h2></div></div>
+      <div id="dr-obox"></div>
+      <div class="tw"><table class="t" id="dr-otable"></table></div>
+      <p class="note">Needs come from each team's 2026 roster on Plain Cap: how its starters rate on the field, and how many of their contracts end after this season. Ties in the standings are broken by point differential here; the league uses strength of schedule.</p>
+    </div>
+  </div>
+
+  <div id="dr-pay" hidden style="display:grid;gap:16px;min-width:0">
+    <p class="lede">Draft picks are the cheapest good players in football. The rookie pay scale sets every contract by draft slot, so a team knows almost exactly what each pick will cost before it is made.</p>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow" id="dr-scale-eb">Four-year value by first-round pick</span><h2 class="sec">The rookie pay scale</h2></div></div>
+      <div class="tw" style="border:0;background:none"><div id="dr-scale"></div></div>
+      <p class="note" id="dr-scale-note"></p>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">Yearly pay, rookie vs. a top-10 veteran</span><h2 class="sec">What a pick saves</h2></div>
+        <div class="seg" id="dr-vpick" role="group" aria-label="Pick slot"><button type="button" data-vp="1" aria-pressed="false">Pick 1</button><button type="button" data-vp="10" aria-pressed="true">Pick 10</button><button type="button" data-vp="32" aria-pressed="false">Pick 32</button></div>
+        <div class="gbars" id="dr-save"></div>
+        <p class="note">The grey bar is the average yearly pay of the 10 highest-paid veterans at the position. The blue bar is that pick's rookie deal per year. A rookie quarterback who plays like a top-10 starter saves his team the most.</p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Plain English</span><h2 class="sec">How rookie deals work</h2></div>
+        <div class="rows" id="dr-rules"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dr-how" hidden style="display:grid;gap:16px;min-width:0">
+    <div class="faq" id="dr-faq"></div>
+  </div>
+</section>
+
 <section class="view" id="v-learn" hidden aria-labelledby="h-learn">
   <div><span class="eyebrow">Cap 101</span><h1 class="title" id="h-learn">The words on every contract page</h1></div>
   <p class="lede">Short answers to the terms you see in contract news. Start with cap hit and dead money; most of the rest builds on those two.</p>
@@ -1262,6 +1382,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <details id="setup" class="faq" style="margin-top:8px"><summary style="padding-inline:16px">Site setup</summary>
     <div style="padding:0 16px 14px;display:grid;gap:8px;max-width:70ch">
       <p>For whoever runs the site. Contract and cap figures live in <code>data/nfl.json</code>, the news feed in <code>data/moves.json</code> and season stats in <code>data/stats.json</code> (built by <code>data/build_stats.py</code> from nflverse files). A daily task refreshes all three each morning.</p>
+      <p>The Draft page reads <code>data/draft.json</code>, built by <code>data/build_draft.py</code> from public big boards and the college stats in <code>data/draft_stats.txt</code> (from cfbstats). Update the ranks and stats there, rerun the script, and the board, grades, mock and rookie pay all recompute in the page.</p>
       <p>Airtable holds the featured deal breakdowns. Set <code>AIRTABLE_TOKEN</code> and <code>AIRTABLE_BASE_ID</code> (and <code>AIRTABLE_TABLE</code> if the table is not named Contracts) in Vercel, and the page reads them through <code>/api/contracts</code>. Without them, the built-in breakdowns show.</p>
       <p>Working Copy keeps the code. Edit <code>src.html</code> in Koder, run <code>build.sh</code> or copy it into <code>index.html</code>, then commit and push. Vercel redeploys on its own.</p>
     </div>
@@ -2714,7 +2835,7 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn'];
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
@@ -2727,6 +2848,7 @@ function route() {
   if (h === 'nba') v = 'learn';
   if (h === 'awards' || h === 'rankings') { v = 'awards'; st.aw.tab = h === 'rankings' ? 'power' : 'awards'; }
   if (['stats', 'ratings', 'roles', 'traits'].includes(h)) v = 'onfield';
+  if (['mock', 'bigboard', 'prospects', 'rookie-pay'].includes(h)) { v = 'draft'; dr.tab = h === 'mock' ? 'order' : h === 'rookie-pay' ? 'pay' : 'board'; }
   if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
   if (!VIEWS.includes(v)) v = 'home';
   VIEWS.forEach(x => ($('#v-' + x).hidden = x !== v));
@@ -2737,6 +2859,7 @@ function route() {
     if (v === 'tools') showTool(st.tool);
     if (v === 'awards') renderAwards();
     if (v === 'freeagency') renderFA();
+    if (v === 'draft') renderDraft();
   }
   hideTip();
 }
@@ -3820,9 +3943,509 @@ function wireFA() {
   $('#fa-heat').addEventListener('click', e => { const b = e.target.closest('[data-fahs]'); if (b) { e.stopPropagation(); f.hs = b.dataset.fahs ? +b.dataset.fahs : null; renderFACap(); } });
 }
 
+/* ===== draft: 2027 big board, prospect pages, order, mock and rookie pay ===== */
+let DX = null, DP = [], SEAS = null, DR_ORDER = [], DR_NEED = {};
+const dr = { tab: store.get('drTab', 'board'), pos: 'all', sort: 'rank', limit: 12, sheet: 'scout', vp: 10, q: '' };
+const DR_GROUPS = ['QB', 'RB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DT', 'LB', 'CB', 'S'];
+const DR_NAME = { QB: 'Quarterback', RB: 'Running back', WR: 'Wide receiver', TE: 'Tight end', OT: 'Offensive tackle', IOL: 'Guard/center', EDGE: 'Edge rusher', DT: 'Def. tackle', LB: 'Linebacker', CB: 'Cornerback', S: 'Safety' };
+const DR_WORD = { QB: 'quarterback', RB: 'running back', WR: 'receiver', TE: 'tight end', OT: 'tackle', IOL: 'interior lineman', EDGE: 'edge rusher', DT: 'defensive tackle', LB: 'linebacker', CB: 'cornerback', S: 'safety' };
+const drWords = G => G === 'S' ? 'safeties' : DR_WORD[G] + 's';
+const DR_SIDE = { QB: 'off', RB: 'off', WR: 'off', TE: 'off', OT: 'off', IOL: 'off', EDGE: 'def', DT: 'def', LB: 'def', CB: 'def', S: 'def' };
+const DR_NFL = { QB: ['QB'], RB: ['RB'], WR: ['WR'], TE: ['TE'], OT: ['LT', 'RT'], IOL: ['LG', 'C', 'RG'], EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'] };
+const DR_STARTERS = { QB: 1, RB: 1, WR: 3, TE: 1, OT: 2, IOL: 3, EDGE: 2, DT: 2, LB: 2, CB: 3, S: 2 };
+const DR_PV = { QB: 1.15, OT: 1.08, EDGE: 1.08, WR: 1.03, CB: 1.03, DT: 1, TE: .95, S: .93, IOL: .93, LB: .9, RB: .9 };
+const DCLS = { FR: 'Freshman', SO: 'Sophomore', JR: 'Junior', SR: 'Senior' };
+const dIn = h => { const m = /^(\d)-(\d+)$/.exec(h || ''); return m ? +m[1] * 12 + +m[2] : null; };
+const dPer = (a, b) => (b ? a / b : null);
+const dN1 = v => v == null ? '—' : v.toFixed(1);
+const dN0 = v => v == null ? '—' : String(Math.round(v));
+const dPc1 = v => v == null ? '—' : (v * 100).toFixed(1) + '%';
+const dSv = (s, k) => (s && s[k]) || 0;
+
+// Metrics: [label, sub, value fn (stats, games), format, weight, lower is better]
+const DMET = {
+  eff: ['Passer efficiency', 'college rating formula', (s) => s.pa ? (8.4 * dSv(s, 'py') + 330 * dSv(s, 'ptd') + 100 * dSv(s, 'pc') - 200 * dSv(s, 'pint')) / s.pa : null, dN1],
+  ypa: ['Yards per attempt', 'passing', s => dPer(dSv(s, 'py'), s.pa), dN1],
+  cmp: ['Completion rate', 'of passes', s => dPer(dSv(s, 'pc'), s.pa), dPc1],
+  tdr: ['Touchdown rate', 'TD passes per throw', s => dPer(dSv(s, 'ptd'), s.pa), dPc1],
+  intr: ['Ball security', 'interception rate, lower is better', s => s.pa ? dSv(s, 'pint') / s.pa : null, dPc1, true],
+  rydg: ['Rushing yards', 'per game', (s, g) => dPer(dSv(s, 'ry'), g), dN1],
+  ryg: ['Rushing yards', 'per game', (s, g) => dPer(dSv(s, 'ry'), g), dN1],
+  ypc: ['Yards per carry', 'rushing', s => dPer(dSv(s, 'ry'), s.ra), dN1],
+  carg: ['Carries', 'per game', (s, g) => dPer(dSv(s, 'ra'), g), dN1],
+  tdg: ['Touchdowns', 'per game', (s, g) => dPer(dSv(s, 'rtd') + dSv(s, 'retd'), g), dN1],
+  recg: ['Catches', 'per game', (s, g) => dPer(dSv(s, 'rec'), g), dN1],
+  ydg: ['Receiving yards', 'per game', (s, g) => dPer(dSv(s, 'rey'), g), dN1],
+  ypr: ['Yards per catch', 'big-play ability', s => dPer(dSv(s, 'rey'), s.rec), dN1],
+  rtdg: ['Receiving TDs', 'per game', (s, g) => dPer(dSv(s, 'retd'), g), dN1],
+  skg: ['Sacks', 'per game', (s, g) => dPer(dSv(s, 'sk'), g), dN1],
+  tflg: ['Tackles for loss', 'per game', (s, g) => dPer(dSv(s, 'tfl'), g), dN1],
+  prg: ['Pressure plays', 'sacks plus QB hurries a game', (s, g) => dPer(dSv(s, 'sk') + dSv(s, 'qbh'), g), dN1],
+  tkg: ['Tackles', 'per game', (s, g) => dPer(dSv(s, 'tk'), g), dN1],
+  tov: ['Takeaway plays', 'forced fumbles plus picks a game', (s, g) => dPer(dSv(s, 'ff') + dSv(s, 'int'), g), dN1],
+  pbug: ['Passes defended', 'breakups a game', (s, g) => dPer(dSv(s, 'pbu'), g), dN1],
+  ballg: ['Plays on the ball', 'breakups plus picks a game', (s, g) => dPer(dSv(s, 'pbu') + dSv(s, 'int'), g), dN1],
+  intg: ['Interceptions', 'per game', (s, g) => dPer(dSv(s, 'int'), g), dN1]
+};
+// Stat tiles (season totals) and the percentile bars that build each grade
+const DT_TILE = {
+  py: ['Pass yards', s => dSv(s, 'py').toLocaleString()], tdint: ['TD–INT', s => `${dSv(s, 'ptd')}–${dSv(s, 'pint')}`], cmpt: ['Comp %', s => pct(dPer(dSv(s, 'pc'), s.pa), 1)],
+  ypat: ['Yds/att', s => dN1(dPer(dSv(s, 'py'), s.pa))], efft: ['Rating', s => dN1(DMET.eff[2](s))], ryt: ['Rush yds', s => String(dSv(s, 'ry'))],
+  rat: ['Carries', s => String(dSv(s, 'ra'))], ypct: ['Yds/carry', s => dN1(dPer(dSv(s, 'ry'), s.ra))], tdt: ['Total TDs', s => String(dSv(s, 'rtd') + dSv(s, 'retd'))],
+  rect: ['Catches', s => String(dSv(s, 'rec'))], reyt: ['Rec yds', s => String(dSv(s, 'rey'))], retdt: ['Rec TDs', s => String(dSv(s, 'retd'))],
+  ydgt: ['Yds/game', (s, g) => dN1(dPer(dSv(s, 'rey'), g))], yprt: ['Yds/catch', s => dN1(dPer(dSv(s, 'rey'), s.rec))],
+  skt: ['Sacks', s => String(dSv(s, 'sk'))], tflt: ['TFL', s => String(dSv(s, 'tfl'))], qbht: ['Hurries', s => String(dSv(s, 'qbh'))], tkt: ['Tackles', s => String(dSv(s, 'tk'))],
+  fft: ['Forced fum.', s => String(dSv(s, 'ff'))], pbut: ['Breakups', s => String(dSv(s, 'pbu'))], intt: ['INTs', s => String(dSv(s, 'int'))]
+};
+const DCFG = {
+  QB: { bars: [['eff', .3], ['ypa', .2], ['cmp', .15], ['tdr', .1], ['intr', .15], ['rydg', .1]], tiles: ['py', 'tdint', 'cmpt', 'ypat', 'efft', 'ryt'], q: s => (s.pa || 0) >= 40 },
+  RB: { bars: [['ryg', .3], ['ypc', .25], ['tdg', .2], ['carg', .1], ['recg', .15]], tiles: ['ryt', 'ypct', 'tdt', 'rat', 'rect'], q: s => (s.ra || 0) >= 30 },
+  WR: { bars: [['ydg', .35], ['recg', .2], ['ypr', .2], ['rtdg', .25]], tiles: ['rect', 'reyt', 'retdt', 'ydgt', 'yprt'], q: s => (s.rec || 0) >= 8 },
+  TE: { bars: [['ydg', .35], ['recg', .25], ['ypr', .15], ['rtdg', .25]], tiles: ['rect', 'reyt', 'retdt', 'ydgt', 'yprt'], q: s => (s.rec || 0) >= 8 },
+  EDGE: { bars: [['skg', .3], ['tflg', .25], ['prg', .25], ['tkg', .1], ['tov', .1]], tiles: ['skt', 'tflt', 'qbht', 'tkt', 'fft'], q: () => true },
+  DT: { bars: [['tflg', .3], ['skg', .25], ['prg', .25], ['tkg', .2]], tiles: ['tkt', 'tflt', 'skt', 'qbht', 'pbut'], q: () => true },
+  LB: { bars: [['tkg', .35], ['tflg', .25], ['prg', .15], ['pbug', .15], ['tov', .1]], tiles: ['tkt', 'tflt', 'skt', 'pbut', 'qbht'], q: () => true },
+  CB: { bars: [['ballg', .55], ['intg', .15], ['tkg', .15], ['tflg', .15]], tiles: ['pbut', 'intt', 'tkt', 'tflt'], q: () => true },
+  S: { bars: [['tkg', .3], ['ballg', .35], ['tflg', .15], ['tov', .2]], tiles: ['tkt', 'intt', 'pbut', 'tflt'], q: () => true },
+  OT: { bars: [], tiles: [] }, IOL: { bars: [], tiles: [] }
+};
+const PROLE_DESC = {
+  'Dual threat': 'Hurts defenses with his legs as well as his arm: 40+ rushing yards a game.',
+  'Gunslinger': 'Pushes the ball downfield: 9.3+ yards an attempt with more incompletions than the short-game passers.',
+  'Quick-game distributor': 'Accurate on quick, on-time throws: completes 70% or more.',
+  'Pocket passer': 'Wins mostly from the pocket with a balance of accuracy and depth.',
+  'Bell cow': 'Carries the load: 16 or more carries a game.',
+  'Receiving back': 'Used heavily as a receiver: 3+ catches a game.',
+  'Lead back': 'The main runner, with 10 to 15 carries a game.',
+  'Committee back': 'Splits carries with other backs.',
+  'Alpha target': 'His offense runs through him: 6.5+ catches or 110+ yards a game.',
+  'Field stretcher': 'A deep threat: 17+ yards a catch.',
+  'Chain mover': 'Short and intermediate catches that move the chains: 11 yards a catch or less.',
+  'Every-down starter': 'A starting receiver used all over the field.',
+  'Receiving weapon': 'A tight end used like a receiver: 4+ catches or 55+ yards a game.',
+  'Two-way tight end': 'Big enough to block in line and catch passes.',
+  'Every-down rusher': 'Stays on the field on every down: 3.5+ tackles and half a sack a game.',
+  'Pass-rush specialist': 'Wins as a pass rusher first: half a sack or more, or 1.2+ pressure plays a game.',
+  'Edge setter': 'Holds the edge against the run.',
+  'Rotational rusher': 'A pass rusher whose 2026 production is still building.',
+  'Interior disruptor': 'Gets into the backfield from the inside: high sack and tackle-for-loss rates.',
+  'Run anchor': 'A big body who holds his ground against the run.',
+  'Green-dot tackler': 'The middle linebacker who makes the tackles: 7+ a game.',
+  'Blitzer': 'Sent after the quarterback often: 0.6+ pressure plays a game.',
+  'Coverage linebacker': 'Breaks up passes in coverage.',
+  'Box linebacker': 'Plays downhill near the line of scrimmage.',
+  'Boundary starter': 'A taller outside corner, 6 feet or more.',
+  'Nickel/rotational corner': 'A smaller corner who fits the slot as well as outside.',
+  'Box safety': 'Plays near the line and tackles a lot: 5+ tackles a game.',
+  'Center fielder': 'Plays deep and goes after the ball.',
+  'Hybrid safety': 'Does a bit of everything, deep and near the line.',
+  'Day-one tackle': 'A first-round tackle who should start as a rookie.',
+  'Developing tackle': 'A tackle with starter tools who may need a year.',
+  'Day-one interior': 'A guard or center who should start as a rookie.',
+  'Developing interior': 'An interior lineman with starter tools who may need a year.'
+};
+function prole(p) {
+  const s = p.st || {}, g = p.g || 1, m = k => DMET[k][2](s, g) || 0;
+  if (!p.q && DCFG[p.grp].bars.length && p.grp !== 'CB') return { QB: 'Pocket passer', RB: 'Committee back', WR: 'Every-down starter', TE: 'Two-way tight end', EDGE: 'Rotational rusher', DT: 'Run anchor', LB: 'Box linebacker', S: 'Hybrid safety' }[p.grp];
+  switch (p.grp) {
+    case 'QB': if (m('rydg') >= 40) return 'Dual threat'; if (m('ypa') >= 9.3 && m('cmp') < .7) return 'Gunslinger'; if (m('cmp') >= .7 && m('ypa') < 9) return 'Quick-game distributor'; return 'Pocket passer';
+    case 'RB': if (m('carg') >= 16) return 'Bell cow'; if (m('recg') >= 3) return 'Receiving back'; return m('carg') >= 10 ? 'Lead back' : 'Committee back';
+    case 'WR': if (m('recg') >= 6.5 || m('ydg') >= 110) return 'Alpha target'; if (m('ypr') >= 17) return 'Field stretcher'; if (s.rec && m('ypr') <= 11) return 'Chain mover'; return 'Every-down starter';
+    case 'TE': return (m('recg') >= 4 || m('ydg') >= 55) ? 'Receiving weapon' : 'Two-way tight end';
+    case 'EDGE': if (m('tkg') >= 3.5 && m('skg') >= .5) return 'Every-down rusher'; if (m('skg') >= .5 || m('prg') >= 1.2) return 'Pass-rush specialist'; if (m('tkg') >= 3) return 'Edge setter'; return 'Rotational rusher';
+    case 'DT': return (m('skg') + m('tflg') * .5 >= .9 || m('prg') >= .8) ? 'Interior disruptor' : 'Run anchor';
+    case 'LB': if (m('tkg') >= 7) return 'Green-dot tackler'; if (m('prg') >= .6) return 'Blitzer'; if (m('pbug') >= .25) return 'Coverage linebacker'; return 'Box linebacker';
+    case 'CB': return (dIn(p.ht) || 72) <= 71 ? 'Nickel/rotational corner' : 'Boundary starter';
+    case 'S': if (m('tkg') >= 5) return 'Box safety'; if (m('ballg') >= .4) return 'Center fielder'; return 'Hybrid safety';
+    case 'OT': return p.crank <= 32 ? 'Day-one tackle' : 'Developing tackle';
+    case 'IOL': return p.crank <= 32 ? 'Day-one interior' : 'Developing interior';
+  }
+  return '';
+}
+// Traits: [name, meaning, groups, metric, floor]. A prospect earns one when he clears the floor; the tier comes from his percentile among the prospects at his position.
+const PTRAITS = {
+  surgeon: ['Surgeon', 'Completes 68% or more of his passes.', ['QB'], 'cmp', .68],
+  airraid: ['Air raid', 'Averages 9 or more yards a throw.', ['QB'], 'ypa', 9],
+  protect: ['Ball protector', 'Throws an interception on 2% of passes or fewer.', ['QB'], 'intr', .02],
+  scramble: ['Scramble threat', 'Runs for 25+ yards a game.', ['QB'], 'rydg', 25],
+  tdmaker: ['Touchdown maker', 'Throws a touchdown on 8% or more of his passes.', ['QB'], 'tdr', .08],
+  workhorse: ['Workhorse', 'Gets 14+ carries a game.', ['RB'], 'carg', 14],
+  chunk: ['Chunk runner', 'Averages 5.5+ yards a carry.', ['RB'], 'ypc', 5.5],
+  goalline: ['Goal-line hammer', 'Scores 0.9+ touchdowns a game.', ['RB'], 'tdg', .9],
+  magnet: ['Target magnet', 'Catches 5+ passes a game (4+ for tight ends).', ['WR', 'TE'], 'recg', p => p.grp === 'TE' ? 4 : 5],
+  bigplay: ['Big-play maker', 'Gains 16+ yards a catch.', ['WR', 'TE'], 'ypr', 16],
+  redzone: ['Red-zone threat', 'Catches a touchdown in most games (0.8+ a game, 0.5+ for tight ends).', ['WR', 'TE'], 'rtdg', p => p.grp === 'TE' ? .5 : .8],
+  engine: ['Yardage engine', 'Gains 90+ receiving yards a game (55+ for tight ends).', ['WR', 'TE'], 'ydg', p => p.grp === 'TE' ? 55 : 90],
+  sackartist: ['Sack artist', 'Gets 0.6+ sacks a game (0.4+ inside).', ['EDGE', 'DT'], 'skg', p => p.grp === 'DT' ? .4 : .6],
+  wrecker: ['Run wrecker', 'Makes 0.8+ tackles for loss a game (0.6+ for linebackers).', ['EDGE', 'DT', 'LB'], 'tflg', p => p.grp === 'LB' ? .6 : .8],
+  pressure: ['Pressure machine', 'Gets 1.2+ sacks and hurries a game (0.8+ inside).', ['EDGE', 'DT'], 'prg', p => p.grp === 'DT' ? .8 : 1.2],
+  tackler: ['Tackle machine', 'Makes 6.5+ tackles a game (4.5+ for safeties).', ['LB', 'S'], 'tkg', p => p.grp === 'S' ? 4.5 : 6.5],
+  ballhawk: ['Ballhawk', 'Gets his hands on 1+ pass a game (0.4+ for safeties).', ['CB', 'S'], 'ballg', p => p.grp === 'S' ? .4 : 1],
+  takeaway: ['Takeaway artist', 'Two or more forced fumbles and interceptions combined.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => dSv(p.st, 'ff') + dSv(p.st, 'int') >= 2],
+  frame: ['Prototype frame', 'Has the height and weight teams look for at his position.', 'ALL', null, p => { const h = dIn(p.ht) || 0, w = p.wt || 0, T = { QB: [76, 215], RB: [72, 215], WR: [76, 210], TE: [78, 245], OT: [78, 315], IOL: [77, 310], EDGE: [77, 255], DT: [76, 305], LB: [75, 235], CB: [74, 195], S: [74, 205] }[p.grp]; return T && h >= T[0] && w >= T[1]; }, 'bronze'],
+  consensus: ['Consensus first-rounder', 'Both boards rank him in their top 32: gold for top 10 on both.', 'ALL', null, p => p.w && p.b && p.w <= 32 && p.b <= 32, p => (p.w <= 10 && p.b <= 10 ? 'gold' : 'silver')],
+  early: ['Early entrant', 'A junior or younger, so he can enter the draft a year early with room to grow.', 'ALL', null, p => p.cls === 'JR' || p.cls === 'SO' || p.cls === 'FR', 'bronze']
+};
+const ptChip = ([k, t]) => `<span class="ot ${t}" title="${esc(TIER_NAME[t] + ': ' + PTRAITS[k][1])}"><i aria-hidden="true"></i>${esc(PTRAITS[k][0])}</span>`;
+const SCH = c => (DX && DX.schools[c]) || [c, '#555', '#ccc'];
+const schVars = c => { const [, c1, c2] = SCH(c); return `--c1:${c1};--c2:${c2};--ink:${inkFor(c1)}`; };
+const schCrest = (c, w = 26) => { const [, c1, c2] = SCH(c), ink = inkFor(c1), fs = c.length >= 4 ? 10 : c.length === 3 ? 12.5 : 15;
+  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><text x="20" y="27" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${fs}" fill="${ink}">${esc(c)}</text></svg>`; };
+const pAv = (p, px) => `<span class="av" style="${schVars(p.sch)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}</span>`;
+const pRole = p => p.role ? `<span class="role" title="${esc(PROLE_DESC[p.role] || '')}">${esc(p.role)}</span>` : '';
+const capGrowth27 = () => (FAX && FAX.capByYear && FAX.capByYear['2027'] ? FAX.capByYear['2027'] / CAP : 1.086);
+function slotVal(n) {
+  const s = (DX && DX.slot26) || [], g = capGrowth27();
+  if (n >= 1 && n <= s.length) return s[n - 1] * g;
+  const r2 = ((DX && DX.slot26r2first) || 12937488);
+  if (n <= 64) return (r2 - (n - 33) * (r2 - 7.2e6) / 31) * g;
+  return Math.max(4.1e6, 6.6e6 - (n - 65) * 1.3e4) * g;
+}
+const roundOf = n => n <= 32 ? 1 : n <= 64 ? 2 : n <= 100 ? 3 : n <= 140 ? 4 : n <= 180 ? 5 : n <= 220 ? 6 : 7;
+
+function prepDraft() {
+  if (!DX) return;
+  DP = DX.prospects.map((r, i) => Object.assign({ i }, r));
+  DP.forEach(p => {
+    const w = p.w || 65, b = p.b || 55, a = p.a != null ? p.a : b;
+    p.cscore = .4 * w + .3 * b + .3 * a;
+    p.g = (p.st && p.st.g) || 0;
+    p.key = (p.name + ' ' + p.grp + ' ' + DR_NAME[p.grp] + ' ' + SCH(p.sch)[0] + ' ' + p.sch).toLowerCase();
+  });
+  [...DP].sort((x, y) => x.cscore - y.cscore).forEach((p, n) => (p.crank = n + 1));
+  const N = DP.length;
+  DR_GROUPS.forEach(G => {
+    const cfg = DCFG[G], all = DP.filter(p => p.grp === G);
+    all.forEach(p => { p.pc = {}; p.rk = {}; p.ot = []; p.q = !!(p.st && cfg.q && p.g >= 3 && cfg.q(p.st)); });
+    const qs = all.filter(p => p.q);
+    cfg.bars.forEach(([k]) => {
+      const [, , f, , low] = DMET[k];
+      const vals = qs.map(p => f(p.st, p.g)).filter(v => v != null);
+      all.forEach(p => { if (!p.st) return; const v = f(p.st, p.g || 1); if (v == null) return; const r = pctRank(vals, v); p.pc[k] = low ? 1 - r : r; });
+      const ranked = qs.filter(p => f(p.st, p.g) != null).sort((a, b) => low ? f(a.st, a.g) - f(b.st, b.g) : f(b.st, b.g) - f(a.st, a.g));
+      ranked.forEach((p, n) => (p.rk[k] = [n + 1, ranked.length]));
+    });
+    const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { if (p.pc[k] != null) { s += wt * p.pc[k]; w += wt; } }); return w ? s / w : null; };
+    const cs = qs.map(comp).filter(v => v != null);
+    all.forEach(p => { const c = p.q ? comp(p) : null; p.prod = c != null ? pctRank(cs, c) : null; });
+  });
+  DP.forEach(p => {
+    p.br = N > 1 ? 1 - (p.crank - 1) / (N - 1) : 1;
+    const mix = p.prod != null ? .7 * p.br + .3 * p.prod : .85 * p.br + .15 * .5;
+    p.gradePct = mix; p.grade = Math.round(40 + 59 * mix);
+    p.role = prole(p);
+    Object.entries(PTRAITS).forEach(([k, [, , groups, met, floor, fixed]]) => {
+      if (groups !== 'ALL' && !groups.includes(p.grp)) return;
+      if (met) {
+        if (!p.q || p.pc[met] == null) return;
+        const v = DMET[met][2](p.st, p.g), fl = typeof floor === 'function' ? floor(p) : floor, low = DMET[met][4];
+        if (v == null || (low ? v > fl : v < fl)) return;
+        p.ot.push([k, tierOf(p.pc[met]) || 'bronze']);
+      } else if (floor(p)) p.ot.push([k, typeof fixed === 'function' ? fixed(p) : fixed || 'silver']);
+    });
+    p.ot.sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
+  });
+  DR_GROUPS.forEach(G => { const g = DP.filter(p => p.grp === G).sort((a, b) => b.grade - a.grade); g.forEach((p, n) => { p.grk = n + 1; p.gn = g.length; }); });
+  draftNeeds(); draftOrder(); draftMock();
+}
+
+/* team needs from the 2026 roster: starter quality on the field plus contracts that end after 2026 */
+function draftNeeds() {
+  DR_NEED = {};
+  const qual = {};
+  TEAMS.forEach(t => {
+    DR_NEED[t.id] = {};
+    DR_GROUPS.forEach(G => {
+      const n = DR_STARTERS[G];
+      const room = PL.filter(p => p.team === t.id && DR_NFL[G].includes(p.sg)).map(p => ({ p, v: p.fq && p.playPct != null ? p.playPct : .25 })).sort((a, b) => b.v - a.v).slice(0, n);
+      while (room.length < n) room.push({ p: null, v: .1 });
+      const q = room.reduce((s, r) => s + r.v, 0) / n;
+      const exp = room.filter(r => r.p && r.p.end && r.p.end <= 2026).length;
+      const old = G === 'QB' && room[0].p && (room[0].p.age || 0) >= 35;
+      const need = Math.max(0, Math.min(1, .72 * (1 - q) + .28 * exp / n + (old ? .2 : 0)));
+      DR_NEED[t.id][G] = { need, q, exp, n, old, starters: room.filter(r => r.p).map(r => r.p) };
+      (qual[G] = qual[G] || []).push([t.id, q]);
+    });
+  });
+  Object.entries(qual).forEach(([G, arr]) => arr.sort((a, b) => b[1] - a[1]).forEach(([id], k) => (DR_NEED[id][G].qrk = k + 1)));
+}
+const topNeeds = (id, n = 3) => DR_GROUPS.map(G => [G, DR_NEED[id] ? DR_NEED[id][G].need : 0]).sort((a, b) => b[1] - a[1]).slice(0, n);
+const needWhy = (id, G) => { const x = DR_NEED[id] && DR_NEED[id][G]; if (!x) return ''; const bits = [`${DR_NAME[G].toLowerCase()} starters rate ${ord(x.qrk)} of 32 on the field`]; if (x.exp) bits.push(`${x.exp} of ${x.n} starter${x.n > 1 ? 's' : ''}' deals end after 2026`); if (x.old) bits.push('the starter is 35 or older'); return bits.join('; '); };
+
+function draftOrder() {
+  DR_ORDER = [];
+  if (!SEAS || !SEAS.teams) return;
+  const rows = Object.entries(SEAS.teams).map(([id, r]) => { const gp = r.w + r.l + r.t; return { id, r, wp: gp ? (r.w + r.t / 2) / gp : .5, pd: r.pf - r.pa }; });
+  rows.sort((a, b) => a.wp - b.wp || a.pd - b.pd || a.id.localeCompare(b.id));
+  rows.forEach((x, k) => DR_ORDER.push({ pick: k + 1, orig: x.id, own: x.id, rec: x.r, via: null }));
+  const tr = (DX && DX.traded) || [];
+  const slot = id => DR_ORDER.find(o => o.orig === id);
+  tr.filter(t => !t.swap).forEach(t => { const o = slot(t.orig); if (o) { o.own = t.own; o.via = t.orig; o.note = t.note; } });
+  const d = slot('DAL'), g = slot('GB');
+  if (d && g) { const [early, late] = d.pick < g.pick ? [d, g] : [g, d]; early.own = 'NYJ'; early.via = early.orig; early.note = 'Jets get the earlier of the Cowboys\' and Packers\' picks (Quinnen Williams trade)'; late.own = 'DAL'; late.via = late.orig === 'DAL' ? null : late.orig; late.note = late.orig === 'GB' ? 'From Green Bay in the Micah Parsons trade' : 'Dallas keeps the later of its own and the Packers\' picks'; }
+}
+function draftMock() {
+  DP.forEach(p => { p.mock = null; });
+  if (!DR_ORDER.length) return;
+  const need = {}; Object.entries(DR_NEED).forEach(([id, o]) => { need[id] = {}; DR_GROUPS.forEach(G => (need[id][G] = o[G].need)); });
+  const pool = [...DP].sort((a, b) => a.crank - b.crank);
+  DR_ORDER.forEach(o => {
+    const cands = pool.slice(0, 14);
+    let best = null, bs = -1;
+    cands.forEach(p => { const s = Math.exp(-(p.crank - 1) / 16) * (.55 + .9 * ((need[o.own] || {})[p.grp] || 0)) * Math.sqrt(DR_PV[p.grp] || 1); if (s > bs) { bs = s; best = p; } });
+    if (!best) return;
+    o.p = best; best.mock = o; pool.splice(pool.indexOf(best), 1);
+    if (need[o.own]) need[o.own][best.grp] *= .3;
+  });
+}
+const projPick = p => p.mock ? p.mock.pick : Math.max(33, Math.round(p.crank + 4));
+
+/* ===== draft rendering ===== */
+function pCard(p) {
+  const [sn] = SCH(p.sch), tiles = DCFG[p.grp].tiles.slice(0, 3), s = p.st || {};
+  const nums = tiles.length && p.st ? tiles.map(k => `<span><small>${esc(DT_TILE[k][0])}</small>${esc(DT_TILE[k][1](s, p.g))}</span>`).join('') : `<span><small>Height</small>${esc(p.ht)}</span><span><small>Weight</small>${p.wt}</span><span><small>Class</small>${esc(p.cls)}</span>`;
+  return `<button type="button" class="fc" data-dp="${p.i}" style="${schVars(p.sch)}" aria-label="${esc(p.name)}, ${esc(DR_NAME[p.grp])}, ${esc(sn)}, board rank ${p.crank}, grade ${p.grade}">
+    <span class="fc-band"><span class="pos">${esc(p.grp)}</span><span class="prk">#${p.crank}</span>${schCrest(p.sch, 24)}</span>
+    ${pAv(p)}
+    <span class="fc-name">${esc(p.name)}</span>
+    <span class="fc-sub">${esc(sn)} · ${esc(p.cls)} · ${esc(p.ht)}, ${p.wt}</span>
+    ${pRole(p)}
+    <span class="fc-nums">${nums}</span>
+    <span class="fc-rings">${ringSVG(p.grade, 'Grade', pColor(p.gradePct))}${p.prod != null ? ringSVG(Math.round(p.prod * 100), '2026', pColor(p.prod)) : ''}</span>
+    ${p.ot.length ? `<span class="traits">${p.ot.slice(0, 2).map(ptChip).join('')}</span>` : ''}
+  </button>`;
+}
+function drSorted(list) {
+  const k = dr.sort;
+  return [...list].sort((a, b) => k === 'grade' ? b.grade - a.grade || a.crank - b.crank : k === 'prod' ? (b.prod ?? -1) - (a.prod ?? -1) || a.crank - b.crank : a.crank - b.crank);
+}
+function renderDraftKPIs() {
+  const one = DR_ORDER[0], own = {}; DR_ORDER.forEach(o => (own[o.own] = (own[o.own] || 0) + 1));
+  const multi = Object.entries(own).filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
+  const top = DP.filter(p => p.crank <= 32), cnt = {}; top.forEach(p => (cnt[p.grp] = (cnt[p.grp] || 0) + 1));
+  const deep = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+  const r = one && one.rec;
+  $('#dr-kpis').innerHTML = `
+    <div class="kpi"><span class="k">Prospects tracked</span><span class="v">${DP.length}</span><span class="s">${DP.filter(p => p.st).length} with 2026 college stats</span></div>
+    ${one ? `<a class="kpi" href="#team-${one.own}"><span class="k">On the clock today</span><span class="v">${esc(TB[one.own] ? TB[one.own].name : one.own)}</span><span class="s">${r.w}-${r.l}${r.t ? '-' + r.t : ''}, worst record in the league</span></a>` : ''}
+    ${deep ? `<div class="kpi"><span class="k">Deepest in round 1</span><span class="v" style="font-size:clamp(1.35rem,2.3vw,2rem);overflow-wrap:anywhere">${esc(DR_NAME[deep[0]])}s</span><span class="s">${deep[1]} of the top 32 on the board</span></div>` : ''}
+    ${multi.length ? `<a class="kpi" href="#team-${multi[0][0]}"><span class="k">Most first-round picks</span><span class="v">${esc(TB[multi[0][0]] ? TB[multi[0][0]].name : multi[0][0])}</span><span class="s">${multi[0][1]} projected firsts${multi[1] ? `; ${esc(TB[multi[1][0]].name)} have ${multi[1][1]}` : ''}</span></a>` : ''}
+    <div class="kpi"><span class="k">No. 1 pick's rookie deal</span><span class="v">${mon(slotVal(1))}</span><span class="s">4 years, est. for 2027, fully guaranteed</span></div>`;
+}
+function renderDraftBoard() {
+  const counts = {}; DP.forEach(p => (counts[p.grp] = (counts[p.grp] || 0) + 1));
+  $('#dr-pos').innerHTML = [['all', 'All ' + DP.length]].concat(DR_GROUPS.filter(G => counts[G]).map(G => [G, `${G} ${counts[G]}`])).map(([k, l]) => `<button type="button" class="chip" data-dpos="${k}" aria-pressed="${dr.pos === k}">${esc(l)}</button>`).join('');
+  $$('#dr-sort button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ds === dr.sort)));
+  const list = drSorted(DP.filter(p => dr.pos === 'all' || p.grp === dr.pos));
+  $('#dr-cards').innerHTML = list.slice(0, dr.limit).map(pCard).join('') || '<p class="empty">No prospects at this position yet.</p>';
+  $('#dr-more').hidden = list.length <= dr.limit;
+  $('#dr-cards-eb').textContent = `${dr.pos === 'all' ? 'All positions' : DR_NAME[dr.pos] + 's'} · sorted by ${dr.sort === 'rank' ? 'board rank' : dr.sort === 'grade' ? 'Plain Cap grade' : '2026 production'} · tap for his full page`;
+  // depth bars
+  const max = Math.max(...DR_GROUPS.map(G => DP.filter(p => p.grp === G).length), 1);
+  $('#dr-depth').innerHTML = DR_GROUPS.filter(G => counts[G]).map(G => { const a = DP.filter(p => p.grp === G && p.crank <= 32).length, b = counts[G] - a;
+    return `<button type="button" class="gb" data-dpos="${G}"><span>${esc(DR_NAME[G])}</span><span class="track" style="display:flex;overflow:hidden"><i style="display:block;height:100%;width:${(a / max * 100).toFixed(1)}%;background:var(--brand)"></i><i style="display:block;height:100%;width:${(b / max * 100).toFixed(1)}%;background:var(--c-space)"></i></span><span class="val">${a}<span class="diff" style="color:var(--muted)">of ${counts[G]} in top 32</span></span></button>`; }).join('');
+  // board splits
+  const sp = DP.filter(p => p.w && p.b).map(p => ({ p, gap: Math.abs(p.w - p.b) })).sort((a, b) => b.gap - a.gap).slice(0, 7);
+  const M = 60;
+  $('#dr-split').innerHTML = `<div class="dumb dumb-axis" aria-hidden="true"><span></span><span class="dtrack"><b style="left:0">1</b><b style="left:${(29 / (M - 1) * 100).toFixed(1)}%">30</b><b style="left:100%">60</b></span><span></span></div>` + sp.map(({ p, gap }) => { const x = v => ((Math.min(v, M) - 1) / (M - 1) * 100).toFixed(1), lo = Math.min(p.w, p.b), hi = Math.max(p.w, p.b);
+    return `<button type="button" class="dumb" data-dp="${p.i}" aria-label="${esc(p.name)}: WalterFootball ${p.w}, NFL Draft Buzz ${p.b}"><span class="dn"><b>${esc(p.name)}</b><small>${esc(p.grp)} · ${esc(SCH(p.sch)[0])}</small></span><span class="dtrack"><i class="dline" style="left:${x(lo)}%;width:${(x(hi) - x(lo))}%"></i><i class="dot dw" style="left:${x(p.w)}%"></i><i class="dot db" style="left:${x(p.b)}%"></i></span><span class="dg num">${gap}</span></button>`; }).join('') +
+    `<ul class="legend" style="margin-top:6px"><li><i class="swatch" style="background:var(--brand);border-radius:50%"></i><span>WalterFootball rank</span></li><li><i class="swatch" style="background:var(--c-def);border-radius:50%"></i><span>NFL Draft Buzz rank</span></li></ul>`;
+  renderDraftTable();
+}
+function renderDraftTable() {
+  const list = drSorted(DP);
+  $('#dr-tcount').textContent = `${DP.length} prospects · boards as of ${new Date(DX.asOf + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })} · college stats through ${new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
+  const key = p => { const t = DCFG[p.grp].tiles; if (!p.st || !t.length) return '—'; return t.slice(0, 2).map(k => `${DT_TILE[k][1](p.st, p.g)} ${DT_TILE[k][0].toLowerCase()}`).join(', '); };
+  $('#dr-table').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Prospect</span></th><th><span>Pos</span></th><th><span>School</span></th><th><span>Class</span></th><th><span>Size</span></th><th class="r"><span>Grade</span></th><th><span>Role</span></th><th><span>2026 so far</span></th><th class="r"><span>Walter</span></th><th class="r"><span>Buzz</span></th><th><span>Model pick</span></th></tr></thead><tbody>${list.map(p => `<tr data-dp="${p.i}" data-s="${esc(p.key + ' ' + p.role + ' ' + p.cls)}"><td class="r">${p.crank}</td><td><span class="pn">${pAv(p, 28)}${esc(p.name)}</span></td><td><span class="pos">${esc(p.grp)}</span></td><td>${esc(SCH(p.sch)[0])}</td><td>${esc(p.cls)}</td><td class="num">${esc(p.ht)}, ${p.wt}</td><td class="r"><b style="color:${pColor(p.gradePct)}">${p.grade}</b></td><td><span class="role sm">${esc(p.role)}</span></td><td>${esc(key(p))}</td><td class="r">${p.w || '—'}</td><td class="r">${p.b || '—'}</td><td>${p.mock ? `<span class="pn" style="font-weight:500">${crest(p.mock.own, 18)}No. ${p.mock.pick}</span>` : `<span class="note">Round ${roundOf(projPick(p))}</span>`}</td></tr>`).join('')}</tbody>`;
+  applyTF($('#dr-table'));
+}
+function renderDraftOrder() {
+  const sd = SEAS && SEAS.week ? `through Week ${SEAS.week}` : '';
+  $('#dr-ord-eb').textContent = `Projected 2027 first round · standings ${sd}`;
+  const own = {}; DR_ORDER.forEach(o => (own[o.own] = own[o.own] || []).push(o.pick));
+  const ownL = Object.entries(own).sort((a, b) => b[1].length - a[1].length || a[1][0] - b[1][0]).filter(([, v]) => v.length !== 1 || true);
+  const multi = ownL.filter(([, v]) => v.length > 1), none = TEAMS.filter(t => !own[t.id]).map(t => t.id);
+  $('#dr-owners').innerHTML = multi.map(([id, v]) => `<a class="gb" href="#team-${id}" style="text-decoration:none;color:inherit"><span class="pn">${crest(id, 20)}${esc(TB[id].name)}</span><span class="track"><i class="fill" style="width:${(v.length / 3 * 100).toFixed(0)}%;background:var(--brand)"></i></span><span class="val">${v.length}<span class="diff" style="color:var(--muted)">picks ${v.join(', ')}</span></span></a>`).join('') +
+    (none.length ? `<p class="note">Every other team holds one first-round pick. The ${none.map(id => TB[id].name).join(', ').replace(/, ([^,]*)$/, ' and $1')} traded theirs away.</p>` : '');
+  $('#dr-trades').innerHTML = DR_ORDER.filter(o => o.via || o.own !== o.orig || o.note).map(o => `<div><span>${esc(TB[o.orig].name)} pick (now No. ${o.pick}) → <b style="font-family:var(--body)">${esc(TB[o.own].name)}</b></span><b>${esc(o.note || '')}</b></div>`).join('');
+  const ty = TY && TY.years && TY.years['2027'] && TY.years['2027'].teams;
+  $('#dr-otable').innerHTML = `<thead><tr><th class="r"><span>Pick</span></th><th><span>Team</span></th><th><span>Record</span></th><th class="r"><span>2027 cap room</span></th><th><span>Biggest needs</span></th><th><span>Model pick</span></th><th class="r"><span>Rookie deal</span></th></tr></thead><tbody>${DR_ORDER.map(o => { const t = TB[o.own], r = o.rec, p = o.p, sp = ty && ty[o.own] ? ty[o.own].space : null;
+    return `<tr data-team="${o.own}" data-s="${esc(teamHay(t) + ' ' + (p ? p.key : ''))}"><td class="r"><b>${o.pick}</b></td><td><span class="pn">${crest(o.own, 22)}<span>${esc(t.name)}${o.via ? `<small class="note" style="display:block;font-weight:500">via ${esc(TB[o.via].name)}</small>` : ''}</span></span></td><td class="num">${r.w}-${r.l}${r.t ? '-' + r.t : ''}</td><td class="r ${sp < 0 ? 'up' : ''}">${mon(sp)}</td><td>${topNeeds(o.own).map(([G]) => `<span class="role sm" title="${esc(needWhy(o.own, G))}">${G}</span>`).join(' ')}</td><td>${p ? `<button type="button" class="row-btn pn" data-dp="${p.i}">${pAv(p, 26)}<span>${esc(p.name)}<small class="note" style="display:block;font-weight:500">${esc(p.grp)} · ${esc(SCH(p.sch)[0])} · board #${p.crank}</small></span></button>` : '—'}</td><td class="r">${mon(slotVal(o.pick))}</td></tr>`; }).join('')}</tbody>`;
+  applyTF($('#dr-otable'));
+}
+function vetTop(G, n = 10) { const a = PL.filter(p => DR_NFL[G].includes(p.sg) && p.apy > 0).map(p => p.apy).sort((x, y) => y - x).slice(0, n); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : null; }
+function renderDraftPay() {
+  const s = DX.slot26 || [], g = capGrowth27(), vals = s.map((v, k) => v * g), max = vals[0] || 1;
+  const W = 720, H = 230, L = 46, B = 26, T = 14, cw = (W - L - 8) / vals.length, y = v => T + (H - T - B) * (1 - v / 60e6);
+  const ticks = [0, 20e6, 40e6, 60e6];
+  $('#dr-scale').innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:520px;display:block" role="img" aria-label="Four-year rookie deal value for picks 1 to 32, from ${mon(vals[0])} at pick 1 to ${mon(vals[vals.length - 1])} at pick 32">
+    ${ticks.map(t => `<line x1="${L}" x2="${W - 4}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"></line><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end" font-family="Roboto Mono,monospace" font-size="10" fill="var(--muted)">$${t / 1e6}M</text>`).join('')}
+    ${vals.map((v, k) => { const x = L + k * cw + 1.5, h = y(0) - y(v); return `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${(cw - 3).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${k < 5 ? 'var(--brand)' : k < 10 ? 'var(--c-off)' : 'var(--c-space)'}"><title>Pick ${k + 1}: ${mon(v)} over 4 years, about ${mon(v / 4)} a year</title></rect>${[0, 4, 9, 15, 31].includes(k) ? `<text x="${(x + (cw - 3) / 2).toFixed(1)}" y="${(y(v) - 4).toFixed(1)}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9.5" fill="var(--fg)">${mon(v, 1)}</text>` : ''}`; }).join('')}
+    ${[1, 5, 10, 16, 20, 25, 32].map(n => `<text x="${(L + (n - 1) * cw + cw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="var(--muted)">${n}</text>`).join('')}
+  </svg>`;
+  $('#dr-scale-eb').textContent = `Four-year value by first-round pick · 2027 estimate`;
+  $('#dr-scale-note').textContent = `2027 figures are the 2026 scale grown ${pct(g - 1, 1)}, the same rate as Over The Cap's projected 2027 cap. The top five picks cost the most by far; after pick 10 the curve flattens out. Pick 33, the first of round 2, was worth ${mon(DX.slot26r2first * g)}.`;
+  $$('#dr-vpick button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.vp === dr.vp)));
+  const rk = slotVal(dr.vp) / 4, rows = DR_GROUPS.map(G => [G, vetTop(G)]).filter(r => r[1]).sort((a, b) => b[1] - a[1]), vmax = rows[0][1];
+  $('#dr-save').innerHTML = rows.map(([G, v]) => `<div class="gb" style="cursor:default"><span>${esc(DR_NAME[G])}</span><span class="track" style="height:18px"><i class="fill" style="width:${(v / vmax * 100).toFixed(1)}%;background:var(--c-space)"></i><i class="fill" style="width:${(rk / vmax * 100).toFixed(1)}%;background:var(--brand);height:10px;top:4px"></i></span><span class="val">${mon(v)}<span class="diff down">saves ${mon(Math.max(0, v - rk))}/yr</span></span></div>`).join('');
+  $('#dr-rules').innerHTML = [
+    ['Length', 'Four years for every pick, plus a fifth-year team option for first-rounders'],
+    ['Guarantees', 'First-round deals are fully guaranteed, or nearly so for the last picks of the round'],
+    ['Who sets the price', 'The draft slot. Agents can only tweak bonus timing and offsets'],
+    ['Signing bonus', 'Most of a first-rounder\'s money, paid up front and spread over four cap years'],
+    ['Cap hit in year 1', `About ${mon(slotVal(1) / 4)} for pick 1 and ${mon(slotVal(32) / 4)} for pick 32`],
+    ['Fifth-year option', 'Set by what top players at his position earn; decided after his third season']
+  ].map(([k, v]) => `<div><span>${esc(k)}</span><b style="font-family:var(--body);max-width:60%">${esc(v)}</b></div>`).join('');
+}
+function renderDraftHow() {
+  if ($('#dr-faq').childElementCount) return;
+  const src = (DX.sources || []).map(([t, u]) => `${t} (${u})`).join('; ');
+  faq($('#dr-faq'), [
+    ['Board rank', 'Plain Cap blends two public big boards: WalterFootball (40%) and NFL Draft Buzz, both its own rank (30%) and its average across many outlets (30%). A player missing from a board is counted just past the end of it. The result is one consensus order, 1 to ' + DP.length + '.'],
+    ['Prospect grade', 'A 40 to 99 score like the play rating on NFL player pages. 70% comes from board rank, because scouts see things box scores miss. 30% comes from his 2026 college production, as percentiles against the other prospects at his position. Linemen have no public blocking stats, and some players have too few games, so for them production counts as average.'],
+    ['2026 production', 'Per-game college stats through ' + new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric' }) + ', from cfbstats. A prospect needs three games, and a minimum workload at skill positions, before his production counts. Competition level differs by conference, so treat it as one input.'],
+    ['Roles', 'One label for how his college team uses him, with the same names as NFL roles where they fit, so you can compare him with NFL players who do the same job. Each role is explained on his page.'],
+    ['Trait badges', 'Skills he stands out in this season. He must clear a real bar first (for example, 0.6 sacks a game for a Sack artist), then the tier shows how he ranks among the prospects at his position: gold for the top 6%, silver for the top 16%, bronze otherwise.'],
+    ['Draft order', 'If the season ended today, using current records. Traded picks move to their new owners. Real tiebreakers use strength of schedule; Plain Cap uses point differential.'],
+    ['Model mock', 'For each pick, the model looks at the 14 best players left and scores each by board rank, how badly the team needs his position, and how much teams value that position. It does not predict trades or a team\'s own board.'],
+    ['Team needs', 'Built from each team\'s 2026 roster on Plain Cap: how its starters at each position rate on the field, how many of their contracts end after this season, and an older starting quarterback.'],
+    ['Rookie pay', 'The 2026 rookie scale for first-round picks, grown with the projected 2027 salary cap. Later-round values are rough estimates.'],
+    ['Sources', src]
+  ]);
+}
+function renderDraft() {
+  if (!DX) return;
+  $('#dr-eyebrow').textContent = `${DX.draft.year} NFL Draft · ${DX.draft.dates} · ${DX.draft.place}`;
+  $$('#dr-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dt === dr.tab)));
+  ['board', 'order', 'pay', 'how'].forEach(k => ($('#dr-' + k).hidden = k !== dr.tab));
+  renderDraftKPIs();
+  if (dr.tab === 'board') renderDraftBoard();
+  if (dr.tab === 'order') renderDraftOrder();
+  if (dr.tab === 'pay') renderDraftPay();
+  if (dr.tab === 'how') renderDraftHow();
+}
+
+/* ===== prospect page ===== */
+function pStory(p) {
+  const s = p.st || {}, g = p.g, out = [], m = k => DMET[k][2](s, g || 1), pl = (n, w, ws) => `${n} ${n === 1 ? w : ws || w + 's'}`;
+  const ws = p.w ? `WalterFootball has him ${ord(p.w)}` : 'He is outside WalterFootball\'s top 60', bs = p.b ? `NFL Draft Buzz ${ord(p.b)}` : 'NFL Draft Buzz leaves him outside its top 50';
+  const gap = p.w && p.b ? Math.abs(p.w - p.b) : null;
+  out.push(`${p.name} is No. ${p.crank} on Plain Cap's consensus board and ${p.grk === 1 ? 'the top-graded' : 'the ' + ord(p.grk) + '-best'} of the ${p.gn} ${drWords(p.grp)} on it. ${ws} and ${bs}${gap != null ? (gap <= 5 ? ', so the boards agree.' : gap >= 15 ? `, a ${gap}-spot gap, so scouts are split on him.` : '.') : '.'}`);
+  if (p.st && g) {
+    const G = p.grp;
+    if (G === 'QB') out.push(`Through ${g} games he has thrown for ${dSv(s, 'py').toLocaleString()} yards, ${pl(dSv(s, 'ptd'), 'touchdown')} and ${pl(dSv(s, 'pint'), 'interception')}, completing ${pct(m('cmp'), 0)} at ${dN1(m('ypa'))} yards a throw${dSv(s, 'ry') > 100 ? `, and he has run for ${dSv(s, 'ry')} more` : ''}.`);
+    else if (G === 'RB') out.push(`Through ${g} games he has ${dSv(s, 'ra')} carries for ${dSv(s, 'ry')} yards (${dN1(m('ypc'))} a carry) and ${pl(dSv(s, 'rtd') + dSv(s, 'retd'), 'touchdown')}, with ${pl(dSv(s, 'rec'), 'catch', 'catches')}.`);
+    else if (G === 'WR' || G === 'TE') out.push(`Through ${g} games he has ${dSv(s, 'rec')} catches for ${dSv(s, 'rey')} yards and ${pl(dSv(s, 'retd'), 'touchdown')}: ${dN1(m('ydg'))} yards a game at ${dN1(m('ypr'))} a catch.`);
+    else if (G === 'EDGE' || G === 'DT') out.push(`Through ${g} games he has ${pl(dSv(s, 'sk'), 'sack')}, ${pl(dSv(s, 'tfl'), 'tackle')} for loss and ${pl(dSv(s, 'qbh'), 'quarterback hurry', 'quarterback hurries')} among ${pl(dSv(s, 'tk'), 'tackle')}.`);
+    else if (G === 'LB') out.push(`Through ${g} games he has ${dSv(s, 'tk')} tackles, ${dSv(s, 'tfl')} for a loss, with ${pl(dSv(s, 'sk'), 'sack')} and ${pl(dSv(s, 'pbu'), 'pass breakup')}.`);
+    else out.push(`Through ${g} games he has ${pl(dSv(s, 'pbu'), 'pass breakup')} and ${pl(dSv(s, 'int'), 'interception')}, with ${pl(dSv(s, 'tk'), 'tackle')}.`);
+    if (g < 4) out.push(`He has played only ${g} game${g === 1 ? '' : 's'} this season, so his numbers carry less weight than his board rank.`);
+  } else if (DCFG[p.grp].bars.length) out.push('Plain Cap has no 2026 college stats for him yet. He may be hurt or not yet listed, so his grade rests on his board rank.');
+  else out.push(`At ${p.ht} and ${p.wt} pounds, he has the frame teams want. Public stats do not track blocks one lineman at a time, so his grade rests on where scouts rank him.`);
+  if (p.role) out.push(`Plain Cap's role for him: ${p.role}. ${PROLE_DESC[p.role] || ''}`);
+  const pk = projPick(p), sl = slotVal(pk), vt = vetTop(p.grp);
+  out.push(`${p.mock ? `In Plain Cap's model mock he goes No. ${pk} to the ${TB[p.mock.own].city} ${TB[p.mock.own].name}` : `He projects as a round ${roundOf(pk)} pick`}. A rookie deal at that slot is worth about ${mon(sl)} over four years, ${mon(sl / 4)} a year${vt ? `, or ${pct(sl / 4 / vt)} of what a top-10 veteran ${DR_WORD[p.grp]} makes` : ''}.`);
+  return out;
+}
+function pFits(p) {
+  const pk = projPick(p);
+  const cands = DR_ORDER.filter(o => Math.abs(o.pick - pk) <= 8).map(o => ({ o, n: DR_NEED[o.own] ? DR_NEED[o.own][p.grp] : null })).filter(x => x.n).sort((a, b) => b.n.need - a.n.need).slice(0, 5);
+  if (!cands.length) return `<p class="note">He projects outside the first round, where the order is not set yet. Teams with the biggest ${DR_WORD[p.grp]} needs: ${TEAMS.map(t => [t, DR_NEED[t.id][p.grp].need]).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([t]) => t.name).join(', ')}.</p>`;
+  return `<p class="note">Teams picking within eight spots of his projected slot (No. ${pk}), ranked by how much they need a ${DR_WORD[p.grp]}.</p><div class="sims">${cands.map(({ o, n }) => `<a class="sim" href="#team-${o.own}" style="text-decoration:none;color:inherit">${crest(o.own, 30)}<span><b>No. ${o.pick} · ${esc(TB[o.own].city)} ${esc(TB[o.own].name)}</b><small>${esc(needWhy(o.own, p.grp).replace(/^./, c => c.toUpperCase()))}</small></span><span class="pc">${Math.round(n.need * 100)}</span></a>`).join('')}</div><p class="note">The number is the team's need score at his position, 0 to 100.</p>`;
+}
+function pComps(p) {
+  const gs = DR_NFL[p.grp], same = PL.filter(q => gs.includes(q.sg) && q.fq && q.play != null && (['OT', 'IOL'].includes(p.grp) || q.role === p.role));
+  const list = (same.length >= 2 ? same : PL.filter(q => gs.includes(q.sg) && q.fq && q.play != null)).sort((a, b) => b.play - a.play).slice(0, 4);
+  if (!list.length) return '';
+  return `<div style="display:grid;gap:6px"><span class="eyebrow">${['OT', 'IOL'].includes(p.grp) ? 'Best NFL players at his position right now' : `NFL players in the same role: ${esc(p.role)}`}</span><div class="sims">${list.map(q => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · ${mon(q.apy)}/yr</small></span><span class="pc">${q.play}</span></button>`).join('')}</div><span class="note">The number is his 2026 NFL play rating. This shows the job, not a promise he will play at that level.</span></div>`;
+}
+function pScout(p) {
+  const cfg = DCFG[p.grp], s = p.st || {};
+  const tiles = cfg.tiles.length && p.st ? cfg.tiles.map(k => `<div><span class="k">${esc(DT_TILE[k][0])}</span><div class="v num">${esc(DT_TILE[k][1](s, p.g))}</div></div>`).join('') : `<div><span class="k">Height</span><div class="v num">${esc(p.ht)}</div></div><div><span class="k">Weight</span><div class="v num">${p.wt}</div></div><div><span class="k">Class</span><div class="v">${esc(p.cls)}</div></div>`;
+  const brk = `<div class="pb"><span class="lbl">Board rank<small>consensus of public boards</small></span><span class="tr"><i style="width:${(p.br * 100).toFixed(0)}%;background:${pColor(p.br)}"></i></span><b>${Math.round(p.br * 100)}</b><span class="pv num">#${p.crank} of ${DP.length}</span></div>`;
+  const bars = cfg.bars.map(([k]) => { const v = p.pc[k], r = p.rk[k], raw = p.st ? DMET[k][2](s, p.g || 1) : null; return `<div class="pb"><span class="lbl">${esc(DMET[k][0])}<small>${esc(DMET[k][1])}</small></span><span class="tr">${v != null && p.q ? `<i style="width:${(v * 100).toFixed(0)}%;background:${pColor(v)}"></i>` : ''}</span><b>${v != null && p.q ? Math.round(v * 100) : '—'}</b><span class="pv num">${raw != null ? DMET[k][3](raw) : '—'}${r && p.q ? ` · ${ord(r[0])}` : ''}</span></div>`; }).join('');
+  const nq = DP.filter(q => q.grp === p.grp && q.q).length;
+  const lo = Math.min(p.w || 99, p.b || 99), boards = [['WalterFootball', p.w, 60], ['NFL Draft Buzz', p.b, 50], ['Outlet average', p.a, 50]];
+  return `<div class="field">
+    <div class="fhead">
+      <div class="bigplay" style="--pc:${pColor(p.gradePct)}"><b>${p.grade}</b><small>Grade</small></div>
+      <div style="display:grid;gap:6px;min-width:0">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${pRole(p)}<span class="rkpill">${esc(p.grp)} #${p.grk} of ${p.gn}</span><span class="rkpill" style="background:var(--brand);color:var(--brand-ink)">Board #${p.crank}</span></div>
+        <span class="note">${esc(DCLS[p.cls] || p.cls)} · ${esc(p.ht)}, ${p.wt} lb · ${p.g ? `${p.g} game${p.g === 1 ? '' : 's'} in 2026` : 'no 2026 stats yet'}</span>
+        ${p.role ? `<span class="note">${esc(PROLE_DESC[p.role] || '')}</span>` : ''}
+      </div>
+    </div>
+    ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(ptChip).join('')}</div>` : ''}
+    <div class="stiles">${tiles}</div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">${cfg.bars.length ? `Percentiles among ${nq} ${drWords(p.grp)} on the board with enough 2026 snaps · these build the grade` : 'What builds his grade'}</span><div class="pbars wide">${brk}${p.q ? bars : ''}</div>${cfg.bars.length && !p.q ? `<p class="note">Not enough 2026 games yet for production percentiles. He needs three games${p.grp === 'QB' ? ' and 40 passes' : ''}.</p>` : ''}</div>
+    <div style="display:grid;gap:6px"><span class="eyebrow">How the boards see him</span><div class="boards">${boards.map(([n, v, mx]) => `<div><span>${esc(n)}</span><span class="dtrack">${v ? `<i class="dot ${v === lo ? 'db' : 'dw'}" style="left:${((Math.min(v, mx) - 1) / (mx - 1) * 100).toFixed(1)}%"></i>` : ''}</span><b class="num">${v ? (n === 'Outlet average' ? v.toFixed(1) : '#' + v) : `Not in top ${mx}`}</b></div>`).join('')}</div></div>
+    <div class="story">${pStory(p).map(x => `<p>${esc(x)}</p>`).join('')}</div>
+    ${pComps(p)}
+    ${p.src ? `<p class="note">2026 stats: <a href="${esc(p.src)}" target="_blank" rel="noopener">cfbstats</a>, through ${new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}.</p>` : ''}
+  </div>`;
+}
+function pPay(p) {
+  const pk = projPick(p), sl = slotVal(pk), yr = sl / 4, vt = vetTop(p.grp), r1 = pk <= 32;
+  const bonus = r1 ? sl * (pk <= 10 ? .66 : .55) : sl * .3;
+  const sal = sl - bonus, capRows = [.16, .22, .28, .34].map((f, k) => [2027 + k, bonus / 4 + sal * f]);
+  return `<div class="sh" style="padding:0">
+    <div class="bigrow"><div><span class="k">Projected pick</span><div class="v">No. ${pk}</div></div><div><span class="k">4-year value</span><div class="v">${mon(sl)}</div></div><div><span class="k">Per year</span><div class="v">${mon(yr)}</div></div></div>
+    <p class="note">${p.mock ? `From Plain Cap's model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
+    <div style="display:grid;gap:6px">
+      <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Signing bonus vs. salary</span><b class="num">about ${mon(bonus)} bonus</b></div>
+      <div class="dbar" role="img" aria-label="Signing bonus about ${mon(bonus)}, salaries about ${mon(sl - bonus)}"><i style="width:${(bonus / sl * 100).toFixed(1)}%;background:var(--gtd)"></i><i style="width:${(100 - bonus / sl * 100).toFixed(1)}%;background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i></div>
+      <ul class="legend"><li><i class="swatch" style="background:var(--gtd)"></i><span>Signing bonus, paid up front<b>${mon(bonus)}</b></span></li><li><i class="swatch" style="background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i><span>Salaries, years 1 to 4${r1 ? ', guaranteed' : ''}<b>${mon(sl - bonus)}</b></span></li></ul>
+    </div>
+    <div style="display:grid;gap:6px"><span class="eyebrow">Estimated cap hit by year</span><div class="cols" style="height:140px">${capRows.map(([y, v]) => `<div class="col"><span class="amt">${mon(v)}</span><span class="bx" style="height:${(v / capRows[3][1] * 100).toFixed(0)}%"></span><span class="lab">${y}</span></div>`).join('')}</div></div>
+    ${vt ? `<div style="display:grid;gap:6px"><div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Vs. a top-10 veteran ${esc(DR_WORD[p.grp])}</span><b class="num">${mon(vt)} a year</b></div><div class="meter"><i style="width:${Math.min(100, yr / vt * 100).toFixed(1)}%"></i></div><span class="note">His rookie deal would cost ${pct(yr / vt)} as much, saving about ${mon(Math.max(0, vt - yr))} a year if he plays like a top-10 starter.</span></div>` : ''}
+    <div class="rows">
+      <div><span>Contract length</span><b>4 years${r1 ? ' + 5th-year option' : ''}</b></div>
+      <div><span>Guarantees</span><b>${r1 ? (pk <= 20 ? 'Fully guaranteed' : 'Mostly guaranteed') : 'Bonus only, usually'}</b></div>
+      <div><span>Free agent after</span><b>${r1 ? '2030 (2031 with option)' : '2030'}</b></div>
+      <div><span>Draft slot pay, 2026 actual</span><b>${pk <= 32 ? mon(DX.slot26[pk - 1]) : '—'}</b></div>
+    </div>
+  </div>`;
+}
+function openProspect(i) {
+  const p = DP[i]; if (!p) return; const [sn] = SCH(p.sch);
+  const tab = ['scout', 'pay', 'fits'].includes(dr.sheet) ? dr.sheet : 'scout';
+  $('#sheet-body').innerHTML = `
+    <div class="sh-top" style="${schVars(p.sch)}">${pAv(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(DR_NAME[p.grp])} · ${esc(DCLS[p.cls] || p.cls)} · 2027 draft prospect</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(sn)} · ${esc(p.ht)}, ${p.wt} lb · board #${p.crank}</p></div><div style="display:grid;gap:8px;justify-items:end">${schCrest(p.sch, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Prospect view"><button type="button" data-tab="scout" aria-pressed="${tab === 'scout'}">Scouting</button><button type="button" data-tab="pay" aria-pressed="${tab === 'pay'}">Rookie contract</button><button type="button" data-tab="fits" aria-pressed="${tab === 'fits'}">Team fits</button></div>
+    <div id="sh-scout" ${tab === 'scout' ? '' : 'hidden'}>${pScout(p)}</div>
+    <div id="sh-pay" ${tab === 'pay' ? '' : 'hidden'}>${pPay(p)}</div>
+    <div id="sh-fits" ${tab === 'fits' ? '' : 'hidden'}><div class="field">${pFits(p)}</div></div>`;
+  if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
+  $('#sheet-body').scrollTop = 0; sheet.scrollTop = 0;
+  $('#sh-x').onclick = () => sheet.close();
+  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; dr.sheet = b.dataset.tab; $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); ['scout', 'pay', 'fits'].forEach(k => ($('#sh-' + k).hidden = k !== dr.sheet)); };
+  $$('#sh-fits a, #sh-scout a[href^="#"]').forEach(a => a.addEventListener('click', () => sheet.close()));
+}
+function wireDraft() {
+  $('#dr-tab').onclick = e => { const b = e.target.closest('[data-dt]'); if (b) { dr.tab = b.dataset.dt; store.set('drTab', dr.tab); renderDraft(); } };
+  $('#dr-sort').onclick = e => { const b = e.target.closest('[data-ds]'); if (b) { dr.sort = b.dataset.ds; renderDraftBoard(); } };
+  $('#dr-vpick').onclick = e => { const b = e.target.closest('[data-vp]'); if (b) { dr.vp = +b.dataset.vp; renderDraftPay(); } };
+  $('#dr-more').onclick = () => { dr.limit += 12; renderDraftBoard(); };
+  $('#dr-tbox').outerHTML = tfBox('dr-table', 'Filter by name, school, position or role');
+  $('#dr-obox').outerHTML = tfBox('dr-otable', 'Filter by team, prospect or position');
+  $('#v-draft').addEventListener('click', e => {
+    const pos = e.target.closest('[data-dpos]'); if (pos) { dr.pos = dr.pos === pos.dataset.dpos && pos.dataset.dpos !== 'all' ? 'all' : pos.dataset.dpos; dr.limit = 12; renderDraftBoard(); if (pos.classList.contains('gb')) $('#dr-cards').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+    const t = e.target.closest('tr[data-team]'); if (t && !e.target.closest('[data-dp]')) { go('team-' + t.dataset.team); }
+  });
+  document.addEventListener('click', e => { const b = e.target.closest('[data-dp]'); if (b && DX) { e.stopPropagation(); openProspect(+b.dataset.dp); } }, true);
+}
+function loadDraft() {
+  getJSON('data/draft.json').then(dx => { DX = dx; prepDraft(); wireDraft(); renderDraft(); renderHomeDraft(); })
+    .catch(() => { const k = $('#dr-kpis'); if (k) k.innerHTML = '<p class="empty" style="background:var(--surface)">The draft data did not load. Reload the page to try again.</p>'; });
+}
+function renderHomeDraft() {
+  const box = $('#home-draft'); if (!box || !DP.length) return;
+  box.innerHTML = [...DP].sort((a, b) => a.crank - b.crank).slice(0, 8).map(pCard).join('');
+}
+
 /* ===== boot ===== */
 function boot(d, mv, sd, se, ty, fx, yx, px) {
-  TY = ty; FAX = fx; YX = yx;
+  SEAS = se; TY = ty; FAX = fx; YX = yx;
   prepare(d, mv);
   const dt = new Date(d.asOf + 'T12:00:00');
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
@@ -3853,6 +4476,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
   if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
   route();
+  loadDraft();
 }
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
