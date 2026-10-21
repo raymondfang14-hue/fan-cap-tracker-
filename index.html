@@ -1934,8 +1934,8 @@ function analyzeField() {
     const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
     const cs = qs.map(comp);
     qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
-    qs.forEach(p => { const sg = pffSig(p); if (sg != null) { p.spct = p.playPct; p.playPct = (1 - PFF_W) * p.spct + PFF_W * sg; p.play = Math.round(40 + 59 * p.playPct); p.comp = p.playPct; } });
-    [...qs].sort((a, b) => b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
+    qs.forEach(p => { const sg = pffSig(p); if (sg != null) { p.spct = p.playPct; p.playPct = (1 - PFF_W) * p.spct + PFF_W * sg; p.play = Math.round(40 + 59 * p.playPct); } });
+    [...qs].sort((a, b) => b.playPct - a.playPct || b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
     all.forEach(p => { p.role = ROLES[g](p); });
     all.forEach(p => calcTraits(p, g));
     const pays = qs.filter(p => p.apy > 0).map(p => p.apy);
