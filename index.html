@@ -1172,7 +1172,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <div id="fa-tbox"></div>
       <div class="tw"><table class="t" id="fa-table"></table></div>
       <button class="btn ghost more" id="fa-more" type="button">Show more</button>
-      <p class="note">Next-deal estimates blend his play rating, his pay rank at the position and his age, then read the result off today's pay scale for that position. They are Plain Cap estimates, not reports.</p>
+      <p class="note">Next-deal estimates rank each player by play rating among his position, read that rank's price off what the league pays today (Over The Cap's contract rankings, cross-checked with CBS Sports and Spotrac), adjust for his age when the deal starts, then grow it with the salary cap to the year he signs. They are Plain Cap estimates, not reports.</p>
     </div>
   </div>
 
@@ -3605,12 +3605,40 @@ function yearModel(p) {
 }
 const capAt = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? r.cap : 0; };
 const lastCap = p => (p.yr && p.yr.length ? p.yr[p.yr.length - 1].cap : p.cap || 0);
-function estNext(p) {
-  if (p._en != null) return p._en;
+/* Est. next deal: rank the player among his position by play rating, read that rank's price off today's league-wide pay list
+   (Over The Cap, data/market.json), adjust for his age when the new deal starts, then grow it to the cap of the year he signs. */
+let MKT = null, MKTPAY = null;
+const mktKey = p => p.group === 'ST' ? (p.pos === 'P' ? 'P' : 'K') : (p.group === 'LG' || p.group === 'RG') ? 'G' : p.group;
+function mktPrice(k, rank) {
+  const L = MKT.ladder[k]; if (!L) return null;
+  if (rank <= L[0][0]) return L[0][1];
+  for (let i = 1; i < L.length; i++) if (rank <= L[i][0]) { const [r0, v0] = L[i - 1], [r1, v1] = L[i], t = (rank - r0) / (r1 - r0); return v0 * Math.pow(v1 / v0, t); }
+  const [rl, vl] = L[L.length - 1]; return Math.max(0.9, vl * Math.pow(0.97, rank - rl));
+}
+function mktAge(k, a) { const A = MKT.age[['LT', 'RT', 'G', 'C'].includes(k) ? 'OL' : k] || [[0, 1]]; let f = 1; A.forEach(([x, v]) => { if (a >= x) f = v; }); return f; }
+function estNextOld(p) {
   const arr = PAYQ[p.group] || [], q = p.play != null ? 0.65 * p.playPct + 0.35 * p.pApy : 0.85 * p.pApy;
   let v = 0.75 * qtile(arr, q) + 0.25 * p.apy; const a = p.age || 27;
   v *= a >= 34 ? 0.55 : a >= 32 ? 0.7 : a >= 30 ? 0.85 : a >= 28 ? 0.95 : a <= 25 ? 1.05 : 1;
-  return (p._en = Math.max(0.9e6, Math.round(v / 1e5) * 1e5));
+  return Math.max(0.9e6, Math.round(v / 1e5) * 1e5);
+}
+function estNext(p) {
+  if (!MKT) return p._en != null ? p._en : (p._en = estNextOld(p));
+  if (p._eb == null) {
+    const k = mktKey(p), S = MKT.slots[k] || 32, Y = p.end || 2027, yrs = Math.max(0, Y - 2026), ag = mktAge(k, (p.age || 27) + yrs);
+    // Six games say little about a player's market, so this season's play rating is blended with where his current pay ranks
+    // at his position (the market's view of him so far). For a rated starter pay only ever helps: a cheap young star is not marked down for being cheap.
+    if (!MKTPAY) { MKTPAY = {}; PL.forEach(q => { if (q.apy > 0) (MKTPAY[mktKey(q)] = MKTPAY[mktKey(q)] || []).push(q.apy); }); Object.values(MKTPAY).forEach(L => L.sort((x, y) => y - x)); }
+    const PA = MKTPAY[k] || [], payRank = 1 + PA.filter(x => x > (p.apy || 0)).length, uPay = Math.max(0, Math.min(1, 1 - (payRank - 1) / (S - 1)));
+    const rated = p.play != null && p.playPct != null, g = (p.st && p.st.g) || 0;
+    const ws = rated ? 0.45 + 0.4 * Math.min(1, g / 12) : 0, prior = rated ? Math.max(0.5, uPay) : uPay;
+    let u = ws * (p.playPct || 0) + (1 - ws) * prior;
+    const sh = Math.max(MKT.shrinkFloor, 1 - MKT.shrinkPerYear * yrs); u = 0.5 + sh * (u - 0.5);
+    const rank = 1 + (1 - u) * (S - 1), v = (mktPrice(k, rank) || 1) * 1e6 * ag;
+    p._eb = v;
+  }
+  const g = capOfYear(p.end || 2027) / CAP;
+  return Math.max(0.9e6, Math.round(p._eb * g / 1e5) * 1e5);
 }
 function analyzeYears() {
   PL.forEach(yearModel);
@@ -3829,8 +3857,8 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null), getJSON('data/pff.json').catch(() => null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), getJSON('data/pff_ol.json').catch(() => null)])
-  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po]) => { if (as && as.teams) ASSETS = as;
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null), getJSON('data/pff.json').catch(() => null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), getJSON('data/pff_ol.json').catch(() => null), getJSON('data/market.json').catch(() => null)])
+  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po, mk]) => { if (as && as.teams) ASSETS = as; if (mk && mk.ladder) MKT = mk;
     if (sd && ow && ow.teams) { OLWK = ow.thru || 0; sd.teams = sd.teams || {}; Object.entries(ow.teams).forEach(([t, v]) => { sd.teams[t] = Object.assign(sd.teams[t] || {}, v); }); }
     if (po && po.rows) { PFFOL = po; px = px || { rank: {}, rookies: [], tow: [], games: [] }; px.ol = po.rows; }
     if (ol && ol.pos) d.players.forEach(p => { if (['LT','LG','C','RG','RT'].includes(p[2])) { const k = p[1] + '|' + p[0].normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'’\-]/g, '').replace(/\b(jr|sr|ii|iii|iv)\b/g, '').replace(/\s+/g, ' ').trim(); if (ol.pos[k]) p[2] = ol.pos[k]; } }); boot(d, mv, sd, se, ty, fx, yx, px); })
