@@ -22,10 +22,11 @@ for fn in sys.argv[1:]:
             if not ys or ys[0] != 2026 or not cap26 or abs(yrs['2026'] - cap26) > max(150000, 0.03 * cap26): why['cap26'] = why.get('cap26', 0) + 1; skipped += 1; continue
             if ys != list(range(2026, ys[-1] + 1)): why['gap'] = why.get('gap', 0) + 1; skipped += 1; continue
             end = r[8]
-            if ys[-1] < min(end - 2, 2031) or ys[-1] > end + 1 and ys[-1] - end > 2: why['end'] = why.get('end', 0) + 1; skipped += 1; continue
+            need = min(end - 1, 2031)
+            if ys[-1] < (need - 2 if r[9] else need) or ys[-1] > end + 1: why['end'] = why.get('end', 0) + 1; skipped += 1; continue
             bshare = min(1, (r[11 + 1] or 0) / cap26) if cap26 else 0
             out = {}
-            for y in ys:
+            for y in [y for y in ys if y <= max(end - 1, 2026)]:
                 c = yrs[str(y)]
                 if y == 2026: out['2026'] = [r[11], r[12], c]
                 else: b = round(c * bshare); out[str(y)] = [c - b, b, c]
