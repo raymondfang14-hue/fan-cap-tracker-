@@ -660,12 +660,12 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 @media (max-width:560px){.cal a,.cal div{grid-template-columns:minmax(0,1fr)}.yb{grid-template-columns:2.8rem minmax(0,1fr) 4.6rem}.yb .s{display:none}.fap{grid-template-columns:5rem minmax(0,1fr) 5rem}}
 
 .pffbox{display:grid;gap:8px;padding:12px 14px;border-radius:var(--r);background:var(--surface-2);box-shadow:inset 3px 0 0 var(--gold)}
-.pffrk{font:800 1.5rem/1 var(--display);font-stretch:80%}
-.pffrk small{font:500 .78rem/1 var(--body);color:var(--muted);font-stretch:100%}
-.pffg{display:flex;gap:18px;flex-wrap:wrap}
-.pffg span{display:grid;gap:2px}
+.pffg{display:flex;gap:20px;flex-wrap:wrap}
+.pffg>div{display:grid;gap:2px}
 .pffg small{font:600 .6rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.pffg b{font:800 1.3rem/1 var(--display);font-stretch:80%}
+.pffg b{font:800 1.4rem/1 var(--display);font-stretch:80%}
+.pffg span{font-size:.78rem;color:var(--muted)}
+.pffl{display:grid;gap:3px;font-size:.84rem;color:var(--muted);padding-left:1.1rem;list-style:disc}
 </style>
 
 <header class="cmd gut">
@@ -1359,7 +1359,7 @@ DEALS.push(
     watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
 );
 const LEARN_NFL = [
-  ['How PFF rankings are used', 'PFF\'s player grades are a paid product, so Plain Cap uses what PFF publishes for free: its 2026 preseason top-32 lists for every major position, with the grades those articles quote. A player\'s play rating counts his PFF rank for 60% and his 2026 stats for 40%. Players outside the lists are rated on stats alone, scaled below the ranked group. For offensive linemen, PFF\'s pass-block and run-block grades also set roles such as Road grader and Blindside protector.'],
+  ['How PFF data is used', 'PFF\'s full player grades are a paid product, so Plain Cap uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 15% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
   ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. Plain Cap estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
@@ -1703,12 +1703,10 @@ const ROLE_DESC = {
   'Two-way tight end': 'Plays most snaps and is part of the passing game.',
   'Rotational tight end': 'Shares time at tight end.',
   'Depth tight end': 'Rarely on the field on offense.',
-  'Blindside protector': 'A tackle PFF grades as an elite pass blocker, 84 or better and well ahead of his run blocking.',
-  'Pass-pro specialist': 'An interior lineman PFF grades as an elite pass blocker, 84 or better and well ahead of his run blocking.',
-  'Road grader': 'A lineman PFF grades as an elite run blocker, 85 or better and well ahead of his pass blocking.',
-  'Two-way anchor': 'PFF grades him 84 or better as a pass blocker and 85 or better as a run blocker.',
-  'Cornerstone lineman': 'One of the eight best linemen at his spot in PFF\'s preseason rankings.',
-  'Sidelined starter': 'PFF ranks him among the best at his position, but he has no qualifying 2026 snaps in the data yet.',
+  'Blindside protector': 'A tackle whose PFF pass-block grades this season average 84 or better, well ahead of his run blocking.',
+  'Pass-pro specialist': 'An interior lineman whose PFF pass-block grades this season average 84 or better, well ahead of his run blocking.',
+  'Road grader': 'A lineman whose PFF run-block grades this season average 85 or better, ahead of his pass blocking.',
+  'Two-way anchor': 'PFF pass-block grades of 84+ and run-block grades of 85+ this season.',
   'Every-snap starter': 'Has played at least 97% of his team\'s offensive snaps.',
   'Starter': 'A regular starter on the line.',
   'Fill-in starter': 'Has started part of the season, often for an injured player.',
@@ -1841,14 +1839,14 @@ const OTRAITS = {
   coffin: ['Coffin corner', 'Pins teams inside the 20.', ['P'], 'pi20'],
   flipper: ['Field flipper', 'High net average per punt.', ['P'], 'pnet'],
   iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', 'ALL', null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
-  pffrank: ['PFF ranked', 'Ranked among the top 32 at his position in PFF\'s 2026 preseason rankings: gold for the top 5, silver for the top 12, bronze for the top 20.', 'ALL', null, p => p.pff && p.pff.rank <= 20, p => (p.pff.rank <= 5 ? 'gold' : p.pff.rank <= 12 ? 'silver' : 'bronze')],
-  roadgrader: ['Road grader', 'PFF run-block grade of 80 or better: gold at 90, silver at 85.', ['OL'], null, p => p.pff && p.pff.run >= 80, p => (p.pff.run >= 90 ? 'gold' : p.pff.run >= 85 ? 'silver' : 'bronze')],
-  passwall: ['Pass-pro wall', 'PFF pass-block grade of 80 or better: gold at 88, silver at 84.', ['OL'], null, p => p.pff && p.pff.pass >= 80, p => (p.pff.pass >= 88 ? 'gold' : p.pff.pass >= 84 ? 'silver' : 'bronze')],
-  sackfree: ['Sack-free', 'PFF noted he allowed no sacks over a full workload.', ['OL'], null, p => p.pff && p.pff.ns, 'silver'],
+  pffrank: ['PFF weekly rank', 'Ranked in PFF\'s weekly in-season quarterback or receiver rankings: gold for the top 3, silver for the top 8, bronze for the top 15.', 'ALL', null, p => p.pff && p.pff.rank && p.pff.rank.r <= 15, p => (p.pff.rank.r <= 3 ? 'gold' : p.pff.rank.r <= 8 ? 'silver' : 'bronze')],
+  pfftow: ['PFF Team of the Week', 'Named to PFF\'s Team of the Week or offensive line of the week this season: bronze once, silver twice, gold three or more times.', 'ALL', null, p => p.pff && p.pff.tow.length > 0, p => (p.pff.tow.length >= 3 ? 'gold' : p.pff.tow.length === 2 ? 'silver' : 'bronze')],
+  roadgrader: ['Road grader', 'PFF run-block grades from his top games this season average 85 or better: gold at 92, silver at 88.', ['OL'], null, p => p.pff && pffFac(p, 'rb') >= 85, p => { const v = pffFac(p, 'rb'); return v >= 92 ? 'gold' : v >= 88 ? 'silver' : 'bronze'; }],
+  passwall: ['Pass-pro wall', 'PFF pass-block grades from his top games this season average 84 or better: gold at 90, silver at 86.', ['OL'], null, p => p.pff && pffFac(p, 'pb') >= 84, p => { const v = pffFac(p, 'pb'); return v >= 90 ? 'gold' : v >= 86 ? 'silver' : 'bronze'; }],
   clean: ['Clean sheet', 'A starting lineman with no penalties yet.', ['OL'], null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
   bigleg: ['Big leg', 'Has made a field goal of 58 yards or longer.', ['K'], null, p => (sm(p).lng || 0) >= 58, 'bronze']
 };
-const PFFKEYS = new Set(['pffrank', 'roadgrader', 'passwall', 'sackfree']);
+const PFFKEYS = new Set(['pffrank', 'pfftow', 'roadgrader', 'passwall']);
 const TIER_ORDER = { gold: 0, silver: 1, bronze: 2 };
 const TIER_NAME = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
 const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze' : null;
@@ -1856,7 +1854,7 @@ const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze
 const SUFX = /\b(jr|sr|ii|iii|iv|v)\b/g;
 const nkey = n => n.toLowerCase().replace(/[.,'’]/g, '').replace(/-/g, ' ').replace(SUFX, '').replace(/\s+/g, ' ').trim();
 const NICK = { matt: 'matthew', cam: 'camryn', mike: 'michael', chris: 'christopher', josh: 'joshua', nate: 'nathan', will: 'william', tony: 'anthony', jon: 'jonathan', dan: 'daniel', ben: 'benjamin', zach: 'zachary', alex: 'alexander', nick: 'nicholas', sam: 'samuel', joe: 'joseph', jake: 'jacob', rob: 'robert', bob: 'robert', tom: 'thomas', greg: 'gregory', pat: 'patrick', ed: 'edward', drew: 'andrew', andy: 'andrew', jt: 'j t' };
-const ALIAS = { 'ahmad gardner': 'sauce gardner', 'chigoziem okonkwo': 'chig okonkwo', 'cameron bynum': 'camryn bynum', 'tariq woolen': 'riq woolen', 'gabriel davis': 'gabe davis', 'hollywood brown': 'marquise brown', 'bam knight': 'zonovan knight', 'kenneth walker': 'kenneth walker' };
+const ALIAS = { 'julius brents': 'juju brents', 'chauncey gardner johnson': 'cj gardner johnson', 'ahmad gardner': 'sauce gardner', 'chigoziem okonkwo': 'chig okonkwo', 'cameron bynum': 'camryn bynum', 'tariq woolen': 'riq woolen', 'gabriel davis': 'gabe davis', 'hollywood brown': 'marquise brown', 'bam knight': 'zonovan knight', 'kenneth walker': 'kenneth walker' };
 const SNAP_SIDE = { QB: 'off', RB: 'off', FB: 'off', WR: 'off', TE: 'off', T: 'off', G: 'off', C: 'off', OT: 'off', OG: 'off', OL: 'off', DE: 'def', DT: 'def', NT: 'def', DL: 'def', LB: 'def', OLB: 'def', ILB: 'def', MLB: 'def', CB: 'def', DB: 'def', S: 'def', FS: 'def', SS: 'def', K: 'st', P: 'st', LS: 'st' };
 
 function attachStats(sd) {
@@ -1885,40 +1883,52 @@ function attachStats(sd) {
   });
 }
 
-/* ===== PFF public rankings: rank, grades, roles and traits ===== */
-let PFF = null, PFFON = new Set();
-const PFFG = { OT: 'OL', G: 'OL', C: 'OL', QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', EDGE: 'EDGE', DT: 'DT', LB: 'LB', CB: 'CB', S: 'S' };
-const PFF_NAME = { OT: 'tackles', G: 'guards', C: 'centers', QB: 'quarterbacks', RB: 'running backs', WR: 'receivers', TE: 'tight ends', EDGE: 'edge rushers', DT: 'interior linemen', LB: 'linebackers', CB: 'cornerbacks', S: 'safeties' };
+/* ===== PFF public in-season data: weekly QB/WR rankings, top game grades, Team of the Week, rookie rankings (weighted lightly) ===== */
+let PFF = null;
+const PFF_W = 0.15;
+const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: ['OL'], EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
+const PFF_FAC = { pb: 'pass block', rb: 'run block', pas: 'passing', rec: 'receiving', cov: 'coverage', rd: 'run defense', pr: 'pass rush', rush: 'rushing' };
 function attachPFF(px) {
-  PFF = px; PFFON = new Set(); PL.forEach(p => (p.pff = null));
-  if (!px || !px.groups) return;
+  PFF = px; PL.forEach(p => (p.pff = null));
+  if (!px) return;
   const canon = k => { const w = k.split(' '); w[0] = NICK[w[0]] || w[0]; return w.join(' '); };
   const variants = k => [...new Set([k, canon(k), ALIAS[k], ALIAS[k] && canon(ALIAS[k])].filter(Boolean))];
-  const byK = {}, side = g => (GROUP_SIDE[g] || 'st');
+  const byK = {};
   PL.forEach(p => variants(nkey(p.name)).forEach(k => ((byK[k] = byK[k] || []).includes(p) || byK[k].push(p))));
-  Object.entries(px.groups).forEach(([g, rows]) => {
-    const sg = PFFG[g]; if (!sg) return; PFFON.add(sg);
-    rows.forEach(e => {
-      const c = [...new Set(variants(nkey(e.n)).flatMap(k => byK[k] || []))].filter(p => !p.pff && side(p.group) === side(sg));
-      const hit = c.find(p => p.group === sg && p.team === e.t) || c.find(p => p.team === e.t) || (c.filter(p => p.group === sg).length === 1 ? c.find(p => p.group === sg) : null);
-      if (hit) hit.pff = { g, rank: e.r, n: rows.length, ovr: e.ovr, pass: e.pass, run: e.run, ns: !!e.ns, note: e.note || '' };
-    });
-  });
+  const sideOf = g => GROUP_SIDE[g] || 'st';
+  const find = (n, t, pos) => { const gs = PFFH[pos]; if (!gs) return null; const all = [...new Set(variants(nkey(n)).flatMap(k => byK[k] || []))], inG = all.filter(p => gs.includes(p.group)), inS = all.filter(p => sideOf(p.group) === sideOf(gs[0]));
+    return inG.find(p => p.team === t) || inS.find(p => p.team === t) || all.find(p => p.team === t) || (inG.length === 1 ? inG[0] : inS.length === 1 ? inS[0] : null); };
+  const get = p => p.pff || (p.pff = { rank: null, rookie: null, tow: [], games: [] });
+  Object.entries(px.rank || {}).forEach(([g, rows]) => rows.forEach(e => { const p = find(e.n, e.t, g); if (p) get(p).rank = { g, r: e.r, n: rows.length, grade: e.g, note: e.note }; }));
+  (px.rookies || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).rookie = { r: e.r, grade: e.g }; });
+  (px.tow || []).forEach(([wk, n, t, pos]) => { const p = find(n, t, pos); if (p) get(p).tow.push(wk); });
+  (px.games || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).games.push(e); });
 }
-const pffPct = p => 1 - (p.pff.rank - 1) / 32 * (p.pff.g === 'C' ? 0.8 : 0.5);
+const pffFac = (p, k) => { const v = (p.pff.games || []).map(x => x.f && x.f[k]).filter(v => v != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+function pffSig(p) {
+  const f = p.pff; if (!f) return null; const parts = [];
+  if (f.rank) parts.push(1 - (f.rank.r - 1) / (f.rank.n - 1));
+  if (f.rookie) parts.push(0.6 + 0.4 * (1 - (f.rookie.r - 1) / 14));
+  const gs = f.games.map(x => x.ovr).filter(v => v != null);
+  if (f.games.length || f.tow.length) { const g = gs.length ? Math.max(0, Math.min(1, (gs.reduce((a, b) => a + b, 0) / gs.length - 70) / 30)) : 0.5; parts.push(Math.min(1, 0.5 + 0.1 * f.tow.length + 0.35 * g)); }
+  return parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null;
+}
 function pffRole(p) {
-  const f = p.pff; if (!f || p.group !== 'OL') return null;
-  const pe = f.pass != null && f.pass >= 84, re = f.run != null && f.run >= 85;
+  if (!p.pff || p.group !== 'OL') return null;
+  const pb = pffFac(p, 'pb'), rb = pffFac(p, 'rb'); if (pb == null && rb == null) return null;
+  const pe = pb != null && pb >= 84, re = rb != null && rb >= 85;
   if (pe && re) return 'Two-way anchor';
-  if (pe && (f.run == null || f.pass - f.run >= 8)) return f.g === 'OT' ? 'Blindside protector' : 'Pass-pro specialist';
-  if (re && (f.pass == null || f.run - f.pass >= 8)) return 'Road grader';
-  if (f.rank <= 8) return 'Cornerstone lineman';
+  if (pe && (rb == null || pb - rb >= 8)) return /^(LT|RT)$/.test(p.pos) ? 'Blindside protector' : 'Pass-pro specialist';
+  if (re && (pb == null || rb - pb >= 5)) return 'Road grader';
   return null;
 }
 const pffHTML = p => { const f = p.pff; if (!f) return '';
-  const ch = [['Overall', f.ovr], ['Pass block', f.pass], ['Run block', f.run]].filter(x => x[1] != null);
-  return `<div class="pffbox"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><span class="eyebrow">PFF public ranking</span><b class="pffrk">#${f.rank} <small>of ${f.n} ${esc(PFF_NAME[f.g])}</small></b></div>${ch.length ? `<div class="pffg">${ch.map(([l, v]) => `<span><small>${l}</small><b class="num">${v.toFixed(1)}</b></span>`).join('')}</div>` : ''}<p class="note">${esc(f.note)}. From PFF's 2026 preseason top 32; grades are mostly from 2025.</p></div>`; };
-const STUB_ST = () => ({ g: 0, gs: 0, m: {}, osh: 0, dsh: 0, osn: 0, dsn: 0, opg: 0, dpg: 0, tg: THRU });
+  const it = (k, v, s) => `<div><small>${k}</small><b class="num">${v}</b><span>${s}</span></div>`, bits = [];
+  if (f.rank) bits.push(it(`Weekly ${f.rank.g} ranking`, '#' + f.rank.r, `of ${f.rank.n}${f.rank.grade != null ? ' · grade ' + f.rank.grade.toFixed(1) : ''}`));
+  if (f.rookie) bits.push(it('Rookie rank', '#' + f.rookie.r, `${f.rookie.grade.toFixed(1)} through Week 5`));
+  if (f.tow.length) bits.push(it('Team of the Week', f.tow.length + '×', 'Week' + (f.tow.length > 1 ? 's ' : ' ') + [...new Set(f.tow)].sort((a, b) => a - b).join(', ')));
+  const gl = f.games.map(x => `Week ${x.wk}: ${x.ovr != null ? x.ovr.toFixed(1) + ' overall' : 'top performer'}${Object.keys(x.f || {}).length ? ' (' + Object.entries(x.f).map(([k, v]) => `${PFF_FAC[k] || k} ${v.toFixed(1)}`).join(', ') + ')' : ''}`);
+  return `<div class="pffbox"><span class="eyebrow">PFF this season · public weekly pages</span><div class="pffg">${bits.join('')}</div>${gl.length ? `<ul class="pffl">${gl.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}<p class="note">PFF only publishes grades for its top performers each week, so a missing grade does not mean a bad week. These pages count for ${Math.round(PFF_W * 100)}% of his rating.</p></div>`; };
 function calcTraits(p, g) {
   Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
     if (groups !== 'ALL' && !groups.includes(g)) return;
@@ -1935,7 +1945,6 @@ function analyzeField() {
   SG_ORDER.forEach(g => {
     const cfg = GCFG[g];
     const all = PL.filter(p => p.sg === g && p.st && (p.st.g || 0) > 0);
-    const useP = PFFON.has(g);
     all.forEach(p => (p.fq = cfg.q(p)));
     const qs = all.filter(p => p.fq);
     MET_KEYS.forEach(k => {
@@ -1949,7 +1958,7 @@ function analyzeField() {
     const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
     const cs = qs.map(comp);
     qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
-    if (useP) qs.forEach(p => { p.spct = p.playPct; p.playPct = p.pff ? 0.6 * pffPct(p) + 0.4 * p.spct : 0.5 * p.spct; p.play = Math.round(40 + 59 * p.playPct); p.comp = p.playPct; });
+    qs.forEach(p => { const sg = pffSig(p); if (sg != null) { p.spct = p.playPct; p.playPct = (1 - PFF_W) * p.spct + PFF_W * sg; p.play = Math.round(40 + 59 * p.playPct); p.comp = p.playPct; } });
     [...qs].sort((a, b) => b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
     all.forEach(p => { p.role = ROLES[g](p); });
     all.forEach(p => calcTraits(p, g));
@@ -1962,16 +1971,6 @@ function analyzeField() {
       p.val = p.playPct - p.payPct;
       p.vlab = p.val >= .35 ? 'Bargain' : p.val <= -.35 ? 'Overpaid so far' : 'Worth it';
     });
-  });
-  // players PFF ranks but who have no qualifying 2026 snaps (injured, new, or not matched to stats): rate them from the PFF rank alone
-  PL.forEach(p => {
-    if (!p.pff || p.play != null || !PFFG[p.pff.g]) return;
-    p.sg = p.sg || sgOf(p); if (!p.sg) return;
-    const had = !!(p.st && p.st.g > 0);
-    if (!p.st) p.st = STUB_ST();
-    p.pffOnly = true; p.playPct = pffPct(p); p.play = Math.round(40 + 59 * p.playPct);
-    if (!had) p.role = pffRole(p) || 'Sidelined starter'; else if (pffRole(p)) p.role = pffRole(p);
-    p.ot = []; calcTraits(p, p.sg);
   });
 }
 
@@ -2014,17 +2013,17 @@ function fieldHTML(p) {
       ${p.play != null ? `<div class="bigplay" style="--pc:${pColor(p.playPct)}"><b>${p.play}</b><small>Play rating</small></div>` : `<div class="bigplay na"><b>—</b><small>Not rated yet</small></div>`}
       <div style="display:grid;gap:6px;min-width:0">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rolePill(p)}${p.prk ? `<span class="rkpill">${esc(SG_NAME[p.sg])} #${p.prk} of ${p.pn}</span>` : ''}</div>
-        <span class="note">${p.pffOnly && !s.g ? 'No 2026 snaps in the data yet' : `${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}`}</span>
+        <span class="note">${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}</span>
         ${p.role ? `<span class="note">${esc(ROLE_DESC[p.role] || '')}</span>` : ''}
       </div>
     </div>
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
     ${pffHTML(p)}
-    ${p.pffOnly ? `<p class="note">Rated from PFF's public ranking alone because he has no qualifying 2026 snaps yet. His rating will use game stats once he plays.</p>` : !p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
+    ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
     <div class="stiles">${tiles}</div>
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
     ${verdict}
-    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties. Where PFF\'s public top-32 rankings list a lineman, his PFF rank and published grades count for 60% of his rating.</p>' : p.fq && PFFON.has(p.sg) ? `<p class="note">${p.pff ? 'His PFF rank counts for 60% of his rating and 2026 stats for 40%.' : 'He is not in PFF\'s public top 32 at his position, so his rating is his stats percentile scaled below the ranked players.'}</p>` : ''}
+    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
   </div>`;
 }
