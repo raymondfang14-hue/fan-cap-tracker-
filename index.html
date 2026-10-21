@@ -1623,7 +1623,19 @@ const MET = {
   punts: ['Punts', '', p => sm(p).pun || 0, i0, 0, 'Punts'],
   pnet: ['Net average', 'yards per punt after returns', p => sm(p).pun ? sm(p).pnet : null, f1, 0, 'Net'],
   pavg: ['Gross average', 'yards per punt', p => sm(p).pun ? sm(p).pavg : null, f1, 0, 'Gross'],
-  pi20: ['Inside the 20', 'share of punts', p => sm(p).pun ? (sm(p).pi20p || 0) : null, pc0, 0, 'In 20']
+  pi20: ['Inside the 20', 'share of punts', p => sm(p).pun ? (sm(p).pi20p || 0) : null, pc0, 0, 'In 20'],
+  ypa: ['Yards per attempt', '', p => sm(p).att ? (sm(p).ypa || 0) : null, f1, 0, 'Y/A'],
+  pprg: ['Fantasy points a game', 'PPR scoring', p => (sm(p).car || sm(p).tgt || sm(p).att) ? (sm(p).ppr || 0) / gp(p) : null, f1, 0, 'PPR/G'],
+  rfdg: ['Rushing first downs', 'a game', p => sm(p).car ? (sm(p).rfd || 0) / gp(p) : null, f1, 0, '1D/G'],
+  ybcm: ['Open lanes', 'yards before contact per carry', p => sm(p).car ? (sm(p).ybc || 0) : null, f1, 0, 'YBC'],
+  ash: ['Air-yards share', 'of team air yards', p => sm(p).tgt ? (sm(p).ash || 0) : null, pc0, 0, 'Air%'],
+  qbhg: ['QB hits', 'a game', p => (sm(p).qbh || 0) / gp(p), f2, 0, 'Hit/G'],
+  hurg: ['Hurries', 'a game', p => (sm(p).hur || 0) / gp(p), f1, 0, 'Hur/G'],
+  solog: ['Solo tackles', 'a game', p => (sm(p).solo || 0) / gp(p), f1, 0, 'Solo/G'],
+  tdal: ['Touchdowns allowed', 'when targeted, lower is better', p => covOK(p) ? (sm(p).dtd || 0) : null, i0, 1, 'TD alw'],
+  tbp: ['Touchbacks', 'share of punts, lower is better', p => sm(p).pun ? (sm(p).ptb || 0) / sm(p).pun : null, pc0, 1, 'TB%'],
+  pcov: ['Punt coverage', 'gross minus net yards, lower is better', p => sm(p).pun ? (sm(p).pavg || 0) - (sm(p).pnet || 0) : null, f1, 1, 'Ret yds'],
+  kpts: ['Kicking points', 'a game', p => sm(p).fga || sm(p).pata ? (3 * (sm(p).fgm || 0) + (sm(p).patm || 0)) / gp(p) : null, f1, 0, 'Pts/G']
 };
 const MET_KEYS = Object.keys(MET);
 const SG_ORDER = ['QB', 'RB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT', 'EDGE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
@@ -1900,47 +1912,42 @@ const ROLES = {
 { const olr = ROLES.OL; ROLES.OL = p => olr(p).map(r => r === '__pff' ? pffRole(p) : r); }
 OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
 // On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
+// Traits are percentile tiers (gold 94+, silver 84+, bronze 72+) on stats that no role is built on, so a trait never repeats a role.
 const OTRAITS = {
   engine: ['EPA engine', 'Adds expected points on almost every play.', ['QB'], 'epa'],
-  surgeon: ['Surgeon', 'Completes more passes than the difficulty of his throws predicts.', ['QB'], 'cpoe'],
-  airraid: ['Air raid', 'Completes 20-yard passes often.', ['QB'], 'deep'],
-  escape: ['Sack dodger', 'Rarely goes down behind the line.', ['QB'], 'skp'],
-  protect: ['Ball protector', 'Rarely throws interceptions.', ['QB'], 'intp'],
-  scramble: ['Scramble threat', 'Picks up real yardage with his legs.', ['QB'], 'rydg', p => (sm(p).car || 0) >= 1.5 * W()],
-  homerun: ['Home-run hitter', 'Breaks 20-yard runs often.', ['RB'], 'r20r'],
-  breaker: ['Tackle breaker', 'Makes the first defender miss often.', ['RB', 'WR', 'TE'], 'btt', p => tch(p) >= 3 * W()],
-  balance: ['Contact balance', 'Keeps gaining after the first hit.', ['RB'], 'yco'],
-  workhorse: ['Workhorse', 'Gets the ball as much as any back.', ['RB'], 'tchg'],
-  thirddown: ['Third-down weapon', 'Produces as a receiver out of the backfield.', ['RB'], 'recg'],
-  deepthreat: ['Deep threat', 'Targeted far downfield.', ['WR', 'TE'], 'radot'],
-  yacmonster: ['YAC monster', 'Piles up yards after the catch.', ['WR', 'TE'], 'yac'],
-  magnet: ['Target magnet', 'Commands a huge share of his team\'s targets.', ['WR', 'TE'], 'tsh'],
-  hands: ['Sure hands', 'No drops on a big target load: gold at 6+ targets a game, silver at 4+.', ['WR', 'TE'], null, p => !sm(p).drp && (sm(p).tgt || 0) >= 4 * W(), p => (sm(p).tgt || 0) >= 6 * W() ? 'gold' : 'silver'],
-  chain: ['Chain mover', 'Turns targets into first downs.', ['WR', 'TE'], 'fdpt'],
-  bigplay: ['Big-play maker', 'Turns catches into 20-yard gains.', ['WR', 'TE'], 'big'],
-  redzone: ['Red-zone threat', 'Scores at a high rate.', ['WR', 'TE'], 'rtdg'],
-  pressure: ['Pressure machine', 'Gets after the quarterback on a high share of snaps.', ['EDGE', 'DT', 'LB'], 'prsr'],
-  sackartist: ['Sack artist', 'Finishes his rushes.', ['EDGE', 'DT'], 'sckg'],
-  wrecker: ['Run wrecker', 'Makes tackles behind the line of scrimmage.', ['EDGE', 'DT', 'LB', 'S'], 'tflg'],
-  tackler: ['Tackle machine', 'Racks up tackles.', ['LB', 'S'], 'tkg'],
-  sure: ['Sure tackler', 'Has not missed a tackle on a real workload: gold at 4+ tackle attempts a game, silver at 2.5+.', ['LB', 'CB', 'S', 'EDGE', 'DT'], null, p => !sm(p).mtk && (sm(p).tk || 0) >= 2.5 * W(), p => (sm(p).tk || 0) >= 4 * W() ? 'gold' : 'silver'],
-  lockdown: ['Lockdown', 'Quarterbacks struggle when they throw at him.', ['CB', 'S', 'LB'], 'pra'],
-  sticky: ['Sticky coverage', 'Gives up few yards per target.', ['CB', 'S'], 'ypta'],
-  ballhawk: ['Ballhawk', 'Gets his hands on the ball a lot.', ['CB', 'S', 'LB'], 'plyg'],
-  takeaway: ['Takeaway artist', 'Creates turnovers.', ['EDGE', 'DT', 'LB', 'CB', 'S'], 'tov'],
-  money: ['Money from 40+', 'Makes long field goals.', ['K'], 'fg40', p => (sm(p).fg40a || 0) >= 4],
-  automatic: ['Automatic', 'Rarely misses a field goal.', ['K'], 'fgp'],
-  coffin: ['Coffin corner', 'Pins teams inside the 20.', ['P'], 'pi20'],
-  flipper: ['Field flipper', 'High net average per punt.', ['P'], 'pnet'],
-  iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', 'ALL', null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
-  pffrank: ['PFF weekly rank', 'Ranked in PFF\'s weekly in-season quarterback or receiver rankings: gold for the top 3, silver for the top 8, bronze for the top 15.', 'ALL', null, p => p.pff && p.pff.rank && p.pff.rank.r <= 15, p => (p.pff.rank.r <= 3 ? 'gold' : p.pff.rank.r <= 8 ? 'silver' : 'bronze')],
-  pfftow: ['PFF Team of the Week', 'Named to PFF\'s Team of the Week or offensive line of the week this season: bronze once, silver twice, gold three or more times.', 'ALL', null, p => p.pff && p.pff.tow.length > 0, p => (p.pff.tow.length >= 3 ? 'gold' : p.pff.tow.length === 2 ? 'silver' : 'bronze')],
-  roadgrader: ['Road grader', 'PFF run-block grades from his top games this season average 85 or better: gold at 92, silver at 88.', OL_G, null, p => p.pff && pffFac(p, 'rb') >= 85, p => { const v = pffFac(p, 'rb'); return v >= 92 ? 'gold' : v >= 88 ? 'silver' : 'bronze'; }],
-  passwall: ['Pass-pro wall', 'PFF pass-block grades from his top games this season average 84 or better: gold at 90, silver at 86.', OL_G, null, p => p.pff && pffFac(p, 'pb') >= 84, p => { const v = pffFac(p, 'pb'); return v >= 90 ? 'gold' : v >= 86 ? 'silver' : 'bronze'; }],
-  clean: ['Clean sheet', 'A starting lineman with no penalties yet.', OL_G, null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
-  bigleg: ['Big leg', 'Has made a field goal of 58 yards or longer.', ['K'], null, p => (sm(p).lng || 0) >= 58, 'bronze']
+  dbeff: ['Dropback efficiency', 'Gains the most yards on each dropback, sacks included.', ['QB'], 'ny'],
+  yatt: ['Yards per throw', 'Gets more yards out of every pass attempt.', ['QB'], 'ypa'],
+  tdrate: ['Touchdown rate', 'Turns a high share of his throws into touchdowns.', ['QB'], 'tdp'],
+  scorer: ['Scoring machine', 'Throws touchdowns in bulk.', ['QB'], 'ptdt'],
+  fantasy: ['Fantasy engine', 'Scores a lot of PPR fantasy points a game.', ['QB', 'RB', 'WR', 'TE'], 'pprg'],
+  ypcace: ['Yards-per-carry ace', 'Averages more yards every time he runs.', ['RB'], 'ypc'],
+  ground: ['Ground gainer', 'Piles up rushing yards every game.', ['RB'], 'rydg'],
+  scrim: ['Scrimmage threat', 'Gains yards running and catching, game after game.', ['RB'], 'scrg'],
+  movechains: ['Chain-moving runner', 'Runs for first downs again and again.', ['RB'], 'rfdg'],
+  lanes: ['Runs through holes', 'Gets lots of yards before anyone touches him, usually a sign of a good line in front.', ['RB'], 'ybcm'],
+  secure: ['Ball security', 'Rarely fumbles for the touches he gets.', ['RB', 'WR', 'TE'], 'fumt', p => tch(p) >= 15],
+  yardage: ['Yardage leader', 'Piles up receiving yards every game.', ['WR', 'TE'], 'ryg'],
+  volume: ['Catch volume', 'Makes more catches than almost anyone at his spot.', ['WR', 'TE'], 'rec'],
+  yptace: ['Yards-per-target ace', 'Gets a lot of yards every time he is thrown to.', ['WR', 'TE'], 'ypt'],
+  airshare: ['Air-yards magnet', 'Draws a big share of his team\'s downfield throws.', ['WR', 'TE'], 'ash'],
+  passwall: ['Pass-block unit', 'His line wins its pass-block matchups (ESPN team data).', OL_G, 'tpbwr'],
+  runwall: ['Run-block unit', 'His line wins its run-block matchups (ESPN team data).', OL_G, 'trbwr'],
+  sackproof: ['Sack-proof line', 'His quarterback rarely goes down behind this line.', OL_G, 'tskp'],
+  openlanes: ['Open lanes', 'Backs get lots of yards before contact behind this line.', OL_G, 'tybc'],
+  qbhitter: ['QB hitter', 'Lands hits on the quarterback even when it is not a sack.', ['EDGE', 'DT', 'LB'], 'qbhg'],
+  hurrier: ['Constant hurrier', 'Hurries the quarterback every game.', ['EDGE', 'DT', 'LB'], 'hurg'],
+  solo: ['Solo tackler', 'Brings down ball carriers on his own.', ['EDGE', 'DT', 'LB', 'CB', 'S'], 'solog'],
+  finisher: ['Reliable finisher', 'Misses very few tackles he attempts.', ['EDGE', 'DT', 'CB', 'S'], 'mtp', p => (sm(p).tk || 0) + (sm(p).mtk || 0) >= 4 * W()],
+  tdproof: ['Touchdown-proof', 'Has not allowed a touchdown on a real coverage workload.', ['LB', 'CB', 'S'], null, p => (sm(p).dtg || 0) >= 3 * W() && !sm(p).dtd, p => (sm(p).dtg || 0) >= 5 * W() ? 'gold' : 'silver'],
+  defscore: ['Defensive scorer', 'Has scored a touchdown on defense this season.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => (sm(p).dtd2 || 0) >= 1, p => (sm(p).dtd2 || 0) >= 2 ? 'gold' : 'silver'],
+  points: ['Point producer', 'Scores a lot of points a game, field goals and extra points together.', ['K'], 'kpts'],
+  xp: ['Extra-point machine', 'Rarely misses an extra point.', ['K'], null, p => (sm(p).pata || 0) >= 10 && (sm(p).patm || 0) === sm(p).pata, 'bronze'],
+  touchback: ['Touchback-free', 'Rarely kicks it into the end zone.', ['P'], 'tbp'],
+  cover: ['Coverage helper', 'Opponents get very little return yardage on his punts.', ['P'], 'pcov'],
+  iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DT', 'LB', 'CB', 'S'], null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
+  defscore_: null
 };
-const PFFKEYS = new Set(['pffrank', 'pfftow', 'roadgrader', 'passwall']);
+delete OTRAITS.defscore_;
 const TIER_ORDER = { gold: 0, silver: 1, bronze: 2 };
 const TIER_NAME = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
 const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze' : null;
@@ -2031,7 +2038,7 @@ function calcTraits(p, g) {
   Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
     if (groups !== 'ALL' && !groups.includes(g)) return;
     if (gate && !gate(p)) return;
-    if (fixed) { if (p.fq || key === 'bigleg' || PFFKEYS.has(key)) p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
+    if (fixed) { if (p.fq || key === 'defscore') p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
     if (!p.fq || p.pc[met] == null) return;
     const t = tierOf(p.pc[met]); if (t) p.ot.push([key, t]);
   });

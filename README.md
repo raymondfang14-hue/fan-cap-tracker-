@@ -22,7 +22,7 @@ Open a view directly with its anchor (`#teams` has the power ratings, and each `
 - `data/years_exact.json`: reported year-by-year cap hits for individual contracts. Every other player's later years are estimated in the browser from the contract terms and labeled as estimates. The daily task upgrades more contracts to exact each run.
 
 ## PFF in-season data (data/pff.json)
-PFF's full player grades are paywalled, so the site uses only what PFF publishes for free during the current season (no preseason rankings): weekly QB and WR rankings, top game grades each week, Team of the Week, and rookie rankings. This is a light signal: 25% of a player's play rating (PFF_W in src.html). Offensive linemen get roles and traits (Road grader, Blindside protector, Pass-pro wall...) from the pass-block and run-block grades PFF states. The daily task re-reads the newest PFF pages.
+PFF's full player grades are paywalled, so the site uses only what PFF publishes for free during the current season (no preseason rankings): weekly QB and WR rankings, top game grades each week, Team of the Week, and rookie rankings. This is a light signal: 25% of a player's play rating (PFF_W in src.html). Offensive linemen get roles (Road grader, Blindside protector, Two-way anchor...) from the pass-block and run-block grades PFF states. Traits are separate from roles: they are gold, silver or bronze tiers on stats that no role uses, and there are no PFF-based traits. The daily task re-reads the newest PFF pages.
 
 ## Free offensive line data (data/olwin.json, data/pff_ol.json)
 No free source tracks every block by individual lineman, so Plain Cap blends what is free:
