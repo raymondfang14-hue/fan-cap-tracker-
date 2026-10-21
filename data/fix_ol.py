@@ -25,4 +25,9 @@ for p in d['players']:
     new = sorted(c)[0][1]
     if new != p[2]: print('FIX', p[0], p[1], p[2], '->', new); p[2] = new; ch += 1
 json.dump(d, open('data/nfl.json','w'), separators=(',',':'))
+# Also write an override map the page applies at load, so a refreshed nfl.json can't undo the fix.
+ov = {}
+for p in d['players']:
+    if p[2] in OL and dc.get((p[1], norm(p[0]))): ov[p[1] + '|' + norm(p[0])] = p[2]
+json.dump({'asOf': mx[:10], 'pos': ov}, open('data/ol_pos.json','w'), separators=(',',':'))
 print('changed', ch, 'unmatched', len(miss)); print(miss)
