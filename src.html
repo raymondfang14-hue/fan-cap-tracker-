@@ -1769,116 +1769,134 @@ const ROLE_DESC = {
 };
 const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
-const ROLES = {
-  QB: p => { const m = sm(p), g = gp(p); if (!p.fq) return p.st.gs ? 'Spot starter' : 'Backup';
-    if ((m.car || 0) / g >= 6 || (m.ryd || 0) / g >= 30) return 'Dual threat';
-    if ((m.adot || 0) >= 9) return 'Gunslinger';
-    if ((m.adot || 0) >= 7.5 && pcv(p, 'intp') <= .3) return 'Gambler';
-    if (pcv(p, 'cpoe') >= .75) return 'Precision passer';
-    if (pcv(p, 'skp') >= .8 && (m.qprs || 0) >= .28) return 'Escape artist';
-    if ((m.adot || 0) <= 7 && (m.cmpp || 0) >= .66) return 'Quick-game distributor';
-    if (pcv(p, 'intp') >= .7 && (m.adot || 0) <= 8.5) return 'Game manager';
-    if (pcv(p, 'pydg') >= .8) return 'Volume passer';
-    return 'Pocket passer'; },
-  RB: p => { const m = sm(p), o = p.st.opg || 0, t = tch(p) / gp(p), tg = (m.tgt || 0) / gp(p);
-    if (t >= 17 && o >= .55) return 'Bell cow';
-    if (tg >= 3.5 && o >= .3 && (m.rsh || 0) < .45) return 'Receiving back';
-    if (p.fq && (m.rsh || 0) >= .2) {
-      if (pcv(p, 'r20r') >= .8) return 'Home-run threat';
-      if (pcv(p, 'yco') >= .8) return 'Power runner';
-      if (pcv(p, 'btt') >= .8) return 'Elusive back';
-      if (pcv(p, 'repa') >= .8) return 'Efficient runner';
-      if ((m.rtd || 0) / gp(p) >= .5) return 'Goal-line finisher'; }
-    if (p.fq && tg >= 2 && (m.rsh || 0) < .3) return 'Third-down back';
-    if ((m.rsh || 0) >= .45) return 'Lead back';
-    if ((m.rsh || 0) >= .2) return 'Committee back';
-    return o >= .1 ? 'Change of pace' : 'Depth back'; },
-  WR: p => { const m = sm(p), o = p.st.opg || 0;
-    if (!m.tgt) return o >= .3 ? 'Blocking/decoy' : stAce(p) ? 'Special teams ace' : 'Depth receiver';
-    if (!p.fq) return o >= .4 ? 'Rotational receiver' : stAce(p) ? 'Special teams ace' : 'Depth receiver';
-    if ((m.tsh || 0) >= .24) return 'Alpha target';
-    if ((m.radot || 0) >= 13) return 'Field stretcher';
-    if (pcv(p, 'big') >= .85) return 'Explosive playmaker';
-    if (pcv(p, 'rtdg') >= .88 && (m.rectd || 0) >= 2) return 'Touchdown maker';
-    if (pcv(p, 'cat') >= .8 && pcv(p, 'drpp') >= .7) return 'Sure hands';
-    if (pcv(p, 'btt') >= .85 && (m.yac || 0) >= 5) return 'Open-field runner';
-    if (pcv(p, 'xepa') >= .85) return 'Efficiency target';
-    if ((m.radot || 0) <= 7 && (m.yac || 0) >= 5) return 'YAC weapon';
-    if ((m.radot || 0) <= 9.5) return 'Chain mover';
-    return o >= .6 ? 'Every-down starter' : 'Rotational receiver'; },
-  TE: p => { const m = sm(p), o = p.st.opg || 0, tg = (m.tgt || 0) / gp(p);
-    if ((m.tsh || 0) >= .17 && p.fq) return 'Receiving weapon';
-    if (p.fq && (m.radot || 0) >= 9.5 && tg >= 2.5) return 'Seam stretcher';
-    if (p.fq && (m.rectd || 0) >= 2) return 'Red-zone weapon';
-    if (p.fq && (m.yac || 0) >= 6 && (m.rec || 0) >= 6) return 'After-the-catch tight end';
-    if (p.fq && tg >= 2.5 && (m.cat || 0) >= .75 && (m.radot || 0) <= 6.5) return 'Safety valve';
-    if (o >= .55 && tg < 3) return 'In-line blocker';
-    if (o >= .55) return 'Two-way tight end';
-    return o >= .2 ? 'Rotational tight end' : stAce(p) ? 'Special teams ace' : 'Depth tight end'; },
-  OL: p => { const s = p.st, o = s.opg || 0, full = s.g >= (s.tg || THRU) - 1; const pr = pffRole(p); if (pr) return pr;
-    if (o >= .6) {
-      if (!full) return 'Fill-in starter';
-      if ((s.osh || 0) >= .97) return 'Every-snap starter';
-      if (p.fq && pcv(p, 'penr') <= .12) return 'Flag magnet';
-      if (!sm(p).pen && (s.osn || 0) >= 30 * W()) return 'Penalty-free starter';
-      if (p.sg === 'C') return 'Line quarterback';
-      if (o < .85) return 'Rotational starter';
-      return /^(LT|RT)$/.test(p.sg) ? 'Edge protector' : 'Interior mauler'; }
-    return o > 0 && o < .2 && s.g >= 2 ? 'Jumbo package' : 'Reserve'; },
-  EDGE: p => { const d = p.st.dpg || 0, pr = pcv(p, 'prsr');
-    if (!p.fq) return d >= .3 ? 'Rotational rusher' : stAce(p) ? 'Special teams ace' : 'Depth rusher';
-    if (pr >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6) return 'Three-down edge';
-    if (d >= .7 && pr >= .5) return 'Every-down rusher';
-    if (pcv(p, 'sckg') >= .85) return 'Sack artist';
-    if (pr >= .6) return 'Pass-rush specialist';
-    if (pcv(p, 'tflg') >= .85) return 'Backfield disruptor';
-    if (pcv(p, 'tov') >= .85) return 'Turnover creator';
-    if (d >= .6 && pr < .4) return 'Edge setter';
-    return 'Rotational rusher'; },
-  DT: p => { const d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Rotational lineman' : stAce(p) ? 'Special teams ace' : 'Depth lineman';
-    if (pcv(p, 'prsr') >= .65) return 'Interior disruptor';
-    if (pcv(p, 'sckg') >= .85) return 'Sack-hunting tackle';
-    if (pcv(p, 'tflg') >= .8) return 'Backfield penetrator';
-    if (pcv(p, 'tkg') >= .75 && pcv(p, 'prsr') < .4) return 'Gap plugger';
-    if (d >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'prsr') < .4) return 'Space eater';
-    return d >= .6 ? 'Run anchor' : 'Rotational lineman'; },
-  LB: p => { const m = sm(p), d = p.st.dpg || 0;
-    if (!p.fq) return d >= .25 ? 'Sub-package linebacker' : stAce(p) ? 'Special teams ace' : 'Special teams/depth';
-    if ((m.prs || 0) / gp(p) >= 1.3 || (m.blz || 0) / gp(p) >= 5) return 'Blitzer';
-    if (d >= .9 && (m.tk || 0) / gp(p) >= 6.5) return 'Green-dot tackler';
-    if ((m.dtg || 0) / gp(p) >= 4) return 'Coverage linebacker';
-    if (pcv(p, 'plyg') >= .85) return 'Ball-hawking linebacker';
-    if (pcv(p, 'tflg') >= .85) return 'Backfield hunter';
-    if (pcv(p, 'tkg') >= .85) return 'Tackle machine';
-    if (pcv(p, 'mtp') >= .85) return 'Sure tackler';
-    return d < .7 ? 'Two-down thumper' : 'Box linebacker'; },
-  CB: p => { const d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Sub-package corner' : stAce(p) ? 'Special teams ace' : 'Depth corner';
-    if (d < .75) return pcv(p, 'plyg') >= .8 ? 'Nickel playmaker' : 'Nickel/rotational corner';
-    const t = pcv(p, 'tgr'); if (t <= .2) return 'No-fly zone';
-    if (pcv(p, 'pra') >= .85) return 'Shutdown corner';
-    if (pcv(p, 'plyg') >= .85) return 'Ball hawk';
-    if (pcv(p, 'tkg') >= .85) return 'Physical corner';
-    if (t >= .8) return 'Targeted starter';
-    return 'Boundary starter'; },
-  S: p => { const m = sm(p), d = p.st.dpg || 0;
-    if (!p.fq) return d >= .3 ? 'Sub-package safety' : stAce(p) ? 'Special teams ace' : 'Depth safety';
-    const tk = (m.tk || 0) / gp(p);
-    if (pcv(p, 'prsg') >= .85) return 'Blitz safety';
-    if (pcv(p, 'tov') >= .85) return 'Turnover machine';
-    if (pcv(p, 'pra') >= .85) return 'Lockdown safety';
-    if (tk >= 6 || pcv(p, 'tflg') >= .8) return 'Box safety';
-    if (tk <= 4.5 && pcv(p, 'plyg') >= .5) return 'Center fielder';
-    return d < .75 ? 'Rotational safety' : 'Hybrid safety'; },
-  K: p => { const m = sm(p);
-    if ((m.lng || 0) >= 60 || (m.fg50 || 0) >= 4) return 'Big-leg kicker';
-    if ((m.fg40a || 0) >= 4 && pcv(p, 'fg40') >= .8) return 'Long-range specialist';
-    if ((m.fga || 0) >= 5 && (m.fgp || 0) >= .9) return 'Mr. Automatic';
-    if ((m.fga || 0) / gp(p) >= 2) return 'Busy leg';
-    return 'Kicker'; },
-  P: p => (p.fq && pcv(p, 'pi20') >= .7) ? 'Coffin-corner punter' : (p.fq && pcv(p, 'pavg') >= .7) ? 'Field flipper' : (p.fq && pcv(p, 'pnet') >= .8) ? 'Net master' : (p.fq && (sm(p).pun || 0) / gp(p) >= 4) ? 'Workhorse punter' : 'Punter'
+// Roles: every rule that fits a player is kept. A rule in a group ('u' etc.) only counts if no earlier rule in the same group matched;
+// the fallback applies only when nothing else matched. Order = priority, so roles[0] is the headline role.
+const mkRoles = (rules, fb) => p => {
+  const out = [], used = {};
+  rules.forEach(([name, grp, fn]) => { if (grp && used[grp]) return; if (fn(p)) { out.push(name); if (grp) used[grp] = 1; } });
+  if (!out.length && fb) out.push(typeof fb === 'function' ? fb(p) : fb);
+  return out;
 };
+const Qd = f => p => !!p.fq && f(p);
+const ROLES = {
+  QB: mkRoles([
+    ['Spot starter', 'u', p => !p.fq && !!p.st.gs], ['Backup', 'u', p => !p.fq],
+    ['Dual threat', null, Qd(p => (sm(p).car || 0) / gp(p) >= 6 || (sm(p).ryd || 0) / gp(p) >= 30)],
+    ['Gunslinger', null, Qd(p => (sm(p).adot || 0) >= 9)],
+    ['Gambler', null, Qd(p => (sm(p).adot || 0) >= 7.5 && pcv(p, 'intp') <= .3)],
+    ['Precision passer', null, Qd(p => pcv(p, 'cpoe') >= .75)],
+    ['Escape artist', null, Qd(p => pcv(p, 'skp') >= .8 && (sm(p).qprs || 0) >= .28)],
+    ['Quick-game distributor', null, Qd(p => (sm(p).adot || 0) <= 7 && (sm(p).cmpp || 0) >= .66)],
+    ['Game manager', null, Qd(p => pcv(p, 'intp') >= .7 && (sm(p).adot || 0) <= 8.5)],
+    ['Volume passer', null, Qd(p => pcv(p, 'pydg') >= .8)]], 'Pocket passer'),
+  RB: mkRoles([
+    ['Bell cow', 'u', p => tch(p) / gp(p) >= 17 && (p.st.opg || 0) >= .55],
+    ['Receiving back', null, p => (sm(p).tgt || 0) / gp(p) >= 3.5 && (p.st.opg || 0) >= .3 && (sm(p).rsh || 0) < .45],
+    ['Home-run threat', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'r20r') >= .8)],
+    ['Power runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'yco') >= .8)],
+    ['Elusive back', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'btt') >= .8)],
+    ['Efficient runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'repa') >= .8)],
+    ['Goal-line finisher', null, Qd(p => (sm(p).rsh || 0) >= .2 && (sm(p).rtd || 0) / gp(p) >= .5)],
+    ['Third-down back', null, Qd(p => (sm(p).tgt || 0) / gp(p) >= 2 && (sm(p).rsh || 0) < .3)],
+    ['Lead back', 'u', p => (sm(p).rsh || 0) >= .45], ['Committee back', 'u', p => (sm(p).rsh || 0) >= .2],
+    ['Change of pace', 'u', p => (p.st.opg || 0) >= .1], ['Depth back', 'u', () => true]]),
+  WR: mkRoles([
+    ['Alpha target', null, Qd(p => (sm(p).tsh || 0) >= .24)],
+    ['Field stretcher', null, Qd(p => (sm(p).radot || 0) >= 13)],
+    ['Explosive playmaker', null, Qd(p => pcv(p, 'big') >= .85)],
+    ['Touchdown maker', null, Qd(p => pcv(p, 'rtdg') >= .88 && (sm(p).rectd || 0) >= 2)],
+    ['Sure hands', null, Qd(p => pcv(p, 'cat') >= .8 && pcv(p, 'drpp') >= .7)],
+    ['Open-field runner', null, Qd(p => pcv(p, 'btt') >= .85 && (sm(p).yac || 0) >= 5)],
+    ['Efficiency target', null, Qd(p => pcv(p, 'xepa') >= .85)],
+    ['YAC weapon', null, Qd(p => (sm(p).radot || 0) <= 7 && (sm(p).yac || 0) >= 5)],
+    ['Chain mover', null, Qd(p => (sm(p).radot || 0) <= 9.5)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Every-down starter', 'u', Qd(p => (p.st.opg || 0) >= .6)],
+    ['Rotational receiver', 'u', p => p.fq || (p.st.opg || 0) >= .4],
+    ['Blocking/decoy', 'u', p => !sm(p).tgt && (p.st.opg || 0) >= .3], ['Depth receiver', 'u', () => true]]),
+  TE: mkRoles([
+    ['Receiving weapon', null, Qd(p => (sm(p).tsh || 0) >= .17)],
+    ['Seam stretcher', null, Qd(p => (sm(p).radot || 0) >= 9.5 && (sm(p).tgt || 0) / gp(p) >= 2.5)],
+    ['Red-zone weapon', null, Qd(p => (sm(p).rectd || 0) >= 2)],
+    ['After-the-catch tight end', null, Qd(p => (sm(p).yac || 0) >= 6 && (sm(p).rec || 0) >= 6)],
+    ['Safety valve', null, Qd(p => (sm(p).tgt || 0) / gp(p) >= 2.5 && (sm(p).cat || 0) >= .75 && (sm(p).radot || 0) <= 6.5)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['In-line blocker', 'u', p => (p.st.opg || 0) >= .55 && (sm(p).tgt || 0) / gp(p) < 3],
+    ['Two-way tight end', 'u', p => (p.st.opg || 0) >= .55],
+    ['Rotational tight end', 'u', p => (p.st.opg || 0) >= .2], ['Depth tight end', 'u', () => true]]),
+  OL: mkRoles([
+    ['__pff', null, p => !!pffRole(p)],
+    ['Flag magnet', null, p => { const s = p.st; return (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1 && p.fq && pcv(p, 'penr') <= .12; }],
+    ['Penalty-free starter', null, p => { const s = p.st; return (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1 && !sm(p).pen && (s.osn || 0) >= 30 * W(); }],
+    ['Line quarterback', null, p => { const s = p.st; return p.sg === 'C' && (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1; }],
+    ['Edge protector', null, p => { const s = p.st; return /^(LT|RT)$/.test(p.sg) && (s.opg || 0) >= .85 && s.g >= (s.tg || THRU) - 1; }],
+    ['Interior mauler', null, p => { const s = p.st; return /^(LG|RG)$/.test(p.sg) && (s.opg || 0) >= .85 && s.g >= (s.tg || THRU) - 1; }],
+    ['Fill-in starter', 'u', p => (p.st.opg || 0) >= .6 && p.st.g < (p.st.tg || THRU) - 1],
+    ['Every-snap starter', 'u', p => (p.st.osh || 0) >= .97 && (p.st.opg || 0) >= .6],
+    ['Rotational starter', 'u', p => (p.st.opg || 0) >= .6 && (p.st.opg || 0) < .85],
+    ['Jumbo package', 'u', p => (p.st.opg || 0) > 0 && (p.st.opg || 0) < .2 && p.st.g >= 2], ['Reserve', 'u', () => true]]),
+  EDGE: mkRoles([
+    ['Three-down edge', 'e', Qd(p => pcv(p, 'prsr') >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6)],
+    ['Every-down rusher', 'e', Qd(p => (p.st.dpg || 0) >= .7 && pcv(p, 'prsr') >= .5)],
+    ['Pass-rush specialist', 'e', Qd(p => pcv(p, 'prsr') >= .6)],
+    ['Sack artist', null, Qd(p => pcv(p, 'sckg') >= .85)],
+    ['Backfield disruptor', null, Qd(p => pcv(p, 'tflg') >= .85)],
+    ['Turnover creator', null, Qd(p => pcv(p, 'tov') >= .85)],
+    ['Edge setter', null, Qd(p => (p.st.dpg || 0) >= .6 && pcv(p, 'prsr') < .4)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Rotational rusher', 'u', p => p.fq || (p.st.dpg || 0) >= .3], ['Depth rusher', 'u', () => true]]),
+  DT: mkRoles([
+    ['Interior disruptor', null, Qd(p => pcv(p, 'prsr') >= .65)],
+    ['Sack-hunting tackle', null, Qd(p => pcv(p, 'sckg') >= .85)],
+    ['Backfield penetrator', null, Qd(p => pcv(p, 'tflg') >= .8)],
+    ['Gap plugger', null, Qd(p => pcv(p, 'tkg') >= .75 && pcv(p, 'prsr') < .4)],
+    ['Space eater', null, Qd(p => (p.st.dpg || 0) >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'prsr') < .4)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Run anchor', 'u', Qd(p => (p.st.dpg || 0) >= .6)],
+    ['Rotational lineman', 'u', p => p.fq || (p.st.dpg || 0) >= .3], ['Depth lineman', 'u', () => true]]),
+  LB: mkRoles([
+    ['Blitzer', null, Qd(p => (sm(p).prs || 0) / gp(p) >= 1.3 || (sm(p).blz || 0) / gp(p) >= 5)],
+    ['Green-dot tackler', null, Qd(p => (p.st.dpg || 0) >= .9 && (sm(p).tk || 0) / gp(p) >= 6.5)],
+    ['Coverage linebacker', null, Qd(p => (sm(p).dtg || 0) / gp(p) >= 4)],
+    ['Ball-hawking linebacker', null, Qd(p => pcv(p, 'plyg') >= .85)],
+    ['Backfield hunter', null, Qd(p => pcv(p, 'tflg') >= .85)],
+    ['Tackle machine', null, Qd(p => pcv(p, 'tkg') >= .85)],
+    ['Sure tackler', null, Qd(p => pcv(p, 'mtp') >= .85)],
+    ['Two-down thumper', null, Qd(p => (p.st.dpg || 0) < .7)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Sub-package linebacker', 'u', p => !p.fq && (p.st.dpg || 0) >= .25],
+    ['Special teams/depth', 'u', p => !p.fq]], 'Box linebacker'),
+  CB: mkRoles([
+    ['No-fly zone', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tgr') <= .2)],
+    ['Shutdown corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'pra') >= .85)],
+    ['Ball hawk', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'plyg') >= .85)],
+    ['Physical corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tkg') >= .85)],
+    ['Targeted starter', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tgr') >= .8)],
+    ['Nickel playmaker', null, Qd(p => (p.st.dpg || 0) < .75 && pcv(p, 'plyg') >= .8)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Nickel/rotational corner', 'u', Qd(p => (p.st.dpg || 0) < .75)],
+    ['Sub-package corner', 'u', p => !p.fq && (p.st.dpg || 0) >= .3], ['Depth corner', 'u', p => !p.fq]], 'Boundary starter'),
+  S: mkRoles([
+    ['Blitz safety', null, Qd(p => pcv(p, 'prsg') >= .85)],
+    ['Turnover machine', null, Qd(p => pcv(p, 'tov') >= .85)],
+    ['Lockdown safety', null, Qd(p => pcv(p, 'pra') >= .85)],
+    ['Box safety', null, Qd(p => (sm(p).tk || 0) / gp(p) >= 6 || pcv(p, 'tflg') >= .8)],
+    ['Center fielder', null, Qd(p => (sm(p).tk || 0) / gp(p) <= 4.5 && pcv(p, 'plyg') >= .5)],
+    ['Special teams ace', null, p => stAce(p)],
+    ['Rotational safety', 'u', Qd(p => (p.st.dpg || 0) < .75)],
+    ['Sub-package safety', 'u', p => !p.fq && (p.st.dpg || 0) >= .3], ['Depth safety', 'u', p => !p.fq]], 'Hybrid safety'),
+  K: mkRoles([
+    ['Big-leg kicker', null, p => (sm(p).lng || 0) >= 60 || (sm(p).fg50 || 0) >= 4],
+    ['Long-range specialist', null, p => (sm(p).fg40a || 0) >= 4 && pcv(p, 'fg40') >= .8],
+    ['Mr. Automatic', null, p => (sm(p).fga || 0) >= 5 && (sm(p).fgp || 0) >= .9],
+    ['Busy leg', null, p => (sm(p).fga || 0) / gp(p) >= 2]], 'Kicker'),
+  P: mkRoles([
+    ['Coffin-corner punter', null, Qd(p => pcv(p, 'pi20') >= .7)],
+    ['Field flipper', null, Qd(p => pcv(p, 'pavg') >= .7)],
+    ['Net master', null, Qd(p => pcv(p, 'pnet') >= .8)],
+    ['Workhorse punter', null, Qd(p => (sm(p).pun || 0) / gp(p) >= 4)]], 'Punter')
+};
+{ const olr = ROLES.OL; ROLES.OL = p => olr(p).map(r => r === '__pff' ? pffRole(p) : r); }
 OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
 // On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
 const OTRAITS = {
@@ -2020,7 +2038,7 @@ function calcTraits(p, g) {
 }
 
 function analyzeField() {
-  PL.forEach(p => { p.sg = sgOf(p); p.pc = {}; p.rk = {}; p.ot = []; p.role = ''; p.play = null; p.fq = false; p.prk = null; p.val = null; p.vlab = ''; p.payPct = null; });
+  PL.forEach(p => { p.sg = sgOf(p); p.pc = {}; p.rk = {}; p.ot = []; p.role = ''; p.roles = []; p.play = null; p.fq = false; p.prk = null; p.val = null; p.vlab = ''; p.payPct = null; });
   SG_ORDER.forEach(g => {
     const cfg = GCFG[g];
     const all = PL.filter(p => p.sg === g && p.st && (p.st.g || 0) > 0);
@@ -2039,7 +2057,7 @@ function analyzeField() {
     qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
     qs.forEach(p => { const sg = pffSig(p); if (sg != null) { p.spct = p.playPct; p.playPct = (1 - PFF_W) * p.spct + PFF_W * sg; p.play = Math.round(40 + 59 * p.playPct); } });
     [...qs].sort((a, b) => b.playPct - a.playPct || b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
-    all.forEach(p => { p.role = ROLES[g](p); });
+    all.forEach(p => { p.roles = ROLES[g](p); p.role = p.roles[0] || ''; });
     all.forEach(p => calcTraits(p, g));
     const pays = qs.filter(p => p.apy > 0).map(p => p.apy);
     const paidRank = [...qs].filter(p => p.apy > 0).sort((a, b) => b.apy - a.apy);
@@ -2056,6 +2074,7 @@ function analyzeField() {
 /* field rendering helpers */
 const otChip = ([k, t]) => `<span class="ot ${t}" title="${esc(TIER_NAME[t] + ': ' + OTRAITS[k][1])}"><i aria-hidden="true"></i>${esc(OTRAITS[k][0])}</span>`;
 const vClass = l => l === 'Bargain' ? 'good' : l === 'Overpaid so far' ? 'bad' : '';
+const rolePills = p => (p.roles || []).slice(0, 4).map(r => `<span class="role" title="${esc(ROLE_DESC[r] || '')}">${esc(r)}</span>`).join('');
 const rolePill = p => p.role ? `<span class="role" title="${esc(ROLE_DESC[p.role] || '')}">${esc(p.role)}</span>` : '';
 const fmtMet = (p, k) => { const v = MET[k][2](p); return v == null ? '—' : MET[k][3](v); };
 const posRank = p => p.prk ? `${p.sg} ${p.prk}` : '';
@@ -2091,9 +2110,9 @@ function fieldHTML(p) {
     <div class="fhead">
       ${p.play != null ? `<div class="bigplay" style="--pc:${pColor(p.playPct)}"><b>${p.play}</b><small>Play rating</small></div>` : `<div class="bigplay na"><b>—</b><small>Not rated yet</small></div>`}
       <div style="display:grid;gap:6px;min-width:0">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rolePill(p)}${p.prk ? `<span class="rkpill">${esc(SG_NAME[p.sg])} #${p.prk} of ${p.pn}</span>` : ''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rolePills(p)}${p.prk ? `<span class="rkpill">${esc(SG_NAME[p.sg])} #${p.prk} of ${p.pn}</span>` : ''}</div>
         <span class="note">${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}</span>
-        ${p.role ? `<span class="note">${esc(ROLE_DESC[p.role] || '')}</span>` : ''}
+        ${p.roles.length ? `<span class="note">${p.roles.slice(0, 4).map(r => esc(ROLE_DESC[r] || '')).filter(Boolean).join(' ')}</span>` : ''}
       </div>
     </div>
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
@@ -2119,7 +2138,7 @@ function renderOnField() {
   $('#of-top-title').textContent = `Top ${SG_NAME[g].toLowerCase()}s right now`;
   $('#of-top').innerHTML = qs.slice(0, 8).map(fieldCard).join('') || '<p class="empty">No one qualifies yet.</p>';
   // roles
-  const roles = {}; all.forEach(p => { (roles[p.role] = roles[p.role] || []).push(p); });
+  const roles = {}; all.forEach(p => { (p.roles || []).forEach(r => { (roles[r] = roles[r] || []).push(p); }); });
   const rl = Object.entries(roles).sort((a, b) => b[1].length - a[1].length);
   const maxR = Math.max(1, ...rl.map(r => r[1].length));
   $('#of-roles-title').textContent = `${SG_NAME[g]} roles`;
@@ -2171,12 +2190,12 @@ function renderOFScatter(qs) {
 }
 function ofMatch(p) {
   const toks = of.q.toLowerCase().split(/\s+/).filter(Boolean); if (!toks.length) return true;
-  const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + (p.role || '')).toLowerCase();
+  const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + ((p.roles || []).join(' '))).toLowerCase();
   return toks.every(x => h.includes(x));
 }
 function renderOFTable(all) {
   const g = of.g, cols = GCFG[g].cols;
-  let list = all.filter(p => (!of.qual || p.fq) && (of.role === 'all' || p.role === of.role) && (of.trait === 'all' || p.ot.some(o => o[0] === of.trait)) && (of.team === 'all' || p.team === of.team) && ofMatch(p));
+  let list = all.filter(p => (!of.qual || p.fq) && (of.role === 'all' || (p.roles || []).includes(of.role)) && (of.trait === 'all' || p.ot.some(o => o[0] === of.trait)) && (of.team === 'all' || p.team === of.team) && ofMatch(p));
   const key = of.sort;
   const val = p => key === 'play' ? (p.play ?? -1) : key === 'apy' ? p.apy : key === 'val' ? (p.val ?? -9) : key === 'name' ? p.name : key === 'role' ? p.role : (MET[key] ? (MET[key][2](p) ?? (of.dir < 0 ? -1e9 : 1e9)) : 0);
   list.sort((a, b) => { const x = val(a), y = val(b); return typeof x === 'string' ? x.localeCompare(y) * -of.dir : (x - y) * of.dir; });
@@ -2828,7 +2847,7 @@ function renderTeam(id) {
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
       ${tfBox('roster-t', 'Filter players by name, position or role')}
       <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('role', 'Role')}${th('play', 'Play')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
-      <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + (p.role || '')).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
   </div>`;
@@ -3281,7 +3300,7 @@ function awRowHTML(r, i, def) {
   const sc = `<span class="pscore" style="--pc:${pColor(awC((r.score - 35) / 55))}">${Math.round(r.score)}</span>`;
   if (r.kind === 'p') {
     const p = r.p, t = r.t, tag = AW.rookies.has(p) && !def.rookie ? ' <span class="rookie">Rookie</span>' : '';
-    return `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + t.city + ' ' + t.name + ' ' + t.id + ' ' + posTag(p.pos) + ' ' + (p.role || '')).toLowerCase())}"><td class="r">${i + 1}</td><td><span class="pn">${avatar(p, 28)}<span>${esc(p.name)}${tag}</span></span></td><td><span class="pn">${crest(p.team, 18)}${esc(t.name)}</span></td><td>${esc(posTag(p.pos))}</td><td class="r">${t.sr ? awRec(t.sr) : '—'}</td><td class="r">${sc}</td><td class="r">${(r.odds * 100).toFixed(r.odds >= .095 ? 0 : 1)}%</td>${parts}<td>${esc(awKey(p))}</td></tr>`;
+    return `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + t.city + ' ' + t.name + ' ' + t.id + ' ' + posTag(p.pos) + ' ' + ((p.roles || []).join(' '))).toLowerCase())}"><td class="r">${i + 1}</td><td><span class="pn">${avatar(p, 28)}<span>${esc(p.name)}${tag}</span></span></td><td><span class="pn">${crest(p.team, 18)}${esc(t.name)}</span></td><td>${esc(posTag(p.pos))}</td><td class="r">${t.sr ? awRec(t.sr) : '—'}</td><td class="r">${sc}</td><td class="r">${(r.odds * 100).toFixed(r.odds >= .095 ? 0 : 1)}%</td>${parts}<td>${esc(awKey(p))}</td></tr>`;
   }
   const t = r.t, s = t.sr;
   return `<tr data-team="${t.id}" data-s="${esc((s.coach + ' ' + t.city + ' ' + t.name + ' ' + t.id + ' ' + t.div).toLowerCase())}"><td class="r">${i + 1}</td><td><span class="pn">${crest(t.id, 20)}<span>${esc(s.coach)}</span></span></td><td>${esc(t.city)} ${esc(t.name)}</td><td class="r">${awRec(s)}</td><td class="r">${sc}</td><td class="r">${(r.odds * 100).toFixed(r.odds >= .095 ? 0 : 1)}%</td>${parts}<td>${esc(awPD(s.pd))} a game · ${s.since >= 2026 ? 'first year' : 'since ' + s.since}${s.w25 != null ? ' · was ' + s.w25 + '-' + s.l25 + (s.t25 ? '-' + s.t25 : '') : ''}</td></tr>`;
@@ -3525,7 +3544,7 @@ function teamYearsHTML(t) {
 function faRows() {
   const f = st.fa, q = f.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let list = faClass(f.year).filter(p => p.apy >= f.min && (f.pos === 'all' || p.group === f.pos) && (f.team === 'all' || p.team === f.team));
-  if (q.length) list = list.filter(p => { const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + p.pos + ' ' + (p.role || '')).toLowerCase(); return q.every(x => h.includes(x)); });
+  if (q.length) list = list.filter(p => { const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase(); return q.every(x => h.includes(x)); });
   const V = { name: p => p.name, pos: p => p.group, age: p => p.age || 0, play: p => (p.play == null ? -1 : p.play), apy: p => p.apy, est: estNext, chg: p => estNext(p) - p.apy, cap: lastCap }[f.sort] || (p => p.apy);
   return list.sort((a, b) => { const x = V(a), y = V(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * f.dir || b.apy - a.apy; });
 }
