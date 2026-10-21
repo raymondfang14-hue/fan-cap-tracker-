@@ -210,6 +210,18 @@ table.t tbody tr:hover{background:var(--brand-soft)}
 .kind.Restructure{background:#E2E9F8;color:#1F3F80}
 .kind.Release{background:#F9DEDC;color:#8C1D18}
 .kind.Signing{background:#EDE3F7;color:#4E2A84}
+.kind.Injury{background:#FFEFC9;color:#6B4500}
+.kind.Game{background:#D6F1EC;color:#0B5A4E}
+.kind.Coaching{background:#F9DDEC;color:#7A1D55}
+.kind.League{background:#E3E7ED;color:#2C3646}
+.newsbar{display:grid;gap:12px}
+.newsbar .controls{align-items:end}
+/* table filter */
+.tfilter{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;margin:0}
+.tfilter label{position:relative;display:block;flex:1 1 220px;max-width:360px}
+.tfilter svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:2;pointer-events:none}
+.tfilter input{width:100%;padding:9px 10px 9px 32px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.tfilter .tf-n{margin:0;font-family:var(--mono)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kind{background:var(--surface-2);color:var(--fg)}}
 :root[data-theme="dark"] .kind{background:var(--surface-2);color:var(--fg)}
 .tlink{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:0;cursor:pointer;font:600 .8rem/1 var(--body);color:var(--brand)}
@@ -539,7 +551,7 @@ table.t td .pscore{font-size:.86rem;min-width:2.1rem}
 .bld{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:900px){.bld{grid-template-columns:minmax(0,1fr)}}
 .blist{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.blist button{display:grid;grid-template-columns:3.2rem auto minmax(0,1fr) auto 4.6rem;gap:8px;align-items:center;padding:6px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer;font-size:.84rem}
+.blist button{display:grid;grid-template-columns:3.2rem auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer;font-size:.84rem}
 .blist button:first-child{border-top:0}
 .blist button:hover{background:var(--brand-soft)}
 .blist .sl{font:700 .66rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
@@ -551,15 +563,13 @@ table.t td .pscore{font-size:.86rem;min-width:2.1rem}
 dialog#picker{border:0;padding:0;border-radius:10px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 40px);background:var(--surface);color:var(--fg);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .pklist{display:grid;max-height:min(52dvh,440px);overflow:auto;border:1px solid var(--line);border-radius:var(--r)}
-.pkrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:7px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer}
+.pkrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer}
 .pkrow:first-child{border-top:0}
 .pkrow:hover,.pkrow:focus-visible{background:var(--brand-soft);outline:none}
 .pkrow[aria-current="true"]{box-shadow:inset 3px 0 0 var(--brand)}
 .pkrow .av{width:34px;height:34px;font-size:.8rem}
 .pkrow b{display:block;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pkrow small{display:block;font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pkrow .cost{font:600 .8rem/1 var(--mono);text-align:right;min-width:4.2rem}
-.pkrow .cost small{font-family:var(--body)}
 </style>
 
 <header class="cmd gut">
@@ -653,7 +663,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <div>
     <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Front office tools</span><h2 class="sec">Play GM for a minute</h2></div></div>
     <div class="tiles">
-      <a class="tile" href="#tools" data-tool="build"><b>Roster builder</b><span>Draft a starting lineup from any team and see how it rates and what it costs against the cap.</span></a>
+      <a class="tile" href="#tools" data-tool="build"><b>Roster builder</b><span>Pick a starting lineup from any team and see how it rates against the league.</span></a>
       <a class="tile" href="#teams"><b>Team ratings</b><span>Power ratings, starting lineups, depth charts and team traits for all 32 teams.</span></a>
       <a class="tile" href="#tools" data-tool="cut"><b>Cut or keep</b><span>Pick a player and see the dead money and the cap space a release would free.</span></a>
       <a class="tile" href="#tools" data-tool="trade"><b>Trade checker</b><span>Swap players between two teams and see each team's cap room after the deal.</span></a>
@@ -664,14 +674,22 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   </div>
 </section>
 
-<!-- NEWS -->
+<!-- NEWS: stories come from data/moves.json; each has a kind, and NEWS_TOPICS in the script groups kinds into the topic chips -->
 <section class="view" id="v-news" hidden aria-labelledby="h-news">
   <div class="sechead">
-    <div><span class="eyebrow" id="news-asof">Contract news</span><h1 class="title" id="h-news">What changed and why it matters</h1></div>
-    <div class="chips" id="news-kinds" role="group" aria-label="Type of move"></div>
+    <div><span class="eyebrow" id="news-asof">NFL news</span><h1 class="title" id="h-news">NFL news, in plain English</h1></div>
+    <span class="note num" id="news-count"></span>
   </div>
-  <p class="lede">Trades, extensions and restructures, each with a plain-English note on what it does to the cap. Tap a team to open its cap page.</p>
+  <p class="lede">Game results, injuries, coaching and front-office changes, league discipline and every contract move, each with a short note on what it means. Tap a team to open its cap page.</p>
+  <div class="newsbar">
+    <div class="chips" id="news-kinds" role="group" aria-label="Topic"></div>
+    <div class="controls">
+      <label class="f" for="news-q" style="flex:1 1 220px">Filter<input id="news-q" type="search" placeholder="Team, player or topic" autocomplete="off"></label>
+      <label class="f" for="news-team">Team<select id="news-team"></select></label>
+    </div>
+  </div>
   <div class="feed" id="news-feed"></div>
+  <button class="btn ghost more" id="news-more" type="button">Show more news</button>
 </section>
 
 <!-- TEAMS -->
@@ -699,6 +717,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     </div>
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">Power ratings</h2></div><a class="btn ghost" href="#builder">Build your own roster</a></div>
+      <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="t-power" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
       <div class="tw"><table class="t" id="t-power"></table></div>
       <p class="note">SKL: running back, receivers and tight end. DL: edge rushers and defensive tackles. DB: corners and safeties. ST: kicker and punter.</p>
     </div>
@@ -758,7 +777,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <div class="panel">
     <div class="sechead"><div><span class="eyebrow">Search the database</span><h2 class="sec">All players under contract</h2></div></div>
     <div class="controls">
-      <label class="f" for="c-q" style="flex:1 1 220px">Name<input id="c-q" type="search" placeholder="Player name" autocomplete="off"></label>
+      <label class="f" for="c-q" style="flex:1 1 220px">Filter<input id="c-q" type="search" placeholder="Player, team or position" autocomplete="off"></label>
       <label class="f" for="c-team">Team<select id="c-team"></select></label>
       <label class="f" for="c-group">Position<select id="c-group"></select></label>
     </div>
@@ -798,11 +817,10 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     <div class="bld">
       <div class="panel">
         <div class="sechead"><div><span class="eyebrow">Any player, any team</span><h2 class="sec">Build a starting lineup</h2></div></div>
-        <p class="note">Tap a spot on the field, or a row in the list, to pick a player. Team ratings and the cap bill update as you go. Your lineup is saved in this browser.</p>
+        <p class="note">Tap a spot on the field, or a row in the list, to pick a player. Team ratings update as you go. Your lineup is saved in this browser.</p>
         <div class="controls">
           <label class="f" for="bld-team">Start from a team<select id="bld-team"></select></label>
           <button type="button" class="btn ghost" id="bld-best" style="align-self:end">Best on paper</button>
-          <button type="button" class="btn ghost" id="bld-value" style="align-self:end">Best under $10M each</button>
           <button type="button" class="btn ghost" id="bld-clear" style="align-self:end">Clear</button>
         </div>
         <div id="bld-field" style="display:grid;gap:10px"></div>
@@ -884,6 +902,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   <div class="panel">
     <div class="sechead"><div><span class="eyebrow" id="of-count"></span><h2 class="sec">Positional rankings</h2></div></div>
     <div class="controls">
+      <label class="f" for="of-q" style="flex:1 1 220px">Filter<input id="of-q" type="search" placeholder="Player, team or role" autocomplete="off"></label>
       <label class="f" for="of-role">Role<select id="of-role"></select></label>
       <label class="f" for="of-trait">Trait<select id="of-trait"></select></label>
       <label class="f" for="of-team">Team<select id="of-team"></select></label>
@@ -922,6 +941,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
       <span class="scale-key">Least <i></i> Most</span>
     </div>
     <p class="note">Each cell shows what a team spends at a position, shaded by its rank among the 32 teams. Tap a column name to sort by it; tap a cell to see those players.</p>
+    <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="heat" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
     <div class="tw" style="border:0;background:none"><table class="heat" id="heat"></table></div>
   </div>
 
@@ -1099,7 +1119,7 @@ const LEARN_NFL = [
   ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
   ['Lineups and depth charts', 'Plain Cap builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
-  ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and adds up your starters\' 2026 cap hits against the $301.2M cap.'],
+  ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and names the real team it most resembles.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
 ];
 const LEARN_NBA = [
@@ -1114,11 +1134,35 @@ const LEARN_NBA = [
 let D = null, TEAMS = [], TB = {}, PL = [], MOVES = [], DEADLINE = '2026-11-10';
 let favTeam = store.get('fav', null);
 const st = {
-  lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tSort: 'space', newsKind: 'All', mktPos: 'QB',
+  lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'cut', tView: store.get('tView', 'ratings'), cut: null, cutWhen: 'post',
   trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], shTab: store.get('shTab', 'field')
 };
+
+/* ===== table filters ===== */
+const TFQ = {};
+const tfBox = (id, label, style) => `<div class="tfilter"${style ? ` style="${style}"` : ''}><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="${id}" placeholder="${esc(label)}" aria-label="${esc(label)}" autocomplete="off" value="${esc(TFQ[id] || '')}"></label><span class="tf-n note" aria-live="polite"></span></div>`;
+function applyTF(table) {
+  if (!table || !table.tBodies[0]) return;
+  const tw = table.closest('.tw'), box = tw && tw.previousElementSibling;
+  if (!box || !box.classList.contains('tfilter')) return;
+  const inp = box.querySelector('input'), n = box.querySelector('.tf-n');
+  const toks = inp.value.toLowerCase().split(/\s+/).filter(Boolean);
+  const body = table.tBodies[0];
+  body.querySelectorAll('.tf-empty').forEach(r => r.remove());
+  const rows = Array.from(body.rows);
+  let shown = 0;
+  rows.forEach(r => { const h = (r.dataset.s || r.textContent).toLowerCase(); const ok = toks.every(t => h.includes(t)); r.hidden = !ok; if (ok) shown++; });
+  if (toks.length && !shown) body.insertAdjacentHTML('beforeend', `<tr class="tf-empty" style="cursor:default"><td colspan="${table.rows[0] ? table.rows[0].cells.length : 1}" class="empty">Nothing matches "${esc(inp.value.trim())}".</td></tr>`);
+  n.textContent = toks.length ? `${shown} of ${rows.length}` : '';
+}
+document.addEventListener('input', e => {
+  const i = e.target.closest && e.target.closest('input[data-tf]'); if (!i) return;
+  TFQ[i.dataset.tf] = i.value;
+  const tw = i.closest('.tfilter').nextElementSibling; applyTF(tw && tw.querySelector('table'));
+});
+const teamHay = t => (t.city + ' ' + t.name + ' ' + t.id + ' ' + t.div).toLowerCase();
 
 /* ===== data ===== */
 function prepare(d, mv) {
@@ -1131,7 +1175,7 @@ function prepare(d, mv) {
   PL.forEach(p => (byPos[p.pos] = byPos[p.pos] || []).push(p.apy));
   Object.values(byPos).forEach(a => a.sort((x, y) => y - x));
   PL.forEach(p => { p.rank = byPos[p.pos].filter(v => v > p.apy).length + 1; p.posCount = byPos[p.pos].length; p.posTop = byPos[p.pos][0]; });
-  MOVES = (mv && mv.moves) || [];
+  MOVES = ((mv && mv.moves) || []).slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
   if (mv && mv.deadline) DEADLINE = mv.deadline;
   const rk = k => [...TEAMS].sort((a, b) => b[k] - a[k]).forEach((t, n) => (t['r_' + k] = n + 1));
   ['space', 'dead', 'active'].forEach(rk);
@@ -1234,7 +1278,8 @@ function renderTraits() {
 function renderHeat() {
   const rows = [...TEAMS].sort((a, b) => heatSort ? b.g[heatSort] - a.g[heatSort] : (a.city + a.name).localeCompare(b.city + b.name));
   $('#heat').innerHTML = `<thead><tr><th style="text-align:left"><button type="button" data-hs="" aria-pressed="${!heatSort}">Team</button></th>${GROUP_ORDER.map(g => `<th><button type="button" data-hs="${g}" aria-pressed="${heatSort === g}" title="${GROUP_NAME[g]}">${g}</button></th>`).join('')}</tr></thead><tbody>` +
-    rows.map(t => `<tr><td class="tm" data-team="${t.id}"><span>${crest(t.id, 20)}${esc(t.name)}</span></td>${GROUP_ORDER.map(g => { const v = t.gp[g]; return `<td class="${v > .6 ? 'hi' : ''}" data-group="${g}" data-team-filter="${t.id}" data-tip="hm|${t.id}|${g}"><i style="opacity:${(0.08 + v * 0.92).toFixed(2)}"></i><b>${(t.g[g] / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
+    rows.map(t => `<tr data-s="${esc(teamHay(t))}"><td class="tm" data-team="${t.id}"><span>${crest(t.id, 20)}${esc(t.name)}</span></td>${GROUP_ORDER.map(g => { const v = t.gp[g]; return `<td class="${v > .6 ? 'hi' : ''}" data-group="${g}" data-team-filter="${t.id}" data-tip="hm|${t.id}|${g}"><i style="opacity:${(0.08 + v * 0.92).toFixed(2)}"></i><b>${(t.g[g] / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
+  applyTF($('#heat'));
 }
 function renderHealth() {
   $('#health').innerHTML = [...TEAMS].sort((a, b) => b.health - a.health).map((t, n) => `<button type="button" class="hl" data-team="${t.id}" data-tip="hh|${t.id}">
@@ -1657,7 +1702,7 @@ function fieldHTML(p) {
 }
 
 /* on-field view */
-const of = { g: 'QB', role: 'all', trait: 'all', team: 'all', qual: true, sort: 'play', dir: -1, limit: 40 };
+const of = { g: 'QB', role: 'all', trait: 'all', team: 'all', qual: true, sort: 'play', dir: -1, limit: 40, q: '' };
 function renderOnField() {
   if (!SD) return;
   const g = of.g, cfg = GCFG[g];
@@ -1717,9 +1762,14 @@ function renderOFScatter(qs) {
     <text x="12" y="${(T + H - B) / 2}" text-anchor="middle" class="ax" transform="rotate(-90 12 ${(T + H - B) / 2})">Play rating</text>
   </svg>`;
 }
+function ofMatch(p) {
+  const toks = of.q.toLowerCase().split(/\s+/).filter(Boolean); if (!toks.length) return true;
+  const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + (p.role || '')).toLowerCase();
+  return toks.every(x => h.includes(x));
+}
 function renderOFTable(all) {
   const g = of.g, cols = GCFG[g].cols;
-  let list = all.filter(p => (!of.qual || p.fq) && (of.role === 'all' || p.role === of.role) && (of.trait === 'all' || p.ot.some(o => o[0] === of.trait)) && (of.team === 'all' || p.team === of.team));
+  let list = all.filter(p => (!of.qual || p.fq) && (of.role === 'all' || p.role === of.role) && (of.trait === 'all' || p.ot.some(o => o[0] === of.trait)) && (of.team === 'all' || p.team === of.team) && ofMatch(p));
   const key = of.sort;
   const val = p => key === 'play' ? (p.play ?? -1) : key === 'apy' ? p.apy : key === 'val' ? (p.val ?? -9) : key === 'name' ? p.name : key === 'role' ? p.role : (MET[key] ? (MET[key][2](p) ?? (of.dir < 0 ? -1e9 : 1e9)) : 0);
   list.sort((a, b) => { const x = val(a), y = val(b); return typeof x === 'string' ? x.localeCompare(y) * -of.dir : (x - y) * of.dir; });
@@ -1732,6 +1782,7 @@ function renderOFTable(all) {
 function wireOnField() {
   $('#of-pos').onclick = e => { const b = e.target.closest('[data-g]'); if (b) { of.g = b.dataset.g; of.role = 'all'; of.trait = 'all'; of.sort = 'play'; of.dir = -1; of.limit = 40; store.set('ofg', of.g); renderOnField(); } };
   $('#of-roles').onclick = e => { const b = e.target.closest('[data-role]'); if (b) { of.role = of.role === b.dataset.role ? 'all' : b.dataset.role; renderOnField(); $('#of-table').scrollIntoView({ block: 'nearest' }); } };
+  $('#of-q').oninput = e => { of.q = e.target.value; of.limit = 40; renderOnField(); };
   $('#of-role').onchange = e => { of.role = e.target.value; renderOnField(); };
   $('#of-trait').onchange = e => { of.trait = e.target.value; renderOnField(); };
   $('#of-team').onchange = e => { of.team = e.target.value; renderOnField(); };
@@ -1990,7 +2041,8 @@ function renderPower() {
   const rows = [...list].sort((a, b) => { const x = val(a, pw.sort), y = val(b, pw.sort); return typeof x === 'string' ? x.localeCompare(y) * pw.dir : (x - y) * pw.dir; });
   const th = (k, l, t) => `<th class="${k === 'name' ? '' : 'r'}" data-pk="${k}"${pw.sort === k ? ` aria-sort="${pw.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button"${t ? ` title="${esc(t)}"` : ''}>${l}</button></th>`;
   $('#t-power').innerHTML = `<thead><tr><th class="r"><span>#</span></th>${th('name', 'Team')}${th('ovr', 'OVR', 'Overall')}${th('off', 'OFF', 'Offense')}${th('def', 'DEF', 'Defense')}${UNITS.map(([k, n, s]) => th(k, s, n)).join('')}<th><span>Top traits</span></th>${th('space', 'Cap room')}</tr></thead><tbody>` +
-    rows.map(t => `<tr data-team="${t.id}" data-tip="tm|${t.id}"><td class="r">${t.rk.ovr}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r"><span class="pscore" style="--pc:${rcol(t.rt.ovr)}">${t.rt.ovr}</span></td>${['off', 'def'].concat(UNITS.map(u => u[0])).map(k => `<td class="r"><span class="uc" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></td>`).join('')}<td><span class="ttraits" style="flex-wrap:nowrap">${t.tt.slice(0, 2).map(ttChip).join('')}</span></td><td class="r">${mon(t.space)}</td></tr>`).join('') + '</tbody>';
+    rows.map(t => `<tr data-team="${t.id}" data-tip="tm|${t.id}" data-s="${esc(teamHay(t))}"><td class="r">${t.rk.ovr}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r"><span class="pscore" style="--pc:${rcol(t.rt.ovr)}">${t.rt.ovr}</span></td>${['off', 'def'].concat(UNITS.map(u => u[0])).map(k => `<td class="r"><span class="uc" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></td>`).join('')}<td><span class="ttraits" style="flex-wrap:nowrap">${t.tt.slice(0, 2).map(ttChip).join('')}</span></td><td class="r">${mon(t.space)}</td></tr>`).join('') + '</tbody>';
+  applyTF($('#t-power'));
   // offense vs defense scatter
   const W2 = 560, H = 400, l = 44, r = 18, tp = 18, b = 40, x = v => l + (v - 40) / 60 * (W2 - l - r), y = v => tp + (100 - v) / 60 * (H - tp - b);
   const ticks = [40, 55, 70, 85, 100];
@@ -2029,11 +2081,8 @@ function renderBuilder() {
   $('#bld-field').innerHTML = lineupFieldHTML(L, true, bld.on);
   const groups = [['Offense', ['QB', 'RB', 'WR1', 'WR2', 'WR3', 'TE', 'LT', 'LG', 'C', 'RG', 'RT']], ['Defense', ['EDGE1', 'IDL1', 'IDL2', 'EDGE2', 'LB1', 'LB2', 'CB1', 'CB2', 'CB3', 'S1', 'S2']], ['Specialists', ['K', 'P', 'LS']]];
   $('#bld-list').innerHTML = `<div class="blist">${groups.map(([n, ids]) => `<div class="unit">${n}</div>` + ids.map(id => { const s = SLOT[id], p = L[id];
-    return `<button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}<span class="num">${p ? mon(p.cap) : ''}</span></button>`; }).join('')).join('')}</div>`;
+    return `<button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}</button>`; }).join('')).join('')}</div>`;
   // output
-  const cost = Object.values(L).reduce((s, p) => s + (p.cap || 0), 0);
-  const avgCost = TEAMS.reduce((s, t) => s + Object.values(t.L).reduce((a, p) => a + (p.cap || 0), 0), 0) / TEAMS.length;
-  const left = CAP - cost, need = (53 - filled) * 1e6;
   const near = [...TEAMS].map(t => ({ t, d: Math.sqrt(UNITS.reduce((s, [k]) => s + (t.rt[k] - rt[k]) ** 2, 0)) })).sort((a, b) => a.d - b.d)[0];
   const cmpT = TB[bld.from] || near.t;
   const traits = [['qb', 'Franchise QB'], ['skill', 'Loaded skill group'], ['ol', 'Trench bullies'], ['front', 'Pass-rush front'], ['lb', 'Sideline-to-sideline linebackers'], ['sec', 'No-fly secondary'], ['st', 'Special teams edge']].map(([k, n]) => [n, tierOf(pctRank(TR[k], u[k]))]).filter(x => x[1]).sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
@@ -2044,21 +2093,16 @@ function renderBuilder() {
     <div style="display:grid;gap:8px"><div class="flegend"><span class="eyebrow">Units vs. the ${esc(cmpT.name)}</span><span>Black tick: ${esc(cmpT.name)}</span></div>${ubarsHTML(rt, rk, { label: cmpT.city + ' ' + cmpT.name, rt: cmpT.rt })}</div>
     ${traits.length ? `<div class="ttraits">${traits.map(([n, tier]) => `<span class="ot ${tier}"><i aria-hidden="true"></i>${esc(n)}</span>`).join('')}</div>` : ''}
     <div class="budget">
-      <div class="flegend"><span class="eyebrow">2026 cap hits of your starters</span><b class="num" style="color:var(--fg)">${mon(cost)} of ${mon(CAP, 1)}</b></div>
-      <div class="stack" role="img" aria-label="Starters ${mon(cost)}, left for the rest of the roster ${mon(Math.max(0, left))}"><i style="width:${Math.min(100, cost / CAP * 100).toFixed(1)}%;background:${left < need ? 'var(--bad)' : 'var(--brand)'}"></i><i class="hatch" style="width:${Math.max(0, left / CAP * 100).toFixed(1)}%"></i></div>
       <div class="rows">
-        <div><span>Left for the other ${53 - filled} roster spots</span><b class="${left < need ? '' : ''}" style="color:${left < need ? 'var(--bad)' : 'var(--good)'}">${left < 0 ? '−' : ''}${mon(Math.abs(left))}</b></div>
-        <div><span>Average team pays its starters</span><b>${mon(avgCost)}</b></div>
         <div><span>Closest real team by unit ratings</span><b><button type="button" class="tlink" data-team="${near.t.id}">${crest(near.t.id, 18)}${esc(near.t.name)}</button></b></div>
       </div>
-      <p class="note" style="color:${left < need ? 'var(--bad)' : 'var(--muted)'}">${left < 0 ? 'Over the cap. A real team could not carry these contracts without cutting or restructuring someone.' : left < need ? `Under the cap, but filling ${53 - filled} more spots at about $1M each needs roughly ${mon(need)}. This roster would be tight.` : 'This lineup fits under the 2026 cap with room to fill out the roster.'} Cap hits are 2026 numbers; trading for players midseason would move only their remaining salary.</p>
     </div>`;
 }
 function bldAvailable(s) {
   const used = new Map(Object.entries(bld.L).map(([k, p]) => [p, k]));
   let list = PL.filter(p => slotOK(s, p));
   const q = bld.q.trim().toLowerCase(); if (q) list = list.filter(p => p.key.includes(q));
-  const sorts = { play: (a, b) => pv(b) - pv(a) || b.apy - a.apy, cheap: (a, b) => (a.cap || 0) - (b.cap || 0) || pv(b) - pv(a), value: (a, b) => (b.val ?? -2) - (a.val ?? -2) || pv(b) - pv(a) };
+  const sorts = { play: (a, b) => pv(b) - pv(a) || a.name.localeCompare(b.name), name: (a, b) => a.name.localeCompare(b.name) };
   return { list: list.sort(sorts[bld.sort]).slice(0, 60), used };
 }
 const picker = $('#picker');
@@ -2068,13 +2112,13 @@ function openPicker(id) {
   $('#pk-body').innerHTML = `
     <div class="sh-hd"><div><span class="eyebrow">${esc(SG_NAME[s.g] || DEPTH_NAME[s.g] || s.g)}${cur ? ' · now ' + esc(cur.name) : ''}</span><h3 id="pk-title">Pick a starter: ${esc(id === 'WR3' ? 'slot receiver' : id === 'CB3' ? 'nickel corner' : s.lab)}</h3></div><button class="x" type="button" aria-label="Close" id="pk-x">×</button></div>
     <div class="controls"><label class="f" for="pk-q" style="flex:1 1 200px">Search<input id="pk-q" type="search" placeholder="Name or team" autocomplete="off"></label>
-      <div class="seg" id="pk-sort" role="group" aria-label="Sort players" style="align-self:end">${[['play', 'Best play'], ['value', 'Best value'], ['cheap', 'Cheapest']].map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${bld.sort === k}">${l}</button>`).join('')}</div></div>
+      <div class="seg" id="pk-sort" role="group" aria-label="Sort players" style="align-self:end">${[['play', 'Best play'], ['name', 'A to Z']].map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${bld.sort === k}">${l}</button>`).join('')}</div></div>
     <div class="pklist" id="pk-list"></div>
     <div class="controls" style="justify-content:space-between"><span class="note">Players already in your lineup move to this spot if picked.</span>${cur ? '<button type="button" class="btn ghost" id="pk-clear">Leave this spot open</button>' : ''}</div>`;
   const draw = () => {
     const { list, used } = bldAvailable(s);
     $('#pk-list').innerHTML = list.map(p => { const at = used.get(p);
-      return `<button type="button" class="pkrow" data-pick="${p.i}" style="${teamVars(p.team)}"${p === cur ? ' aria-current="true"' : ''}>${avatar(p)}<span style="min-width:0"><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))} · ${esc(TB[p.team].name)}${p.role ? ' · ' + esc(p.role) : ''}${at && at !== id ? ' · in your lineup' : ''}</small></span>${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>'}<span class="cost">${mon(p.cap)}<small>cap hit</small></span></button>`; }).join('') || '<p class="empty">No players match.</p>';
+      return `<button type="button" class="pkrow" data-pick="${p.i}" style="${teamVars(p.team)}"${p === cur ? ' aria-current="true"' : ''}>${avatar(p)}<span style="min-width:0"><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))} · ${esc(TB[p.team].name)}${p.role ? ' · ' + esc(p.role) : ''}${at && at !== id ? ' · in your lineup' : ''}</small></span>${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>'}</button>`; }).join('') || '<p class="empty">No players match.</p>';
   };
   draw();
   $('#pk-q').oninput = e => { bld.q = e.target.value; draw(); };
@@ -2094,9 +2138,6 @@ function wireBuilder() {
   $('#tool-build').addEventListener('click', e => { const b = e.target.closest('[data-slot]'); if (b) { e.stopPropagation(); openPicker(b.dataset.slot); } });
   $('#bld-team').onchange = e => { const id = e.target.value; if (!TB[id]) return; bld.L = Object.assign({}, TB[id].L); bld.from = id; e.target.value = ''; saveBld(); renderBuilder(); };
   $('#bld-best').onclick = () => { bld.L = buildLineup(PL, 'best'); bld.from = null; saveBld(); renderBuilder(); };
-  $('#bld-value').onclick = () => {
-    // highest play rating at each spot among players whose cap hit is under $10M
-    bld.L = buildLineup(PL.filter(p => (p.cap || 0) < 1e7 && p.play != null), 'best'); bld.from = null; saveBld(); renderBuilder(); };
   $('#bld-clear').onclick = () => { bld.L = {}; bld.from = null; saveBld(); renderBuilder(); };
 }
 
@@ -2247,7 +2288,7 @@ function moveHTML(m) {
     <h3>${esc(m.head)}</h3><p>${esc(m.plain)}</p>
     ${m.url ? `<div class="meta"><a href="${esc(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a></div>` : ''}</div></article>`;
 }
-function renderHomeFeed() { $('#home-feed').innerHTML = MOVES.slice(0, 3).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>'; }
+function renderHomeFeed() { $('#home-feed').innerHTML = MOVES.filter(m => CONTRACT_KINDS.includes(m.kind)).slice(0, 3).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>'; }
 function renderDeadline() {
   const end = new Date(DEADLINE + 'T16:00:00-05:00'), now = new Date();
   const days = Math.ceil((end - now) / 864e5);
@@ -2267,11 +2308,26 @@ function renderHomeCards() {
 $('#hc-seg').onclick = e => { const b = e.target.closest('button'); if (b) { hcSel = b.dataset.hc; renderHomeCards(); } };
 
 /* ===== news ===== */
+const NEWS_TOPICS = [['All', 'All news', null], ['Contracts', 'Contracts', ['Trade', 'Extension', 'Restructure', 'Release', 'Signing']], ['Injuries', 'Injuries', ['Injury']], ['Games', 'Games', ['Game']], ['Coaching', 'Coaching', ['Coaching']], ['League', 'League', ['League']]];
+const CONTRACT_KINDS = NEWS_TOPICS[1][2];
+const newsHay = m => m._h || (m._h = [m.head, m.plain, m.kind, m.source, (m.players || []).join(' '), (m.teams || []).map(id => TB[id] ? TB[id].city + ' ' + TB[id].name + ' ' + id : id).join(' ')].join(' ').toLowerCase());
+function buildNewsControls() {
+  $('#news-team').innerHTML = '<option value="all">All teams</option>' + [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(t => `<option value="${t.id}">${esc(t.city)} ${esc(t.name)}</option>`).join('');
+  $('#news-q').oninput = e => { st.newsQ = e.target.value; st.newsLimit = 20; renderNews(); };
+  $('#news-team').onchange = e => { st.newsTeam = e.target.value; st.newsLimit = 20; renderNews(); };
+  $('#news-more').onclick = () => { st.newsLimit += 20; renderNews(); };
+}
 function renderNews() {
-  const kinds = ['All', ...new Set(MOVES.map(m => m.kind))];
-  $('#news-kinds').innerHTML = kinds.map(k => `<button type="button" class="chip" data-k="${k}" aria-pressed="${k === st.newsKind}">${k === 'All' ? 'All moves' : k + 's'}</button>`).join('');
-  const list = MOVES.filter(m => st.newsKind === 'All' || m.kind === st.newsKind);
-  $('#news-feed').innerHTML = list.map(moveHTML).join('') || '<p class="empty">No moves of this type yet.</p>';
+  const toks = st.newsQ.toLowerCase().split(/\s+/).filter(Boolean);
+  const base = MOVES.filter(m => (st.newsTeam === 'all' || (m.teams || []).includes(st.newsTeam)) && toks.every(t => newsHay(m).includes(t)));
+  const topic = NEWS_TOPICS.find(t => t[0] === st.newsTopic) || NEWS_TOPICS[0];
+  $('#news-kinds').innerHTML = NEWS_TOPICS.map(([k, l, kinds]) => { const n = kinds ? base.filter(m => kinds.includes(m.kind)).length : base.length; return `<button type="button" class="chip" data-k="${k}" aria-pressed="${k === topic[0]}">${l} <span class="num" style="opacity:.7">${n}</span></button>`; }).join('');
+  const list = topic[2] ? base.filter(m => topic[2].includes(m.kind)) : base;
+  $('#news-feed').innerHTML = list.slice(0, st.newsLimit).map(moveHTML).join('') || '<p class="empty">No news matches. Clear the filter or try another topic.</p>';
+  $('#news-more').hidden = list.length <= st.newsLimit;
+  $('#news-count').textContent = `${list.length} stor${list.length === 1 ? 'y' : 'ies'}`;
+  const q = $('#news-q'); if (document.activeElement !== q && q.value !== st.newsQ) q.value = st.newsQ;
+  const tm = $('#news-team'); if (tm.value !== st.newsTeam) tm.value = st.newsTeam;
 }
 
 /* ===== teams ===== */
@@ -2310,6 +2366,7 @@ function renderTeam(id) {
   const ends = yrs.map(y => { const ps = roster.filter(p => (y === 2032 ? p.end >= 2032 : p.end === y)); return { y, n: ps.length, cap: ps.reduce((s, p) => s + (p.cap || 0), 0), names: ps.sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 3).map(p => p.name) }; });
   const maxE = Math.max(1, ...ends.map(e => e.cap));
   const team_moves = MOVES.filter(m => (m.teams || []).includes(id));
+  if (TFQ.team !== id) { TFQ['roster-t'] = ''; TFQ.team = id; }
   const th = (k, l) => `<th class="${['name', 'pos', 'role'].includes(k) ? '' : 'r'}" data-k="${k}"${r.sort === k ? ` aria-sort="${r.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${l}</button></th>`;
   $('#team-body').innerHTML = `
   <div class="view">
@@ -2356,14 +2413,17 @@ function renderTeam(id) {
         ${t.topDead && t.topDead.length ? `<div><span class="eyebrow">Biggest dead money</span><div class="rows">${t.topDead.map(([n, v]) => `<div><span>${esc(n)}</span><b>${mon(v)}</b></div>`).join('')}</div></div>` : ''}
       </div>
     </div>
-    ${team_moves.length ? `<div class="panel"><h2 class="sec">${esc(t.name)} moves</h2><div class="feed">${team_moves.map(moveHTML).join('')}</div></div>` : ''}
+    ${team_moves.length ? `<div class="panel"><div class="sechead"><h2 class="sec">${esc(t.name)} news</h2>${team_moves.length > 5 ? `<button type="button" class="btn ghost" data-newsteam="${id}">All ${team_moves.length} stories</button>` : ''}</div><div class="feed">${team_moves.slice(0, 5).map(moveHTML).join('')}</div></div>` : ''}
     <div class="panel" id="tp-roster">
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
+      ${tfBox('roster-t', 'Filter players by name, position or role')}
       <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('role', 'Role')}${th('play', 'Play')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
-      <tbody>${sorted.map(p => `<tr data-p="${p.i}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + (p.role || '')).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
   </div>`;
+  applyTF($('#roster-t'));
+  $$('#team-body [data-newsteam]').forEach(b => b.onclick = () => { st.newsTeam = b.dataset.newsteam; st.newsTopic = 'All'; st.newsQ = ''; st.newsLimit = 20; renderNews(); go('news'); });
   $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
   $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos', 'role'].includes(k) ? 1 : -1; } renderTeam(id); });
   wireTeamField(t);
@@ -2378,6 +2438,7 @@ function gtdBar(p) {
 function renderDeals() {
   $('#deals').innerHTML = dealCards(DEALS.filter(c => c.league !== 'NBA'));
   $('#nba-deals').innerHTML = dealCards(DEALS.filter(c => c.league === 'NBA'));
+  $$('#deals table, #nba-deals table').forEach(applyTF);
 }
 function dealCards(list) {
   return list.map(c => {
@@ -2392,7 +2453,7 @@ function dealCards(list) {
       <dl class="facts">${c.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>
       <p style="font-size:.92rem">${esc(c.plain)}</p>
       <div class="watch"><b>Watch for</b>${esc(c.watch)}</div>
-      ${c.table ? `<details class="yearly"><summary>${esc(c.table.title)}</summary><div class="tw" style="margin-top:8px"><table class="t"><thead><tr>${c.table.cols.map((x, n) => `<th class="${n ? 'r' : ''}"><span>${esc(x)}</span></th>`).join('')}</tr></thead><tbody>${c.table.rows.map(rw => `<tr style="cursor:default">${rw.map((x, n) => `<td class="${n ? 'r' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="note">${esc(c.table.note)}</p></details>` : ''}
+      ${c.table ? `<details class="yearly"><summary>${esc(c.table.title)}</summary>${tfBox('yr-' + c.league + '-' + c.name, 'Filter years or amounts', 'margin-top:8px')}<div class="tw" style="margin-top:8px"><table class="t"><thead><tr>${c.table.cols.map((x, n) => `<th class="${n ? 'r' : ''}"><span>${esc(x)}</span></th>`).join('')}</tr></thead><tbody>${c.table.rows.map(rw => `<tr style="cursor:default">${rw.map((x, n) => `<td class="${n ? 'r' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="note">${esc(c.table.note)}</p></details>` : ''}
       ${pl ? `<button type="button" class="btn ghost" data-p="${pl.i}">Open full contract</button>` : ''}
     </article>`;
   }).join('');
@@ -2433,7 +2494,7 @@ function renderTable() {
   list.sort((a, b) => ((a[c.sort] ?? -1) - (b[c.sort] ?? -1)) * c.dir);
   $('#c-count').textContent = `${list.length.toLocaleString()} of ${PL.length.toLocaleString()} contracts`;
   $$('#c-table th[data-k]').forEach(th => th.dataset.k === c.sort ? th.setAttribute('aria-sort', c.dir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
-  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="8" class="empty">No contracts match. Clear the name or pick another team.</td></tr>`;
+  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="8" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
   $('#c-more').hidden = list.length <= c.limit;
 }
 function buildContractControls() {
@@ -2625,7 +2686,7 @@ $('#t-sort').onchange = e => { st.tSort = e.target.value; renderTeamGrid(); };
 $('#t-view').onclick = e => { const b = e.target.closest('button'); if (b) { st.tView = b.dataset.tv; store.set('tView', st.tView); renderTeamsView(); } };
 $('#t-power').addEventListener('click', e => { const b = e.target.closest('[data-pk]'); if (b) { e.stopPropagation(); const k = b.dataset.pk; if (pw.sort === k) pw.dir *= -1; else { pw.sort = k; pw.dir = k === 'name' ? 1 : -1; } renderPower(); } });
 document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('g[data-team]')) { e.preventDefault(); go('team-' + e.target.dataset.team); } });
-$('#news-kinds').onclick = e => { const b = e.target.closest('.chip'); if (b) { st.newsKind = b.dataset.k; renderNews(); } };
+$('#news-kinds').onclick = e => { const b = e.target.closest('.chip'); if (b) { st.newsTopic = b.dataset.k; st.newsLimit = 20; renderNews(); } };
 $('#toolnav').onclick = e => { const b = e.target.closest('button'); if (b) showTool(b.dataset.t); };
 $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { st.cutWhen = b.dataset.w; renderCut(); } };
 faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
@@ -2636,7 +2697,7 @@ function boot(d, mv, sd) {
   const dt = new Date(d.asOf + 'T12:00:00');
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   $('#stamp').textContent = 'Updated ' + ds;
-  $('#news-asof').textContent = `Contract news · updated ${ds}`;
+  $('#news-asof').textContent = `NFL news · updated ${new Date(((mv && mv.asOf) || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
   $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
@@ -2645,7 +2706,7 @@ function boot(d, mv, sd) {
   analyzeTeams(); wireBuilder();
   wireOnField(); renderOnField();
   renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
-  renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); renderNews(); renderTeamsView();
+  renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); buildNewsControls(); renderNews(); renderTeamsView();
   buildContractControls(); renderDeals(); renderMarket(); renderTable();
   bindSearch($('#q-home'), $('#r-home'), it => it.type === 'team' ? go('team-' + it.t.id) : openPlayer(it.p.i));
   bindSearch($('#dg-q'), $('#dg-r'), it => { dgPick = it.p.i; renderDG(); }, false);

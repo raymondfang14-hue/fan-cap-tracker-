@@ -2,6 +2,380 @@
  "asOf": "2026-10-20",
  "moves": [
   {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Release",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Jordan Elliott"
+   ],
+   "head": "Titans release DT Jordan Elliott after an off-field incident",
+   "plain": "The release follows an incident on Oct 15. His two-year, $8M deal had $3.24M guaranteed at signing. Guaranteed money is owed even after a cut, so expect some of it to show up as dead money.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Injury",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Terry McLaurin"
+   ],
+   "head": "Commanders WR Terry McLaurin tears his patellar tendon and is out for the year",
+   "plain": "He has three years and $87M left on his extension, which runs through 2028. About $5.35M of his 2027 salary is guaranteed for injury, so it is protected because of this kind of injury.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Davante Adams",
+    "Kobie Turner",
+    "Blake Grupe"
+   ],
+   "head": "Rams take three injury hits: Davante Adams, Kobie Turner and kicker Blake Grupe",
+   "plain": "Adams had a ruptured hamstring and surgery, with a reported 6 to 10 weeks out. Turner is headed to injured reserve for roughly 4 to 6 weeks. Grupe tore his ACL and is on IR, and the Rams are working out kickers. A player on IR has to miss at least four games.",
+   "source": "DK Network, Pro Football Rumors",
+   "url": "https://dknetwork.draftkings.com/2026/10/20/nfl-injury-report-week-7/"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Injury",
+   "teams": [
+    "BAL",
+    "TB",
+    "SF",
+    "NE",
+    "GB"
+   ],
+   "players": [
+    "Lamar Jackson",
+    "Baker Mayfield",
+    "Deebo Samuel",
+    "Nick Bosa",
+    "A.J. Brown",
+    "Micah Parsons"
+   ],
+   "head": "Week 7 injury watch: Lamar Jackson, Baker Mayfield, Deebo Samuel and more",
+   "plain": "Jackson has a sprained left ankle and has not practiced since Oct 4, but is day-to-day. Mayfield (dislocated thumb) was expected back at practice Wednesday. Samuel (hamstring) is out at least a couple of weeks and Bosa (calf) has missed four games. Patriots WR A.J. Brown has a high ankle sprain, and Packers DE Micah Parsons is on the PUP list with a knee (ACL) injury.",
+   "source": "DK Network",
+   "url": "https://dknetwork.draftkings.com/2026/10/20/nfl-injury-report-week-7/"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Release",
+   "teams": [
+    "NYG",
+    "ATL",
+    "MIA"
+   ],
+   "players": [
+    "Najee Harris",
+    "Jihad Ward",
+    "Charles Snowden",
+    "Bralen Trice",
+    "Riley Patterson",
+    "Zane Gonzalez",
+    "Storm Duck"
+   ],
+   "head": "Giants cut RB Najee Harris as teams reshuffle their rosters",
+   "plain": "Harris was on a veteran-minimum deal with no guaranteed money, so cutting him costs the Giants almost nothing. The Falcons added edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice. The Dolphins swapped kickers and waived CB Storm Duck.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "League",
+   "teams": [
+    "SF",
+    "KC",
+    "MIN",
+    "LAC",
+    "MIA"
+   ],
+   "players": [],
+   "head": "Three unbeaten teams are left: 49ers, Chiefs and Vikings",
+   "plain": "The 49ers are 6-0 after Monday night. The Chiefs and Vikings are also still unbeaten, with Minnesota coming off a bye. At the bottom, the Chargers are 0-6 and the Dolphins are 0-5.",
+   "source": "Yahoo Sports (PFN rankings)",
+   "url": "https://sports.yahoo.com/articles/week-7-nfl-power-rankings-140011039.html"
+  },
+  {
+   "iso": "2026-10-19",
+   "date": "Oct 19",
+   "kind": "Coaching",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Daniel Jones"
+   ],
+   "head": "Colts fire GM Chris Ballard after the loss to the Titans",
+   "plain": "Owner Carlie Irsay-Gordon said the change was needed to compete for championships. Coach Shane Steichen said Daniel Jones, who threw two interceptions on Sunday, is still the starting quarterback.",
+   "source": "Yahoo Sports",
+   "url": "https://sports.yahoo.com/nfl/live/nfl-news-injury-updates-week-6-142829593.html"
+  },
+  {
+   "iso": "2026-10-19",
+   "date": "Oct 19",
+   "kind": "Injury",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Jalen Hurts"
+   ],
+   "head": "Eagles QB Jalen Hurts is out for the season with blood clots",
+   "plain": "He was diagnosed with a deep vein thrombosis and blood clots in his lungs, and is on blood thinners. The Eagles put him on injured reserve. Philadelphia has lost four straight and Tanner McKee is now the quarterback.",
+   "source": "Yahoo Sports, Pro Football Rumors",
+   "url": "https://sports.yahoo.com/nfl/live/nfl-news-injury-updates-week-6-142829593.html"
+  },
+  {
+   "iso": "2026-10-19",
+   "date": "Oct 19",
+   "kind": "Coaching",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Mike McDaniel"
+   ],
+   "head": "Chargers fall to 0-6 and coach Jim Harbaugh says everything is on the table",
+   "plain": "It is the franchise's worst start since 2000. Harbaugh did not directly defend offensive coordinator Mike McDaniel after the 22-6 loss to the Chiefs and said the team will look at everything.",
+   "source": "Yahoo Sports",
+   "url": "https://sports.yahoo.com/nfl/live/nfl-news-injury-updates-week-6-142829593.html"
+  },
+  {
+   "iso": "2026-10-19",
+   "date": "Oct 19",
+   "kind": "Game",
+   "teams": [
+    "SF",
+    "WAS"
+   ],
+   "players": [],
+   "head": "49ers survive the Commanders 23-17 on Monday night",
+   "plain": "San Francisco moved to 6-0 after a late scare. Washington lost WR Terry McLaurin to a serious knee injury in the game and is now 1-4-1.",
+   "source": "Yahoo Sports (PFN rankings), Bleacher Report",
+   "url": "https://sports.yahoo.com/articles/week-7-nfl-power-rankings-140011039.html"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "HOU",
+    "JAX"
+   ],
+   "players": [
+    "C.J. Stroud",
+    "Travis Hunter"
+   ],
+   "head": "Texans beat the Jaguars 34-31 in London on a last-second field goal",
+   "plain": "Ka'imi Fairbairn hit a 49-yard kick as time ran out. C.J. Stroud threw for 312 yards and three touchdowns. Travis Hunter had eight catches and a touchdown for Jacksonville, which now trails in the AFC South.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "CLE",
+    "BAL"
+   ],
+   "players": [
+    "Deshaun Watson",
+    "Lamar Jackson"
+   ],
+   "head": "Browns top the Ravens 13-10 and take the AFC North lead",
+   "plain": "Baltimore played without Lamar Jackson and managed only 235 yards. Deshaun Watson led his fourth game-winning drive of the season.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "TEN",
+    "IND"
+   ],
+   "players": [
+    "Jeffery Simmons"
+   ],
+   "head": "Titans beat the Colts 26-20 for Robert Saleh's first win as head coach",
+   "plain": "Tennessee broke a six-game losing streak against Indianapolis and scored on a blocked punt. The Colts fired their general manager the next day.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "KC",
+    "LAC"
+   ],
+   "players": [
+    "Kenneth Walker III"
+   ],
+   "head": "Chiefs beat the Chargers 22-6 as Kenneth Walker III runs for 128 yards",
+   "plain": "Walker scored twice. Kicker Harrison Butker missed an extra point and a field goal in windy conditions. The Chargers have not won yet this season.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "GB",
+    "DAL"
+   ],
+   "players": [
+    "Jordan Love"
+   ],
+   "head": "Packers beat the Cowboys 23-13 for a third straight win",
+   "plain": "Green Bay pressured Dak Prescott all night and forced two interceptions. Dallas has lost two in a row, and its defense is still a concern.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "CHI",
+    "ATL"
+   ],
+   "players": [
+    "Caleb Williams"
+   ],
+   "head": "Bears beat the Falcons 31-23 with Caleb Williams back from injury",
+   "plain": "Williams missed time after a Week 2 hamstring injury. He returned to complete 30 of 36 passes for 305 yards. Kyler Gordon had three sacks in his first game back.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "NO",
+    "NYG"
+   ],
+   "players": [
+    "Jameis Winston",
+    "J.J. McCarthy",
+    "Tyler Shough"
+   ],
+   "head": "Saints beat the Giants 34-27 and New York benches Jameis Winston",
+   "plain": "Winston threw two interceptions and J.J. McCarthy, who came over from the Vikings in a Sep 28 trade, nearly led a late comeback. Tyler Shough threw four touchdowns for New Orleans.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "CAR",
+    "PHI"
+   ],
+   "players": [
+    "Bryce Young",
+    "Chuba Hubbard"
+   ],
+   "head": "Panthers beat the Eagles 25-14 and lead the NFC South",
+   "plain": "Bryce Young threw for 281 yards and Chuba Hubbard ran for 120. Philadelphia played without Jalen Hurts and Saquon Barkley.",
+   "source": "NFL.com, Bleacher Report",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "NE",
+    "NYJ"
+   ],
+   "players": [
+    "Drake Maye",
+    "A.J. Brown"
+   ],
+   "head": "Patriots beat the Jets 26-19 as A.J. Brown returns",
+   "plain": "Drake Maye moved the offense even after losing several linemen to injury. Brown came back from his injury with three catches for 27 yards.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "PIT",
+    "TB"
+   ],
+   "players": [
+    "Jalen Ramsey",
+    "Germie Bernard"
+   ],
+   "head": "Steelers rally past the Buccaneers 26-19 in overtime",
+   "plain": "Pittsburgh trailed by 13 going into the fourth quarter. Rookie Germie Bernard scored the winning touchdown and Jalen Ramsey ended Tampa Bay's last drive with a fourth-down sack.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-6-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-10-18",
+   "date": "Oct 18",
+   "kind": "Game",
+   "teams": [
+    "ARI",
+    "LAR",
+    "DEN",
+    "SEA",
+    "BUF",
+    "LV"
+   ],
+   "players": [
+    "Chad Ryland",
+    "Sam Darnold",
+    "Josh Allen"
+   ],
+   "head": "Also in Week 6: Cardinals upset the Rams, Broncos win in overtime, Bills hold off the Raiders",
+   "plain": "Arizona beat Los Angeles 18-16 as kicker Chad Ryland made six field goals. Denver beat Seattle 17-14 in overtime after two Sam Darnold interceptions. Buffalo beat Las Vegas 33-30.",
+   "source": "NFL.com, Bleacher Report",
+   "url": "https://bleacherreport.com/articles/25511941-2026-nfl-week-6-biggest-takeaways-every-team"
+  },
+  {
+   "iso": "2026-10-13",
+   "date": "Oct 13",
+   "kind": "League",
+   "teams": [
+    "CHI"
+   ],
+   "players": [
+    "Montez Sweat"
+   ],
+   "head": "Bears pass rusher Montez Sweat suspended two games",
+   "plain": "The NFL says he violated its performance-enhancing substances policy. The Bears beat the Falcons the following Sunday without him.",
+   "source": "AP via NY1",
+   "url": "https://ny1.com/nyc/all-boroughs/ap-top-news/2026/10/13/bears-de-montez-sweat-suspended-2-games-for-violating-nfls-performance-enhancing-substances-policy"
+  },
+  {
    "date": "Oct 11",
    "kind": "Trade",
    "teams": [
@@ -14,7 +388,30 @@
    "head": "Texans get WR Marvin Harrison Jr. from the Cardinals",
    "plain": "Arizona gets a 2027 second-round pick and a 2027 sixth. Houston also sends back a 2027 seventh. Harrison now counts on Houston's cap.",
    "source": "SI trade tracker",
-   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league"
+   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
+   "iso": "2026-10-11"
+  },
+  {
+   "iso": "2026-10-09",
+   "date": "October",
+   "kind": "Signing",
+   "teams": [
+    "ATL",
+    "PHI",
+    "NE",
+    "PIT"
+   ],
+   "players": [
+    "Gervon Dexter",
+    "Andy Dalton",
+    "Lane Johnson",
+    "Romeo Doubs",
+    "Marquez Valdes-Scantling"
+   ],
+   "head": "More October moves: Falcons extend Gervon Dexter, Eagles cut Andy Dalton",
+   "plain": "Atlanta extended DL Gervon Dexter. Philadelphia released QB Andy Dalton, and right tackle Lane Johnson is retiring. New England put WR Romeo Doubs on injured reserve, and Pittsburgh added WR Marquez Valdes-Scantling to its practice squad. The terms were not in the report.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
   },
   {
    "date": "October",
@@ -29,7 +426,23 @@
    "head": "Ravens get center Cam Jurgens from the Eagles",
    "plain": "Philadelphia gets a 2027 fifth-round pick and a 2028 second. Baltimore sends back a 2027 seventh. The Eagles still carry about $4.6M of his old bonus as dead money.",
    "source": "SI trade tracker",
-   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league"
+   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
+   "iso": "2026-10-08"
+  },
+  {
+   "iso": "2026-10-02",
+   "date": "Oct 2",
+   "kind": "League",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Jed York"
+   ],
+   "head": "NFL suspends 49ers owner Jed York six games and fines him $500,000",
+   "plain": "The league cited its personal conduct policy after an August arrest in Ohio. He pleaded no contest to two misdemeanors. He had already stayed away for the first three games, which count toward the six, so he can return Oct 20.",
+   "source": "Front Office Sports",
+   "url": "https://frontofficesports.com/article/nfl-suspends-jed-york-6-games/"
   },
   {
    "date": "Sep 30",
@@ -44,7 +457,8 @@
    "head": "Cowboys get CB Joey Porter Jr. from the Steelers",
    "plain": "Contract talks stalled. Porter reportedly wanted about $30M a year and Pittsburgh would not go past the high $20Ms in new money. The Steelers get a 2027 sixth and a 2028 second.",
    "source": "SI trade tracker",
-   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league"
+   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
+   "iso": "2026-09-30"
   },
   {
    "date": "Sep 28",
@@ -59,7 +473,8 @@
    "head": "Giants get QB J.J. McCarthy from the Vikings",
    "plain": "Minnesota gets a 2027 fifth-round pick. McCarthy is still on his rookie deal; the Vikings keep about $5.1M of dead money from it.",
    "source": "SI trade tracker",
-   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league"
+   "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
+   "iso": "2026-09-28"
   },
   {
    "date": "Sep 12",
@@ -73,7 +488,19 @@
    "head": "Packers extend TE Tucker Kraft, 4 years, $75M",
    "plain": "That is $18.75M a year, third among tight ends behind George Kittle and Trey McBride. Incentives can push it to $92M. He got a $26.5M signing bonus.",
    "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/"
+   "url": "https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/",
+   "iso": "2026-09-12"
+  },
+  {
+   "iso": "2026-08-27",
+   "date": "Aug 27",
+   "kind": "League",
+   "teams": [],
+   "players": [],
+   "head": "New 2026 fine system targets five dangerous tackles and blocks",
+   "plain": "The five are hip-drop tackles, horse-collar tackles, launching, hits on defenseless players and blindside blocks. Three of those fouls in a season bring a one-game suspension. A player fined once for one of them gets half the fine back, and everyone starts the year with a clean slate.",
+   "source": "Sports Illustrated",
+   "url": "https://www.si.com/nfl/explaining-changes-fine-system"
   },
   {
    "date": "Early Aug",
@@ -87,7 +514,8 @@
    "head": "Colts extend RB Jonathan Taylor for two years, $44M",
    "plain": "Reported as $39M guaranteed and $22M a year, with up to $47M possible. The date is inferred from the report, which says only 'Thursday'.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/jonathan-taylor-colts-contract-extension"
+   "url": "https://www.nfl.com/news/jonathan-taylor-colts-contract-extension",
+   "iso": "2026-08-07"
   },
   {
    "date": "Summer",
@@ -109,7 +537,8 @@
    "head": "Five big extensions land before the season",
    "plain": "Smith-Njigba: 4 years, $168.6M. Anderson: 3 years, $150M. Simmons: 3 years, $105.8M. London: 4 years, $141M. Davis: 3 years, $78M. All five are in the data on this site.",
    "source": "Yardbarker, July 2",
-   "url": "https://www.yardbarker.com/nfl/articles/five_key_contract_extensions_signed_ahead_of_the_2026_nfl_season/s1_13132_44020297"
+   "url": "https://www.yardbarker.com/nfl/articles/five_key_contract_extensions_signed_ahead_of_the_2026_nfl_season/s1_13132_44020297",
+   "iso": "2026-07-02"
   },
   {
    "date": "May 11",
@@ -123,7 +552,8 @@
    "head": "Steelers extend kicker Chris Boswell, 4 years, $28M",
    "plain": "That is $7M a year, the top of the kicker market.",
    "source": "NFL.com roundup",
-   "url": "https://nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-may-11"
+   "url": "https://nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-may-11",
+   "iso": "2026-05-11"
   },
   {
    "date": "Feb 18",
@@ -137,7 +567,8 @@
    "head": "Chiefs rework Mahomes' deal and free $43.6M of 2026 cap space",
    "plain": "His 2026 cap hit fell from $78.2M to $34.65M. The move turns salary into guaranteed bonus money, which pushes cost into later years. His 2027 cap number is $85.3M.",
    "source": "Front Office Sports",
-   "url": "https://frontofficesports.com/article/mahomes-reworks-deal-clears-43-6m-for-cap-strapped-chiefs/"
+   "url": "https://frontofficesports.com/article/mahomes-reworks-deal-clears-43-6m-for-cap-strapped-chiefs/",
+   "iso": "2026-02-18"
   }
  ],
  "deadline": "2026-11-10"
