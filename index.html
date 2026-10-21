@@ -1097,7 +1097,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 
   <div class="panel">
     <div class="sechead">
-      <div><span class="eyebrow">32 teams × 11 positions · 2026 cap hits</span><h2 class="sec">Spending heatmap, $M</h2></div>
+      <div><span class="eyebrow">32 teams × 15 positions · 2026 cap hits</span><h2 class="sec">Spending heatmap, $M</h2></div>
       <span class="scale-key">Least <i></i> Most</span>
     </div>
     <p class="note">Each cell shows what a team spends at a position, shaded by its rank among the 32 teams. Tap a column name to sort by it; tap a cell to see those players.</p>
@@ -1225,19 +1225,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 <section class="view" id="v-learn" hidden aria-labelledby="h-learn">
   <div><span class="eyebrow">Cap 101</span><h1 class="title" id="h-learn">The words on every contract page</h1></div>
   <p class="lede">Short answers to the terms you see in contract news. Start with cap hit and dead money; most of the rest builds on those two.</p>
-  <div class="grid2" style="align-items:start">
-    <div class="faq" id="faq-nfl"></div>
-    <div style="display:grid;gap:10px">
-      <h2 class="sec">NBA basics</h2>
-      <p class="note">Plain Cap covers the NFL first. These notes explain how the NBA's softer cap differs.</p>
-      <div class="faq" id="faq-nba"></div>
-    </div>
-  </div>
-  <div>
-    <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">NBA, read for you</span><h2 class="sec">Two recent NBA deals</h2></div></div>
-    <div class="deals" id="nba-deals"></div>
-    <p class="note" style="margin-top:10px">Every NBA team and contract comes next, built the same way as the NFL pages.</p>
-  </div>
+  <div class="faq" id="faq-nfl"></div>
 </section>
 
 </div></main>
@@ -1260,9 +1248,6 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     <li><a href="https://www.playerprofiler.com/?p=150729" target="_blank" rel="noopener">PlayerProfiler: Gibbs</a></li>
     <li><a href="https://www.detroitfootball.net/p/breaking-down-the-structure-of-jahmyr" target="_blank" rel="noopener">Detroit Football Network</a></li>
     <li><a href="https://atozsports.com/nfl/tennessee-titans-news/titans-jeffery-simmons-contract-details-revealed-signing-bonus-salary-cap-potential-out/" target="_blank" rel="noopener">A to Z Sports</a></li>
-    <li><a href="https://www.ksl.com/article/51631386/pistons-jalen-duren-agree-on-5-year-200m-contract-ap-source-says" target="_blank" rel="noopener">AP: Duren</a></li>
-    <li><a href="https://www.tsn.ca/nba/article/celtics-to-extend-pritchard-on-two-year-442m-deal-n1-50176173/" target="_blank" rel="noopener">TSN: Pritchard</a></li>
-    <li><a href="https://pr.nba.com/2026-27-salary-cap/" target="_blank" rel="noopener">NBA: 2026-27 cap</a></li>
   </ul>
   <details id="setup" class="faq" style="margin-top:8px"><summary style="padding-inline:16px">Site setup</summary>
     <div style="padding:0 16px 14px;display:grid;gap:8px;max-width:70ch">
@@ -1312,10 +1297,11 @@ const teamVars = id => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#
 const avatar = (p, px) => `<span class="av" style="${teamVars(p.team)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}${headshot(p) ? `<img class="ph" src="${headshot(p)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>`;
 const badge = (id, lg) => crest(id, lg ? 46 : 22);
 const badgeOld = (id, lg) => `<span class="badge${lg ? ' lg' : ''}" style="background:${COLORS[id] || '#555'};color:${inkFor(COLORS[id] || '#555')}" aria-hidden="true">${esc(id)}</span>`;
-const POSGROUP = { QB: 'QB', RB: 'RB', FB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', IDL: 'DT', EDGE: 'EDGE', LB: 'LB', CB: 'CB', S: 'S', K: 'ST', P: 'ST', LS: 'ST' };
-const GROUP_ORDER = ['QB', 'RB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'ST'];
-const GROUP_NAME = { QB: 'Quarterback', RB: 'Running back', WR: 'Receiver', TE: 'Tight end', OL: 'Off. line', EDGE: 'Edge rusher', DT: 'Def. tackle', LB: 'Linebacker', CB: 'Cornerback', S: 'Safety', ST: 'Kick & punt' };
-const GROUP_SIDE = { QB: 'off', RB: 'off', WR: 'off', TE: 'off', OL: 'off', EDGE: 'def', DT: 'def', LB: 'def', CB: 'def', S: 'def', ST: 'st' };
+const POSGROUP = { QB: 'QB', RB: 'RB', FB: 'RB', WR: 'WR', TE: 'TE', LT: 'LT', LG: 'LG', C: 'C', RG: 'RG', RT: 'RT', IDL: 'DT', EDGE: 'EDGE', LB: 'LB', CB: 'CB', S: 'S', K: 'ST', P: 'ST', LS: 'ST' };
+const OL_G = ['LT', 'LG', 'C', 'RG', 'RT'];
+const GROUP_ORDER = ['QB', 'RB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT', 'EDGE', 'DT', 'LB', 'CB', 'S', 'ST'];
+const GROUP_NAME = { QB: 'Quarterback', RB: 'Running back', WR: 'Receiver', TE: 'Tight end', LT: 'Left tackle', LG: 'Left guard', C: 'Center', RG: 'Right guard', RT: 'Right tackle', EDGE: 'Edge rusher', DT: 'Def. tackle', LB: 'Linebacker', CB: 'Cornerback', S: 'Safety', ST: 'Kick & punt' };
+const GROUP_SIDE = { QB: 'off', RB: 'off', WR: 'off', TE: 'off', LT: 'off', LG: 'off', C: 'off', RG: 'off', RT: 'off', EDGE: 'def', DT: 'def', LB: 'def', CB: 'def', S: 'def', ST: 'st' };
 const SIDE_VAR = { off: 'var(--c-off)', def: 'var(--c-def)', st: 'var(--c-st)' };
 const POS_WORD = { QB: 'quarterback', RB: 'running back', WR: 'wide receiver', TE: 'tight end', LT: 'left tackle', LG: 'left guard', C: 'center', RG: 'right guard', RT: 'right tackle', IDL: 'defensive tackle', EDGE: 'edge rusher', LB: 'linebacker', CB: 'cornerback', S: 'safety', K: 'kicker', P: 'punter', LS: 'long snapper', FB: 'fullback' };
 const POS_LIST = ['QB', 'RB', 'WR', 'TE', 'LT', 'RT', 'LG', 'RG', 'C', 'EDGE', 'IDL', 'LB', 'CB', 'S', 'K', 'P'];
@@ -1347,18 +1333,6 @@ let DEALS = [
     plain: 'Green Bay locked him up a day before the opener. At $18.75M a year he trails only George Kittle and Trey McBride among tight ends. The bonus is spread over the deal, so it counts about $5.6M a season.',
     watch: 'Reports did not give a total guarantee, so the bar shows only the bonus as locked.' }
 ];
-DEALS.push(
-  { league: 'NBA', pos: 'C', name: 'Jalen Duren', team: 'Detroit Pistons', head: '$200M', sub: '5 years, fully guaranteed', scale: 200,
-    bar: [['locked', 200, 'Fully guaranteed', '$200M']],
-    facts: [['Average a year', '$40M'], ['Reported ask', '$287M max'], ['Detroit\'s offer', '$87M below the ask'], ['Alternative', '$9.6M qualifying offer']],
-    plain: 'Duren was a restricted free agent and signed shortly before a deadline that would have left him with a one-year, $9.6M qualifying offer. At $40M a year the deal takes up roughly a quarter of this season\'s $165M cap.',
-    watch: 'He reportedly wanted the five-year max, about $57M a year. Detroit held at $200M.' },
-  { league: 'NBA', pos: 'G', name: 'Payton Pritchard', team: 'Boston Celtics', head: '$44.2M', sub: '2 years starting 2028-29, plus a mutual option', scale: 44.2,
-    bar: [['locked', 44.2, 'Fully guaranteed (as reported)', '$44.2M']],
-    facts: [['2028-29 salary', 'About $21.2M'], ['2029-30 mutual option', 'Nearly $23M'], ['Current deal, this season', '$7.8M'], ['Current deal, next season', '$8.3M']],
-    plain: 'Boston extended him early. His current four-year, $30M deal runs through 2027-28, so the new money starts in 2028-29. NBA rules cap the first-year raise on an extension, and the Celtics paid the most they could.',
-    watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
-);
 const LEARN_NFL = [
   ['How PFF data is used', 'PFF\'s full player grades are a paid product, so Plain Cap uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 25% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
@@ -1390,13 +1364,6 @@ const LEARN_NFL = [
   ['Lineups and depth charts', 'Plain Cap builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
   ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and names the real team it most resembles.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
-];
-const LEARN_NBA = [
-  ['Soft cap', 'NBA teams can go over the cap to re-sign their own players, use exceptions and take back salary in trades.'],
-  ['Luxury tax', 'Teams over the tax line pay a penalty on every dollar over it, and the rate climbs the further over they go. In 2026-27 the line is $200.428M.'],
-  ['The aprons', 'Two more lines sit above the tax. Above the first ($209.015M) a team loses some ways to add players; above the second ($221.686M) the limits get tighter.'],
-  ['Guaranteed pay', 'NBA contracts are usually fully guaranteed. A waived player still gets paid and stays on the books.'],
-  ['Bird rights', 'A team can go over the cap to re-sign its own player. It is why a team with no room can still keep its star.']
 ];
 
 /* ===== state ===== */
@@ -1657,7 +1624,7 @@ const MET = {
   pi20: ['Inside the 20', 'share of punts', p => sm(p).pun ? (sm(p).pi20p || 0) : null, pc0, 0, 'In 20']
 };
 const MET_KEYS = Object.keys(MET);
-const SG_ORDER = ['QB', 'RB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
+const SG_ORDER = ['QB', 'RB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT', 'EDGE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
 const SG_NAME = Object.assign({}, GROUP_NAME, { WR: 'Wide receiver', K: 'Kicker', P: 'Punter' });
 const sgOf = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.group === 'ST' ? null : p.group;
 // q: qualifier per week played, bars: weighted percentile mix behind the play rating, cols: table and stat tiles
@@ -1677,6 +1644,7 @@ const GCFG = {
   K: { q: p => (sm(p).fga || 0) >= 0.8 * W(), need: () => `${Math.ceil(0.8 * W())} field goal tries`, bars: [['fgp', .4], ['fg40', .3], ['fg50', .15], ['patp', .15]], cols: ['fgm', 'fgp', 'fg40', 'fg50', 'lngk'] },
   P: { q: p => (sm(p).pun || 0) >= 2 * W(), need: () => `${2 * W()} punts`, bars: [['pnet', .5], ['pavg', .2], ['pi20', .3]], cols: ['punts', 'pavg', 'pnet', 'pi20'] }
 };
+OL_G.forEach(g => { GCFG[g] = GCFG.OL; }); delete GCFG.OL;
 // Roles: one per player, NFL-specific usage labels
 const ROLE_DESC = {
   'Dual threat': 'Runs for real yardage on top of passing: six or more carries or 30+ rushing yards a game.',
@@ -1806,6 +1774,7 @@ const ROLES = {
   K: p => (sm(p).lng || 0) >= 58 || (sm(p).fg50 || 0) >= 3 ? 'Big-leg kicker' : 'Kicker',
   P: p => (p.fq && pcv(p, 'pi20') >= .7) ? 'Coffin-corner punter' : (p.fq && pcv(p, 'pavg') >= .7) ? 'Field flipper' : 'Punter'
 };
+OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
 // On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
 const OTRAITS = {
   engine: ['EPA engine', 'Adds expected points on almost every play.', ['QB'], 'epa'],
@@ -1842,9 +1811,9 @@ const OTRAITS = {
   iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', 'ALL', null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
   pffrank: ['PFF weekly rank', 'Ranked in PFF\'s weekly in-season quarterback or receiver rankings: gold for the top 3, silver for the top 8, bronze for the top 15.', 'ALL', null, p => p.pff && p.pff.rank && p.pff.rank.r <= 15, p => (p.pff.rank.r <= 3 ? 'gold' : p.pff.rank.r <= 8 ? 'silver' : 'bronze')],
   pfftow: ['PFF Team of the Week', 'Named to PFF\'s Team of the Week or offensive line of the week this season: bronze once, silver twice, gold three or more times.', 'ALL', null, p => p.pff && p.pff.tow.length > 0, p => (p.pff.tow.length >= 3 ? 'gold' : p.pff.tow.length === 2 ? 'silver' : 'bronze')],
-  roadgrader: ['Road grader', 'PFF run-block grades from his top games this season average 85 or better: gold at 92, silver at 88.', ['OL'], null, p => p.pff && pffFac(p, 'rb') >= 85, p => { const v = pffFac(p, 'rb'); return v >= 92 ? 'gold' : v >= 88 ? 'silver' : 'bronze'; }],
-  passwall: ['Pass-pro wall', 'PFF pass-block grades from his top games this season average 84 or better: gold at 90, silver at 86.', ['OL'], null, p => p.pff && pffFac(p, 'pb') >= 84, p => { const v = pffFac(p, 'pb'); return v >= 90 ? 'gold' : v >= 86 ? 'silver' : 'bronze'; }],
-  clean: ['Clean sheet', 'A starting lineman with no penalties yet.', ['OL'], null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
+  roadgrader: ['Road grader', 'PFF run-block grades from his top games this season average 85 or better: gold at 92, silver at 88.', OL_G, null, p => p.pff && pffFac(p, 'rb') >= 85, p => { const v = pffFac(p, 'rb'); return v >= 92 ? 'gold' : v >= 88 ? 'silver' : 'bronze'; }],
+  passwall: ['Pass-pro wall', 'PFF pass-block grades from his top games this season average 84 or better: gold at 90, silver at 86.', OL_G, null, p => p.pff && pffFac(p, 'pb') >= 84, p => { const v = pffFac(p, 'pb'); return v >= 90 ? 'gold' : v >= 86 ? 'silver' : 'bronze'; }],
+  clean: ['Clean sheet', 'A starting lineman with no penalties yet.', OL_G, null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
   bigleg: ['Big leg', 'Has made a field goal of 58 yards or longer.', ['K'], null, p => (sm(p).lng || 0) >= 58, 'bronze']
 };
 const PFFKEYS = new Set(['pffrank', 'pfftow', 'roadgrader', 'passwall']);
@@ -1887,7 +1856,7 @@ function attachStats(sd) {
 /* ===== PFF public in-season data: weekly QB/WR rankings, top game grades, Team of the Week, rookie rankings (weighted lightly) ===== */
 let PFF = null;
 const PFF_W = 0.25;
-const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: ['OL'], EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
+const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: OL_G, EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
 const PFF_FAC = { pb: 'pass block', rb: 'run block', pas: 'passing', rec: 'receiving', cov: 'coverage', rd: 'run defense', pr: 'pass rush', rush: 'rushing' };
 function attachPFF(px) {
   PFF = px; PL.forEach(p => (p.pff = null));
@@ -1915,7 +1884,7 @@ function pffSig(p) {
   return parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null;
 }
 function pffRole(p) {
-  if (!p.pff || p.group !== 'OL') return null;
+  if (!p.pff || !OL_G.includes(p.group)) return null;
   const pb = pffFac(p, 'pb'), rb = pffFac(p, 'rb'); if (pb == null && rb == null) return null;
   const pe = pb != null && pb >= 84, re = rb != null && rb >= 85;
   if (pe && re) return 'Two-way anchor';
@@ -2024,7 +1993,7 @@ function fieldHTML(p) {
     <div class="stiles">${tiles}</div>
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
     ${verdict}
-    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
+    ${OL_G.includes(p.sg) ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
   </div>`;
 }
@@ -2131,11 +2100,11 @@ const SLOTS = [
   { id: 'WR2', lab: 'WR', g: 'WR', unit: 'skill', w: .2, r: 5, c: 9 },
   { id: 'WR3', lab: 'Slot', g: 'WR', unit: 'skill', w: .14, r: 6, c: 2 },
   { id: 'TE', lab: 'TE', g: 'TE', unit: 'skill', w: .2, r: 5, c: 8 },
-  { id: 'LT', lab: 'LT', g: 'OL', unit: 'ol', w: .22, r: 5, c: 3 },
-  { id: 'LG', lab: 'LG', g: 'OL', unit: 'ol', w: .18, r: 5, c: 4 },
-  { id: 'C', lab: 'C', g: 'OL', unit: 'ol', w: .2, r: 5, c: 5 },
-  { id: 'RG', lab: 'RG', g: 'OL', unit: 'ol', w: .18, r: 5, c: 6 },
-  { id: 'RT', lab: 'RT', g: 'OL', unit: 'ol', w: .22, r: 5, c: 7 },
+  { id: 'LT', lab: 'LT', g: 'LT', unit: 'ol', w: .22, r: 5, c: 3 },
+  { id: 'LG', lab: 'LG', g: 'LG', unit: 'ol', w: .18, r: 5, c: 4 },
+  { id: 'C', lab: 'C', g: 'C', unit: 'ol', w: .2, r: 5, c: 5 },
+  { id: 'RG', lab: 'RG', g: 'RG', unit: 'ol', w: .18, r: 5, c: 6 },
+  { id: 'RT', lab: 'RT', g: 'RT', unit: 'ol', w: .22, r: 5, c: 7 },
   { id: 'EDGE1', lab: 'Edge', g: 'EDGE', unit: 'front', w: .3, r: 3, c: 2 },
   { id: 'IDL1', lab: 'DT', g: 'DT', unit: 'front', w: .25, r: 3, c: 4 },
   { id: 'IDL2', lab: 'DT', g: 'DT', unit: 'front', w: .2, r: 3, c: 6 },
@@ -2170,10 +2139,9 @@ const rcol = r => pColor((r - 40) / 59);
 function buildLineup(pool, mode) {
   const sorted = [...pool].sort((a, b) => depthKey(mode)(b) - depthKey(mode)(a));
   const used = new Set(), L = {};
-  const ol = sorted.filter(p => p.sg === 'OL').slice(0, 5);
-  OL_IDS.forEach(pos => { const p = ol.find(q => q.pos === pos && !used.has(q)); if (p) { L[pos] = p; used.add(p); } });
-  OL_IDS.forEach(pos => { if (L[pos]) return; const p = sorted.find(q => q.sg === 'OL' && !used.has(q)); if (p) { L[pos] = p; used.add(p); } });
-  SLOTS.filter(s => s.g !== 'OL').forEach(s => { const p = sorted.find(q => !used.has(q) && slotOK(s, q)); if (p) { L[s.id] = p; used.add(p); } });
+  OL_IDS.forEach(pos => { const p = sorted.find(q => q.pos === pos && !used.has(q)); if (p) { L[pos] = p; used.add(p); } });
+  OL_IDS.forEach(pos => { if (L[pos]) return; const p = sorted.find(q => OL_G.includes(q.sg) && !used.has(q)); if (p) { L[pos] = p; used.add(p); } });
+  SLOTS.filter(s => !OL_G.includes(s.g)).forEach(s => { const p = sorted.find(q => !used.has(q) && slotOK(s, q)); if (p) { L[s.id] = p; used.add(p); } });
   return L;
 }
 function unitRaw(L) {
@@ -2769,8 +2737,7 @@ function gtdBar(p) {
 /* ===== contracts ===== */
 function renderDeals() {
   $('#deals').innerHTML = dealCards(DEALS.filter(c => c.league !== 'NBA'));
-  $('#nba-deals').innerHTML = dealCards(DEALS.filter(c => c.league === 'NBA'));
-  $$('#deals table, #nba-deals table').forEach(applyTF);
+  $$('#deals table').forEach(applyTF);
 }
 function dealCards(list) {
   return list.map(c => {
@@ -3344,7 +3311,7 @@ document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === 
 $('#news-kinds').onclick = e => { const b = e.target.closest('.chip'); if (b) { st.newsTopic = b.dataset.k; st.newsLimit = 20; renderNews(); } };
 $('#toolnav').onclick = e => { const b = e.target.closest('button'); if (b) showTool(b.dataset.t); };
 $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { st.cutWhen = b.dataset.w; renderCut(); } };
-faq($('#faq-nfl'), LEARN_NFL); faq($('#faq-nba'), LEARN_NBA);
+faq($('#faq-nfl'), LEARN_NFL);
 
 /* ===== free agency, projected cap by year, year by year contracts =====
    Year by year cap hits: exact when data/years_exact.json has the contract, otherwise estimated from the contract's yearly
@@ -3532,7 +3499,7 @@ function renderFATags() {
   // tags
   const offic = (FAX && FAX.tags) || {}, c27 = faClass(2027);
   $('#fa-tag').innerHTML = `<thead><tr><th><span>Position</span></th><th class="r"><span>Tag price</span></th><th><span>Five biggest deals</span></th><th><span>Tag candidates (2027 class)</span></th></tr></thead><tbody>` +
-    GROUP_ORDER.map(g => { const t = TAGP[g], cand = c27.filter(p => p.group === g && p.play >= 85).sort((a, b) => b.play - a.play).slice(0, 4), o = offic[g];
+    GROUP_ORDER.map(g => { const t = TAGP[g], cand = c27.filter(p => p.group === g && p.play >= 85).sort((a, b) => b.play - a.play).slice(0, 4), o = offic[g] || (OL_G.includes(g) ? offic.OL : undefined);
       return `<tr style="cursor:default" data-s="${esc((GROUP_NAME[g] + ' ' + t.top.map(p => p.name).join(' ') + ' ' + cand.map(p => p.name).join(' ')).toLowerCase())}"><td><b>${GROUP_NAME[g]}</b></td><td class="r${o ? '' : ' est'}">${o ? mon(o) : '~' + mon(t.est)}</td><td><span class="note">${t.top.map(p => esc(p.name)).join(', ')}</span></td><td>${cand.map(p => `<button type="button" class="tlink" data-p="${p.i}">${esc(p.name)} <span class="note">${p.play}</span></button>`).join(' ') || '<span class="note">None rated 85+</span>'}</td></tr>`; }).join('') + '</tbody>';
   applyTF($('#fa-tag'));
   // cap casualties
@@ -3611,6 +3578,5 @@ Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>
-
 </body></html>
 </body></html>
