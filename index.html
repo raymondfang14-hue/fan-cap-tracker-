@@ -660,6 +660,13 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .cal .past{opacity:.55}
 @media (max-width:560px){.cal a,.cal div{grid-template-columns:minmax(0,1fr)}.yb{grid-template-columns:2.8rem minmax(0,1fr) 4.6rem}.yb .s{display:none}.fap{grid-template-columns:5rem minmax(0,1fr) 5rem}}
 
+.pffbox{display:grid;gap:8px;padding:12px 14px;border-radius:var(--r);background:var(--surface-2);box-shadow:inset 3px 0 0 var(--gold)}
+.pffrk{font:800 1.5rem/1 var(--display);font-stretch:80%}
+.pffrk small{font:500 .78rem/1 var(--body);color:var(--muted);font-stretch:100%}
+.pffg{display:flex;gap:18px;flex-wrap:wrap}
+.pffg span{display:grid;gap:2px}
+.pffg small{font:600 .6rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pffg b{font:800 1.3rem/1 var(--display);font-stretch:80%}
 </style>
 
 <header class="cmd gut">
@@ -1353,6 +1360,7 @@ DEALS.push(
     watch: 'Reports describe the 2029-30 mutual option a little differently. Check the exact terms before quoting them.' }
 );
 const LEARN_NFL = [
+  ['How PFF rankings are used', 'PFF\'s player grades are a paid product, so Plain Cap uses what PFF publishes for free: its 2026 preseason top-32 lists for every major position, with the grades those articles quote. A player\'s play rating counts his PFF rank for 60% and his 2026 stats for 40%. Players outside the lists are rated on stats alone, scaled below the ranked group. For offensive linemen, PFF\'s pass-block and run-block grades also set roles such as Road grader and Blindside protector.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
   ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. Plain Cap estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
@@ -1696,6 +1704,12 @@ const ROLE_DESC = {
   'Two-way tight end': 'Plays most snaps and is part of the passing game.',
   'Rotational tight end': 'Shares time at tight end.',
   'Depth tight end': 'Rarely on the field on offense.',
+  'Blindside protector': 'A tackle PFF grades as an elite pass blocker, 84 or better and well ahead of his run blocking.',
+  'Pass-pro specialist': 'An interior lineman PFF grades as an elite pass blocker, 84 or better and well ahead of his run blocking.',
+  'Road grader': 'A lineman PFF grades as an elite run blocker, 85 or better and well ahead of his pass blocking.',
+  'Two-way anchor': 'PFF grades him 84 or better as a pass blocker and 85 or better as a run blocker.',
+  'Cornerstone lineman': 'One of the eight best linemen at his spot in PFF\'s preseason rankings.',
+  'Sidelined starter': 'PFF ranks him among the best at his position, but he has no qualifying 2026 snaps in the data yet.',
   'Every-snap starter': 'Has played at least 97% of his team\'s offensive snaps.',
   'Starter': 'A regular starter on the line.',
   'Fill-in starter': 'Has started part of the season, often for an injured player.',
@@ -1761,7 +1775,7 @@ const ROLES = {
     if (o >= .55 && tg < 3) return 'In-line blocker';
     if (o >= .55) return 'Two-way tight end';
     return o >= .2 ? 'Rotational tight end' : 'Depth tight end'; },
-  OL: p => { const s = p.st, o = s.opg || 0, full = s.g >= (s.tg || THRU) - 1;
+  OL: p => { const s = p.st, o = s.opg || 0, full = s.g >= (s.tg || THRU) - 1; const pr = pffRole(p); if (pr) return pr;
     if (o >= .6) return !full ? 'Fill-in starter' : (s.osh || 0) >= .97 ? 'Every-snap starter' : 'Starter';
     return o > 0 && o < .2 && s.g >= 2 ? 'Jumbo package' : 'Reserve'; },
   EDGE: p => { const d = p.st.dpg || 0, pr = pcv(p, 'prsr');
@@ -1828,9 +1842,14 @@ const OTRAITS = {
   coffin: ['Coffin corner', 'Pins teams inside the 20.', ['P'], 'pi20'],
   flipper: ['Field flipper', 'High net average per punt.', ['P'], 'pnet'],
   iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', 'ALL', null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
+  pffrank: ['PFF ranked', 'Ranked among the top 32 at his position in PFF\'s 2026 preseason rankings: gold for the top 5, silver for the top 12, bronze for the top 20.', 'ALL', null, p => p.pff && p.pff.rank <= 20, p => (p.pff.rank <= 5 ? 'gold' : p.pff.rank <= 12 ? 'silver' : 'bronze')],
+  roadgrader: ['Road grader', 'PFF run-block grade of 80 or better: gold at 90, silver at 85.', ['OL'], null, p => p.pff && p.pff.run >= 80, p => (p.pff.run >= 90 ? 'gold' : p.pff.run >= 85 ? 'silver' : 'bronze')],
+  passwall: ['Pass-pro wall', 'PFF pass-block grade of 80 or better: gold at 88, silver at 84.', ['OL'], null, p => p.pff && p.pff.pass >= 80, p => (p.pff.pass >= 88 ? 'gold' : p.pff.pass >= 84 ? 'silver' : 'bronze')],
+  sackfree: ['Sack-free', 'PFF noted he allowed no sacks over a full workload.', ['OL'], null, p => p.pff && p.pff.ns, 'silver'],
   clean: ['Clean sheet', 'A starting lineman with no penalties yet.', ['OL'], null, p => !sm(p).pen && (p.st.osn || 0) >= 30 * W(), 'silver'],
   bigleg: ['Big leg', 'Has made a field goal of 58 yards or longer.', ['K'], null, p => (sm(p).lng || 0) >= 58, 'bronze']
 };
+const PFFKEYS = new Set(['pffrank', 'roadgrader', 'passwall', 'sackfree']);
 const TIER_ORDER = { gold: 0, silver: 1, bronze: 2 };
 const TIER_NAME = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
 const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze' : null;
@@ -1867,11 +1886,57 @@ function attachStats(sd) {
   });
 }
 
+/* ===== PFF public rankings: rank, grades, roles and traits ===== */
+let PFF = null, PFFON = new Set();
+const PFFG = { OT: 'OL', G: 'OL', C: 'OL', QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', EDGE: 'EDGE', DT: 'DT', LB: 'LB', CB: 'CB', S: 'S' };
+const PFF_NAME = { OT: 'tackles', G: 'guards', C: 'centers', QB: 'quarterbacks', RB: 'running backs', WR: 'receivers', TE: 'tight ends', EDGE: 'edge rushers', DT: 'interior linemen', LB: 'linebackers', CB: 'cornerbacks', S: 'safeties' };
+function attachPFF(px) {
+  PFF = px; PFFON = new Set(); PL.forEach(p => (p.pff = null));
+  if (!px || !px.groups) return;
+  const canon = k => { const w = k.split(' '); w[0] = NICK[w[0]] || w[0]; return w.join(' '); };
+  const variants = k => [...new Set([k, canon(k), ALIAS[k], ALIAS[k] && canon(ALIAS[k])].filter(Boolean))];
+  const byK = {}, side = g => (GROUP_SIDE[g] || 'st');
+  PL.forEach(p => variants(nkey(p.name)).forEach(k => ((byK[k] = byK[k] || []).includes(p) || byK[k].push(p))));
+  Object.entries(px.groups).forEach(([g, rows]) => {
+    const sg = PFFG[g]; if (!sg) return; PFFON.add(sg);
+    rows.forEach(e => {
+      const c = [...new Set(variants(nkey(e.n)).flatMap(k => byK[k] || []))].filter(p => !p.pff && side(p.group) === side(sg));
+      const hit = c.find(p => p.group === sg && p.team === e.t) || c.find(p => p.team === e.t) || (c.filter(p => p.group === sg).length === 1 ? c.find(p => p.group === sg) : null);
+      if (hit) hit.pff = { g, rank: e.r, n: rows.length, ovr: e.ovr, pass: e.pass, run: e.run, ns: !!e.ns, note: e.note || '' };
+    });
+  });
+}
+const pffPct = p => 1 - (p.pff.rank - 1) / 32 * (p.pff.g === 'C' ? 0.8 : 0.5);
+function pffRole(p) {
+  const f = p.pff; if (!f || p.group !== 'OL') return null;
+  const pe = f.pass != null && f.pass >= 84, re = f.run != null && f.run >= 85;
+  if (pe && re) return 'Two-way anchor';
+  if (pe && (f.run == null || f.pass - f.run >= 8)) return f.g === 'OT' ? 'Blindside protector' : 'Pass-pro specialist';
+  if (re && (f.pass == null || f.run - f.pass >= 8)) return 'Road grader';
+  if (f.rank <= 8) return 'Cornerstone lineman';
+  return null;
+}
+const pffHTML = p => { const f = p.pff; if (!f) return '';
+  const ch = [['Overall', f.ovr], ['Pass block', f.pass], ['Run block', f.run]].filter(x => x[1] != null);
+  return `<div class="pffbox"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><span class="eyebrow">PFF public ranking</span><b class="pffrk">#${f.rank} <small>of ${f.n} ${esc(PFF_NAME[f.g])}</small></b></div>${ch.length ? `<div class="pffg">${ch.map(([l, v]) => `<span><small>${l}</small><b class="num">${v.toFixed(1)}</b></span>`).join('')}</div>` : ''}<p class="note">${esc(f.note)}. From PFF's 2026 preseason top 32; grades are mostly from 2025.</p></div>`; };
+const STUB_ST = () => ({ g: 0, gs: 0, m: {}, osh: 0, dsh: 0, osn: 0, dsn: 0, opg: 0, dpg: 0, tg: THRU });
+function calcTraits(p, g) {
+  Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
+    if (groups !== 'ALL' && !groups.includes(g)) return;
+    if (gate && !gate(p)) return;
+    if (fixed) { if (p.fq || key === 'bigleg' || PFFKEYS.has(key)) p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
+    if (!p.fq || p.pc[met] == null) return;
+    const t = tierOf(p.pc[met]); if (t) p.ot.push([key, t]);
+  });
+  p.ot.sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
+}
+
 function analyzeField() {
   PL.forEach(p => { p.sg = sgOf(p); p.pc = {}; p.rk = {}; p.ot = []; p.role = ''; p.play = null; p.fq = false; p.prk = null; p.val = null; p.vlab = ''; p.payPct = null; });
   SG_ORDER.forEach(g => {
     const cfg = GCFG[g];
     const all = PL.filter(p => p.sg === g && p.st && (p.st.g || 0) > 0);
+    const useP = PFFON.has(g);
     all.forEach(p => (p.fq = cfg.q(p)));
     const qs = all.filter(p => p.fq);
     MET_KEYS.forEach(k => {
@@ -1885,18 +1950,10 @@ function analyzeField() {
     const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
     const cs = qs.map(comp);
     qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
+    if (useP) qs.forEach(p => { p.spct = p.playPct; p.playPct = p.pff ? 0.6 * pffPct(p) + 0.4 * p.spct : 0.5 * p.spct; p.play = Math.round(40 + 59 * p.playPct); p.comp = p.playPct; });
     [...qs].sort((a, b) => b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
     all.forEach(p => { p.role = ROLES[g](p); });
-    all.forEach(p => {
-      Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
-        if (groups !== 'ALL' && !groups.includes(g)) return;
-        if (gate && !gate(p)) return;
-        if (fixed) { if (p.fq || key === 'bigleg') p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
-        if (!p.fq || p.pc[met] == null) return;
-        const t = tierOf(p.pc[met]); if (t) p.ot.push([key, t]);
-      });
-      p.ot.sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
-    });
+    all.forEach(p => calcTraits(p, g));
     const pays = qs.filter(p => p.apy > 0).map(p => p.apy);
     const paidRank = [...qs].filter(p => p.apy > 0).sort((a, b) => b.apy - a.apy);
     paidRank.forEach((p, n) => { p.payRk = n + 1; p.payN = paidRank.length; });
@@ -1906,6 +1963,16 @@ function analyzeField() {
       p.val = p.playPct - p.payPct;
       p.vlab = p.val >= .35 ? 'Bargain' : p.val <= -.35 ? 'Overpaid so far' : 'Worth it';
     });
+  });
+  // players PFF ranks but who have no qualifying 2026 snaps (injured, new, or not matched to stats): rate them from the PFF rank alone
+  PL.forEach(p => {
+    if (!p.pff || p.play != null || !PFFG[p.pff.g]) return;
+    p.sg = p.sg || sgOf(p); if (!p.sg) return;
+    const had = !!(p.st && p.st.g > 0);
+    if (!p.st) p.st = STUB_ST();
+    p.pffOnly = true; p.playPct = pffPct(p); p.play = Math.round(40 + 59 * p.playPct);
+    if (!had) p.role = pffRole(p) || 'Sidelined starter'; else if (pffRole(p)) p.role = pffRole(p);
+    p.ot = []; calcTraits(p, p.sg);
   });
 }
 
@@ -1948,16 +2015,17 @@ function fieldHTML(p) {
       ${p.play != null ? `<div class="bigplay" style="--pc:${pColor(p.playPct)}"><b>${p.play}</b><small>Play rating</small></div>` : `<div class="bigplay na"><b>—</b><small>Not rated yet</small></div>`}
       <div style="display:grid;gap:6px;min-width:0">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${rolePill(p)}${p.prk ? `<span class="rkpill">${esc(SG_NAME[p.sg])} #${p.prk} of ${p.pn}</span>` : ''}</div>
-        <span class="note">${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}</span>
+        <span class="note">${p.pffOnly && !s.g ? 'No 2026 snaps in the data yet' : `${s.g} game${s.g === 1 ? '' : 's'}${s.gs ? `, ${s.gs} as a regular` : ''} · ${pct(snapSh)} of team snaps · through Week ${THRU}`}</span>
         ${p.role ? `<span class="note">${esc(ROLE_DESC[p.role] || '')}</span>` : ''}
       </div>
     </div>
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
-    ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
+    ${pffHTML(p)}
+    ${p.pffOnly ? `<p class="note">Rated from PFF's public ranking alone because he has no qualifying 2026 snaps yet. His rating will use game stats once he plays.</p>` : !p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
     <div class="stiles">${tiles}</div>
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
     ${verdict}
-    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
+    ${p.sg === 'OL' ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties. Where PFF\'s public top-32 rankings list a lineman, his PFF rank and published grades count for 60% of his rating.</p>' : p.fq && PFFON.has(p.sg) ? `<p class="note">${p.pff ? 'His PFF rank counts for 60% of his rating and 2026 stats for 40%.' : 'He is not in PFF\'s public top 32 at his position, so his rating is his stats percentile scaled below the ranked players.'}</p>` : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
   </div>`;
 }
@@ -3504,7 +3572,7 @@ function wireFA() {
 }
 
 /* ===== boot ===== */
-function boot(d, mv, sd, se, ty, fx, yx) {
+function boot(d, mv, sd, se, ty, fx, yx, px) {
   TY = ty; FAX = fx; YX = yx;
   prepare(d, mv);
   const dt = new Date(d.asOf + 'T12:00:00');
@@ -3514,6 +3582,7 @@ function boot(d, mv, sd, se, ty, fx, yx) {
   $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Year-by-year figures after 2026 are estimates unless marked Reported. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
+  attachPFF(px);
   analyzeField();
   if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   analyzeTeams(); analyzeYears(); wireFA(); wireBuilder();
@@ -3538,8 +3607,8 @@ function boot(d, mv, sd, se, ty, fx, yx) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null)])
-  .then(([d, mv, as, sd, se, ty, fx, yx]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd, se, ty, fx, yx); })
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null), getJSON('data/pff.json').catch(() => null)])
+  .then(([d, mv, as, sd, se, ty, fx, yx, px]) => { if (as && as.teams) ASSETS = as; boot(d, mv, sd, se, ty, fx, yx, px); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
 </script>

@@ -20,3 +20,6 @@ Open a view directly with its anchor (`#teams` has the power ratings, and each `
 - `data/teamyears.json`: Over The Cap's reported cap room for 2027 and 2028, per team (refreshed daily).
 - `data/freeagency.json`: cap projections, cap growth rate, the offseason calendar and official franchise tag prices once announced.
 - `data/years_exact.json`: reported year-by-year cap hits for individual contracts. Every other player's later years are estimated in the browser from the contract terms and labeled as estimates. The daily task upgrades more contracts to exact each run.
+
+## PFF rankings (data/pff.json)
+PFF's player grades are paywalled, so the site uses what PFF publishes for free: its 2026 preseason top-32 lists (QB, RB, WR, TE, tackles, guards, centers, edge, interior defenders, LB, CB, S) with the grades those articles quote. A listed player's play rating is 60% PFF rank and 40% 2026 stats; unlisted players use stats scaled below the ranked group. Offensive linemen also get roles and traits from PFF's pass-block and run-block grades. The daily task re-reads the PFF articles.
