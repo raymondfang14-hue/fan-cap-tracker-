@@ -23,3 +23,9 @@ Open a view directly with its anchor (`#teams` has the power ratings, and each `
 
 ## PFF in-season data (data/pff.json)
 PFF's full player grades are paywalled, so the site uses only what PFF publishes for free during the current season (no preseason rankings): weekly QB and WR rankings, top game grades each week, Team of the Week, and rookie rankings. This is a light signal: 25% of a player's play rating (PFF_W in src.html). Offensive linemen get roles and traits (Road grader, Blindside protector, Pass-pro wall...) from the pass-block and run-block grades PFF states. The daily task re-reads the newest PFF pages.
+
+## Free offensive line data (data/olwin.json, data/pff_ol.json)
+No free source tracks every block by individual lineman, so Plain Cap blends what is free:
+- `data/olwin.json`: ESPN's team Pass Block Win Rate (PBWR) and Run Block Win Rate (RBWR), built by `data/build_olwin.py` from the free NFL Lines table. The page merges these into each team's stats. They feed the lineman play rating (35% snap share, 15% penalties, 15% PBWR, 15% RBWR, 10% sack rate, 10% yards before contact).
+- `data/pff_ol.json`: individual lineman figures PFF states in its free weekly OL rankings article (pressures, pass-blocking snaps, grades), built by `data/build_pff_ol.py`. They show on the lineman's card and do not change his rating. Only figures tied to one named lineman are kept.
+Refresh both weekly: edit the rows in each script, run it, then `sh build.sh`.

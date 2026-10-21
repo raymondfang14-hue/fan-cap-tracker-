@@ -1592,6 +1592,8 @@ const MET = {
   penr: ['Clean play', 'penalties per 100 snaps, lower is better', p => p.st && p.st.osn ? (sm(p).pen || 0) / p.st.osn * 100 : null, f2, 1, 'Pen/100'],
   tskp: ['Team pass protection', 'team sack rate, lower is better', p => TEAMST[p.team] ? TEAMST[p.team].skp : null, pc1, 1, 'Team sack%'],
   tybc: ['Team run lanes', 'team yards before contact per carry', p => TEAMST[p.team] ? TEAMST[p.team].ybc : null, f2, 0, 'Team YBC'],
+  tpbwr: ['Line pass-block wins', 'ESPN: share of pass plays the line holds up 2.5 seconds', p => TEAMST[p.team] && TEAMST[p.team].pbwr != null ? TEAMST[p.team].pbwr : null, pc0, 0, 'Team PBWR'],
+  trbwr: ['Line run-block wins', 'ESPN: share of designed runs the line wins its blocks', p => TEAMST[p.team] && TEAMST[p.team].rbwr != null ? TEAMST[p.team].rbwr : null, pc0, 0, 'Team RBWR'],
   prsr: ['Pressure rate', 'pressures per 100 snaps', p => p.st && p.st.dsn ? (sm(p).prs || 0) / p.st.dsn * 100 : null, f1, 0, 'Prs/100'],
   sckg: ['Sacks a game', '', p => (sm(p).sck || 0) / gp(p), f2, 0, 'Sck/G'],
   sck: ['Sacks', '', p => sm(p).sck || 0, h1, 0, 'Sacks'],
@@ -1634,7 +1636,7 @@ const GCFG = {
   RB: { q: p => tch(p) >= 6 * W(), need: () => `${6 * W()} touches`, bars: [['scrg', .25], ['ypc', .13], ['yco', .14], ['repa', .12], ['btt', .1], ['recg', .1], ['tdg', .11], ['fumt', .05]], cols: ['rush', 'ypc', 'yco', 'recy', 'tdt', 'btt'] },
   WR: { q: p => (sm(p).tgt || 0) >= 2.5 * W(), need: () => `${2.5 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
   TE: { q: p => (sm(p).tgt || 0) >= 2 * W(), need: () => `${2 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
-  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .45], ['penr', .25], ['tskp', .15], ['tybc', .15]], cols: ['snaps', 'osh', 'penr', 'tskp', 'tybc'] },
+  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .35], ['penr', .15], ['tpbwr', .15], ['trbwr', .15], ['tskp', .1], ['tybc', .1]], cols: ['snaps', 'osh', 'penr', 'tpbwr', 'trbwr'] },
   EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
   DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
   LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .2], ['tflg', .14], ['mtp', .14], ['pra', .14], ['prsg', .1], ['plyg', .1], ['dsh', .12], ['tov', .06]], cols: ['tkt', 'tflt', 'sck', 'prst', 'pdt', 'pra'] },
@@ -1853,12 +1855,12 @@ function attachStats(sd) {
 }
 
 /* ===== PFF public in-season data: weekly QB/WR rankings, top game grades, Team of the Week, rookie rankings (weighted lightly) ===== */
-let PFF = null;
+let PFF = null, PFFOL = null, OLWK = 0;
 const PFF_W = 0.25;
 const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: OL_G, EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
 const PFF_FAC = { pb: 'pass block', rb: 'run block', pas: 'passing', rec: 'receiving', cov: 'coverage', rd: 'run defense', pr: 'pass rush', rush: 'rushing' };
 function attachPFF(px) {
-  PFF = px; PL.forEach(p => (p.pff = null));
+  PFF = px; PL.forEach(p => { p.pff = null; p.pffol = null; });
   if (!px) return;
   const canon = k => { const w = k.split(' '); w[0] = NICK[w[0]] || w[0]; return w.join(' '); };
   const variants = k => [...new Set([k, canon(k), ALIAS[k], ALIAS[k] && canon(ALIAS[k])].filter(Boolean))];
@@ -1872,6 +1874,7 @@ function attachPFF(px) {
   (px.rookies || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).rookie = { r: e.r, grade: e.g }; });
   (px.tow || []).forEach(([wk, n, t, pos]) => { const p = find(n, t, pos); if (p) get(p).tow.push(wk); });
   (px.games || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).games.push(e); });
+  (px.ol || []).forEach(e => { const p = find(e.n, e.t, 'OL'); if (p) (p.pffol = p.pffol || []).push(e); });
 }
 const pffFac = (p, k) => { const v = (p.pff.games || []).map(x => x.f && x.f[k]).filter(v => v != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 function pffSig(p) {
@@ -1891,13 +1894,16 @@ function pffRole(p) {
   if (re && (pb == null || rb - pb >= 5)) return 'Road grader';
   return null;
 }
-const pffHTML = p => { const f = p.pff; if (!f) return '';
+const pffHTML = p => { const f = p.pff; if (!f || !(f.rank || f.rookie || f.tow.length || f.games.length)) return '';
   const it = (k, v, s) => `<div><small>${k}</small><b class="num">${v}</b><span>${s}</span></div>`, bits = [];
   if (f.rank) bits.push(it(`Weekly ${f.rank.g} ranking`, '#' + f.rank.r, `of ${f.rank.n}${f.rank.grade != null ? ' · grade ' + f.rank.grade.toFixed(1) : ''}`));
   if (f.rookie) bits.push(it('Rookie rank', '#' + f.rookie.r, `${f.rookie.grade.toFixed(1)} through Week 5`));
   if (f.tow.length) bits.push(it('Team of the Week', f.tow.length + '×', 'Week' + (f.tow.length > 1 ? 's ' : ' ') + [...new Set(f.tow)].sort((a, b) => a - b).join(', ')));
   const gl = f.games.map(x => `Week ${x.wk}: ${x.ovr != null ? x.ovr.toFixed(1) + ' overall' : 'top performer'}${Object.keys(x.f || {}).length ? ' (' + Object.entries(x.f).map(([k, v]) => `${PFF_FAC[k] || k} ${v.toFixed(1)}`).join(', ') + ')' : ''}`);
   return `<div class="pffbox"><span class="eyebrow">PFF this season · public weekly pages</span><div class="pffg">${bits.join('')}</div>${gl.length ? `<ul class="pffl">${gl.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}<p class="note">PFF only publishes grades for its top performers each week, so a missing grade does not mean a bad week. These pages count for ${Math.round(PFF_W * 100)}% of his rating.</p></div>`; };
+const pffolHTML = p => { const r = p.pffol; if (!r || !r.length) return '';
+  const lab = (PFFOL && PFFOL.labels) || {};
+  return `<div class="pffbox"><span class="eyebrow">PFF figures on him this season · free public pages</span><ul class="pffl">${r.map(x => `<li>${esc((lab[x.sc] || 'Recent') + ': ' + x.bits.join(' · '))}</li>`).join('')}</ul><p class="note">PFF names only some linemen in its free weekly articles, so a lineman who is not listed here was simply not mentioned. These figures are shown for context and do not change his rating.</p></div>`; };
 function calcTraits(p, g) {
   Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
     if (groups !== 'ALL' && !groups.includes(g)) return;
@@ -1988,11 +1994,12 @@ function fieldHTML(p) {
     </div>
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
     ${pffHTML(p)}
+    ${pffolHTML(p)}
     ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
     <div class="stiles">${tiles}</div>
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
     ${verdict}
-    ${OL_G.includes(p.sg) ? '<p class="note">Public stats do not track blocks one lineman at a time, so line ratings lean on playing time and penalties, plus how the whole line protects and opens running lanes.</p>' : ''}
+    ${OL_G.includes(p.sg) ? '<p class="note">No free source tracks every block one lineman at a time, so his rating blends playing time, penalties and how the whole line performs: ESPN\'s team pass-block and run-block win rates (through Week ${OLWK}), sack rate and yards before contact. Individual PFF figures appear above when PFF has published them.</p>' : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
   </div>`;
 }
@@ -3572,8 +3579,10 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
 const API = /vercel\.app$|localhost$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null), getJSON('data/pff.json').catch(() => null), getJSON('data/ol_pos.json').catch(() => null)])
-  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol]) => { if (as && as.teams) ASSETS = as;
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), getJSON('data/teamyears.json').catch(() => null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_exact.json').catch(() => null), getJSON('data/pff.json').catch(() => null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), getJSON('data/pff_ol.json').catch(() => null)])
+  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po]) => { if (as && as.teams) ASSETS = as;
+    if (sd && ow && ow.teams) { OLWK = ow.thru || 0; sd.teams = sd.teams || {}; Object.entries(ow.teams).forEach(([t, v]) => { sd.teams[t] = Object.assign(sd.teams[t] || {}, v); }); }
+    if (po && po.rows) { PFFOL = po; px = px || { rank: {}, rookies: [], tow: [], games: [] }; px.ol = po.rows; }
     if (ol && ol.pos) d.players.forEach(p => { if (['LT','LG','C','RG','RT'].includes(p[2])) { const k = p[1] + '|' + p[0].normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'’\-]/g, '').replace(/\b(jr|sr|ii|iii|iv)\b/g, '').replace(/\s+/g, ' ').trim(); if (ol.pos[k]) p[2] = ol.pos[k]; } }); boot(d, mv, sd, se, ty, fx, yx, px); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
