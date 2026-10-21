@@ -10,6 +10,12 @@ Inputs, all edited by hand or by the daily refresh task:
            one line per prospect: "<key> {json}" with his 2026 season totals from his cfbstats page
            (g games, pc/pa/py/ptd/pint passing, ra/ry/rtd rushing, rec/rey/retd receiving,
            tk tackles, tfl, sk sacks, int, pbu, qbh QB hurries, ff forced fumbles). Omit zero values.
+  data/draft_espn.txt
+           one line per prospect: "<key> <ESPN athlete id>" for his headshot
+           (https://a.espncdn.com/i/headshots/college-football/players/full/<id>.png). Find the id with
+           https://site.web.api.espn.com/apis/common/v3/search?query=<First%20Last>&limit=10&mode=prefix&type=player
+           and take the NCAA Football result on his school. SCHOOLS rows end with the school's ESPN team id
+           (logo https://a.espncdn.com/i/teamlogos/ncaa/500/<id>.png; same search with type=team).
   ASOF, STATS_THRU, BOARD_DATES
            dates (YYYY-MM-DD): today, the "through" date printed on cfbstats pages, and the
            update date of each board.
@@ -107,16 +113,16 @@ P = [
 ]
 
 SCHOOLS = {
- 'OSU': ['Ohio State', '#BB0000', '#666666'], 'TEX': ['Texas', '#BF5700', '#FFFFFF'], 'ND': ['Notre Dame', '#0C2340', '#C99700'],
- 'IND': ['Indiana', '#990000', '#EEEDEB'], 'SC': ['South Carolina', '#73000A', '#000000'], 'UGA': ['Georgia', '#BA0C2F', '#000000'],
- 'MIA': ['Miami', '#005030', '#F47321'], 'ORE': ['Oregon', '#154733', '#FEE123'], 'RUT': ['Rutgers', '#CC0033', '#5F6A72'],
- 'LSU': ['LSU', '#461D7C', '#FDD023'], 'MISS': ['Ole Miss', '#14213D', '#CE1126'], 'TENN': ['Tennessee', '#FF8200', '#FFFFFF'],
- 'BAMA': ['Alabama', '#9E1B32', '#828A8F'], 'MSST': ['Mississippi State', '#660000', '#FFFFFF'], 'CLEM': ['Clemson', '#F56600', '#522D80'],
- 'MICH': ['Michigan', '#00274C', '#FFCB05'], 'MINN': ['Minnesota', '#7A0019', '#FFCC33'], 'ASU': ['Arizona State', '#8C1D40', '#FFC627'],
- 'FSU': ['Florida State', '#782F40', '#CEB888'], 'UF': ['Florida', '#0021A5', '#FA4616'], 'VT': ['Virginia Tech', '#630031', '#CF4420'],
- 'OKST': ['Oklahoma State', '#FF7300', '#000000'], 'OU': ['Oklahoma', '#841617', '#FDF9D8'], 'IOWA': ['Iowa', '#000000', '#FFCD00'],
- 'MIZ': ['Missouri', '#000000', '#F1B82D'], 'TTU': ['Texas Tech', '#CC0000', '#000000'], 'LOU': ['Louisville', '#AD0000', '#000000'],
- 'TAMU': ['Texas A&M', '#500000', '#FFFFFF'], 'PSU': ['Penn State', '#041E42', '#FFFFFF'], 'USC': ['USC', '#990000', '#FFC72C'],
+ 'OSU': ['Ohio State', '#BB0000', '#666666', 194], 'TEX': ['Texas', '#BF5700', '#FFFFFF', 251], 'ND': ['Notre Dame', '#0C2340', '#C99700', 87],
+ 'IND': ['Indiana', '#990000', '#EEEDEB', 84], 'SC': ['South Carolina', '#73000A', '#000000', 2579], 'UGA': ['Georgia', '#BA0C2F', '#000000', 61],
+ 'MIA': ['Miami', '#005030', '#F47321', 2390], 'ORE': ['Oregon', '#154733', '#FEE123', 2483], 'RUT': ['Rutgers', '#CC0033', '#5F6A72', 164],
+ 'LSU': ['LSU', '#461D7C', '#FDD023', 99], 'MISS': ['Ole Miss', '#14213D', '#CE1126', 145], 'TENN': ['Tennessee', '#FF8200', '#FFFFFF', 2633],
+ 'BAMA': ['Alabama', '#9E1B32', '#828A8F', 333], 'MSST': ['Mississippi State', '#660000', '#FFFFFF', 344], 'CLEM': ['Clemson', '#F56600', '#522D80', 228],
+ 'MICH': ['Michigan', '#00274C', '#FFCB05', 130], 'MINN': ['Minnesota', '#7A0019', '#FFCC33', 135], 'ASU': ['Arizona State', '#8C1D40', '#FFC627', 9],
+ 'FSU': ['Florida State', '#782F40', '#CEB888', 52], 'UF': ['Florida', '#0021A5', '#FA4616', 57], 'VT': ['Virginia Tech', '#630031', '#CF4420', 259],
+ 'OKST': ['Oklahoma State', '#FF7300', '#000000', 197], 'OU': ['Oklahoma', '#841617', '#FDF9D8', 201], 'IOWA': ['Iowa', '#000000', '#FFCD00', 2294],
+ 'MIZ': ['Missouri', '#000000', '#F1B82D', 142], 'TTU': ['Texas Tech', '#CC0000', '#000000', 2641], 'LOU': ['Louisville', '#AD0000', '#000000', 97],
+ 'TAMU': ['Texas A&M', '#500000', '#FFFFFF', 245], 'PSU': ['Penn State', '#041E42', '#FFFFFF', 213], 'USC': ['USC', '#990000', '#FFC72C', 30],
 }
 
 KEYS = ['g', 'pc', 'pa', 'py', 'ptd', 'pint', 'ra', 'ry', 'rtd', 'rec', 'rey', 'retd', 'tk', 'tfl', 'sk', 'int', 'pbu', 'qbh', 'ff']
@@ -136,6 +142,11 @@ SLOT26 = [54565500, 52103630, 50537014, 48746540, 45613238, 40018084, 35541950, 
 
 assert all(r[3] in SCHOOLS for r in P), [r[0] for r in P if r[3] not in SCHOOLS]
 assert len({r[0] for r in P}) == len(P), 'duplicate key'
+espn = {}
+for line in (HERE / 'draft_espn.txt').read_text().splitlines():
+    if line.strip():
+        k, v = line.split()
+        espn[k] = int(v)
 out = []
 missing = []
 for (k, n, grp, sch, cls, ht, wt, w, b, a, tid, pid) in P:
@@ -145,6 +156,8 @@ for (k, n, grp, sch, cls, ht, wt, w, b, a, tid, pid) in P:
     r = {'id': k, 'name': n, 'grp': grp, 'sch': sch, 'cls': cls, 'ht': ht, 'wt': wt, 'w': w, 'b': b, 'a': a}
     if st:
         r['st'] = st
+    if k in espn:
+        r['espn'] = espn[k]
     if pid:
         r['src'] = f'https://cfbstats.com/2026/player/{tid}/{pid}/index.html'
     out.append(r)
@@ -176,4 +189,4 @@ doc = {
  'prospects': out,
 }
 OUT.write_text(json.dumps(doc, separators=(',', ':')))
-print(len(out), 'prospects;', 'missing stats:', missing, '->', OUT, OUT.stat().st_size, 'bytes')
+print(len(out), 'prospects;', 'missing stats:', missing, 'missing espn:', [r['id'] for r in out if 'espn' not in r], '->', OUT, OUT.stat().st_size, 'bytes')
