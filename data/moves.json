@@ -1,6 +1,109 @@
 {
- "asOf": "2026-10-20",
+ "asOf": "2026-10-21",
  "moves": [
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "League",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Jalen Hurts"
+   ],
+   "head": "NFL won't punish the Eagles over Jalen Hurts' blood clot, but the players' union wants an investigation",
+   "plain": "Hurts played every snap in London one day after doctors found a blood clot in his calf. He was later found to have clots in both lungs and is likely out for the year. The NFL says the Eagles handled it properly, but the players' union (NFLPA) is calling for a full investigation into his medical care.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/nflpa-seeking-investigation-into-eagles-handling-of-jalen-hurts"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Coaching",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Peyton Manning"
+   ],
+   "head": "Colts may reach out to Peyton Manning about their GM opening",
+   "plain": "After firing GM Chris Ballard, the Colts may call Peyton Manning for advice and to see whether he wants the job. Dan Patrick reported they might even discuss a small ownership stake. As of Tuesday, owner Carlie Irsay-Gordon had not contacted him, and it isn't clear whether either side is interested.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/colts-to-contact-peyton-manning-about-gm-job"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Signing",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Brandon McManus",
+    "Blake Grupe"
+   ],
+   "head": "Rams sign veteran K Brandon McManus after Blake Grupe's ACL tear",
+   "plain": "The Rams lost kicker Blake Grupe to a torn ACL, so they worked out Brandon McManus and Matt Prater and chose McManus. It is their third kicker in about two weeks. His deal is expected to be a veteran-minimum contract.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/rams-to-stage-workout-with-brandon-mcmanus-matt-prater"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Release",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Riley Patterson",
+    "Storm Duck",
+    "Zane Gonzalez",
+    "Justin Tucker"
+   ],
+   "head": "Winless Dolphins cut K Riley Patterson and CB Storm Duck and bring back Zane Gonzalez",
+   "plain": "Miami is 0-5 and releasing kicker Riley Patterson after early misses. Zane Gonzalez returns on a practice-squad deal to kick, and Justin Tucker also worked out for the team. Patterson was on a one-year, $1.4M deal with no guaranteed money, so cutting him costs little. Cornerback Storm Duck, who started the year on PUP, goes to waivers.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/dolphins-to-cut-cb-storm-duck-k-riley-patterson"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Signing",
+   "teams": [
+    "ATL",
+    "WAS"
+   ],
+   "players": [
+    "Charles Snowden",
+    "Bralen Trice"
+   ],
+   "head": "Falcons poach edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice",
+   "plain": "Atlanta signed edge rusher Charles Snowden to its active roster from Washington's practice squad. To make room, it is waiving Bralen Trice, who could return to the practice squad if he clears waivers.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/falcons-to-sign-charles-snowden-off-commanders-taxi-squad-cut-bralen-trice"
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
+   "kind": "Release",
+   "teams": [
+    "PHI",
+    "SF",
+    "DAL",
+    "LAR"
+   ],
+   "players": [
+    "Jaydon Blue",
+    "Carson Steele",
+    "Naquan Jones",
+    "Caelen Carson",
+    "Poona Ford"
+   ],
+   "head": "Tuesday roster churn: Eagles waive two RBs, 49ers cut Naquan Jones, Cowboys waive Caelen Carson",
+   "plain": "The Eagles waived RB Jaydon Blue and RB Carson Steele (Steele with an injury designation). The 49ers released DT Naquan Jones, and the Cowboys waived CB Caelen Carson to promote S Juanyeh Thomas from the practice squad. Along with Davante Adams, the Rams also put DT Poona Ford on IR.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/minor-nfl-transactions-10-20-26"
+  },
   {
    "iso": "2026-10-20",
    "date": "Oct 20",
