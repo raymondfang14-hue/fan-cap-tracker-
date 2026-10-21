@@ -505,6 +505,7 @@ code{font:500 .82rem/1.4 var(--mono);background:var(--surface-2);padding:1px 5px
 .ubar>b{font:800 1.05rem/1 var(--display);font-stretch:80%;text-align:right;font-variant-numeric:tabular-nums}
 .ubar small{font:500 .72rem/1 var(--mono);color:var(--muted);text-align:right}
 .ttraits{display:flex;flex-wrap:wrap;gap:6px}
+.tt-box{display:grid;gap:10px}.tt-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tt-row{display:grid;gap:6px}.tt-row>small{font:700 .64rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .fieldd{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:repeat(7,auto);gap:10px 4px;padding:14px 6px;border-radius:var(--r);border:1px solid var(--line);background:repeating-linear-gradient(180deg,var(--surface-2) 0 46px,color-mix(in srgb,var(--surface-2) 55%,var(--surface)) 46px 92px)}
 .fieldd .los{grid-row:4;grid-column:1/-1;position:relative;border-top:2px dashed var(--brand);margin:6px 0}
 .fieldd .los span{position:absolute;right:6px;top:-.55rem;padding:0 5px;background:var(--surface-2);font:600 .58rem/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
@@ -812,6 +813,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     </div>
   </div>
   <div class="chips" id="t-div" role="group" aria-label="Division"></div>
+  <div class="panel tt-box" id="t-traits"></div>
   <div id="t-ratings" style="display:grid;gap:16px;min-width:0">
     <p class="lede">Each team is rated from the play ratings of its starters, the players with the most snaps at every spot, then ranked against the league on the same 40 to 99 scale players use. Tap a team for its lineup, depth chart, stats and traits.</p>
     <div class="grid2">
@@ -1370,7 +1372,7 @@ const LEARN_NFL = [
 let D = null, TEAMS = [], TB = {}, PL = [], MOVES = [], DEADLINE = '2026-11-10';
 let favTeam = store.get('fav', null);
 const st = {
-  lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
+  lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tTraits: [], tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'cut', tView: store.get('tView', 'ratings'), cut: null, cutWhen: 'post',
   trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], shTab: store.get('shTab', 'field')
@@ -1398,7 +1400,7 @@ document.addEventListener('input', e => {
   TFQ[i.dataset.tf] = i.value;
   const tw = i.closest('.tfilter').nextElementSibling; applyTF(tw && tw.querySelector('table'));
 });
-const teamHay = t => (t.city + ' ' + t.name + ' ' + t.id + ' ' + t.div).toLowerCase();
+const teamHay = t => (t.city + ' ' + t.name + ' ' + t.id + ' ' + t.div + ' ' + (t.tt || []).map(x => TTRAITS[x[0]][0]).join(' ')).toLowerCase();
 
 /* ===== data ===== */
 function prepare(d, mv) {
@@ -2314,28 +2316,45 @@ const TSDEF = {
   ypta: ['Yards per target allowed', 'lower is better', x => x.dtg ? x.dya / x.dtg : 0, f1, 1, 'def'],
   tflg: ['Tackles for loss a game', '', x => x.tfl / x.g, f2, 0, 'def'],
   mtp: ['Missed tackle rate', 'share of attempts, lower is better', x => x.tk + x.mtk ? x.mtk / (x.tk + x.mtk) : 0, pc1, 1, 'def'],
+  passrate: ['Pass rate', 'share of offensive plays that are dropbacks', x => x.db + x.car ? x.db / (x.db + x.car) : 0, pc1, 0, 'off'],
+  adot: ['Throw depth', 'air yards per pass', x => x.att ? x.ay / x.att : 0, f1, 0, 'off'],
+  explo: ['Explosive plays a game', '20+ yard passes and runs', x => (x.p20 + x.r20) / x.g, f1, 0, 'off'],
+  qbrun: ['Quarterback rushing', 'yards a game', x => x.qry / x.g, f1, 0, 'off'],
+  blzg: ['Blitzes a game', 'defenders sent after the passer', x => x.blz / x.g, f1, 0, 'def'],
+  rushr: ['Pressure without the blitz', 'pressures per blitz', x => x.prs / Math.max(1, x.blz), f2, 0, 'def'],
   peng: ['Penalties a game', 'lower is better', x => x.pen / x.g, f1, 1, 'other'],
   fgp: ['Field goal rate', '', x => x.fga ? x.fgm / x.fga : 0, pc0, 0, 'other']
 };
 const TS_KEYS = Object.keys(TSDEF);
+// Team traits describe how a team plays (style), what it has (talent) and how it is built (roster). Tiers: gold top 2 teams, silver top 5, bronze top 9.
+const TT_CATS = [['off', 'Offensive style'], ['def', 'Defensive style'], ['talent', 'Talent'], ['roster', 'Roster and discipline']];
 const TTRAITS = {
-  qb: ['Franchise QB', 'Its starting quarterback rates near the top of the league.', t => pctRank(TR.qb, t.u.qb)],
-  weapons: ['Loaded skill group', 'Backs, receivers and tight ends rate among the best.', t => pctRank(TR.skill, t.u.skill)],
-  wall: ['Trench bullies', 'The starting offensive line rates among the best.', t => pctRank(TR.ol, t.u.ol)],
-  epa: ['Efficient offense', 'Adds expected points on its plays at one of the best rates.', t => t.tp.epa],
-  air: ['Air raid', 'Throws for more yards a game than most.', t => t.tp.pypg],
-  ground: ['Ground and pound', 'Runs for more yards a game than most.', t => t.tp.rypg],
-  pocket: ['Clean pocket', 'Its quarterbacks rarely get sacked.', t => t.tp.skp],
-  rush: ['Pass-rush factory', 'Gets after the quarterback more than almost anyone.', t => t.tp.prsg],
-  ball: ['Takeaway machine', 'Forces interceptions and fumbles at a high rate.', t => t.tp.tovg],
-  nofly: ['No-fly secondary', 'Quarterbacks struggle when they throw into its coverage.', t => t.tp.pra],
-  stuff: ['Run stuffers', 'Makes tackles behind the line often.', t => t.tp.tflg],
-  sure: ['Sure tacklers', 'Rarely misses a tackle.', t => t.tp.mtp],
-  clean: ['Disciplined', 'Draws few penalties.', t => t.tp.peng],
-  room: ['Cap flexibility', 'Has more cap room than most teams.', t => pctRank(TEAMS.map(x => x.space), t.space)],
-  bargain: ['Bargain hunters', 'Has more players playing well above their pay than most teams.', t => pctRank(TEAMS.map(x => x.nBargain), t.nBargain)],
-  young: ['Young starters', 'Its starting lineup is one of the youngest.', t => pctRank(TEAMS.map(x => -x.age), -t.age)],
-  vets: ['Veteran lineup', 'Its starting lineup is one of the oldest.', t => pctRank(TEAMS.map(x => x.age), t.age)]
+  passhappy: ['Pass-happy', 'Throws on a bigger share of its plays than almost anyone.', t => t.tp.passrate, 'off'],
+  runfirst: ['Run-first', 'Runs the ball on a bigger share of its plays than almost anyone.', t => 1 - t.tp.passrate, 'off'],
+  vertical: ['Vertical attack', 'Throws deeper than most: long air yards on every pass.', t => t.tp.adot, 'off'],
+  shortgame: ['Short and quick', 'Gets the ball out fast with short throws.', t => 1 - t.tp.adot, 'off'],
+  explosive: ['Explosive offense', 'Piles up 20-yard passes and runs.', t => t.tp.explo, 'off'],
+  scramble: ['Quarterback runs', 'Its quarterbacks add real rushing yards.', t => t.tp.qbrun, 'off'],
+  epa: ['Efficient offense', 'Adds expected points on its plays at one of the best rates.', t => t.tp.epa, 'off'],
+  points: ['Touchdown machine', 'Scores more offensive touchdowns a game than most.', t => t.tp.tdg, 'off'],
+  pocket: ['Clean pocket', 'Its quarterbacks rarely get sacked.', t => t.tp.skp, 'off'],
+  careful: ['Ball security', 'Throws very few interceptions.', t => t.tp.intr, 'off'],
+  lanes: ['Open run lanes', 'Backs get lots of yards before the first defender touches them.', t => t.tp.ybc, 'off'],
+  blitz: ['Blitz-happy', 'Sends extra rushers more often than almost anyone.', t => t.tp.blzg, 'def'],
+  fourman: ['Four-man pressure', 'Gets to the quarterback without needing to blitz.', t => t.tp.rushr, 'def'],
+  rush: ['Pass-rush factory', 'Gets after the quarterback more than almost anyone.', t => t.tp.prsg, 'def'],
+  ball: ['Takeaway machine', 'Forces interceptions and fumbles at a high rate.', t => t.tp.tovg, 'def'],
+  nofly: ['No-fly secondary', 'Quarterbacks struggle when they throw into its coverage.', t => t.tp.pra, 'def'],
+  stuff: ['Run stuffers', 'Makes tackles behind the line often.', t => t.tp.tflg, 'def'],
+  sure: ['Sure tacklers', 'Rarely misses a tackle.', t => t.tp.mtp, 'def'],
+  qb: ['Franchise QB', 'Its starting quarterback rates near the top of the league.', t => pctRank(TR.qb, t.u.qb), 'talent'],
+  weapons: ['Loaded skill group', 'Backs, receivers and tight ends rate among the best.', t => pctRank(TR.skill, t.u.skill), 'talent'],
+  wall: ['Trench bullies', 'The starting offensive line rates among the best.', t => pctRank(TR.ol, t.u.ol), 'talent'],
+  clean: ['Disciplined', 'Draws few penalties.', t => t.tp.peng, 'roster'],
+  room: ['Cap flexibility', 'Has more cap room than most teams.', t => pctRank(TEAMS.map(x => x.space), t.space), 'roster'],
+  bargain: ['Bargain hunters', 'Has more players playing well above their pay than most teams.', t => pctRank(TEAMS.map(x => x.nBargain), t.nBargain), 'roster'],
+  young: ['Young starters', 'Its starting lineup is one of the youngest.', t => pctRank(TEAMS.map(x => -x.age), -t.age), 'roster'],
+  vets: ['Veteran lineup', 'Its starting lineup is one of the oldest.', t => pctRank(TEAMS.map(x => x.age), t.age), 'roster']
 };
 const ttChip = ([k, tier]) => `<span class="ot ${tier}" title="${esc(TIER_NAME[tier] + ': ' + TTRAITS[k][1])}"><i aria-hidden="true"></i>${esc(TTRAITS[k][0])}</span>`;
 const startAge = L => { const a = Object.values(L).map(p => p.age).filter(Boolean); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : 27; };
@@ -2346,12 +2365,12 @@ function analyzeTeams() {
   TEAMS.forEach(t => { t.rt = rateAll(t.u); t.rk = rankAll(t.u); });
   // team stats
   const X = {};
-  TEAMS.forEach(t => (X[t.id] = { pyd: 0, ptd: 0, int: 0, att: 0, ryd: 0, rtd: 0, car: 0, db: 0, pe: 0, re: 0, sck: 0, prs: 0, tov: 0, tfl: 0, dtg: 0, praw: 0, dya: 0, mtk: 0, tk: 0, pen: 0, fgm: 0, fga: 0,
+  TEAMS.forEach(t => (X[t.id] = { pyd: 0, ptd: 0, int: 0, att: 0, ryd: 0, rtd: 0, car: 0, db: 0, pe: 0, re: 0, sck: 0, prs: 0, ay: 0, qry: 0, p20: 0, r20: 0, blz: 0, tov: 0, tfl: 0, dtg: 0, praw: 0, dya: 0, mtk: 0, tk: 0, pen: 0, fgm: 0, fga: 0,
     g: (TEAMST[t.id] && TEAMST[t.id].g) || Math.max(1, THRU), skp: TEAMST[t.id] ? TEAMST[t.id].skp : 0, ybc: TEAMST[t.id] ? TEAMST[t.id].ybc : 0 }));
   if (SD) SD.players.forEach(s => { const x = X[s.t], m = s.m || {}; if (!x) return;
-    if (m.att) { const db = m.att + (m.sk || 0); x.pyd += m.pyd || 0; x.ptd += m.ptd || 0; x.int += m.int || 0; x.att += m.att; x.db += db; x.pe += (m.pepa || 0) * db; }
-    if (m.car) { x.ryd += m.ryd || 0; x.rtd += m.rtd || 0; x.car += m.car; x.re += (m.repa || 0) * m.car; }
-    x.sck += m.sck || 0; x.prs += m.prs || 0; x.tov += (m.dint || 0) + (m.ff || 0); x.tfl += m.tfl || 0; x.dtg += m.dtg || 0; x.praw += (m.pra || 0) * (m.dtg || 0); x.dya += m.dya || 0; x.mtk += m.mtk || 0; x.tk += m.tk || 0;
+    if (m.att) { const db = m.att + (m.sk || 0); x.pyd += m.pyd || 0; x.ptd += m.ptd || 0; x.int += m.int || 0; x.att += m.att; x.db += db; x.pe += (m.pepa || 0) * db; x.ay += (m.adot || 0) * m.att; x.qry += m.ryd || 0; x.p20 += m.p20 || 0; }
+    if (m.car) { x.ryd += m.ryd || 0; x.rtd += m.rtd || 0; x.car += m.car; x.re += (m.repa || 0) * m.car; x.r20 += m.r20 || 0; }
+    x.sck += m.sck || 0; x.prs += m.prs || 0; x.blz += m.blz || 0; x.tov += (m.dint || 0) + (m.ff || 0); x.tfl += m.tfl || 0; x.dtg += m.dtg || 0; x.praw += (m.pra || 0) * (m.dtg || 0); x.dya += m.dya || 0; x.mtk += m.mtk || 0; x.tk += m.tk || 0;
     x.pen += m.pen || 0; if (m.fga) { x.fgm += m.fgm || 0; x.fga += m.fga; } });
   TEAMS.forEach(t => { t.ts = {}; TS_KEYS.forEach(k => (t.ts[k] = TSDEF[k][2](X[t.id]))); });
   TS_KEYS.forEach(k => { const low = TSDEF[k][4], vals = TEAMS.map(t => t.ts[k]);
@@ -2415,7 +2434,7 @@ function teamFieldHTML(t) {
     </div>
     <div class="panel">
       <div><span class="eyebrow">Gold top 2 teams · silver top 5 · bronze top 9</span><h2 class="sec">Team traits</h2></div>
-      <div class="ttraits">${t.tt.length ? t.tt.map(ttChip).join('') : '<span class="note">No standout traits yet.</span>'}</div>
+      ${t.tt.length ? TT_CATS.map(([c, n]) => { const L2 = t.tt.filter(x => TTRAITS[x[0]][3] === c); return L2.length ? `<div class="tt-row"><small>${esc(n)}</small><div class="ttraits">${L2.map(ttChip).join('')}</div></div>` : ''; }).join('') : '<span class="note">No standout traits yet.</span>'}
       <div class="rows">
         <div><span>Average age of starters</span><b>${t.age.toFixed(1)}</b></div>
         <div><span>Bargains (playing well above their pay)</span><b>${t.nBargain}</b></div>
@@ -2469,12 +2488,12 @@ function wireTeamField(t) {
 const pw = { sort: 'ovr', dir: -1 };
 function renderPower() {
   if (!SD) { $('#t-power').innerHTML = '<tbody><tr><td class="empty">Season stats did not load, so team ratings are not available.</td></tr></tbody>'; $('#t-scatter').innerHTML = ''; $('#t-best').innerHTML = ''; return; }
-  const list = TEAMS.filter(t => st.tDiv === 'All' || t.div === st.tDiv);
+  const list = TEAMS.filter(teamOK);
   const val = (t, k) => k === 'name' ? t.city + t.name : k === 'space' ? t.space : k === 'nt' ? t.tt.length : t.u[k];
   const rows = [...list].sort((a, b) => { const x = val(a, pw.sort), y = val(b, pw.sort); return typeof x === 'string' ? x.localeCompare(y) * pw.dir : (x - y) * pw.dir; });
   const th = (k, l, t) => `<th class="${k === 'name' ? '' : 'r'}" data-pk="${k}"${pw.sort === k ? ` aria-sort="${pw.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button"${t ? ` title="${esc(t)}"` : ''}>${l}</button></th>`;
   $('#t-power').innerHTML = `<thead><tr><th class="r"><span>#</span></th>${th('name', 'Team')}${th('ovr', 'OVR', 'Overall')}${th('off', 'OFF', 'Offense')}${th('def', 'DEF', 'Defense')}${UNITS.map(([k, n, s]) => th(k, s, n)).join('')}<th><span>Top traits</span></th>${th('space', 'Cap room')}</tr></thead><tbody>` +
-    rows.map(t => `<tr data-team="${t.id}" data-tip="tm|${t.id}" data-s="${esc(teamHay(t))}"><td class="r">${t.rk.ovr}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r"><span class="pscore" style="--pc:${rcol(t.rt.ovr)}">${t.rt.ovr}</span></td>${['off', 'def'].concat(UNITS.map(u => u[0])).map(k => `<td class="r"><span class="uc" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></td>`).join('')}<td><span class="ttraits" style="flex-wrap:nowrap">${t.tt.slice(0, 2).map(ttChip).join('')}</span></td><td class="r">${mon(t.space)}</td></tr>`).join('') + '</tbody>';
+    rows.map(t => `<tr data-team="${t.id}" data-tip="tm|${t.id}" data-s="${esc(teamHay(t))}"><td class="r">${t.rk.ovr}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r"><span class="pscore" style="--pc:${rcol(t.rt.ovr)}">${t.rt.ovr}</span></td>${['off', 'def'].concat(UNITS.map(u => u[0])).map(k => `<td class="r"><span class="uc" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></td>`).join('')}<td><span class="ttraits" style="flex-wrap:nowrap">${[...t.tt].sort((a, b) => st.tTraits.includes(b[0]) - st.tTraits.includes(a[0])).slice(0, 2).map(ttChip).join('')}</span></td><td class="r">${mon(t.space)}</td></tr>`).join('') + '</tbody>';
   applyTF($('#t-power'));
   // offense vs defense scatter
   const W2 = 560, H = 400, l = 44, r = 18, tp = 18, b = 40, x = v => l + (v - 40) / 60 * (W2 - l - r), y = v => tp + (100 - v) / 60 * (H - tp - b);
@@ -2494,6 +2513,7 @@ function renderTeamsView() {
   $$('#t-view button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tv === v)));
   $('#t-ratings').hidden = v !== 'ratings'; $('#t-cap').hidden = v !== 'cap';
   divChips($('#t-div'), st.tDiv, d => { st.tDiv = d; renderTeamsView(); });
+  traitChips();
   if (v === 'ratings') renderPower(); else renderTeamGrid();
 }
 
@@ -2680,6 +2700,18 @@ function renderKPIs() {
     <button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Top yearly pay</span><span class="v num">${mon(top.apy)}</span><span class="s">${esc(top.name)}, ${esc(TB[top.team].name)}</span></button>
     <div class="kpi"><span class="k">Dead money, league</span><span class="v num">${mon(deadAll, 0)}</span><span class="s">Owed to players no longer on the team</span></div>`;
 }
+const teamOK = t => (st.tDiv === 'All' || t.div === st.tDiv) && st.tTraits.every(k => t.tt.some(x => x[0] === k));
+function traitChips() {
+  const box = $('#t-traits'); if (!box) return;
+  if (!SD) { box.innerHTML = ''; return; }
+  const base = TEAMS.filter(t => st.tDiv === 'All' || t.div === st.tDiv);
+  box.innerHTML = `<div class="tt-head"><span class="eyebrow">Filter by team trait${st.tTraits.length ? ' · ' + st.tTraits.length + ' picked, teams must have all' : ''}</span>${st.tTraits.length ? '<button type="button" class="chip" data-clear="1">Clear traits</button>' : ''}</div>` +
+    TT_CATS.map(([c, n]) => `<div class="tt-row"><small>${esc(n)}</small><div class="chips">${Object.entries(TTRAITS).filter(([, d]) => d[3] === c).map(([k, d]) => { const cnt = base.filter(t => t.tt.some(x => x[0] === k)).length;
+      return `<button type="button" class="chip" data-tt="${k}" title="${esc(d[1])}" aria-pressed="${st.tTraits.includes(k)}">${esc(d[0])} <span class="num" style="opacity:.6">${cnt}</span></button>`; }).join('')}</div></div>`).join('');
+  box.onclick = e => { const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.clear) st.tTraits = []; else { const k = b.dataset.tt, i = st.tTraits.indexOf(k); if (i >= 0) st.tTraits.splice(i, 1); else st.tTraits.push(k); }
+    renderTeamsView(); };
+}
 function divChips(el, cur, cb) {
   el.innerHTML = DIVS.map(d => `<button type="button" class="chip" data-d="${d}" aria-pressed="${d === cur}">${d === 'All' ? 'All teams' : d}</button>`).join('');
   el.onclick = e => { const b = e.target.closest('.chip'); if (b) cb(b.dataset.d); };
@@ -2773,7 +2805,7 @@ function capStack(t, sm) {
 }
 function renderTeamGrid() {
   const s = st.tSort;
-  const list = TEAMS.filter(t => st.tDiv === 'All' || t.div === st.tDiv).sort((a, b) => s === 'name' ? (a.city + a.name).localeCompare(b.city + b.name) : b[s] - a[s]);
+  const list = TEAMS.filter(teamOK).sort((a, b) => s === 'name' ? (a.city + a.name).localeCompare(b.city + b.name) : b[s] - a[s]);
   $('#team-grid').innerHTML = list.map(t => `<a class="tc" href="#team-${t.id}">
       <span class="hd">${badge(t.id)}<span><b>${esc(t.city)} ${esc(t.name)}</b><small>${esc(t.div)}${t.id === favTeam ? ' · your team' : ''}</small></span></span>
       ${capStack(t, true)}
