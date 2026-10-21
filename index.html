@@ -826,6 +826,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
         <div class="best" id="t-best"></div>
       </div>
     </div>
+    <div class="panel tt-box" id="t-traits"></div>
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">Power ratings</h2></div><a class="btn ghost" href="#builder">Build your own roster</a></div>
       <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="t-power" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
@@ -853,7 +854,6 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
     </ul>
     <div class="teams" id="team-grid"></div>
   </div>
-  <div class="panel tt-box" id="t-traits"></div>
 </section>
 
 <!-- AWARDS + POWER RANKINGS: scored in the script (awards and power rankings section) from player stats, team ratings and data/season.json -->
@@ -2805,7 +2805,7 @@ function capStack(t, sm) {
 }
 function renderTeamGrid() {
   const s = st.tSort;
-  const list = TEAMS.filter(teamOK).sort((a, b) => s === 'name' ? (a.city + a.name).localeCompare(b.city + b.name) : b[s] - a[s]);
+  const list = TEAMS.filter(t => st.tDiv === 'All' || t.div === st.tDiv).sort((a, b) => s === 'name' ? (a.city + a.name).localeCompare(b.city + b.name) : b[s] - a[s]);
   $('#team-grid').innerHTML = list.map(t => `<a class="tc" href="#team-${t.id}">
       <span class="hd">${badge(t.id)}<span><b>${esc(t.city)} ${esc(t.name)}</b><small>${esc(t.div)}${t.id === favTeam ? ' · your team' : ''}</small></span></span>
       ${capStack(t, true)}
