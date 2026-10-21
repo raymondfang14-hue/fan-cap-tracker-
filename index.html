@@ -190,6 +190,9 @@ table.t td{padding:8px 10px;border-top:1px solid var(--line);white-space:nowrap}
 table.t .r{text-align:right}
 table.t td.r{font-family:var(--mono);font-variant-numeric:tabular-nums}
 table.t tbody tr{cursor:pointer}
+tr.cf-row td{padding:3px 4px;border-top:0;background:var(--surface-2)}
+.cfi{width:100%;min-width:3.6rem;box-sizing:border-box;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--fg);font:500 .72rem/1.2 var(--body)}
+.cfi::placeholder{color:var(--muted);opacity:.7}
 table.t tbody tr:hover{background:var(--brand-soft)}
 .pn{display:flex;align-items:center;gap:8px;font-weight:600}
 .pos{display:inline-block;min-width:2.6rem;text-align:center;padding:3px 5px;border-radius:3px;font:600 .68rem/1 var(--mono);background:var(--surface-2);color:var(--muted)}
@@ -1029,7 +1032,12 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
   </div>
 
   <div id="tool-compare" hidden class="panel">
-    <h2 class="sec">Compare two contracts</h2>
+    <div class="sechead"><h2 class="sec">Compare two players</h2>
+      <div class="seg" id="cmp-mode" role="group" aria-label="What to compare">
+        <button type="button" data-cm="contract" aria-pressed="true">Contracts</button>
+        <button type="button" data-cm="stats" aria-pressed="false">Stats and analytics</button>
+      </div>
+    </div>
     <div class="vs">
       <div class="pick"><label class="f" for="cmp-a">First player<input id="cmp-a" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-ar" hidden></div></div>
       <div class="pick"><label class="f" for="cmp-b">Second player<input id="cmp-b" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-br" hidden></div></div>
@@ -1375,26 +1383,75 @@ const st = {
   lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tTraits: [], tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'cut', tView: store.get('tView', 'ratings'), cut: null, cutWhen: 'post',
-  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], shTab: store.get('shTab', 'field')
+  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], cmpMode: 'contract', shTab: store.get('shTab', 'field')
 };
 
 /* ===== table filters ===== */
 const TFQ = {};
 const tfBox = (id, label, style) => `<div class="tfilter"${style ? ` style="${style}"` : ''}><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="${id}" placeholder="${esc(label)}" aria-label="${esc(label)}" autocomplete="off" value="${esc(TFQ[id] || '')}"></label><span class="tf-n note" aria-live="polite"></span></div>`;
+/* Column filters: every table gets a filter row under its headers. Text matches part of the cell; numbers take >, >=, <, <=, = or a range like 10-20; start with ! to exclude. */
+const COLF = {};
+const cellNum = t => { const m = String(t).replace(/,/g, '').match(/-?\d*\.?\d+/); return m ? parseFloat(m[0]) : null; };
+function colTest(q, txt) {
+  q = q.trim().toLowerCase(); if (!q) return true;
+  let neg = false; if (q[0] === '!') { neg = true; q = q.slice(1).trim(); if (!q) return true; }
+  const t = txt.trim().toLowerCase(); let ok;
+  const mo = q.match(/^(>=|<=|>|<|=)\s*(-?[\d.,]+)/), mr = q.match(/^(-?[\d.,]+)\s*(?:-|to|\.\.)\s*(-?[\d.,]+)/);
+  if (mo || mr) {
+    const n = cellNum(t);
+    if (n == null) ok = false;
+    else if (mo) { const v = parseFloat(mo[2].replace(/,/g, '')); ok = mo[1] === '>' ? n > v : mo[1] === '>=' ? n >= v : mo[1] === '<' ? n < v : mo[1] === '<=' ? n <= v : Math.abs(n - v) < 1e-9; }
+    else { const lo = parseFloat(mr[1].replace(/,/g, '')), hi = parseFloat(mr[2].replace(/,/g, '')); ok = n >= Math.min(lo, hi) && n <= Math.max(lo, hi); }
+  } else ok = q.split(/\s+/).every(w => t.includes(w));
+  return neg ? !ok : ok;
+}
+const colKey = table => table.id || table.closest('.tw')?.id || 'tbl';
+function colVals(table) { const row = table.tHead && table.tHead.rows[table.tHead.rows.length - 1]; if (!row) return []; const f = COLF[colKey(table)] || {}; return Array.from(row.cells).map((c, i) => ({ i, h: (c.dataset.h || c.textContent).trim(), q: (f[(c.dataset.h || c.textContent).trim()] || '') })); }
 function applyTF(table) {
   if (!table || !table.tBodies[0]) return;
   const tw = table.closest('.tw'), box = tw && tw.previousElementSibling;
-  if (!box || !box.classList.contains('tfilter')) return;
-  const inp = box.querySelector('input'), n = box.querySelector('.tf-n');
-  const toks = inp.value.toLowerCase().split(/\s+/).filter(Boolean);
+  const hasBox = !!(box && box.classList.contains('tfilter'));
+  const inp = hasBox ? box.querySelector('input') : null, n = hasBox ? box.querySelector('.tf-n') : null;
+  const toks = inp ? inp.value.toLowerCase().split(/\s+/).filter(Boolean) : [];
+  const cols = colVals(table).filter(c => c.q.trim());
   const body = table.tBodies[0];
   body.querySelectorAll('.tf-empty').forEach(r => r.remove());
   const rows = Array.from(body.rows);
   let shown = 0;
-  rows.forEach(r => { const h = (r.dataset.s || r.textContent).toLowerCase(); const ok = toks.every(t => h.includes(t)); r.hidden = !ok; if (ok) shown++; });
-  if (toks.length && !shown) body.insertAdjacentHTML('beforeend', `<tr class="tf-empty" style="cursor:default"><td colspan="${table.rows[0] ? table.rows[0].cells.length : 1}" class="empty">Nothing matches "${esc(inp.value.trim())}".</td></tr>`);
-  n.textContent = toks.length ? `${shown} of ${rows.length}` : '';
+  rows.forEach(r => {
+    const h = (r.dataset.s || r.textContent).toLowerCase();
+    let ok = toks.every(t => h.includes(t));
+    if (ok && cols.length) ok = cols.every(c => r.cells[c.i] && colTest(c.q, r.cells[c.i].textContent));
+    r.hidden = !ok; if (ok) shown++; });
+  const active = toks.length || cols.length;
+  if (active && !shown) body.insertAdjacentHTML('beforeend', `<tr class="tf-empty" style="cursor:default"><td colspan="${table.rows[0] ? table.rows[0].cells.length : 1}" class="empty">Nothing matches the filters.</td></tr>`);
+  if (n) n.textContent = active ? `${shown} of ${rows.length}` : '';
 }
+function enhanceTables() {
+  document.querySelectorAll('table.t, table.heat').forEach(table => {
+    const th = table.tHead; if (!th || !th.rows.length) return;
+    if (th.querySelector('.cf-row')) {
+      const key = colKey(table), f = COLF[key], b = table.tBodies[0];
+      if (f && b && Object.values(f).some(v => v)) { const rs = Array.from(b.rows).filter(r => !r.classList.contains('tf-empty')), sig = rs.length + '|' + (rs[0] ? rs[0].textContent.length : 0);
+        if (table._cfSig !== sig) { applyTF(table); const r2 = Array.from(b.rows).filter(r => !r.classList.contains('tf-empty')); table._cfSig = r2.length + '|' + (r2[0] ? r2[0].textContent.length : 0); } }
+      return; }
+    const hr = th.rows[th.rows.length - 1], key = colKey(table), saved = COLF[key] || {};
+    const tr = document.createElement('tr'); tr.className = 'cf-row';
+    Array.from(hr.cells).forEach(c => { const h = c.textContent.trim(), td = document.createElement('td');
+      td.dataset.h = h; td.className = 'cf' + (c.classList.contains('r') ? ' r' : '');
+      if (h) { const i = document.createElement('input'); i.type = 'text'; i.className = 'cfi'; i.placeholder = 'Filter'; i.setAttribute('aria-label', 'Filter ' + h); i.title = 'Text, or numbers like >80, <=5, 10-20. Start with ! to exclude.'; i.autocomplete = 'off'; i.value = saved[h] || ''; i.dataset.cf = h; td.appendChild(i); }
+      tr.appendChild(td); });
+    th.appendChild(tr);
+    if (Object.values(saved).some(v => v)) applyTF(table);
+  });
+}
+document.addEventListener('input', e => {
+  const c = e.target.closest && e.target.closest('input.cfi'); if (!c) return;
+  const table = c.closest('table'), key = colKey(table); (COLF[key] = COLF[key] || {})[c.dataset.cf] = c.value; applyTF(table);
+});
+let cfQueued = false;
+new MutationObserver(() => { if (cfQueued) return; cfQueued = true; requestAnimationFrame(() => { cfQueued = false; enhanceTables(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+document.addEventListener('DOMContentLoaded', enhanceTables);
 document.addEventListener('input', e => {
   const i = e.target.closest && e.target.closest('input[data-tf]'); if (!i) return;
   TFQ[i.dataset.tf] = i.value;
@@ -3105,10 +3162,39 @@ function radarSVG(a, b) {
     <ul class="legend" style="grid-template-columns:repeat(2,max-content)"><li><i class="swatch" style="background:var(--brand)"></i><span>${esc(a.name)}</span></li><li><i class="swatch" style="background:var(--c-def)"></i><span>${esc(b.name)}</span></li></ul>
     <span class="note">Percentiles at each player's own position.</span></div>`;
 }
+function cmpStatsHTML(a, b) {
+  const head = `<div class="cmprow"><div class="l">${badge(a.team)}<b style="font-family:var(--body)">${esc(a.name)}</b></div><span></span><div class="rgt">${badge(b.team)}<b style="font-family:var(--body)">${esc(b.name)}</b></div></div>`;
+  if (!a.st || !b.st) return head + `<p class="empty">${esc(!a.st ? a.name : b.name)} has no 2026 stats yet, so there is nothing to compare.</p>`;
+  const keysOf = p => { const c = GCFG[p.sg]; return c ? [...new Set(c.bars.map(x => x[0]).concat(c.cols))] : []; };
+  const ka = keysOf(a), kb = keysOf(b), same = a.sg === b.sg;
+  const keys = (same ? ka : ka.filter(k => kb.includes(k))).filter(k => MET[k]);
+  const row = (lab, sub, va, vb, pa, pb, ra, rb) => { const win = pa != null && pb != null && Math.abs(pa - pb) > .01 ? (pa > pb ? 'a' : 'b') : '';
+    const bar = (p, c) => (p == null ? '' : `<i class="b" style="width:${(p * 60).toFixed(0)}%;background:${c}"></i>`);
+    return `<div class="cmprow"><div class="l"><span class="note">${ra || ''}</span><b${win === 'a' ? ' style="color:var(--good)"' : ''}>${va}</b>${bar(pa, 'var(--brand)')}</div><span class="lab" title="${esc(sub || '')}">${esc(lab)}</span><div class="rgt">${bar(pb, 'var(--c-def)')}<b${win === 'b' ? ' style="color:var(--good)"' : ''}>${vb}</b><span class="note">${rb || ''}</span></div></div>`; };
+  const val = (p, k) => { const v = MET[k][2](p); return v == null ? '—' : MET[k][3](v); };
+  const rk = (p, k) => (p.fq && p.rk[k] ? '#' + p.rk[k][0] : '');
+  const pct = (p, k) => (MET[k][2](p) == null || p.pc[k] == null ? null : p.pc[k]);
+  const chips = p => (p.ot.length ? p.ot.map(otChip).join('') : '<span class="note">None</span>');
+  let out = head;
+  out += `<div class="cmprow"><div class="l"><b>${a.play ?? '—'}</b></div><span class="lab">Play rating</span><div class="rgt"><b>${b.play ?? '—'}</b></div></div>`;
+  out += `<div class="cmprow"><div class="l"><b>${a.prk ? '#' + a.prk + ' of ' + a.pn : '—'}</b></div><span class="lab">${same ? esc(SG_NAME[a.sg]) + ' rank' : 'Position rank'}</span><div class="rgt"><b>${b.prk ? '#' + b.prk + ' of ' + b.pn : '—'}</b></div></div>`;
+  out += `<div class="cmprow"><div class="l" style="flex-wrap:wrap">${(a.roles || []).slice(0, 4).map(r => `<span class="role sm">${esc(r)}</span>`).join('') || '—'}</div><span class="lab">Roles</span><div class="rgt" style="flex-wrap:wrap">${(b.roles || []).slice(0, 4).map(r => `<span class="role sm">${esc(r)}</span>`).join('') || '—'}</div></div>`;
+  out += `<div class="cmprow"><div class="l" style="flex-wrap:wrap">${chips(a)}</div><span class="lab">Traits</span><div class="rgt" style="flex-wrap:wrap">${chips(b)}</div></div>`;
+  out += `<div class="cmprow"><div class="l"><b>${a.st.g || 0} (${a.st.gs || 0} started)</b></div><span class="lab">Games</span><div class="rgt"><b>${b.st.g || 0} (${b.st.gs || 0} started)</b></div></div>`;
+  if (!keys.length) out += `<p class="note">${esc(SG_NAME[a.sg] || a.pos)} and ${esc(SG_NAME[b.sg] || b.pos)} are measured on different stats, so only the ratings above line up. Pick two players at the same position for a stat-by-stat comparison.</p>`;
+  else {
+    out += `<div class="cmprow"><span></span><span class="lab" style="text-align:center">${same ? 'Stats and analytics' : 'Shared stats'}</span><span></span></div>`;
+    out += keys.map(k => row(MET[k][0], MET[k][1], val(a, k), val(b, k), pct(a, k), pct(b, k), rk(a, k), rk(b, k))).join('');
+    out += `<p class="note">Bars show where each player ranks against qualified ${same ? esc(SG_NAME[a.sg].toLowerCase()) + 's' : 'players at his position'} (longer is better, even for stats where lower is better). Green marks the better number. ${a.fq && b.fq ? '' : esc([a, b].filter(p => !p.fq).map(p => p.name).join(' and ')) + ' has not played enough to qualify for rankings.'}</p>`;
+  }
+  return out;
+}
 function renderCompare() {
   const [a, b] = st.cmp.map(i => (i == null ? null : PL[i]));
   if (a) $('#cmp-a').value = a.name; if (b) $('#cmp-b').value = b.name;
-  if (!a || !b) { $('#cmp-out').innerHTML = `<p class="empty">${a ? 'Now pick a second player.' : 'Pick two players to line their contracts up.'}</p>`; return; }
+  $$('#cmp-mode button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.cm === st.cmpMode)));
+  if (!a || !b) { $('#cmp-out').innerHTML = `<p class="empty">${a ? 'Now pick a second player.' : 'Pick two players to compare.'}</p>`; return; }
+  if (st.cmpMode === 'stats') { $('#cmp-out').innerHTML = cmpStatsHTML(a, b); return; }
   const radar = radarSVG(a, b);
   const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
   $('#cmp-out').innerHTML = `<div class="cmprow"><div class="l">${badge(a.team)}<b style="font-family:var(--body)">${esc(a.name)}</b></div><span></span><div class="rgt">${badge(b.team)}<b style="font-family:var(--body)">${esc(b.name)}</b></div></div>` +
@@ -3731,6 +3817,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   bindSearch($('#dg-q'), $('#dg-r'), it => { dgPick = it.p.i; renderDG(); }, false);
   if (dgPick == null) { const j = PL.find(p => p.name === 'Jahmyr Gibbs'); dgPick = j ? j.i : 0; renderDG(); }
   bindSearch($('#cut-q'), $('#cut-r'), it => { st.cut = it.p.i; renderCut(); }, false);
+  $('#cmp-mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; st.cmpMode = b.dataset.cm; renderCompare(); };
   bindSearch($('#cmp-a'), $('#cmp-ar'), it => { st.cmp[0] = it.p.i; renderCompare(); }, false);
   bindSearch($('#cmp-b'), $('#cmp-br'), it => { st.cmp[1] = it.p.i; renderCompare(); }, false);
   if (st.cut == null) { const c = PL.filter(p => p.cap && p.dpost != null).sort((a, b) => (b.cap - b.dpost) - (a.cap - a.dpost))[0]; st.cut = c ? c.i : null; }
