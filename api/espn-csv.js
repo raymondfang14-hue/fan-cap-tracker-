@@ -4,7 +4,8 @@
 const BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
 const FIX = { WSH: 'WAS', JAC: 'JAX' };
 const norm = n => n.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b/g, '').replace(/[^a-z]/g, '');
-const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+// Quote for CSV; a leading = + - @ would run as a formula in Excel or Sheets, so prefix it with '.
+const q = v => { let t = String(v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
 const j = async u => { const r = await fetch(u, { headers: { 'User-Agent': 'PlainCap/1.0' } }); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
 
 module.exports = async (req, res) => {
@@ -32,6 +33,7 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="plaincap_espn_assets.csv"');
     res.status(200).send(rows.map(r => r.map(q).join(',')).join('\n') + '\n');
   } catch (e) {
-    res.status(502).json({ error: 'Could not read ESPN: ' + e.message });
+    console.error('espn-csv:', e);
+    res.status(502).json({ error: 'Could not read ESPN right now. Try again in a few minutes.' });
   }
 };

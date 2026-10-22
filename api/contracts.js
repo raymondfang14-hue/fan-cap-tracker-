@@ -59,7 +59,8 @@ async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     res.status(200).json({ updated: new Date().toISOString(), contracts });
   } catch (e) {
-    res.status(502).json({ error: String(e.message || e) });
+    console.error('contracts:', e);
+    res.status(502).json({ error: 'Could not read the deals table right now.' });
   }
 }
 

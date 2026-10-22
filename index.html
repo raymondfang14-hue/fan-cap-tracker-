@@ -1978,6 +1978,8 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Links and images from data files only ever point at http(s). Anything else (javascript:, data:) becomes empty.
+const safeUrl = u => /^https?:\/\//i.test(String(u || '').trim()) ? esc(String(u).trim()) : '';
 const mon = (n, d) => {
   if (n == null || !Number.isFinite(n)) return '—';
   const a = Math.abs(n), s = n < 0 ? '−' : '';
@@ -2004,9 +2006,9 @@ const COLORS2 = { ARI: '#FFB612', ATL: '#000000', BAL: '#9E7C0C', BUF: '#C60C30'
 const IMAGES = { logos: !/[?&]plain=1/.test(location.search), headshots: !/[?&]plain=1/.test(location.search) };
 let ASSETS = { teams: {}, players: {} };
 const normName = n => n.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b/g, '').replace(/[^a-z]/g, '');
-const headshot = p => (IMAGES.headshots && ASSETS.players[p.team + '|' + normName(p.name)]) || '';
+const headshot = p => (IMAGES.headshots && safeUrl(ASSETS.players[p.team + '|' + normName(p.name)])) || '';
 const crest = (id, w = 26) => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc', ink = inkFor(c1), small = id.length > 2;
-  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><path d="M6 12.5 H34" stroke="${c2}" stroke-width="1.6" opacity=".7"></path><path d="M20 35 L23 39.5 H17 Z" fill="${c2}" opacity=".85"></path><text x="20" y="${small ? 29 : 30}" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${small ? 12 : 14.5}" fill="${ink}">${id}</text>${IMAGES.logos && ASSETS.teams[id] ? `<image href="${ASSETS.teams[id].logo}" x="0" y="0" width="40" height="46" preserveAspectRatio="xMidYMid meet" onload="[...this.parentNode.children].forEach(n=>n!==this&&n.remove())" onerror="this.remove()"></image>` : ''}</svg>`; };
+  return `<svg class="crest" viewBox="0 0 40 46" width="${w}" height="${Math.round(w * 1.15)}" aria-hidden="true"><path d="M20 1.5 L38 6.5 V21 C38 33 30.5 40 20 44.5 C9.5 40 2 33 2 21 V6.5 Z" fill="${c1}" stroke="${c2}" stroke-width="2.6" stroke-linejoin="round"></path><path d="M6 12.5 H34" stroke="${c2}" stroke-width="1.6" opacity=".7"></path><path d="M20 35 L23 39.5 H17 Z" fill="${c2}" opacity=".85"></path><text x="20" y="${small ? 29 : 30}" text-anchor="middle" font-family="Archivo,'Arial Narrow',sans-serif" font-weight="800" font-size="${small ? 12 : 14.5}" fill="${ink}">${id}</text>${IMAGES.logos && ASSETS.teams[id] && safeUrl(ASSETS.teams[id].logo) ? `<image href="${safeUrl(ASSETS.teams[id].logo)}" x="0" y="0" width="40" height="46" preserveAspectRatio="xMidYMid meet" onload="[...this.parentNode.children].forEach(n=>n!==this&&n.remove())" onerror="this.remove()"></image>` : ''}</svg>`; };
 const initials = n => { const w = n.replace(/[.,]/g, '').split(/\s+/).filter(x => x && !/^(Jr|Sr|II|III|IV|V)$/i.test(x)); return ((w[0] || '?')[0] + (w.length > 1 ? w[w.length - 1][0] : '')).toUpperCase(); };
 const teamVars = id => { const c1 = COLORS[id] || '#555', c2 = COLORS2[id] || '#ccc'; return `--c1:${c1};--c2:${c2};--ink:${inkFor(c1)}`; };
 const avatar = (p, px) => `<span class="av" style="${teamVars(p.team)}${px ? `;width:${px}px;height:${px}px;font-size:${(px * .38).toFixed(0)}px` : ''}" aria-hidden="true">${esc(initials(p.name))}${headshot(p) ? `<img class="ph" src="${headshot(p)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>`;
@@ -3533,7 +3535,7 @@ function moveHTML(m) {
   return `<article class="mv"><span class="when">${esc(m.date)}</span><div class="body">
     <div class="meta"><span class="kind ${esc(m.kind)}">${esc(m.kind)}</span>${teams}</div>
     <h3>${esc(m.head)}</h3><p>${esc(m.plain)}</p>
-    ${m.url ? `<div class="meta"><a href="${esc(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a></div>` : ''}</div></article>`;
+    ${safeUrl(m.url) ? `<div class="meta"><a href="${safeUrl(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a></div>` : ''}</div></article>`;
 }
 function renderHomeFeed() { $('#home-feed').innerHTML = MOVES.filter(m => CONTRACT_KINDS.includes(m.kind)).slice(0, 3).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>'; }
 function renderDeadline() {
@@ -3793,7 +3795,7 @@ const PROV = { r: ['Reported', 'rep'], f: ['Calculated', 'calc'], m: ['League mi
 const VERW = { t: 'total value', a: 'yearly average', g: 'guarantees', f: 'money guaranteed at signing', e: 'final season', c: '2026 cap hit', b: 'signing bonus' };
 function provHTML(p) {
   const s = D && D.sources && D.sources[p.srcI], [lab, cls] = PROV[p.prov] || PROV.u;
-  const link = s ? (/^https?:/.test(s[1]) ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : esc(s[0])) : '';
+  const link = s ? (safeUrl(s[1]) ? `<a href="${safeUrl(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : esc(s[0])) : '';
   let txt;
   if (p.prov === 'r') { const got = [...p.ver].map(c => c === 'b' && p.sb ? 'signing bonus ' + mon(p.sb, 1) : VERW[c]).filter(Boolean), miss = ['t', 'g', 'c'].filter(c => !p.ver.includes(c)).map(c => VERW[c]); txt = `From ${link || 'a news report'}: ${got.join(', ')}.${miss.length ? ' Not yet confirmed: ' + miss.join(', ') + '.' : ''}`; }
   else if (p.prov === 'f') txt = 'Calculated by PlainStats from his draft slot with the rookie pay scale and the league minimum salaries in the CBA. <a href="#learn">How we calculate</a>';
@@ -4551,7 +4553,7 @@ function renderFATags() {
   const lg = cal.find(c => /league year/i.test(c.label)), days = lg ? Math.ceil((new Date(lg.date + 'T16:00:00-05:00') - now) / 864e5) : null;
   $('#fa-cal-eb').textContent = days != null && days > 0 ? `${days} days until free agency opens` : 'The road to free agency';
   $('#fa-cal').innerHTML = cal.map((c, n) => { const inner = `<span class="d">${dayFmt(c.date)}</span><span><b>${esc(c.label)}</b><small>${esc(c.note || '')}</small></span>`, cls = n === next ? 'next' : n < next || next < 0 ? 'past' : '';
-    return c.url ? `<a class="${cls}" href="${esc(c.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('') || '<p class="empty">Dates did not load.</p>';
+    return safeUrl(c.url) ? `<a class="${cls}" href="${safeUrl(c.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="${cls}">${inner}</div>`; }).join('') || '<p class="empty">Dates did not load.</p>';
   $('#fa-cal-note').textContent = 'Source: NFL.com, Pro Football Talk and team sites. Dates can change.' + (FAX && FAX.asOf ? ' Updated ' + dayFmt(FAX.asOf) + '.' : '');
   // tags
   const offic = (FAX && FAX.tags) || {}, c27 = faClass(2027);
@@ -5032,7 +5034,7 @@ function pScout(p) {
     <div style="display:grid;gap:6px"><span class="eyebrow">How the boards see him</span><div class="boards">${boards.map(([n, v, mx]) => `<div><span>${esc(n)}</span><span class="dtrack">${v ? `<i class="dot ${v === lo ? 'db' : 'dw'}" style="left:${((Math.min(v, mx) - 1) / (mx - 1) * 100).toFixed(1)}%"></i>` : ''}</span><b class="num">${v ? (n === 'Outlet average' ? v.toFixed(1) : '#' + v) : `Not in top ${mx}`}</b></div>`).join('')}</div></div>
     <div class="story">${pStory(p).map(x => `<p>${esc(x)}</p>`).join('')}</div>
     ${pComps(p)}
-    ${p.src ? `<p class="note">2026 stats: <a href="${esc(p.src)}" target="_blank" rel="noopener">cfbstats</a>, through ${new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}.</p>` : ''}
+    ${safeUrl(p.src) ? `<p class="note">2026 stats: <a href="${safeUrl(p.src)}" target="_blank" rel="noopener">cfbstats</a>, through ${new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}.</p>` : ''}
   </div>`;
 }
 function pPay(p) {
