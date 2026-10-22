@@ -6,7 +6,6 @@
 // that is not confirmed). Only the slug comes from the URL, which means nobody can make this domain draw a card with text of their choosing.
 // Headshots and logos are fetched from ESPN's image CDN here, because the build sandbox can't reach it; if an image is missing the card
 // shows initials instead. If anything fails the request redirects to the static /og-image.png so a shared link never gets a broken image.
-import { ImageResponse } from '@vercel/og';
 import { card, W, H } from './_og-layout.js';
 
 const KINDS = new Set(['players', 'teams', 'draft', 'pages']);
@@ -73,6 +72,8 @@ export default async function handler(request) {
     if (!c) return fallback();
     const [main, logo] = await Promise.all([toDataUri(c.i), toDataUri(c.g)]);
     // Draw to bytes here (not as a streamed ImageResponse) so a render error lands in the catch and becomes the fallback, not a broken 500.
+    // @vercel/og is ES-module only and Vercel compiles this file to CommonJS, so it has to be loaded with a dynamic import.
+    const { ImageResponse } = await import('@vercel/og');
     const png = await new ImageResponse(card(c, { main, logo }, asOf), { width: W, height: H, fonts }).arrayBuffer();
     return new Response(png, { headers: { 'Content-Type': 'image/png', 'Cache-Control': CACHE } });
   } catch (e) {
