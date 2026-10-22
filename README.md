@@ -16,6 +16,10 @@ Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Ca
 ## Views
 Open a view directly with its anchor (`#teams` has the power ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
 
+## Search pages (players/, teams/, draft/, sitemap.xml)
+`python3 -I tools/build_seo.py` turns the data files into crawlable pages: one for every player with a confirmed contract or 2026 stats, three per team (overview, cap space, dead money), one per draft prospect, and hub pages for teams, players and the draft. Each has its own title, description, plain-English summary, FAQ and schema markup (Person, SportsTeam, FAQPage, BreadcrumbList), and the script rewrites `sitemap.xml` and `tools/seo-nav.html` (the team links `build.sh` adds to the bottom of the home page). Players whose contract is still being verified get `noindex` and stay out of the sitemap until a named report confirms the deal. Run it after every data refresh, then `./build.sh`, then commit.
+To submit to Google: add `https://www.plainstatsnfl.com` as a property in Search Console, open Sitemaps and submit `sitemap.xml`.
+
 ## Where contract numbers come from (data/nfl.json, data/ledger.csv, data/cba.json)
 PlainStats does not copy Over The Cap or Spotrac. `data/build_contracts.py` builds every player row and tags where it comes from:
 - `r` reported: `data/ledger.csv` has one row per deal from a named news report or team announcement, with its URL. Blank fields stay unverified and the player page says so.
