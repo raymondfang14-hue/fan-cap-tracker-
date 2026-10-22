@@ -1891,6 +1891,7 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
       <li><b>Advertising.</b> PlainStats is supported by ads. Third-party vendors, including Google, use cookies to serve ads based on your visits to this and other websites. Google's advertising cookies let it and its partners show ads based on those visits.</li>
       <li><b>Your choices.</b> You can turn off personalized ads in <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ad Settings</a>, or opt out of many third-party vendors at <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener">aboutads.info</a>. Blocking cookies in your browser also works, though some saved settings will reset.</li>
       <li><b>Visitor counts.</b> If you accept cookies, the site uses Google Analytics to count visits and see which pages are popular. If you decline, no analytics run.</li>
+      <li><b>Newsletter.</b> If you subscribe to The Cap Sheet, your email address is handled by beehiiv, our email provider. You can unsubscribe in any email.</li>
       <li><b>Questions.</b> Write to <a href="mailto:info@plainstatsnfl.com">info@plainstatsnfl.com</a>.</li>
     </ul>
   </div>
@@ -5562,11 +5563,11 @@ function buildMenus() {
 /* ===== analytics, consent, newsletter, ads =====
    Launch settings. Everything below stays off until its value is filled in, and only runs on the live domains.
    ga4: Google Analytics 4 measurement ID (G-XXXXXXXXXX).
-   waitlist.action: the form URL from your email tool (beehiiv, Buttondown, Formspree).
+   waitlist.beehiivForm: the beehiiv embedded form ID. waitlist.action: a plain form URL from another email tool, if you switch.
    ads.client: AdSense publisher ID (ca-pub-...), plus optional slot IDs. */
 const LIVE_HOSTS = ['plainstatsnfl.com', 'www.plainstatsnfl.com', 'fan-cap-tracker.vercel.app'];
-const ANALYTICS = { ga4: '' };
-const WAITLIST = { action: '' };
+const ANALYTICS = { ga4: 'G-PLKGBKTLC3' };
+const WAITLIST = { beehiivForm: '5f4b7895-a58d-49c2-a019-4706196fa376', action: '' };
 const ADS = {
   client: '',
   hosts: LIVE_HOSTS,
@@ -5596,9 +5597,15 @@ const ADS = {
     }
   }
 
-  // newsletter signup (shown only once an action URL is set)
+  // newsletter signup: beehiiv embed (live domains only) or a plain form action
   const su = $('#signup'), sf = $('#signup-form');
-  if (su && sf && WAITLIST.action) {
+  if (su && sf && WAITLIST.beehiivForm && onLive) {
+    su.hidden = false;
+    const holder = document.createElement('div'); holder.className = 'bh'; sf.replaceWith(holder);
+    const s = document.createElement('script'); s.async = true;
+    s.src = 'https://subscribe-forms.beehiiv.com/v3/loader.js'; s.dataset.beehiivForm = WAITLIST.beehiivForm;
+    holder.appendChild(s);
+  } else if (su && sf && WAITLIST.action) {
     su.hidden = false; sf.action = WAITLIST.action;
     sf.addEventListener('submit', e => {
       const em = $('#signup-email'); if (!em.value || !em.checkValidity()) { e.preventDefault(); em.reportValidity(); return; }
