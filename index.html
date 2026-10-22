@@ -1030,6 +1030,23 @@ footer a:hover{color:var(--fg);text-decoration:underline}
 .disc{margin:clamp(20px,4vw,36px) auto 0;max-width:62ch;text-align:center;font:400 .74rem/1.45 var(--body);color:var(--muted)}
 dialog .disc{margin:6px 22px 18px;max-width:none}
 
+/* ---------- design pass: sentence-case labels, calmer hover ----------
+   The first layer set small labels in tracked all-caps mono. The storefront look reads them in sentence case,
+   in the body face, so labels stop shouting over the numbers they describe. */
+.bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.awc .aw-k,.watch b,.cmprow .lab,.fc-nums small,.ring,
+.heat th,.pvps .q,.bigplay small,.pffg small,table.t th,.tier b,.vlab,.coachcard b,.sh-top h3,.dpos h3,
+.blist .sl,.blist .unit,.rkpill,.slot .sp,.kind,.outlook,.rookie,.srcb,.role,.ad::before,
+.tt-row>small,.cplink,.fieldd .los span,.drow .dn{
+  text-transform:none!important;letter-spacing:0!important;font-family:var(--body)!important}
+.bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.fc-nums small,.bigplay small,.pffg small,.tt-row>small{font-size:.74rem!important;font-weight:500!important}
+table.t th{font-size:.76rem!important;font-weight:600!important}
+.kind,.outlook,.rookie,.srcb,.role{font-size:.72rem!important;font-weight:600!important;border-radius:6px}
+/* A word-valued tile shrinks to fit its tile instead of breaking mid-word ("Quarterback s"). */
+.kpi.fit{container-type:inline-size}
+.kpi.fit .v{font-size:clamp(1.15rem,12.5cqi,1.9rem);white-space:nowrap}
+/* Cards that open something keep their shadow on hover but no longer jump. */
+.ex:hover,.tile:hover,a.kpi:hover,button.kpi:hover,.fc:hover{transform:none}
+
 </style>
 
 <header class="gn" id="gn">
@@ -1070,13 +1087,14 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
   <div class="kpis" id="kpis" hidden></div>
 
   <div class="ex-head">
-    <h2 id="h-explore">Everything on PlainStats.</h2>
+    <h2 id="h-explore">NFL contracts and stats, in plain English.</h2>
+    <p>Every cap hit, guarantee and play rating for all 32 teams, refreshed each morning.</p>
   </div>
   <div class="hx hx-s">
     <div class="search">
       <label class="sr" for="q-home">Find a player or team</label>
       <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
-      <input id="q-home" type="search" placeholder="Search Mahomes, Lions or edge rushers" autocomplete="off" aria-controls="r-home"></span>
+      <input id="q-home" type="search" placeholder="Search a player or team" autocomplete="off" aria-controls="r-home"></span>
       <div class="results" id="r-home" hidden></div>
     </div>
   </div>
@@ -4861,7 +4879,7 @@ function renderDraftKPIs() {
   $('#dr-kpis').innerHTML = `
     <div class="kpi"><span class="k">Prospects tracked</span><span class="v">${DP.length}</span><span class="s">${DP.filter(p => p.st).length} with 2026 college stats</span></div>
     ${one ? `<a class="kpi" href="#team-${one.own}"><span class="k">On the clock today</span><span class="v">${esc(TB[one.own] ? TB[one.own].name : one.own)}</span><span class="s">${r.w}-${r.l}${r.t ? '-' + r.t : ''}, worst record in the league</span></a>` : ''}
-    ${deep ? `<div class="kpi"><span class="k">Deepest in round 1</span><span class="v" style="font-size:clamp(1.35rem,2.3vw,2rem);overflow-wrap:anywhere">${esc(DR_NAME[deep[0]])}s</span><span class="s">${deep[1]} of the top 32 on the board</span></div>` : ''}
+    ${deep ? `<div class="kpi fit"><span class="k">Deepest in round 1</span><span class="v">${esc(DR_NAME[deep[0]])}s</span><span class="s">${deep[1]} of the top 32 on the board</span></div>` : ''}
     ${multi.length ? `<a class="kpi" href="#team-${multi[0][0]}"><span class="k">Most first-round picks</span><span class="v">${esc(TB[multi[0][0]] ? TB[multi[0][0]].name : multi[0][0])}</span><span class="s">${multi[0][1]} projected firsts${multi[1] ? `; ${esc(TB[multi[1][0]].name)} have ${multi[1][1]}` : ''}</span></a>` : ''}
     <div class="kpi"><span class="k">No. 1 pick's rookie deal</span><span class="v">${mon(slotVal(1))}</span><span class="s">4 years, est. for 2027, fully guaranteed</span></div>`;
 }
