@@ -21,7 +21,8 @@ PlainStats does not copy Over The Cap or Spotrac. `data/build_contracts.py` buil
 - `r` reported: `data/ledger.csv` has one row per deal from a named news report or team announcement, with its URL. Blank fields stay unverified and the player page says so.
 - `f` calculated: rookie contracts for the last four draft classes, from the draft slot with PlainStats' rookie scale (`data/rookie_scale.py`, anchored to real 2026 signings listed in `data/cba.json`) and the CBA minimum salaries, including the proven performance escalator, fifth-year options and trades. Undrafted rookies get the minimum.
 - `m` league minimum and `p` practice squad: valued with the CBA tables in `data/cba.json`.
-- `u` unverified: older figures still being re-checked. The daily refresh moves these into the ledger, biggest cap hits first.
+- `u` unverified: no sourced figure yet. The dollar fields are blank in `nfl.json` and the page says "Contract being verified". The daily refresh moves these into the ledger (starting with quarterbacks and the best-known players, using nflverse snap counts to choose), and `data/build_market.py` waits to rebuild the price ladder until most contracts are verified.
+- Suggest a fix: the button on every player sheet and in the footer opens a form that composes an email to info@plainstatsnfl.com. A contract figure changes only when the sender's link, or our own search, finds a named report.
 Run `python3 -I data/build_contracts.py <folder with nflverse roster_2026.csv, draft_picks.csv, snap_counts_2023-2025.csv>`, then `data/fix_ol.py`, then `data/build_market.py`.
 - `data/years_calc.json`: year-by-year cap hits PlainStats calculates (rookie deals). Other players' later years are estimated in the browser and labeled.
 - `data/freeagency.json`: PlainStats cap projection (2026 cap grown 7% a year), the offseason calendar and official franchise tag prices once announced.

@@ -655,6 +655,7 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .srcb.rep{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .srcb.calc{background:color-mix(in srgb,var(--brand) 16%,transparent);color:var(--brand)}
 .srcb.old{background:color-mix(in srgb,var(--warn,#b26b00) 16%,transparent);color:var(--warn,#b26b00)}
+.fixf{display:grid;gap:12px}.fixf label{display:grid;gap:5px;font-size:.84rem;font-weight:600}.fixf input,.fixf select,.fixf textarea{font:inherit;font-weight:400;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg,var(--surface));color:var(--fg);min-width:0}.fixf textarea{min-height:92px;resize:vertical}.fixf .hint{font-size:.78rem;color:var(--muted);font-weight:400}.fixf .row{display:flex;gap:8px;flex-wrap:wrap}.fixf .ctx{font-size:.84rem;color:var(--muted)}.fixl{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
 .prov{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:.82rem;color:var(--muted);line-height:1.45}
 .prov a{color:var(--link,var(--brand))}
 .est{font-style:italic;color:var(--muted)}
@@ -918,8 +919,9 @@ select,input[type="text"],input[type="search"],input[type="number"]{border:1px s
 .tw{border:0;border-radius:16px}
 table.t th{background:var(--surface);box-shadow:inset 0 -1px 0 var(--line);font:600 .68rem/1.2 var(--body);letter-spacing:.04em}
 table.t td{border-top-color:var(--line)}
-dialog#sheet,dialog#picker{border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
-dialog#sheet::backdrop,dialog#picker::backdrop{background:var(--scrim);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+dialog#sheet,dialog#picker,dialog#fix{border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog#fix{border:0;padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 40px);background:var(--surface);color:var(--fg)}
+dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{background:var(--scrim);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .badge{border-radius:6px}
 
 /* ---------- home hero ---------- */
@@ -1883,8 +1885,8 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
   <div><span class="eyebrow">About</span><h1 class="title" id="h-about">About PlainStats</h1></div>
   <div class="panel prose">
     <p>PlainStats explains NFL contracts and the salary cap for everyday fans. Every deal shows what is really guaranteed, what the player counts against the cap each year, and what happens if his team cuts or trades him. Team pages, player ratings, the draft board and the front-office tools all build on the same numbers.</p>
-    <p>Contract figures come from named news reports and team announcements, plus PlainStats' own calculations from the rookie pay scale and the collective bargaining agreement. Each player shows where his numbers come from, and figures still being re-verified are marked. Player stats come from nflverse. Ratings, grades, estimates and award odds are PlainStats' own models built from public data. They are estimates, not official figures, and they update as new stats and reports arrive.</p>
-    <p>Found a wrong number or have an idea? Email <a href="mailto:info@plainstatsnfl.com">info@plainstatsnfl.com</a>. Corrections are fixed fast.</p>
+    <p>Contract figures come from named news reports and team announcements, plus PlainStats' own calculations from the rookie pay scale and the collective bargaining agreement. Each player shows where his numbers come from, and a contract with no confirmed figure yet shows "Contract being verified" instead of a dollar amount. Player stats come from nflverse. Ratings, grades, estimates and award odds are PlainStats' own models built from public data. They are estimates, not official figures, and they update as new stats and reports arrive.</p>
+    <p>Found a wrong number or have an idea? Use <button type="button" class="fixl" data-fix>Suggest a fix</button> or email <a href="mailto:info@plainstatsnfl.com">info@plainstatsnfl.com</a>. A contract figure changes once a named report confirms it.</p>
     <p>PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA, the NBA or any team.</p>
   </div>
   <div class="panel prose" id="privacy">
@@ -1937,11 +1939,20 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
       <p>Ads stay off until you add a Google AdSense publisher ID to <code>ADS.client</code> and your live domain to <code>ADS.hosts</code> near the end of the script. Until then the slots are hidden. <button class="btn ghost more" type="button" id="ad-prev">Preview ad spots</button></p>
     </div>
   </details>
-  <div class="ft-base"><span>© 2026 PlainStats</span><a href="#about">About</a><a href="#privacy">Privacy</a><a href="mailto:info@plainstatsnfl.com">Contact</a><a href="#learn">Cap 101</a></div>
+  <div class="ft-base"><span>© 2026 PlainStats</span><a href="#about">About</a><a href="#privacy">Privacy</a><a href="mailto:info@plainstatsnfl.com">Contact</a><button type="button" class="fixl" data-fix>Suggest a fix</button><a href="#learn">Cap 101</a></div>
 </div></footer>
 
 <div id="tip" hidden></div>
 <dialog id="sheet" aria-labelledby="sh-name"><div class="sh" id="sheet-body"></div><p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p></dialog>
+<dialog id="fix" aria-labelledby="fx-title"><div class="sh"><div class="sh-hd" style="display:flex;justify-content:space-between;align-items:start;gap:12px"><div><span class="eyebrow">Help us get it right</span><h3 id="fx-title" style="margin:2px 0 0">Suggest a fix</h3></div><button class="x" type="button" aria-label="Close" id="fx-x">×</button></div>
+<form class="fixf" id="fx-form" onsubmit="return false">
+<p class="ctx" id="fx-ctx"></p>
+<label>What needs fixing?<select id="fx-kind"><option value="Contract figure">A contract figure</option><option value="Team, position or age">Team, position or age</option><option value="A stat or rating">A stat or rating</option><option value="Something else">Something else</option></select></label>
+<label>What should it say?<textarea id="fx-msg" placeholder="Example: his deal is $48M over 3 years, with $30M guaranteed."></textarea></label>
+<label>Link to a report<input id="fx-url" type="url" inputmode="url" placeholder="https://…"><span class="hint" id="fx-hint">Required for contract figures. A team announcement or a news report from a named outlet works. Posts on social media and forums do not count.</span></label>
+<div class="row"><button class="btn" type="button" id="fx-send">Open email to send</button><button class="btn ghost" type="button" id="fx-copy">Copy text</button></div>
+<p class="note" id="fx-note">This opens your email app with the details filled in, addressed to info@plainstatsnfl.com. We change a number only after a named report confirms it, and we do not reply to every note.</p>
+</form></div><p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p></dialog>
 <dialog id="picker" aria-labelledby="pk-title"><div class="sh" id="pk-body"></div><p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p></dialog>
 
 <script>
@@ -1957,6 +1968,7 @@ const mon = (n, d) => {
   if (a >= 1e3) return s + '$' + Math.round(a / 1e3) + 'K';
   return s + '$' + Math.round(a);
 };
+const VERIFYING = 'Contract being verified';
 const pct = (x, d = 0) => Number.isFinite(x) ? (x * 100).toFixed(d) + '%' : '—';
 const ord = n => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
 const store = {
@@ -2019,7 +2031,7 @@ let DEALS = [
     watch: 'Reports did not give a total guarantee, so the bar shows only the bonus as locked.' }
 ];
 const LEARN_NFL = [
-  ['Where the numbers come from', 'PlainStats builds its contract figures itself. Deals come from named news reports and team announcements, with a link on each player. Rookie contracts are calculated from the draft slot with the rookie pay scale, and minimum deals from the salary table in the collective bargaining agreement (CBA). Stats and play-by-play come from nflverse, an open data project. A player marked Being re-verified still shows an older figure that is being checked.'],
+  ['Where the numbers come from', 'PlainStats builds its contract figures itself. Deals come from named news reports and team announcements, with a link on each player. Rookie contracts are calculated from the draft slot with the rookie pay scale, and minimum deals from the salary table in the collective bargaining agreement (CBA). Stats and play-by-play come from nflverse, an open data project. A player marked Contract being verified has no confirmed figure yet, so PlainStats shows no dollar amount until a report confirms it.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
   ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. PlainStats estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
@@ -2141,10 +2153,12 @@ function prepare(d, mv) {
   TEAMS.forEach(t => { t.eff = t.active + t.dead + t.space; TB[t.id] = t; });
   PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8], voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, group: POSGROUP[r[2]] || 'ST' }));
   PL.forEach(p => { if (p.total > 0 && p.gtd > p.total) p.gtd = p.total; if (p.fg > p.gtd) p.fg = p.gtd; p.gtdp = p.total > 0 ? p.gtd / p.total : 0; p.yrs = p.apy > 0 ? Math.max(1, Math.round(p.total / p.apy)) : 1; p.key = (p.name + ' ' + p.team + ' ' + TB[p.team].name + ' ' + TB[p.team].city + ' ' + p.pos).toLowerCase(); });
+  // A contract with no sourced figure (prov 'u') is hidden: no dollars are shown and it stays out of every ranking.
+  PL.forEach(p => { p.hid = p.prov === 'u'; });
   const byPos = {};
-  PL.forEach(p => (byPos[p.pos] = byPos[p.pos] || []).push(p.apy));
+  PL.forEach(p => { (byPos[p.pos] = byPos[p.pos] || []); if (!p.hid) byPos[p.pos].push(p.apy); });
   Object.values(byPos).forEach(a => a.sort((x, y) => y - x));
-  PL.forEach(p => { p.rank = byPos[p.pos].filter(v => v > p.apy).length + 1; p.posCount = byPos[p.pos].length; p.posTop = byPos[p.pos][0]; });
+  PL.forEach(p => { p.rank = p.hid ? 999 : byPos[p.pos].filter(v => v > p.apy).length + 1; p.posCount = byPos[p.pos].length; p.posTop = byPos[p.pos][0]; });
   MOVES = ((mv && mv.moves) || []).slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
   if (mv && mv.deadline) DEADLINE = mv.deadline;
   const rk = k => [...TEAMS].sort((a, b) => b[k] - a[k]).forEach((t, n) => (t['r_' + k] = n + 1));
@@ -2183,9 +2197,10 @@ function analyze() {
   PL.forEach(p => { (by[p.pos] = by[p.pos] || []).push(p); });
   PL.forEach(p => { p.yl = Math.max(1, p.end - 2026); p.capShare = (p.cap || 0) / CAP; p.deadR = p.cap ? Math.min(2, (p.dpost || 0) / p.cap) : 0; });
   Object.values(by).forEach(list => {
-    const col = k => list.map(x => x[k]);
-    const A = { apy: col('apy'), gtdp: col('gtdp'), cap: col('capShare'), dead: col('deadR'), yl: col('yl'), age: list.map(x => -(x.age || 30)) };
+    const vl = list.filter(x => !x.hid), col = k => vl.map(x => x[k]);
+    const A = { apy: col('apy'), gtdp: col('gtdp'), cap: col('capShare'), dead: col('deadR'), yl: col('yl'), age: vl.map(x => -(x.age || 30)) };
     list.forEach(p => {
+      if (p.hid) { p.pApy = p.pGtd = p.pCap = p.pDead = p.pYrs = 0.5; p.pYouth = pctRank(A.age, -(p.age || 30)); p.sec = p.mkt = null; return; }
       p.pApy = pctRank(A.apy, p.apy); p.pGtd = pctRank(A.gtdp, p.gtdp); p.pCap = pctRank(A.cap, p.capShare);
       p.pDead = p.cap ? pctRank(A.dead, p.deadR) : 0.5; p.pYrs = pctRank(A.yl, p.yl); p.pYouth = pctRank(A.age, -(p.age || 30));
       p.sec = Math.round(100 * (0.45 * p.pGtd + 0.35 * p.pDead + 0.20 * p.pYrs));
@@ -3340,6 +3355,7 @@ document.addEventListener('scroll', hideTip, { passive: true });
 /* ===== story ===== */
 function story(p) {
   const t = TB[p.team], out = [];
+  if (p.hid) return [`${p.name} plays for the ${t.city} ${t.name}. PlainStats has no sourced contract figure for him yet, so we are not showing one. It appears here once a news report confirms it.`];
   out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year. He can become a free agent in ${p.end}.`);
   if (p.total > 0 && p.gtd > 0) out.push(`${mon(p.gtd)} of it (${pct(p.gtdp)}) is guaranteed${p.fg > 0 && p.fg < p.gtd ? `, and ${mon(p.fg)} of that was locked in the day he signed` : ''}.`);
   else out.push('None of the money is guaranteed, so the team could release him and owe nothing more.');
@@ -3632,7 +3648,7 @@ function renderTeam(id) {
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
       ${tfBox('roster-t', 'Filter players by name, position or role')}
       <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('role', 'Role')}${th('play', 'Play')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
-      <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end || '—'}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
   </div>`;
@@ -3707,7 +3723,7 @@ function renderTable() {
   list.sort((a, b) => ((a[c.sort] ?? -1) - (b[c.sort] ?? -1)) * c.dir);
   $('#c-count').textContent = `${list.length.toLocaleString()} of ${PL.length.toLocaleString()} contracts`;
   $$('#c-table th[data-k]').forEach(th => th.dataset.k === c.sort ? th.setAttribute('aria-sort', c.dir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
-  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${yearCell(p, 2027)}</td><td class="r">${yearCell(p, 2028)}</td><td class="r">${yearCell(p, 2029)}</td><td class="r">${p.end}</td></tr>`).join('') || `<tr><td colspan="11" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
+  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}${p.hid ? ' <span class="srcb old" title="No sourced contract figure yet">verifying</span>' : ''}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${yearCell(p, 2027)}</td><td class="r">${yearCell(p, 2028)}</td><td class="r">${yearCell(p, 2029)}</td><td class="r">${p.end || '—'}</td></tr>`).join('') || `<tr><td colspan="11" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
   $('#c-more').hidden = list.length <= c.limit;
 }
 function buildContractControls() {
@@ -3722,9 +3738,40 @@ function buildContractControls() {
   $$('#c-table th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (st.c.sort === k) st.c.dir *= -1; else { st.c.sort = k; st.c.dir = k === 'age' || k === 'end' ? 1 : -1; } renderTable(); });
 }
 
+/* ===== suggest a fix ===== */
+const fixDlg = $('#fix'), FIXTO = 'info@plainstatsnfl.com';
+let fixCtx = { label: '', link: '' };
+function openFix(ctx) {
+  fixCtx = ctx || { label: '', link: location.href };
+  if (!fixCtx.link) fixCtx.link = location.href;
+  $('#fx-ctx').textContent = fixCtx.label ? 'About: ' + fixCtx.label : 'About: ' + (document.title || 'this page');
+  $('#fx-kind').value = fixCtx.kind || 'Contract figure'; $('#fx-msg').value = ''; $('#fx-url').value = '';
+  fixHint();
+  if (sheet.open) sheet.close();
+  if (!fixDlg.open) { try { fixDlg.showModal(); } catch (e) { fixDlg.setAttribute('open', ''); } }
+  setTimeout(() => $('#fx-msg').focus(), 30);
+}
+function fixHint() { const need = $('#fx-kind').value === 'Contract figure'; $('#fx-url').required = need; $('#fx-hint').textContent = need ? 'Required for contract figures. A team announcement or a news report from a named outlet works. Posts on social media and forums do not count.' : 'Optional, but a link helps us check it.'; }
+function fixText() {
+  const kind = $('#fx-kind').value, msg = $('#fx-msg').value.trim(), url = $('#fx-url').value.trim();
+  return { subject: 'PlainStats fix: ' + (fixCtx.label || kind), body: `Page: ${fixCtx.link}\nAbout: ${fixCtx.label || '(general)'}\nType: ${kind}\n\nWhat it should say:\n${msg}\n\nReport link: ${url || '(none)'}\n` };
+}
+function fixOK() {
+  const kind = $('#fx-kind').value, msg = $('#fx-msg').value.trim(), url = $('#fx-url').value.trim();
+  if (!msg) { $('#fx-note').textContent = 'Tell us what it should say first.'; $('#fx-msg').focus(); return false; }
+  if (kind === 'Contract figure' && !/^https?:\/\/\S+\.\S+/.test(url)) { $('#fx-note').textContent = 'Add a link to the report. We only change contract figures that a named report confirms.'; $('#fx-url').focus(); return false; }
+  return true;
+}
+$('#fx-kind').onchange = fixHint;
+$('#fx-x').onclick = () => fixDlg.close();
+fixDlg.addEventListener('click', e => { if (e.target === fixDlg) fixDlg.close(); });
+$('#fx-send').onclick = () => { if (!fixOK()) return; const t = fixText(); location.href = `mailto:${FIXTO}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(t.body)}`; $('#fx-note').textContent = 'If your email app did not open, use Copy text and send it to ' + FIXTO + '. Thank you.'; };
+$('#fx-copy').onclick = async () => { if (!fixOK()) return; const t = fixText(); try { await navigator.clipboard.writeText('To: ' + FIXTO + '\nSubject: ' + t.subject + '\n\n' + t.body); $('#fx-note').textContent = 'Copied. Paste it into an email to ' + FIXTO + '.'; } catch (e) { $('#fx-note').textContent = 'Could not copy. Email the details to ' + FIXTO + '.'; } };
+document.addEventListener('click', e => { const b = e.target.closest('[data-fix]'); if (b) openFix({ label: '', link: location.href }); });
+
 /* ===== player sheet ===== */
 const sheet = $('#sheet');
-const PROV = { r: ['Reported', 'rep'], f: ['Calculated', 'calc'], m: ['League minimum', 'calc'], p: ['Practice squad', 'calc'], u: ['Being re-verified', 'old'] };
+const PROV = { r: ['Reported', 'rep'], f: ['Calculated', 'calc'], m: ['League minimum', 'calc'], p: ['Practice squad', 'calc'], u: ['Being verified', 'old'] };
 const VERW = { t: 'total value', a: 'yearly average', g: 'guarantees', f: 'money guaranteed at signing', e: 'final season', c: '2026 cap hit', b: 'signing bonus' };
 function provHTML(p) {
   const s = D && D.sources && D.sources[p.srcI], [lab, cls] = PROV[p.prov] || PROV.u;
@@ -3734,19 +3781,20 @@ function provHTML(p) {
   else if (p.prov === 'f') txt = 'Calculated by PlainStats from his draft slot with the rookie pay scale and the league minimum salaries in the CBA. <a href="#learn">How we calculate</a>';
   else if (p.prov === 'm') txt = 'A one-year league-minimum deal, valued with the CBA minimum salary for his years in the league.';
   else if (p.prov === 'p') txt = 'Practice squad pay set by the CBA, for a full season.';
-  else txt = 'This figure comes from an older data set and is being checked against news reports. It may change.';
+  else txt = 'PlainStats shows a contract only after a team announcement or a named news report confirms it. His is not confirmed yet, so no dollar figures appear.';
   return `<div class="prov"><span class="srcb ${cls}">${lab}</span><span>${txt}</span></div>`;
 }
 function openPlayer(i) {
   const p = PL[i]; if (!p) return; const t = TB[p.team];
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
-    <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · free agent ${p.end}${p.voidy ? ' (void years)' : ''}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : 'free agent ' + p.end + (p.voidy ? ' (void years)' : '')}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-years" ${st.shTab === 'years' ? '' : 'hidden'}>${yearsHTML(p)}</div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
     <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'contract' ? '' : 'hidden'}>
+    ${p.hid ? `<div class="story"><p><b>${VERIFYING}.</b> ${esc(story(p)[0])}</p></div>${provHTML(p)}` : `
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
     <div class="bigrow">
       <div><span class="k">Per year</span><div class="v">${mon(p.apy)}</div></div>
@@ -3773,16 +3821,18 @@ function openPlayer(i) {
       <div><span>Dead money if cut before June 1</span><b>${mon(p.dpre)}</b></div>
       <div><span>Dead money this season if cut after June 1</span><b>${mon(p.dpost)}</b></div>
     </div>
-    <div class="controls">
+    `}<div class="controls">
       ${p.cap != null && p.dpost != null ? `<button type="button" class="btn" data-act="cut">Try cutting him</button>` : ''}
-      <button type="button" class="btn ghost" data-act="cmp">Compare</button>
+      ${p.hid ? '' : '<button type="button" class="btn ghost" data-act="cmp">Compare</button>'}
       <a class="btn ghost" href="#team-${p.team}" data-act="team">${esc(t.name)} cap page</a>
     </div>
-    </div>`;
+    </div>
+    <p class="note" style="margin:14px 0 0">Something look wrong? <button type="button" class="fixl" data-act="fix">Suggest a fix</button></p>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
   $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab !== 'contract'; $('#sh-years').hidden = st.shTab !== 'years'; $('#sh-stats').hidden = st.shTab !== 'stats'; };
   $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
+    if (b.dataset.act === 'fix') { openFix({ label: `${p.name}, ${TB[p.team].name} (${posTag(p.pos)})`, link: location.href, kind: 'Contract figure' }); return; }
     sheet.close();
     if (b.dataset.act === 'cut') { st.cut = p.i; st.tool = 'cut'; go('tools'); renderCut(); }
     if (b.dataset.act === 'cmp') { st.cmp[0] = p.i; st.tool = 'compare'; go('tools'); renderCompare(); }
@@ -4283,6 +4333,7 @@ st.fa = { tab: store.get('faTab', 'class'), year: 2027, pos: 'all', min: 5e6, te
 const qtile = (arr, q) => { if (!arr.length) return 0; const x = Math.max(0, Math.min(1, q)) * (arr.length - 1), i = Math.floor(x); return arr[i] + (arr[Math.min(arr.length - 1, i + 1)] - arr[i]) * (x - i); };
 
 function yearModel(p) {
+  if (p.hid) { p.yr = null; return; }
   const cap = p.cap || 0, bonus = Math.min(p.bonus || 0, cap), base = p.base != null ? Math.min(p.base, cap) : Math.max(0, cap - bonus);
   const last = Math.max(2026, Math.min((p.end || 2027) - 1, FY_MAX)), n = last - 2025;
   let rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
@@ -4375,6 +4426,7 @@ const dayFmt = iso => new Date(iso + 'T12:00:00').toLocaleDateString([], { month
 
 /* player sheet: year by year */
 function yearsHTML(p) {
+  if (p.hid) return `<p class="empty">${VERIFYING}. Year-by-year cap hits appear once a report confirms his deal.</p>`;
   if (!p.yr || !p.yr.length) return '<p class="empty">No contract years to show.</p>';
   const rows = p.yr, maxc = Math.max(...rows.map(r => r.cap), 1), tot = rows.reduce((s, r) => s + r.cap, 0), est = rows.some(r => r.src === 'estimate');
   const last = rows[rows.length - 1].y;
@@ -5465,7 +5517,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   $('#stamp').textContent = 'Updated ' + ds;
   $('#news-asof').textContent = `NFL news · updated ${new Date(((mv && mv.asOf) || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  $('#foot-asof').textContent = `Contract figures as of ${ds}. PlainStats builds them from news reports and team announcements, the rookie pay scale and the CBA; some older figures are still being re-verified and are marked on each player. Year-by-year figures after 2026 are estimates unless marked Calculated. PlainStats is not affiliated with the NFL, the NBA or any team.`;
+  $('#foot-asof').textContent = `Contract figures as of ${ds}. PlainStats builds them from news reports and team announcements, the rookie pay scale and the CBA; players whose contracts are not confirmed yet show "Contract being verified" with no dollar figures. Year-by-year figures after 2026 are estimates unless marked Calculated. PlainStats is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
   attachPFF(px);

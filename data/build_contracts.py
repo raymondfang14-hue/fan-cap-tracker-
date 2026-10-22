@@ -9,7 +9,8 @@ Sources, in order of priority (each player row ends with a provenance code, a so
                data/cba.json (anchored to real signings) and the CBA minimum salaries. Undrafted rookies get the minimum.
   m  MINIMUM   veterans on one-year league-minimum deals, valued with the CBA minimum salary table.
   p  PRACTICE  practice squad players, valued at the 2026 practice squad weekly pay times 18 weeks.
-  u  UNVERIFIED  older figures not yet re-sourced. The scheduled refresh replaces these with ledger rows over time.
+  u  UNVERIFIED  no sourced figure yet. The dollar fields are blanked in nfl.json and the page says the contract is being
+               verified. The scheduled refresh replaces these with ledger rows over time.
 
 Team rosters, draft slots, credited seasons and ages come from nflverse (data licensed CC BY 4.0).
 The script never invents a contract: a player with no ledger row who is not covered by a formula keeps his row as 'u'.
@@ -238,12 +239,18 @@ for r in ROST:
     else: continue
     out.append(row + ['f', CBA_SRC, 'tagfecb', None]); count['f'] += 1; added += 1
 
+# Unverified rows keep only name, team, position and age: PlainStats does not publish a dollar figure it cannot source.
+HIDE = [4, 5, 6, 7, 8, 10, 11, 12, 13, 14]
+for row in out:
+    if row[15] == 'u':
+        for i in HIDE: row[i] = None
+        row[9] = 0
 D['players'] = out
 D['sources'] = SRC
 D['prov'] = {'asOf': datetime.date.today().isoformat(), 'counts': count, 'added': added,
              'legend': {'r': 'Reported in a named news report or team announcement', 'f': 'Calculated with the rookie scale and CBA minimum salaries',
                         'm': 'League-minimum deal, valued with the CBA minimum salary table', 'p': 'Practice squad pay set by the CBA',
-                        'u': 'Older figure not yet re-verified'}}
+                        'u': 'No sourced figure yet; the page shows "contract being verified"'}}
 json.dump(D, open('data/nfl.json', 'w'), separators=(',', ':'))
 json.dump({'asOf': D['prov']['asOf'], 'note': 'Year-by-year cap hits PlainStats calculates itself: rookie contracts from the rookie scale and CBA minimums (data/cba.json), plus exercised fifth-year options. Each row: [base salary, bonus counted, cap hit].', 'contracts': YC},
           open('data/years_calc.json', 'w'), separators=(',', ':'))

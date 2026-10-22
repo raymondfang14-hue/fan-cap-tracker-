@@ -14,6 +14,10 @@ GROUP = {'QB': 'QB', 'RB': 'RB', 'FB': 'RB', 'WR': 'WR', 'TE': 'TE', 'LT': 'LT',
          'IDL': 'DT', 'DT': 'DT', 'EDGE': 'EDGE', 'LB': 'LB', 'CB': 'CB', 'S': 'S', 'K': 'K', 'P': 'P'}
 RANKS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 35, 40, 45, 50, 60, 70, 80]
 _nfl = json.load(open('data/nfl.json'))
+_u = sum(1 for r in _nfl['players'] if len(r) > 15 and r[15] == 'u')
+if _u > 0.2 * len(_nfl['players']):
+    print(f'skipped: {_u} of {len(_nfl["players"])} contracts are still unverified, so a price ladder built now would be wrong. data/market.json is unchanged.')
+    raise SystemExit(0)
 _apy = {}
 for r in _nfl['players']:
     g = GROUP.get(r[2])
