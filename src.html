@@ -1039,28 +1039,17 @@ footer a:hover{color:var(--fg);text-decoration:underline}
 <!-- HOME -->
 <section class="view" id="v-home" aria-labelledby="h-home">
   <div class="hx">
-    <p class="hx-eb">2026 NFL season · salary cap $301.2M per team</p>
-    <h1 class="hx-h" id="h-home">The salary cap, made simple.</h1>
-    <p class="hx-sub">NFL contracts, stats and team analytics, explained in plain English.</p>
+    <h1 class="sr" id="h-home">PlainStats</h1>
+    <p class="hx-sub">Player ratings, team rankings, news, the draft and free agency, all explained in plain English. Search any player or team to start.</p>
     <div class="search">
       <label class="sr" for="q-home">Find a player or team</label>
       <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
       <input id="q-home" type="search" placeholder="Search Mahomes, Lions or edge rushers" autocomplete="off" aria-controls="r-home"></span>
       <div class="results" id="r-home" hidden></div>
     </div>
-    <div class="hx-links"><a href="#teams">Browse all 32 teams</a><a href="#news">Read the latest news</a></div>
-    <div class="hx-cap" id="hx-cap" aria-live="polite">
-      <div class="hd"><b>Where the average team's $301.2M goes</b><span id="hx-cap-sub">Loading cap sheets</span></div>
-      <div class="stack" id="hx-cap-bar"><i class="sk"></i></div>
-      <ul id="hx-cap-leg">
-        <li><i class="swatch" style="background:var(--brand)"></i><span><b>—</b>Spent on the roster</span></li>
-        <li><i class="swatch" style="background:var(--c-dead)"></i><span><b>—</b>Dead money</span></li>
-        <li><i class="swatch hatch"></i><span><b>—</b>Cap room left</span></li>
-      </ul>
-    </div>
   </div>
 
-  <div class="kpis" id="kpis"></div>
+  <div class="kpis" id="kpis" hidden></div>
 
   <div class="ex-head">
     <h2 id="h-explore">Everything on PlainStats.</h2>
@@ -1162,7 +1151,7 @@ footer a:hover{color:var(--fg);text-decoration:underline}
   <div class="panel">
     <div class="sechead"><div><span class="eyebrow">2027 NFL Draft · April 29 to May 1</span><h2 class="sec">Top of the draft board</h2></div><a class="btn ghost" href="#draft">Big board and mock</a></div>
     <div class="fcs row" id="home-draft"></div>
-    <p class="note">Grade ring: PlainStats' 40 to 99 prospect grade. 2026 ring: his college production this season against the other prospects at his position.</p>
+    <p class="note">Grade ring: PlainStats's 40 to 99 prospect grade. 2026 ring: his college production this season against the other prospects at his position.</p>
   </div>
 
   <div class="grid2">
@@ -1421,7 +1410,7 @@ footer a:hover{color:var(--fg);text-decoration:underline}
       <div><span class="eyebrow">2024 first-round picks · teams decide by early May 2027</span><h2 class="sec">Fifth-year option decisions</h2></div>
       <div id="rk-obox"></div>
       <div class="tw"><table class="t" id="rk-opt"></table></div>
-      <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. PlainStats' read compares that price with what his play is worth on today's market.</p>
+      <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. PlainStats's read compares that price with what his play is worth on today's market.</p>
     </div>
     <div class="panel">
       <div><span class="eyebrow">Best play rating first</span><h2 class="sec">Extension watch</h2></div>
@@ -1788,7 +1777,7 @@ footer a:hover{color:var(--fg);text-decoration:underline}
   </div>
 
   <div id="dr-order" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is PlainStats' best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
+    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is PlainStats's best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
     <div class="grid2">
       <div class="panel">
         <div><span class="eyebrow">Picks in the projected first round</span><h2 class="sec">Who holds the picks</h2></div>
@@ -4853,7 +4842,7 @@ function pStory(p) {
   const s = p.st || {}, g = p.g, out = [], m = k => DMET[k][2](s, g || 1), pl = (n, w, ws) => `${n} ${n === 1 ? w : ws || w + 's'}`;
   const ws = p.w ? `WalterFootball has him ${ord(p.w)}` : 'He is outside WalterFootball\'s top 60', bs = p.b ? `NFL Draft Buzz ${ord(p.b)}` : 'NFL Draft Buzz leaves him outside its top 50';
   const gap = p.w && p.b ? Math.abs(p.w - p.b) : null;
-  out.push(`${p.name} is No. ${p.crank} on PlainStats' consensus board and ${p.grk === 1 ? 'the top-graded' : 'the ' + ord(p.grk) + '-best'} of the ${p.gn} ${drWords(p.grp)} on it. ${ws} and ${bs}${gap != null ? (gap <= 5 ? ', so the boards agree.' : gap >= 15 ? `, a ${gap}-spot gap, so scouts are split on him.` : '.') : '.'}`);
+  out.push(`${p.name} is No. ${p.crank} on PlainStats's consensus board and ${p.grk === 1 ? 'the top-graded' : 'the ' + ord(p.grk) + '-best'} of the ${p.gn} ${drWords(p.grp)} on it. ${ws} and ${bs}${gap != null ? (gap <= 5 ? ', so the boards agree.' : gap >= 15 ? `, a ${gap}-spot gap, so scouts are split on him.` : '.') : '.'}`);
   if (p.st && g) {
     const G = p.grp;
     if (G === 'QB') out.push(`Through ${g} games he has thrown for ${dSv(s, 'py').toLocaleString()} yards, ${pl(dSv(s, 'ptd'), 'touchdown')} and ${pl(dSv(s, 'pint'), 'interception')}, completing ${pct(m('cmp'), 0)} at ${dN1(m('ypa'))} yards a throw${dSv(s, 'ry') > 100 ? `, and he has run for ${dSv(s, 'ry')} more` : ''}.`);
@@ -4865,9 +4854,9 @@ function pStory(p) {
     if (g < 4) out.push(`He has played only ${g} game${g === 1 ? '' : 's'} this season, so his numbers carry less weight than his board rank.`);
   } else if (DCFG[p.grp].bars.length) out.push('PlainStats has no 2026 college stats for him yet. He may be hurt or not yet listed, so his grade rests on his board rank.');
   else out.push(`At ${p.ht} and ${p.wt} pounds, he has the frame teams want. Public stats do not track blocks one lineman at a time, so his grade rests on where scouts rank him.`);
-  if (p.role) out.push(`PlainStats' role for him: ${p.role}. ${PROLE_DESC[p.role] || ''}`);
+  if (p.role) out.push(`PlainStats's role for him: ${p.role}. ${PROLE_DESC[p.role] || ''}`);
   const pk = projPick(p), sl = slotVal(pk), vt = vetTop(p.grp);
-  out.push(`${p.mock ? `In PlainStats' model mock he goes No. ${pk} to the ${TB[p.mock.own].city} ${TB[p.mock.own].name}` : `He projects as a round ${roundOf(pk)} pick`}. A rookie deal at that slot is worth about ${mon(sl)} over four years, ${mon(sl / 4)} a year${vt ? `, or ${pct(sl / 4 / vt)} of what a top-10 veteran ${DR_WORD[p.grp]} makes` : ''}.`);
+  out.push(`${p.mock ? `In PlainStats's model mock he goes No. ${pk} to the ${TB[p.mock.own].city} ${TB[p.mock.own].name}` : `He projects as a round ${roundOf(pk)} pick`}. A rookie deal at that slot is worth about ${mon(sl)} over four years, ${mon(sl / 4)} a year${vt ? `, or ${pct(sl / 4 / vt)} of what a top-10 veteran ${DR_WORD[p.grp]} makes` : ''}.`);
   return out;
 }
 function pFits(p) {
@@ -4913,7 +4902,7 @@ function pPay(p) {
   const sal = sl - bonus, capRows = [.16, .22, .28, .34].map((f, k) => [2027 + k, bonus / 4 + sal * f]);
   return `<div class="sh" style="padding:0">
     <div class="bigrow"><div><span class="k">Projected pick</span><div class="v">No. ${pk}</div></div><div><span class="k">4-year value</span><div class="v">${mon(sl)}</div></div><div><span class="k">Per year</span><div class="v">${mon(yr)}</div></div></div>
-    <p class="note">${p.mock ? `From PlainStats' model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
+    <p class="note">${p.mock ? `From PlainStats's model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
     <div style="display:grid;gap:6px">
       <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Signing bonus vs. salary</span><b class="num">about ${mon(bonus)} bonus</b></div>
       <div class="dbar" role="img" aria-label="Signing bonus about ${mon(bonus)}, salaries about ${mon(sl - bonus)}"><i style="width:${(bonus / sl * 100).toFixed(1)}%;background:var(--gtd)"></i><i style="width:${(100 - bonus / sl * 100).toFixed(1)}%;background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i></div>
@@ -5511,13 +5500,7 @@ function buildMenus() {
   // teams flyout, grouped by division
   const g = $('#gn-teams');
   if (g) g.innerHTML = DIVS.slice(1).map(d => `<div class="gn-div"><h4>${esc(d)}</h4><ul>${TEAMS.filter(t => t.div === d).sort((a, b) => a.city.localeCompare(b.city)).map(t => `<li><a href="#team-${t.id}">${crest(t.id, 18)}<span>${esc(t.city)} ${esc(t.name)}</span></a></li>`).join('')}</ul></div>`).join('');
-  // average team cap sheet in the hero
   const n = TEAMS.length || 1;
-  const av = k => TEAMS.reduce((s, t) => s + Math.max(0, t[k] || 0), 0) / n;
-  const a = av('active'), d = av('dead'), r = av('space'), tot = a + d + r || 1;
-  $('#hx-cap-bar').innerHTML = `<i style="width:${(a / tot * 100).toFixed(2)}%;background:var(--brand)" title="Spent on the roster"></i><i style="width:${(d / tot * 100).toFixed(2)}%;background:var(--c-dead)" title="Dead money"></i><i class="hatch" style="width:${(r / tot * 100).toFixed(2)}%" title="Cap room"></i>`;
-  const lb = $$('#hx-cap-leg b'); [a, d, r].forEach((v, i) => { if (lb[i]) lb[i].textContent = mon(v); });
-  $('#hx-cap-sub').textContent = `Average of all ${n} teams · ${pct(d / tot, 1)} is dead money`;
   // live counts on the explore tiles
   const nl = $('[data-live="news"]'); if (nl && typeof MOVES !== 'undefined' && MOVES.length) nl.textContent = `${MOVES.length.toLocaleString()} stories this season`;
   const cl = $('[data-live="contracts"]'); if (cl && PL.length) cl.textContent = `${PL.length.toLocaleString()} contracts`;
