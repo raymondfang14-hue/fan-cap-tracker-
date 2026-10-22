@@ -1,6 +1,97 @@
 {
- "asOf": "2026-10-21",
+ "asOf": "2026-10-22",
  "moves": [
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "Release",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Rayshawn Jenkins"
+   ],
+   "head": "Steelers release S Rayshawn Jenkins",
+   "plain": "Pittsburgh cut the 32-year-old safety, who had mostly become a special-teams player. The move likely clears a roster spot for starter DeShon Elliott to return from injured reserve. Jenkins was on a one-year deal worth about $1.3 million.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/steelers-release-s-rayshawn-jenkins"
+  },
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "League",
+   "teams": [
+    "BUF"
+   ],
+   "players": [
+    "Sam Franklin"
+   ],
+   "head": "Bills' Sam Franklin will appeal a one-game suspension for spitting",
+   "plain": "The NFL suspended Franklin one game without pay for spitting at a Raiders player. He denies it and is appealing. Teammate C.J. Gardner-Johnson also got a one-game ban for a spitting incident in the same win, so the Bills could miss both in Week 8 against the Ravens.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/bills-sam-franklin-to-appeal-one-game-suspension-for-unsportsmanlike-conduct"
+  },
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "League",
+   "teams": [
+    "CIN"
+   ],
+   "players": [
+    "Shemar Stewart"
+   ],
+   "head": "Teams are tracking Bengals DE Shemar Stewart ahead of the Nov. 10 trade deadline",
+   "plain": "The 2025 first-round pick has played just 17 snaps this season and is buried behind other Bengals edge rushers. ESPN reports other teams are watching him. If his role does not grow, he could be traded before the deadline.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/teams-tracking-bengals-de-shemar-stewart-before-trade-deadline"
+  },
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "League",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Sam LaPorta"
+   ],
+   "head": "Lions TE Sam LaPorta says he will 'go get paid somewhere else' if no extension comes",
+   "plain": "LaPorta, on pace for career highs, said he is frustrated Detroit has not extended him. Top tight ends make about $19 million a year, and the projected tight end franchise tag is about $17.5 million. Detroit may have to choose between him and safety Brian Branch.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/lions-te-sam-laporta-frustrated-with-lack-of-extension"
+  },
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "League",
+   "teams": [
+    "KC",
+    "SEA"
+   ],
+   "players": [
+    "Kenneth Walker"
+   ],
+   "head": "Seahawks never made an offer to RB Kenneth Walker before he signed with the Chiefs",
+   "plain": "Walker signed a three-year, $43.1 million deal with Kansas City in March and leads the NFL in rushing with 665 yards. He faces his old team in Week 7. Seattle instead drafted Jadarian Price in the first round.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/seahawks-did-not-make-offer-to-rb-kenneth-walker"
+  },
+  {
+   "iso": "2026-10-21",
+   "date": "Oct 21",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Kobie Turner"
+   ],
+   "head": "Rams place DT Kobie Turner on injured reserve",
+   "plain": "Los Angeles made the injury official in Wednesday's transactions, a day after Turner was hurt. It adds to a run of injuries on the Rams defense and special teams.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/minor-nfl-transactions-10-21-26"
+  },
   {
    "iso": "2026-10-20",
    "date": "Oct 20",

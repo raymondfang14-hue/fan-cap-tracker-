@@ -1,5 +1,5 @@
 {
- "asOf": "2026-10-21",
+ "asOf": "2026-10-22",
  "note": "Exact year-by-year figures, [base salary, bonuses and other, cap hit] in dollars, keyed by 'Player|TEAM'. Contracts not listed here are estimated from their terms. The daily update adds new entries.",
  "contracts": {
   "Chris Olave|NO": {
@@ -15021,13 +15021,6 @@
    ]
   },
   "Robert Tonyan|PIT": {
-   "2026": [
-    1300000,
-    0,
-    1075000
-   ]
-  },
-  "Rayshawn Jenkins|PIT": {
    "2026": [
     1300000,
     0,
