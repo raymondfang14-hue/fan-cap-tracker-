@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://plainstatsnfl.com/sitemap.xml
+Sitemap: https://www.plainstatsnfl.com/sitemap.xml
