@@ -5,6 +5,13 @@ const lines = s => String(s || '').split(/\r?\n/).map(x => x.trim()).filter(Bool
 const parts = line => line.split('|').map(x => x.trim());
 const num = v => { const x = Number(v); return Number.isFinite(x) ? x : 0; };
 
+// "Outlet | https://link" per line. Only http(s) links count as a named report.
+const sourcesOf = f => lines(f.Sources).map(parts).filter(([name, url]) => name && /^https?:\/\//i.test(url || '')).map(([name, url]) => [name, url]);
+
+// A deal leaves this function only when it names at least one report and someone ticked Verified
+// after checking every figure against it. Anything else stays in Airtable and off the site.
+const isVerified = f => f.Verified === true && sourcesOf(f).length > 0;
+
 function toContract(f) {
   const c = {
     league: f.League || '',
@@ -19,7 +26,8 @@ function toContract(f) {
     bar: lines(f.Bar).map(l => { const [k, v, label, shown] = parts(l); return [k, num(v), label || '', shown || '']; }),
     facts: lines(f.Facts).map(l => parts(l).slice(0, 2)),
     plain: f.Plain || '',
-    watch: f.Watch || ''
+    watch: f.Watch || '',
+    sources: sourcesOf(f)
   };
   if (f.ThisSeasonCapHit !== undefined && f.ThisSeasonCapHit !== '') c.hit = num(f.ThisSeasonCapHit);
   if (f.TableRows) {
@@ -55,9 +63,10 @@ async function handler(req, res) {
       records.push(...j.records);
       offset = j.offset;
     } while (offset);
-    const contracts = records.map(r => toContract(r.fields)).filter(c => c.name && c.league);
+    const contracts = records.filter(r => isVerified(r.fields)).map(r => toContract(r.fields)).filter(c => c.name && c.league);
+    const held = records.length - contracts.length;
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    res.status(200).json({ updated: new Date().toISOString(), contracts });
+    res.status(200).json({ updated: new Date().toISOString(), held, contracts });
   } catch (e) {
     console.error('contracts:', e);
     res.status(502).json({ error: 'Could not read the deals table right now.' });
@@ -66,3 +75,4 @@ async function handler(req, res) {
 
 module.exports = handler;
 module.exports.toContract = toContract;
+module.exports.isVerified = isVerified;

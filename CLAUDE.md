@@ -14,6 +14,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - A contract figure without a named report shows "Contract being verified". Do not guess numbers.
 - Free data only, current season (2026). Pipeline: `data/build_contracts.py` → `data/fix_ol.py` → `data/build_market.py`. Run Python with `python3 -I`.
 - A hook checks that any edited `data/*.json` still parses.
+- Featured deal breakdowns live in Airtable (Cap Tracker base). `/api/contracts` only serves a deal with `Verified` ticked and at least one `Sources` line (`Outlet | https://link`). Tick Verified only after every figure on the card is checked against those reports; record what was checked or calculated in `CheckNotes`. The built-in `DEALS` in src.html is the fallback and must match the verified Airtable records.
 
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
