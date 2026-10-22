@@ -1,23 +1,37 @@
-"""Write data/olwin.json: ESPN team block win rates (PBWR = pass block win rate, RBWR = run block win rate).
-ESPN publishes these from NFL Next Gen Stats tracking data. Plain Cap reads them as plain text from the free
-NFL Lines table ("ESPN Block Win % Through Week N") and credits ESPN.
-Usage: python3 data/build_olwin.py   (edit THRU, ASOF and ROWS below when refreshing)
-Each row: team code, PBWR %, PBWR rank, RBWR %, RBWR rank."""
-import json
+"""Write data/olwin.json: team offensive line measures PlainStats computes itself from nflverse play-by-play.
 
-ASOF, THRU, SRC = '2026-10-15', 5, 'ESPN Analytics (NFL Next Gen Stats tracking data), as tabulated by NFL Lines, through Week 5'
-ROWS = [
-    ('ARI', 30, 31, 72, 21), ('ATL', 53, 9, 73, 17), ('BAL', 48, 21, 74, 8), ('BUF', 59, 2, 77, 2),
-    ('CAR', 44, 27, 71, 27), ('CHI', 56, 4, 74, 11), ('CIN', 46, 24, 77, 1), ('CLE', 47, 22, 71, 26),
-    ('DAL', 50, 17, 69, 31), ('DEN', 47, 23, 73, 19), ('DET', 58, 3, 72, 22), ('GB', 26, 32, 73, 20),
-    ('HOU', 53, 11, 71, 24), ('IND', 49, 19, 73, 18), ('JAX', 42, 28, 74, 14), ('KC', 52, 13, 76, 3),
-    ('LV', 62, 1, 74, 13), ('LAC', 39, 30, 75, 6), ('LAR', 54, 6, 75, 7), ('MIA', 51, 15, 71, 28),
-    ('MIN', 52, 14, 75, 5), ('NE', 52, 12, 74, 12), ('NO', 45, 26, 73, 16), ('NYG', 50, 16, 74, 15),
-    ('NYJ', 54, 7, 70, 30), ('PHI', 48, 20, 71, 23), ('PIT', 53, 8, 74, 9), ('SF', 56, 5, 76, 4),
-    ('SEA', 46, 25, 71, 25), ('TB', 50, 17, 74, 10), ('TEN', 42, 29, 70, 29), ('WAS', 53, 10, 67, 32),
-]
-assert len(ROWS) == 32 and len({r[0] for r in ROWS}) == 32
-out = {'asOf': ASOF, 'thru': THRU, 'source': SRC,
-       'teams': {t: {'pbwr': pb / 100, 'pbwrRk': pr, 'rbwr': rb / 100, 'rbwrRk': rr} for t, pb, pr, rb, rr in ROWS}}
+  pbwr  "Pass protection": share of the team's dropbacks with no sack and no QB hit (scrambles count as dropbacks).
+  rbwr  "Run success": share of the team's designed runs (rush attempts that are not QB scrambles or kneels) that
+        gain positive expected points (nflverse `success`).
+Both are regular-season plays only, two-point tries and aborted snaps excluded. The keys keep their old names so the
+page reads them unchanged; *Rk is the rank among 32 teams (1 = best).
+
+Data: nflverse play-by-play (play_by_play_<season>.csv.gz from github.com/nflverse/nflverse-data releases, CC BY 4.0).
+Usage: python3 -I data/build_olwin.py <path to play_by_play_<season>.csv.gz>
+"""
+import csv, gzip, json, sys, datetime
+
+FIX = {'LA': 'LAR', 'JAC': 'JAX', 'WSH': 'WAS', 'SD': 'LAC', 'OAK': 'LV', 'STL': 'LAR'}
+db, hit, ru, ok, wk = {}, {}, {}, {}, 0
+with gzip.open(sys.argv[1], 'rt') as f:
+    for r in csv.DictReader(f):
+        if r['season_type'] != 'REG' or r['two_point_attempt'] == '1' or r['aborted_play'] == '1' or not r['posteam']:
+            continue
+        t = FIX.get(r['posteam'], r['posteam']); wk = max(wk, int(r['week'] or 0))
+        if r['qb_dropback'] == '1':
+            db[t] = db.get(t, 0) + 1
+            if r['sack'] == '1' or r['qb_hit'] == '1': hit[t] = hit.get(t, 0) + 1
+        elif r['rush_attempt'] == '1' and r['qb_scramble'] != '1' and r['qb_kneel'] != '1':
+            ru[t] = ru.get(t, 0) + 1
+            if r['success'] == '1' or (r['epa'] and float(r['epa']) > 0): ok[t] = ok.get(t, 0) + 1
+teams = {}
+for t in db:
+    teams[t] = {'pbwr': round(1 - hit.get(t, 0) / db[t], 3), 'rbwr': round(ok.get(t, 0) / max(1, ru.get(t, 0)), 3)}
+for k in ('pbwr', 'rbwr'):
+    for i, t in enumerate(sorted(teams, key=lambda t: -teams[t][k])): teams[t][k + 'Rk'] = i + 1
+assert len(teams) == 32, len(teams)
+out = {'asOf': datetime.date.today().isoformat(), 'thru': wk,
+       'source': f'PlainStats, from nflverse play-by-play through Week {wk}: pass protection = dropbacks with no sack or QB hit; run success = designed runs with positive expected points',
+       'teams': teams}
 json.dump(out, open('data/olwin.json', 'w'), separators=(',', ':'))
-print('teams', len(out['teams']))
+print('teams', len(teams), 'thru week', wk, 'KC', teams['KC'])

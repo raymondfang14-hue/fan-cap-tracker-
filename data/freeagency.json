@@ -2,10 +2,10 @@
  "asOf": "2026-10-21",
  "capGrowth": 0.07,
  "capByYear": {
-  "2027": 327000000,
-  "2028": 352000000
+  "2027": 322300000,
+  "2028": 344800000
  },
- "capNote": "The league has not set the 2027 or 2028 cap. These are the projections Over The Cap uses for its future cap tables; later years grow by the rate shown.",
+ "capNote": "The league has not set the 2027 or 2028 cap. PlainStats projects the 2026 cap of $301.2M (NFL.com) growing 7% a year, about the average rise of the last five years.",
  "calendar": [
   {
    "date": "2026-11-10",
@@ -57,5 +57,5 @@
   }
  ],
  "tags": {},
- "source": "Dates: NFL.com 2026-27 important dates, Pro Football Talk and the Buccaneers site. Future caps: Over The Cap."
+ "source": "Dates: NFL.com 2026-27 important dates, Pro Football Talk and the Buccaneers site. Future caps: PlainStats projection from the official 2026 cap."
 }

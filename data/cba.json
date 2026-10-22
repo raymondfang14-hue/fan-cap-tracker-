@@ -1,0 +1,259 @@
+{
+ "asOf": "2026-10-22",
+ "note": "League rules and official figures PlainStats uses to calculate contracts itself. Every number here comes from the league, the collective bargaining agreement (CBA) or a named news report. Rows marked est are PlainStats estimates.",
+ "cap": {
+  "2026": 301200000,
+  "src": [
+   "NFL.com: 2026 salary cap set at $301.2 million",
+   "https://www.nfl.com/_amp/nfl-announces-2026-salary-cap-set-at-301-2-million-per-team"
+  ]
+ },
+ "capGrowthEst": 0.07,
+ "minSalary": {
+  "2026": {
+   "0": 885000,
+   "1": 1005000,
+   "2": 1075000,
+   "3": 1145000,
+   "4": 1215000,
+   "5": 1215000,
+   "6": 1215000,
+   "7": 1300000
+  },
+  "stepPerYearEst": 45000,
+  "src": [
+   "NFL Football Operations: types of free agents (2026 minimum salaries)",
+   "https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents"
+  ],
+  "note": "Keys are credited seasons (7 means seven or more). Later years add stepPerYearEst a year, an estimate that matches the 2025 to 2026 rise in the rookie minimum."
+ },
+ "vetSalaryBenefit": {
+  "minCredited": 4,
+  "countsAsCredited": 2,
+  "note": "A player with four or more credited seasons on a one-year minimum deal counts against the cap as if he had two (CBA Article 26)."
+ },
+ "rfaTenders": {
+  "2026": {
+   "first": 8107000,
+   "second": 5811000,
+   "original": 3674000,
+   "rofr": 3547000
+  },
+  "src": [
+   "NFL Football Operations: types of free agents (2026 tenders)",
+   "https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents"
+  ]
+ },
+ "practiceSquad": {
+  "2026": {
+   "weekly": 13750,
+   "weeklyVet": 18350,
+   "weeklyVetMax": 22850,
+   "weeks": 18
+  },
+  "src": [
+   "Sports Illustrated: how much practice squad players make (July 28, 2026)",
+   "https://www.si.com/nfl/how-much-nfl-practice-squad-players-make"
+  ],
+  "note": "weekly applies to players with two or fewer accrued seasons, weeklyVet to the rest."
+ },
+ "tags": {
+  "2026": {
+   "QB": [
+    43895000,
+    37833000
+   ],
+   "RB": [
+    14293000,
+    11323000
+   ],
+   "WR": [
+    27298000,
+    23852000
+   ],
+   "TE": [
+    15045000,
+    12687000
+   ],
+   "OL": [
+    25773000,
+    23392000
+   ],
+   "EDGE": [
+    24434000,
+    21512000
+   ],
+   "DT": [
+    27127000,
+    22521000
+   ],
+   "LB": [
+    26865000,
+    21925000
+   ],
+   "CB": [
+    21161000,
+    18119000
+   ],
+   "S": [
+    20149000,
+    16012000
+   ],
+   "ST": [
+    6649000,
+    6005000
+   ]
+  },
+  "src": [
+   "NBC Sports: 2026 franchise and transition tag values (Feb 23, 2026)",
+   "https://www.nbcsportsboston.com/nfl/nfl-franchise-tag-tracker-list-players-deadline/772364/"
+  ],
+  "note": "[franchise (non-exclusive), transition] in dollars. EDGE is the league's defensive end number. ST is kicker and punter."
+ },
+ "proration": {
+  "maxYears": 5,
+  "note": "A signing bonus counts evenly over the contract's years, at most five (CBA Article 13)."
+ },
+ "rookieScale": {
+  "note": "Four-year rookie contract value by draft slot for the 2026 class, interpolated between the real signings below. Earlier classes are scaled by each class's No. 1 pick. Bonus is the signing bonus.",
+  "anchors2026": [
+   {
+    "pick": 1,
+    "total": 57270000,
+    "bonus": 38100000,
+    "who": "Fernando Mendoza",
+    "src": "https://thescore.com/nfl/news/3569729"
+   },
+   {
+    "pick": 4,
+    "total": 51100000,
+    "bonus": 33600000,
+    "who": "Carnell Tate",
+    "src": "https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker"
+   },
+   {
+    "pick": 6,
+    "total": 41900000,
+    "who": "Mansoor Delane",
+    "src": "https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker"
+   },
+   {
+    "pick": 7,
+    "total": 37200000,
+    "bonus": 23500000,
+    "who": "Sonny Styles",
+    "src": "https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker"
+   },
+   {
+    "pick": 22,
+    "total": 20456000,
+    "who": "Akheem Mesidor",
+    "src": "https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker"
+   },
+   {
+    "pick": 29,
+    "total": 18000000,
+    "who": "Peter Woods (guaranteed amount)",
+    "src": "https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker"
+   },
+   {
+    "pick": 33,
+    "total": 13376000,
+    "bonus": 6188000,
+    "who": "De'Zhaun Stribling",
+    "src": "https://www.profootballrumors.com/2026/05/49ers-sign-33rd-overall-pick-dezhaun-stribling-to-fully-guaranteed-deal"
+   },
+   {
+    "pick": 37,
+    "total": 12810000,
+    "bonus": 5778000,
+    "who": "Colton Hood",
+    "src": "https://digital-release.mytwintiers.com/sports/sports-illustrated/arena-nfl/si-new-york-giants-nfl/2d5d31f/giants-finalize-deal-with-second-round-draft-pick-colton-hood"
+   },
+   {
+    "pick": 64,
+    "total": 7880000,
+    "bonus": 2200000,
+    "who": "Bud Clark",
+    "src": "https://www.fox13seattle.com/sports/seahawks-sign-second-round-pick-bud-clark"
+   },
+   {
+    "pick": 66,
+    "total": 7380000,
+    "bonus": 1800000,
+    "who": "Tyler Onyedim",
+    "src": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/broncos-sign-third-round-pick-tyler-onyedim-as-logjam-breaks-of-unsigned-third-round-picks"
+   },
+   {
+    "pick": 210,
+    "total": 4630000,
+    "bonus": 251000,
+    "who": "Gabriel Rubio",
+    "src": "https://steelersnow.com/steelers-sign-sixth-round-pick-to-rookie-contract/"
+   }
+  ],
+  "classNo1": {
+   "2023": [
+    37950000,
+    24600000,
+    "https://www.cbssports.com/nfl/news/panthers-no-1-pick-bryce-young-signs-four-year-fully-guaranteed-rookie-contract-worth-nearly-38-million"
+   ],
+   "2024": [
+    39000000,
+    25500000,
+    "https://www.cbssports.com/nfl/news/bears-caleb-williams-signs-rookie-contract-qb-asked-for-historic-no-tag-clause-in-deal-declined-per-report"
+   ],
+   "2025": [
+    48000000,
+    null,
+    "https://www.foxsports.com/stories/nfl/tennessee-titans-no-1-pick-cam-ward-signs-fully-guaranteed-rookie-contract"
+   ],
+   "2026": [
+    57270000,
+    38100000,
+    "https://thescore.com/nfl/news/3569729"
+   ]
+  }
+ },
+ "fifthYearOptions2023": {
+  "src": [
+   "ESPN via ABC7: 2023 first-round fifth-year option tracker",
+   "https://abc7.com/post/nfl-fifth-year-option-tracker-2023-first-round-draft-class/18835034/"
+  ],
+  "exercised": {
+   "Bryce Young": 26500000,
+   "C.J. Stroud": 25900000,
+   "Devon Witherspoon": 21200000,
+   "Paris Johnson Jr.": 19000000,
+   "Bijan Robinson": null,
+   "Jalen Carter": 27000000,
+   "Darnell Wright": 19070000,
+   "Peter Skoronski": 19070000,
+   "Jahmyr Gibbs": 14290000,
+   "Lukas Van Ness": 13800000,
+   "Will McDonald IV": 13800000,
+   "Christian Gonzalez": 18100000,
+   "Calijah Kancey": 14400000,
+   "Quentin Johnston": 18000000,
+   "Zay Flowers": 27300000,
+   "Jordan Addison": 18000000,
+   "Dalton Kincaid": 8100000,
+   "Anton Harrison": 19000000,
+   "Bryan Bresee": 13900000,
+   "Nolan Smith Jr.": 13700000
+  },
+  "declined": [
+   "Anthony Richardson",
+   "Tyree Wilson",
+   "Broderick Jones",
+   "Jack Campbell",
+   "Deonte Banks",
+   "Mazi Smith",
+   "Myles Murphy"
+  ],
+  "extended": [
+   "Will Anderson Jr.",
+   "Jaxon Smith-Njigba"
+  ]
+ }
+}

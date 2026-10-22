@@ -25,7 +25,7 @@ him. School codes must be keys of SCHOOLS (add the school with its colors if a n
 Group (grp) is one of QB RB WR TE OT IOL EDGE DT LB CB S. Run: python3 -I data/build_draft.py
 The page computes the consensus order, grades, roles, traits, the mock and rookie pay itself.
 Boards: WalterFootball 2027 big board and NFL Draft Buzz big board. College stats: cfbstats.com.
-Rookie scale: 2026 first-round slot values (Pro Football Network / Spotrac)."""
+Rookie scale: PlainStats' own scale from real 2026 signings (data/rookie_scale.py, data/cba.json)."""
 import json, re, sys, pathlib
 
 HERE = pathlib.Path(__file__).parent
@@ -134,11 +134,12 @@ for line in (HERE / 'draft_stats.txt').read_text().splitlines():
     d = json.loads(js)
     stats[k] = {x: d[x] for x in KEYS if d.get(x)}
 
-# 2026 first-round slot values, four-year totals (Pro Football Network, citing Spotrac). Pick 33 from the same article.
-SLOT26 = [54565500, 52103630, 50537014, 48746540, 45613238, 40018084, 35541950, 31065822, 30841760, 29611072,
-          27708728, 25023034, 24351620, 23232590, 22785000, 21442128, 20994516, 20435008, 20099288, 19987396,
-          19875486, 19651672, 19427870, 18980258, 18756456, 18532620, 18308844, 18196940, 17298970, 16823440,
-          16425104, 16168614]
+# 2026 first-round slot values, four-year totals, from PlainStats' rookie scale (data/rookie_scale.py, built from
+# real 2026 signings and the CBA minimum salaries in data/cba.json). Pick 33 is the first pick of round 2.
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from rookie_scale import rookie_deal
+SLOT26 = [rookie_deal(k, 2026)['total'] for k in range(1, 33)]
+SLOT33 = rookie_deal(33, 2026)['total']
 
 assert all(r[3] in SCHOOLS for r in P), [r[0] for r in P if r[3] not in SCHOOLS]
 assert len({r[0] for r in P}) == len(P), 'duplicate key'
@@ -172,7 +173,7 @@ doc = {
  ],
  'schools': SCHOOLS,
  'slot26': SLOT26,
- 'slot26r2first': 12937488,
+ 'slot26r2first': SLOT33,
  'traded': [
    {'orig': 'IND', 'own': 'NYJ', 'note': 'Sauce Gardner trade'},
    {'orig': 'LAR', 'own': 'CLE', 'note': 'Myles Garrett trade'},
@@ -183,7 +184,7 @@ doc = {
    ['WalterFootball 2027 big board', 'https://walterfootball.com/nfldraftbigboard2027.php'],
    ['NFL Draft Buzz big board', 'https://www.nfldraftbuzz.com/buzzbigboard'],
    ['cfbstats: 2026 college stats', 'https://cfbstats.com/2026/team/index.html'],
-   ['Pro Football Network: 2026 rookie scale', 'https://www.profootballnetwork.com/nfl-draft-rookie-scale-contracts-april-23-2026/'],
+   ['PlainStats rookie scale, built from 2026 signings reported by NFL.com and team news', 'https://www.nfl.com/news/2026-nfl-draft-first-round-pick-signing-tracker'],
    ['Wikipedia: 2027 NFL draft traded picks', 'https://en.wikipedia.org/wiki/2027_NFL_draft'],
  ],
  'prospects': out,

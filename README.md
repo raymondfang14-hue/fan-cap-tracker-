@@ -16,19 +16,18 @@ Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Ca
 ## Views
 Open a view directly with its anchor (`#teams` has the power ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
 
-## Free agency and year-by-year contracts (#freeagency)
-- `data/teamyears.json`: Over The Cap's reported cap room for 2027 and 2028, per team (refreshed daily).
-- `data/freeagency.json`: cap projections, cap growth rate, the offseason calendar and official franchise tag prices once announced.
-- `data/years_exact.json`: reported year-by-year cap hits for individual contracts. Every other player's later years are estimated in the browser from the contract terms and labeled as estimates. The daily task upgrades more contracts to exact each run.
-
-## PFF in-season data (data/pff.json)
-PFF's full player grades are paywalled, so the site uses only what PFF publishes for free during the current season (no preseason rankings): weekly QB and WR rankings, top game grades each week, Team of the Week, and rookie rankings. This is a light signal: 25% of a player's play rating (PFF_W in src.html). Offensive linemen get roles (Road grader, Blindside protector, Two-way anchor...) from the pass-block and run-block grades PFF states. Traits are separate from roles: they are gold, silver or bronze tiers on stats that no role uses, and there are no PFF-based traits. The daily task re-reads the newest PFF pages.
-
-## Free offensive line data (data/olwin.json, data/pff_ol.json)
-No free source tracks every block by individual lineman, so PlainStats blends what is free:
-- `data/olwin.json`: ESPN's team Pass Block Win Rate (PBWR) and Run Block Win Rate (RBWR), built by `data/build_olwin.py` from the free NFL Lines table. The page merges these into each team's stats. They feed the lineman play rating (35% snap share, 15% penalties, 15% PBWR, 15% RBWR, 10% sack rate, 10% yards before contact).
-- `data/pff_ol.json`: individual lineman figures PFF states in its free weekly OL rankings article (pressures, pass-blocking snaps, grades), built by `data/build_pff_ol.py`. They show on the lineman's card and do not change his rating. Only figures tied to one named lineman are kept.
-Refresh both weekly: edit the rows in each script, run it, then `sh build.sh`.
+## Where contract numbers come from (data/nfl.json, data/ledger.csv, data/cba.json)
+PlainStats does not copy Over The Cap or Spotrac. `data/build_contracts.py` builds every player row and tags where it comes from:
+- `r` reported: `data/ledger.csv` has one row per deal from a named news report or team announcement, with its URL. Blank fields stay unverified and the player page says so.
+- `f` calculated: rookie contracts for the last four draft classes, from the draft slot with PlainStats' rookie scale (`data/rookie_scale.py`, anchored to real 2026 signings listed in `data/cba.json`) and the CBA minimum salaries, including the proven performance escalator, fifth-year options and trades. Undrafted rookies get the minimum.
+- `m` league minimum and `p` practice squad: valued with the CBA tables in `data/cba.json`.
+- `u` unverified: older figures still being re-checked. The daily refresh moves these into the ledger, biggest cap hits first.
+Run `python3 -I data/build_contracts.py <folder with nflverse roster_2026.csv, draft_picks.csv, snap_counts_2023-2025.csv>`, then `data/fix_ol.py`, then `data/build_market.py`.
+- `data/years_calc.json`: year-by-year cap hits PlainStats calculates (rookie deals). Other players' later years are estimated in the browser and labeled.
+- `data/freeagency.json`: PlainStats cap projection (2026 cap grown 7% a year), the offseason calendar and official franchise tag prices once announced.
+- Team cap space and dead money per team are still the older figures until enough contracts are re-sourced to add them up.
+## Offensive line team measures (data/olwin.json)
+Built by `python3 -I data/build_olwin.py <play_by_play_2026.csv.gz>` from nflverse play-by-play: pass protection (dropbacks with no sack or QB hit) and run success (designed runs with positive expected points). PlainStats no longer uses ESPN win rates or PFF figures.
 
 ## Draft (#draft, data/draft.json)
 The Draft page covers the 2027 class: a big board, a full page for each prospect (grade, role, trait badges, 2026 college stats, NFL players in the same role, rookie contract, team fits), the projected first-round order with a model mock, and the rookie pay scale. `data/draft.json` is built by `python3 -I data/build_draft.py` from the prospect list in that script (WalterFootball and NFL Draft Buzz board ranks, cfbstats ids) the season totals in `data/draft_stats.txt` and the ESPN athlete ids in `data/draft_espn.txt` (prospect headshots; school logos use the ESPN team id at the end of each SCHOOLS row, the same ESPN CDN images the NFL cards use); the script's docstring explains the format. The page computes everything else at load: the consensus order, grades, roles, traits, team needs from the 2026 roster, the draft order from `data/season.json` with traded picks applied, and rookie pay grown with the projected 2027 cap from `data/freeagency.json`.
@@ -38,4 +37,4 @@ The Draft page covers the 2027 class: a big board, a full page for each prospect
 - Links: every player opens at `#p-<first-last>-<team>` and every draft prospect at `#d-<id>`; the player and prospect pages have a Copy link button that copies the Vercel address.
 - Contracts > Best & worst: market value is today's price for a player who ranks where he ranks on the field (data/market.json), minus his yearly pay.
 - Contracts > Rookie deals: draft classes matched to contracts by name and team; fifth-year option prices are rough CBA estimates.
-- Tools > Offseason: 2027 cap room starts from Over The Cap's 2027 table (data/teamyears.json); release, restructure, re-sign, tag and free-agent costs are PlainStats estimates, and moves are saved per team in the browser.
+- Tools > Offseason: 2027 cap room is estimated from every contract on the site; release, restructure, re-sign, tag and free-agent costs are PlainStats estimates, and moves are saved per team in the browser.
