@@ -15,6 +15,11 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - Free data only, current season (2026). Pipeline: `data/build_contracts.py` → `data/fix_ol.py` → `data/build_market.py`. Run Python with `python3 -I`.
 - A hook checks that any edited `data/*.json` still parses.
 
+## Checks
+- `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
+- `python3 -I tools/check_ledger.py` checks `data/ledger.csv` for missing sources, totals that don't add up and duplicates. After adding ledger rows, have the `ledger-checker` agent compare them with their source links.
+- `.mcp.json` adds Playwright (browser checks) and Vercel (deploy logs) for Claude Code sessions.
+
 ## Shipping
 - Push changes to GitHub without asking first (standing instruction from the owner).
 - Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
