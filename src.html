@@ -1047,6 +1047,31 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 /* Cards that open something keep their shadow on hover but no longer jump. */
 .ex:hover,.tile:hover,a.kpi:hover,button.kpi:hover,.fc:hover{transform:none}
 
+/* Share this: a small button on every chart and table, the offscreen copy it photographs, and the preview that opens. */
+.ps-share{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:600 .82rem/1 var(--body);cursor:pointer;white-space:nowrap;flex:none}
+.ps-share svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ps-share:hover{background:var(--surface-2)}
+.ps-share[aria-busy="true"]{opacity:.6;cursor:progress}
+.ps-share:focus-visible,.ps-dlg button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.ps-sharebar{display:flex;justify-content:flex-end;margin-bottom:-8px}
+.ps-cap{position:fixed;left:-12000px;top:0;padding:16px;background:var(--bg);box-sizing:border-box;pointer-events:none}
+.ps-cap,.ps-cap *{animation:none!important;transition:none!important}
+.ps-cap>.panel{width:100%;margin:0}
+.ps-wm{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:0 4px;font:600 12px/1 var(--body);color:var(--muted)}
+.ps-wm b{display:inline-flex;align-items:center;gap:7px;color:var(--fg);font-weight:700}
+.ps-wm i{display:block;width:9px;height:9px;border-radius:50%;background:var(--brand)}
+.ps-ctx{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);font:600 .78rem/1 var(--body)}
+.ps-dlg{width:min(92vw,720px);max-height:90dvh;padding:18px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);color:var(--fg);overflow:auto}
+.ps-dlg::backdrop{background:rgba(0,0,0,.55)}
+.ps-dlg-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ps-dlg-h h2{font:700 1.15rem/1.2 var(--body);margin:0}
+.ps-dlg-x{width:36px;height:36px;border:0;border-radius:50%;background:var(--surface-2);color:var(--fg);font-size:1.3rem;line-height:1;cursor:pointer}
+.ps-dlg-img{display:grid;place-items:center;padding:12px;border-radius:var(--r);background:var(--bg)}
+.ps-dlg-img img{max-width:100%;max-height:55dvh;object-fit:contain;border-radius:8px}
+.ps-dlg-a{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.ps-dlg-note{margin-top:10px}
+.ps-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);z-index:70;max-width:min(92vw,420px);padding:11px 16px;border-radius:999px;background:var(--fg);color:var(--bg);font:600 .85rem/1.3 var(--body);text-align:center}
+
 </style>
 
 <header class="gn" id="gn">
@@ -5700,5 +5725,202 @@ const ADS = {
   if (pv) pv.addEventListener('click', () => { const on = !root.classList.contains('ads-preview'); store.set('adprev', on); setPrev(on); });
 })();
 
+</script>
+<script>
+/* ===== Share this: turn any chart or table panel into a clean image with a small PlainStats watermark =====
+   A "Share this" button goes on every panel that holds a chart or table. Clicking it copies the panel offscreen (so the live page never
+   changes), drops the controls, caps long tables, adds the watermark, photographs the copy, and opens a preview with Share, Save and Copy.
+   The photo is taken by html-to-image, loaded on first use only so it costs nothing until someone shares. */
+(() => {
+  const LIB = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js';
+  const MAX_ROWS = 20;   // longest table that goes into an image; a line under it says how many rows were left out
+  const DATA = '.hbars,.gbars,.cols,.heat,.chartbox,[id$="scatter"],table.t,table.heat';
+  const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>';
+  const filled = el => el.childElementCount > 0 && el.textContent.trim().length > 0;
+
+  // ---- put the button on every panel that has a chart or table ----
+  const eligible = p => {
+    if (p.tagName === 'DETAILS' || p.classList.contains('prose') || p.closest('[hidden]')) return false;
+    return [...p.querySelectorAll(DATA)].some(el => el.closest('.panel') === p && filled(el));
+  };
+  function decorate() {
+    document.querySelectorAll('main .panel').forEach(p => {
+      if (p.closest('.ps-cap')) return;   // never decorate the copy that is being photographed
+      if (p.querySelector(':scope > .ps-sharebar, :scope > .sechead > .ps-share') || !eligible(p)) return;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'ps-share'; b.setAttribute('aria-label', 'Share this as an image'); b.innerHTML = ICON + 'Share this';
+      const head = p.querySelector(':scope > .sechead');
+      if (head) head.appendChild(b);
+      else { const bar = document.createElement('div'); bar.className = 'ps-sharebar'; bar.appendChild(b); p.insertBefore(bar, p.firstChild); }
+    });
+  }
+  let timer = 0;
+  const later = () => { clearTimeout(timer); timer = setTimeout(decorate, 200); };
+  new MutationObserver(later).observe(document.querySelector('main') || document.body, { childList: true, subtree: true });
+  window.addEventListener('hashchange', later);
+  later();
+
+  // ---- small helpers ----
+  let toastEl, toastT;
+  function toast(msg) {
+    if (!toastEl) { toastEl = document.createElement('div'); toastEl.className = 'ps-toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); }
+    toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { toastEl.hidden = true; }, 4500);
+  }
+  let libP;
+  const loadLib = () => libP || (libP = new Promise((ok, no) => {
+    if (window.htmlToImage) return ok(window.htmlToImage);
+    const s = document.createElement('script');
+    s.src = LIB; s.async = true;
+    s.onload = () => window.htmlToImage ? ok(window.htmlToImage) : (libP = null, no(new Error('image library missing')));
+    s.onerror = () => { libP = null; no(new Error('image library did not load')); };
+    document.head.appendChild(s);
+  }));
+  const dataDate = () => { try { return typeof D !== 'undefined' && D && D.asOf ? new Date(D.asOf + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : ''; } catch (e) { return ''; } };
+  const slugOf = s => String(s || 'chart').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'chart';
+
+  // ESPN logos and headshots live on another origin. If that origin allows it they are copied into the image; if not they are left out
+  // (a blank spot is better than a broken image or a failed export).
+  async function inlineImages(root) {
+    const toData = async url => {
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 5000);
+      try {
+        const r = await fetch(url, { mode: 'cors', credentials: 'omit', signal: ctl.signal });
+        if (!r.ok) throw new Error('image ' + r.status);
+        const blob = await r.blob();
+        return await new Promise((ok, no) => { const f = new FileReader(); f.onload = () => ok(f.result); f.onerror = no; f.readAsDataURL(blob); });
+      } finally { clearTimeout(t); }
+    };
+    const abs = u => new URL(u, location.href).href;
+    const jobs = [];
+    root.querySelectorAll('img').forEach(img => {
+      const u = img.getAttribute('src');
+      if (!u || u.startsWith('data:')) return;
+      img.removeAttribute('srcset'); img.removeAttribute('loading');
+      jobs.push(toData(abs(u)).then(d => { img.src = d; }).catch(() => img.remove()));
+    });
+    root.querySelectorAll('image').forEach(im => {
+      const u = im.getAttribute('href') || im.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+      if (!u || u.startsWith('data:')) return;
+      jobs.push(toData(abs(u)).then(d => im.setAttribute('href', d)).catch(() => im.remove()));
+    });
+    await Promise.all(jobs);
+  }
+
+  // Make the copy "clean": no buttons, search boxes or paging, a one-line note of what the controls were set to, long tables cut short.
+  // cloneNode copies attributes, not what someone typed or picked, so the live values are read from the real panel and passed in.
+  function clean(clone, live) {
+    const ctx = text => { const s = document.createElement('span'); s.className = 'ps-ctx'; s.textContent = text; return s; };
+    // A search box becomes a "Filter: ..." pill if it has text in it, and goes away (with its label) if it is empty.
+    const typed = [...live.querySelectorAll('input,textarea')].map(n => (n.value || '').trim());
+    clone.querySelectorAll('input,textarea').forEach((n, i) => {
+      const box = n.closest('.tfilter') || n.closest('label') || n;
+      if (typed[i] && /^(search|text)$/.test(n.type || 'text')) box.replaceWith(ctx('Filter: ' + typed[i])); else box.remove();
+    });
+    const picked = [...live.querySelectorAll('select')].map(s => (s.options[s.selectedIndex] || {}).textContent || '');
+    clone.querySelectorAll('.ps-share,.ps-sharebar,.tfilter,.ad,[data-noshare],.more,.btn,script').forEach(n => n.remove());
+    clone.querySelectorAll('.seg,.chips').forEach(g => {
+      const on = [...g.querySelectorAll('[aria-pressed="true"]')].map(b => b.textContent.trim()).filter(Boolean);
+      if (on.length) g.replaceWith(ctx(on.join(' · '))); else g.remove();
+    });
+    clone.querySelectorAll('select').forEach((sel, i) => { if (picked[i] && picked[i].trim()) sel.replaceWith(ctx(picked[i].trim())); else sel.remove(); });
+    clone.querySelectorAll('[aria-live]').forEach(n => n.removeAttribute('aria-live'));
+    clone.querySelectorAll('.tw,.hbars,.gbars,[style*="max-height"],[style*="overflow"]').forEach(n => { n.style.overflow = 'visible'; n.style.maxHeight = 'none'; });
+    // Tables: a filter hides rows rather than removing them, so rows the live table hides are dropped first, then the rest are capped.
+    const liveTables = [...live.querySelectorAll('table')];
+    clone.querySelectorAll('table').forEach((t, k) => {
+      const body = t.tBodies[0], lb = liveTables[k] && liveTables[k].tBodies[0];
+      if (!body) return;
+      const rows = [...body.rows];
+      const shown = rows.filter((r, i) => !(lb && lb.rows[i] && getComputedStyle(lb.rows[i]).display === 'none'));
+      rows.forEach(r => { if (!shown.includes(r)) r.remove(); });
+      if (shown.length <= MAX_ROWS) return;
+      shown.slice(MAX_ROWS).forEach(r => r.remove());
+      const note = document.createElement('p');
+      note.className = 'note'; note.textContent = 'Showing ' + MAX_ROWS + ' of ' + shown.length + ' rows. The full table is at plainstatsnfl.com.';
+      (t.closest('.tw') || t).after(note);
+    });
+  }
+
+  async function makeImage(panel) {
+    const heading = ((panel.querySelector('h2.sec, h2, h3') || {}).textContent || document.title).trim();
+    const wideTable = Math.max(0, ...[...panel.querySelectorAll('.tw, table')].map(el => el.scrollWidth));
+    const width = Math.round(Math.min(1200, Math.max(panel.getBoundingClientRect().width, wideTable + 56))) + 32;
+    const clone = panel.cloneNode(true);
+    clean(clone, panel);
+    const wrap = document.createElement('div');
+    wrap.className = 'ps-cap'; wrap.style.width = width + 'px';
+    const wm = document.createElement('div');
+    wm.className = 'ps-wm';
+    wm.innerHTML = '<b><i></i>PlainStats</b><span>plainstatsnfl.com' + (dataDate() ? ' · Data as of ' + dataDate() : '') + '</span>';
+    wrap.append(clone, wm);
+    // Sit beside the real panel so any styles that depend on the view it lives in still apply to the copy.
+    panel.after(wrap);
+    try {
+      await inlineImages(wrap);
+      const lib = await loadLib();
+      const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f5f5f7';
+      const ratio = Math.max(1, Math.min(2, Math.sqrt(12e6 / (wrap.offsetWidth * wrap.offsetHeight))));  // stay under phone canvas limits
+      const opts = { pixelRatio: ratio, backgroundColor: bg, cacheBust: false, style: { position: 'static', left: 'auto', top: 'auto', margin: '0' } };
+      let blob;
+      try { blob = await lib.toBlob(wrap, opts); } catch (e) { blob = await lib.toBlob(wrap, Object.assign({ skipFonts: true }, opts)); }
+      if (!blob) throw new Error('empty image');
+      return { blob, heading };
+    } finally { wrap.remove(); }
+  }
+
+  // ---- preview ----
+  let dlg, curUrl = '';
+  function ensureDialog() {
+    if (dlg) return dlg;
+    dlg = document.createElement('dialog');
+    dlg.className = 'ps-dlg'; dlg.setAttribute('aria-labelledby', 'ps-dlg-t');
+    dlg.innerHTML = '<div class="ps-dlg-h"><h2 id="ps-dlg-t">Share this</h2><button type="button" class="ps-dlg-x" data-a="close" aria-label="Close">&times;</button></div>'
+      + '<div class="ps-dlg-img"><img alt="Preview of the image you are about to share"></div>'
+      + '<p class="note ps-dlg-note">The image includes a small PlainStats watermark.</p>'
+      + '<div class="ps-dlg-a"><button type="button" class="btn" data-a="share" hidden>Share</button><button type="button" class="btn ghost" data-a="save">Save image</button><button type="button" class="btn ghost" data-a="copy" hidden>Copy image</button></div>';
+    document.body.appendChild(dlg);
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', () => { if (curUrl) { URL.revokeObjectURL(curUrl); curUrl = ''; } });
+    return dlg;
+  }
+  function openPreview({ blob, heading }) {
+    const file = new File([blob], 'plainstats-' + slugOf(heading) + '.png', { type: 'image/png' });
+    const d = ensureDialog();
+    if (curUrl) URL.revokeObjectURL(curUrl);
+    curUrl = URL.createObjectURL(blob);
+    d.querySelector('img').src = curUrl;
+    const canShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+    const canCopy = !!(navigator.clipboard && window.ClipboardItem);
+    d.querySelector('[data-a="share"]').hidden = !canShare;
+    d.querySelector('[data-a="copy"]').hidden = !canCopy;
+    d.onclick = async e => {
+      const a = e.target.closest('[data-a]') && e.target.closest('[data-a]').dataset.a;
+      if (!a) return;
+      if (a === 'close') return d.close();
+      try {
+        if (a === 'share') await navigator.share({ files: [file], title: heading, text: heading + ' · plainstatsnfl.com' });
+        if (a === 'copy') { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('Image copied'); }
+        if (a === 'save') { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; document.body.appendChild(l); l.click(); l.remove(); }
+        if (window.gtag) gtag('event', 'share', { method: 'image_' + a, content_type: 'panel', item_id: slugOf(heading) });
+      } catch (err) { if (!err || err.name !== 'AbortError') toast('That did not work here. Try Save image instead.'); }
+    };
+    d.querySelector('#ps-dlg-t').textContent = heading.length > 60 ? 'Share this' : 'Share: ' + heading;
+    if (typeof d.showModal === 'function') d.showModal();
+    else { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; l.click(); }
+  }
+
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.ps-share');
+    if (!b) return;
+    e.preventDefault();
+    const panel = b.closest('.panel');
+    if (!panel || b.getAttribute('aria-busy') === 'true') return;
+    b.setAttribute('aria-busy', 'true');
+    const label = b.lastChild; const was = label.textContent; label.textContent = 'Making image…';
+    try { openPreview(await makeImage(panel)); }
+    catch (err) { console.error('share image failed', err); toast('Could not make the image. Check your connection and try again.'); }
+    finally { b.removeAttribute('aria-busy'); label.textContent = was; }
+  });
+})();
 </script>
 </body></html>

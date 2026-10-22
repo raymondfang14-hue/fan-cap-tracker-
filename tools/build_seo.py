@@ -11,6 +11,8 @@ Writes plain static HTML (no JavaScript, inline CSS, system fonts) into
   draft/<name>.html              /draft/jeremiah-smith
   players/index.html, teams/index.html, draft/index.html   (hub pages that link to everything)
 and rewrites sitemap.xml. vercel.json has cleanUrls on, so the .html is dropped from the address.
+It also writes og-data/<kind>.json (players, teams, draft, pages): the text behind each page's social card. Every page's og:image is
+/api/og?k=<kind>&s=<slug>&v=<asOf>, which api/og.js draws on demand (the sandbox can't reach ESPN's image CDN, Vercel can).
 
 Data rules (CLAUDE.md) are enforced here, not just in the page:
   * A contract figure appears only if the player's `ver` letters in data/nfl.json confirm it
@@ -21,7 +23,7 @@ Data rules (CLAUDE.md) are enforced here, not just in the page:
 
 Re-run after every data refresh (build.sh does it too), then commit the generated folders and sitemap.xml.
 """
-import csv, html, json, pathlib, re, shutil, unicodedata
+import csv, datetime as dt, html, json, pathlib, re, shutil, unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / 'data'
@@ -44,6 +46,27 @@ ASOF = NFL['asOf']
 CAP = NFL['cap']
 SEASON_YEAR = NFL['season']
 SOURCES = NFL['sources']
+
+# ---------------------------------------------------------------- social cards (Open Graph)
+# Every page points og:image at /api/og?k=<kind>&s=<slug>&v=<asOf>. api/og.js looks the slug up in og-data/<kind>.json,
+# written at the end of main(), and draws the card (face or logo, name, one key number). The card text comes only from
+# this script, so it follows the same data rules as the page: a contract figure shows only when `ver` confirms it.
+# Team colors are read from the page itself (src.html COLORS) so the cards never drift from the site.
+_m = re.search(r"const COLORS = \{([^}]*)\}", (ROOT / 'src.html').read_text(encoding='utf-8'))
+TEAM_COLOR = dict(re.findall(r"(\w+): '(#[0-9A-Fa-f]{6})'", _m.group(1))) if _m else {}
+OG = {'players': {}, 'teams': {}, 'draft': {}, 'pages': {}}
+OG_BRAND = '#0D47A1'
+
+
+def og_url(kind, slug):
+    return f"{SITE}/api/og?k={kind}&s={slug}&v={ASOF}"
+
+
+def og_add(kind, slug, **card):
+    """Store one card (empty fields dropped to keep the files small) and return its image URL."""
+    OG[kind][slug] = {k: v for k, v in card.items() if v not in (None, '')}
+    return og_url(kind, slug)
+
 
 POSNAME = {'QB': 'quarterback', 'RB': 'running back', 'FB': 'fullback', 'WR': 'wide receiver', 'TE': 'tight end',
            'LT': 'left tackle', 'LG': 'left guard', 'C': 'center', 'RG': 'right guard', 'RT': 'right tackle',
@@ -307,8 +330,48 @@ def player_faq(p, f):
     return q
 
 
+def headline_stat(p):
+    """One season number for the card when no contract figure is confirmed. (value, label) or None. Only keys that are present."""
+    s = p.s26 or {}
+    if not s.get('g'):
+        return None
+    pick = {'QB': ('pyd', 'passing yards'), 'RB': ('ryd', 'rushing yards'), 'FB': ('ryd', 'rushing yards'), 'WR': ('reyd', 'receiving yards'),
+            'TE': ('reyd', 'receiving yards'), 'EDGE': ('dsk', 'sacks'), 'IDL': ('dsk', 'sacks'), 'LB': ('tk', 'tackles'), 'CB': ('tk', 'tackles'),
+            'S': ('tk', 'tackles'), 'K': ('fgm', 'field goals made'), 'P': ('pun', 'punts')}.get(p.pos)
+    if pick and s.get(pick[0]):
+        v = s[pick[0]]
+        return (f'{v:,}' if isinstance(v, int) else f'{v:g}'), pick[1]
+    return str(s['g']), ('game played' if s['g'] == 1 else 'games played')
+
+
+def player_card(p, f, T, has_deal):
+    """Card text for a player page. Contract numbers come from contract_facts() only, so unconfirmed deals never appear."""
+    card = dict(m='face', c=TEAM_COLOR.get(p.team, OG_BRAND), i=headshot(p.name, p.team), g=T.get('logo'), t=p.name,
+                s=f"{p.pos} · {T['full']}", e='NFL contract explained')
+    if f['apy']:
+        card.update(n=mon(f['apy']), l='per year')
+        if f['total'] and f['end']:
+            card['x'] = f"{mon(f['total'])} total through {f['end']}"
+        elif f['total']:
+            card['x'] = f"{mon(f['total'])} total"
+        elif f['cap']:
+            card['x'] = f"{SEASON_YEAR} cap hit {mon(f['cap'])}"
+    elif f['total']:
+        card.update(n=mon(f['total']), l='total contract', x=(f"Runs through {f['end']}" if f['end'] else None))
+    elif f['cap']:
+        card.update(n=mon(f['cap']), l=f'{SEASON_YEAR} cap hit')
+    else:
+        # No confirmed contract: lead with a real season number and say the contract is still being verified.
+        st = headline_stat(p)
+        if st:
+            card.update(n=st[0], l=f'{st[1]} in {SEASON_YEAR}', x='Contract being verified')
+        else:
+            card.update(n='Contract being verified')
+    return card
+
+
 # ---------------------------------------------------------------- html shell
-CSS = """:root{color-scheme:light dark;--bg:#f5f5f7;--sf:#fff;--fg:#1d1d1f;--mu:#636368;--ln:#e1e1e6;--br:#0071e3;--lk:#0066cc;--bs:#e8f1fc}
+CSS =""":root{color-scheme:light dark;--bg:#f5f5f7;--sf:#fff;--fg:#1d1d1f;--mu:#636368;--ln:#e1e1e6;--br:#0071e3;--lk:#0066cc;--bs:#e8f1fc}
 @media(prefers-color-scheme:dark){:root{--bg:#000;--sf:#161617;--fg:#f5f5f7;--mu:#a1a1a6;--ln:#2c2c2f;--br:#2997ff;--lk:#2997ff;--bs:#0c2541}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
 a{color:var(--lk)}header.top{background:var(--sf);border-bottom:1px solid var(--ln)}
@@ -343,15 +406,19 @@ def crumbs_ld(items):
         {'@type': 'ListItem', 'position': i + 1, 'name': n, 'item': SITE + u} for i, (n, u) in enumerate(items)]}
 
 
-def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=()):
+def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), card=None):
     canon = SITE + path
-    img = image or SITE + '/og-image.png'
+    img = card or image or SITE + '/og-image.png'
+    # A generated card is always 1200x630; say so (and describe it) so X, Discord and iMessage render it without a resize pass.
+    alt = esc(clip(title.replace(' | PlainStats', ''), 110) + ' (PlainStats)')
+    img_meta = (f'<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{alt}">'
+                f'<meta name="twitter:image:alt" content="{alt}">') if card else ''
     crumb_html = ''
     if crumbs:
         crumb_html = '<nav class="crumbs" aria-label="Breadcrumb">' + ' › '.join(
             f'<a href="{esc(u)}">{esc(n)}</a>' for n, u in crumbs[:-1]) + (' › ' if len(crumbs) > 1 else '') + esc(crumbs[-1][0]) + '</nav>'
     meta_robots = f'<meta name="robots" content="{robots}">' if robots else ''
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="mailto:{EMAIL}?subject=Suggest%20a%20fix%3A%20{esc(path)}">Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="mailto:{EMAIL}?subject=Suggest%20a%20fix%3A%20{esc(path)}">Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
 
 
 def faq_html(faq):
@@ -454,7 +521,8 @@ def build_player(p):
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Players', '/players'), (p.name, path)])]
     crumbs = [('PlainStats', '/'), ('Players', '/players'), (p.name, path)]
     thin = not has_deal
-    write(f'players{"/" + p.slug}.html', shell(path, title, desc, body, graph, robots='noindex,follow' if thin else None, image=img, crumbs=crumbs))
+    card = og_add('players', p.slug, **player_card(p, f, T, has_deal))
+    write(f'players{"/" + p.slug}.html', shell(path, title, desc, body, graph, robots='noindex,follow' if thin else None, image=img, crumbs=crumbs, card=card))
     if not thin:
         URLS.append((path, '0.7' if p.prov == 'r' else '0.5', 'weekly'))
 
@@ -504,6 +572,11 @@ def build_team(t):
     if rec:
         bits.append(f"This season they are {rec[0]}" + (f" under head coach {rec[1]['coach']}." if rec[1].get('coach') else '.'))
     summary = ' '.join(bits)
+    # Team cards: logo on the team color, one big number. Overview and cap pages lead with cap space, dead-money page with dead money.
+    sub = t['div'] + (f" · {rec[0]}" if rec else '')
+    og_base = dict(m='logo', c=TEAM_COLOR.get(tid, OG_BRAND), i=t.get('logo'), t=full, s=sub)
+    card_space = dict(og_base, e='Team cap space', n=space_txt, l=f'of cap space · {rank_txt} most in the NFL', x=f"Dead money {mon(t['dead'])}")
+    card_dead = dict(og_base, e='Team dead money', n=mon(t['dead']), l=f"in dead money · {ordn(t['r_dead'])} most in the NFL", x=f'Cap space {space_txt}')
 
     # --- overview page
     faq = [
@@ -536,7 +609,7 @@ def build_team(t):
         team_ld['coach'] = {'@type': 'Person', 'name': rec[1]['coach']}
     graph = [team_ld, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, path)])]
-    write(f'teams/{slug}/index.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, path)]))
+    write(f'teams/{slug}/index.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, path)], card=og_add('teams', slug, **card_space)))
     URLS.append((path, '0.8', 'daily'))
 
     # --- cap space page
@@ -559,7 +632,7 @@ def build_team(t):
             f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/#team-{tid}">Open in the app</a></li></ul>')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)])]
-    write(f'teams/{slug}/cap.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)]))
+    write(f'teams/{slug}/cap.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)], card=og_add('teams', f'{slug}-cap', **card_space)))
     URLS.append((path, '0.8', 'daily'))
 
     # --- dead money page
@@ -580,7 +653,7 @@ def build_team(t):
             f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/#team-{tid}">Open in the app</a></li></ul>')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)])]
-    write(f'teams/{slug}/dead-money.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)]))
+    write(f'teams/{slug}/dead-money.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)], card=og_add('teams', f'{slug}-dead-money', **card_dead)))
     URLS.append((path, '0.7', 'daily'))
 
 
@@ -653,7 +726,18 @@ def build_prospect(pr):
         person['image'] = img
     graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': DRAFT.get('asOf', ASOF), 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Draft', '/draft'), (pr['name'], path)])]
-    write(f'draft/{pr["slug"]}.html', shell(path, title, desc, body, graph, image=img, crumbs=[('PlainStats', '/'), ('Draft', '/draft'), (pr['name'], path)]))
+    # Card: college headshot on the school color, school logo in the corner, big board rank as the key number.
+    sch = SCHOOLS.get(pr['sch'], [pr['sch']])
+    sch_color = sch[1] if len(sch) > 1 and re.fullmatch(r'#[0-9A-Fa-f]{6}', str(sch[1])) else OG_BRAND
+    sch_logo = f'https://a.espncdn.com/i/teamlogos/ncaa/500/{sch[3]}.png' if len(sch) > 3 and sch[3] else None
+    card = dict(m='face', c=sch_color, i=img, g=sch_logo, t=pr['name'], s=f"{pr['grp']} · {school}", e='2027 NFL Draft prospect')
+    if pr.get('b'):
+        card.update(n=f"#{pr['b']}", l='on the NFL Draft Buzz big board', x=(f"#{pr['w']} on WalterFootball" if pr.get('w') else None))
+    elif pr.get('w'):
+        card.update(n=f"#{pr['w']}", l='on the WalterFootball big board')
+    else:
+        card.update(n='2027 class', l='NFL Draft prospect')
+    write(f'draft/{pr["slug"]}.html', shell(path, title, desc, body, graph, image=img, crumbs=[('PlainStats', '/'), ('Draft', '/draft'), (pr['name'], path)], card=og_add('draft', pr['slug'], **card)))
     URLS.append((path, '0.5', 'weekly'))
 
 
@@ -668,7 +752,9 @@ def build_hubs():
     body = (f'<h1>NFL teams: cap space and dead money</h1><p class="lede">All 32 teams, as of {esc(ASOF)}. Tap a team for its roster, cap space and dead money.</p>'
             f'<div class="card scroll"><table><thead><tr><th>Team</th><th class="r">Cap space</th><th class="r">Dead money</th><th>More</th></tr></thead><tbody>{rows}</tbody></table></div>{faq_html(faq)}')
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', path)])]
-    write('teams/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Teams', path)]))
+    card = og_add('pages', 'teams', m='brand', c=OG_BRAND, e='PlainStats', t='All 32 NFL teams', s='Cap space and dead money', n=mon(CAP, 0), l=f'{SEASON_YEAR} salary cap per team',
+                  x='Explained in plain English')
+    write('teams/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Teams', path)], card=card))
     URLS.append((path, '0.9', 'daily'))
 
     # players hub
@@ -682,7 +768,9 @@ def build_hubs():
             blocks += f'<h2><a href="/teams/{t["slug"]}">{esc(t["full"])}</a></h2><ul class="list">' + ''.join(f'<li>{player_name_link(p)} <span class="note">{esc(p.pos)}</span></li>' for p in ps) + '</ul>'
     body = f'<h1>NFL player contracts explained</h1><p class="lede">{len(PAGES)} players with a confirmed contract or {SEASON_YEAR} stats, grouped by team. Contracts still being verified are not shown until a named report confirms them.</p>{blocks}'
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, crumbs_ld([('PlainStats', '/'), ('Players', path)])]
-    write('players/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Players', path)]))
+    card = og_add('pages', 'players', m='brand', c=OG_BRAND, e='PlainStats', t='NFL player contracts', s='Explained in plain English', n=f'{len(PAGES):,}', l=f'players with a contract or {SEASON_YEAR} stats',
+                  x='Browse every team')
+    write('players/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Players', path)], card=card))
     URLS.append((path, '0.9', 'daily'))
 
     # draft hub
@@ -696,7 +784,9 @@ def build_hubs():
     body = (f'<h1>2027 NFL Draft prospects</h1><p class="lede">Sorted by NFL Draft Buzz average rank. Board ranks from WalterFootball and NFL Draft Buzz; college stats from cfbstats.com.</p>'
             f'<div class="card scroll"><table><thead><tr><th>Prospect</th><th>Pos</th><th>School</th><th class="r">WF</th><th class="r">Buzz</th></tr></thead><tbody>{rows}</tbody></table></div>{faq_html(faq)}')
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Draft', path)])]
-    write('draft/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Draft', path)]))
+    card = og_add('pages', 'draft', m='brand', c=OG_BRAND, e='PlainStats', t='2027 NFL Draft', s='Big board, stats and profiles', n=f'{len(PROS):,}', l='prospects in the 2027 class',
+                  x='WalterFootball and NFL Draft Buzz ranks')
+    write('draft/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Draft', path)], card=card))
     URLS.append((path, '0.8', 'daily'))
 
 
@@ -718,6 +808,16 @@ def build_sitemap():
     (ROOT / 'sitemap.xml').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
+def build_og_data():
+    """og-data/<kind>.json: the text and image URLs api/og.js draws each card from. Never edit by hand."""
+    out = ROOT / 'og-data'
+    shutil.rmtree(out, ignore_errors=True)
+    out.mkdir()
+    label = dt.date.fromisoformat(ASOF).strftime('%b %-d, %Y') if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(ASOF)) else str(ASOF)
+    for kind, cards in OG.items():
+        (out / f'{kind}.json').write_text(json.dumps({'asOf': label, 'cards': cards}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+
+
 def main():
     for d in ('players', 'teams', 'draft'):
         shutil.rmtree(ROOT / d, ignore_errors=True)
@@ -730,6 +830,8 @@ def main():
     build_hubs()
     build_sitemap()
     build_nav()
+    build_og_data()
+    print(f'social cards {sum(len(c) for c in OG.values())}', end=' | ')
     print(f'players {len(PAGES)} of {len(PLAYERS)} | teams {len(TEAMS)} x3 | draft {len(PROS)} | sitemap urls {len(URLS) + 3}')
 
 

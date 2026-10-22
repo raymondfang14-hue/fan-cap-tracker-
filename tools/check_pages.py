@@ -9,6 +9,7 @@ import argparse, asyncio, functools, http.server, os, sys, threading
 
 VIEWS = ['home', 'news', 'teams', 'team-KC', 'contracts', 'rankings', 'awards', 'draft',
          'tools', 'builder', 'cut', 'trade', 'compare', 'learn']
+SHARE_VIEWS = ['teams', 'contracts', 'rankings', 'draft']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,6 +41,11 @@ async def main(args):
                     wide = await page.evaluate('document.documentElement.scrollWidth - innerWidth')
                     if wide > 1:
                         problems.append(f'{size}/{scheme} #{v}: page scrolls sideways by {wide}px')
+                    if v in SHARE_VIEWS:
+                        try:  # the buttons appear after the data loads and a short debounce, so wait for one instead of guessing
+                            await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
+                        except Exception:
+                            problems.append(f'{size}/{scheme} #{v}: no visible "Share this" button on any chart or table')
                     if args.shots:
                         os.makedirs(args.shots, exist_ok=True)
                         await page.screenshot(path=os.path.join(args.shots, f'{v}-{size}-{scheme}.png'))

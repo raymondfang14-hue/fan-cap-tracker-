@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+# The social card images are drawn by /api/og. X, Facebook and Reddit obey robots.txt for the image too, so it must stay allowed.
+Allow: /api/og
 Disallow: /api/
 
 Sitemap: https://www.plainstatsnfl.com/sitemap.xml
