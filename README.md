@@ -1,9 +1,9 @@
-# Plain Cap
+# PlainStats
 
 Every NFL contract and team salary cap in plain English, for everyday fans.
 
 ## Files
-- `src.html` is the page (also published as the Plain Cap artifact). Edit this one.
+- `src.html` is the page (also published as the PlainStats artifact). Edit this one.
 - `build.sh` wraps `src.html` into `index.html`, which Vercel serves. On a phone, edit `index.html` directly in Koder and make the same change in `src.html`.
 - `data/nfl.json` holds all 32 teams' cap figures and every player contract. `data/moves.json` is the NFL news feed (contract moves, injuries, games, coaching, league news) and the trade deadline date. A daily scheduled task refreshes both.
 - `data/season.json` holds standings (record, points for and against), head coaches, 2025 records, the rookie and comeback-candidate lists, and `prevRanks` (last week's power ranking, for the movement arrows). It feeds the Awards and Power rankings page (`#awards`, `#rankings`), which scores everything in the browser from `data/stats.json` plus this file, so a data refresh updates the page.
@@ -25,7 +25,7 @@ Open a view directly with its anchor (`#teams` has the power ratings, and each `
 PFF's full player grades are paywalled, so the site uses only what PFF publishes for free during the current season (no preseason rankings): weekly QB and WR rankings, top game grades each week, Team of the Week, and rookie rankings. This is a light signal: 25% of a player's play rating (PFF_W in src.html). Offensive linemen get roles (Road grader, Blindside protector, Two-way anchor...) from the pass-block and run-block grades PFF states. Traits are separate from roles: they are gold, silver or bronze tiers on stats that no role uses, and there are no PFF-based traits. The daily task re-reads the newest PFF pages.
 
 ## Free offensive line data (data/olwin.json, data/pff_ol.json)
-No free source tracks every block by individual lineman, so Plain Cap blends what is free:
+No free source tracks every block by individual lineman, so PlainStats blends what is free:
 - `data/olwin.json`: ESPN's team Pass Block Win Rate (PBWR) and Run Block Win Rate (RBWR), built by `data/build_olwin.py` from the free NFL Lines table. The page merges these into each team's stats. They feed the lineman play rating (35% snap share, 15% penalties, 15% PBWR, 15% RBWR, 10% sack rate, 10% yards before contact).
 - `data/pff_ol.json`: individual lineman figures PFF states in its free weekly OL rankings article (pressures, pass-blocking snaps, grades), built by `data/build_pff_ol.py`. They show on the lineman's card and do not change his rating. Only figures tied to one named lineman are kept.
 Refresh both weekly: edit the rows in each script, run it, then `sh build.sh`.
@@ -38,4 +38,4 @@ The Draft page covers the 2027 class: a big board, a full page for each prospect
 - Links: every player opens at `#p-<first-last>-<team>` and every draft prospect at `#d-<id>`; the player and prospect pages have a Copy link button that copies the Vercel address.
 - Contracts > Best & worst: market value is today's price for a player who ranks where he ranks on the field (data/market.json), minus his yearly pay.
 - Contracts > Rookie deals: draft classes matched to contracts by name and team; fifth-year option prices are rough CBA estimates.
-- Tools > Offseason: 2027 cap room starts from Over The Cap's 2027 table (data/teamyears.json); release, restructure, re-sign, tag and free-agent costs are Plain Cap estimates, and moves are saved per team in the browser.
+- Tools > Offseason: 2027 cap room starts from Over The Cap's 2027 table (data/teamyears.json); release, restructure, re-sign, tag and free-agent costs are PlainStats estimates, and moves are saved per team in the browser.

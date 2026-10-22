@@ -1,12 +1,21 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PlainStats</title><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="PlainStats"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-180.png"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style></head><body>
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <meta charset="utf-8">
-<title>Plain Cap</title>
+<title>PlainStats</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Every NFL contract and team salary cap, explained in plain English for everyday fans.">
+<meta name="description" content="Every NFL contract, team salary cap and player rating, explained in plain English for everyday fans.">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PlainStats">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=Public+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
 <style>
 /* Layout: front-office app shell. Blue command bar, then a hub of tools and charts on a cool grey field; cards only where an object can be opened. */
 :root{
@@ -739,46 +748,392 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
 #dr-owners .gb{grid-template-columns:6.6rem minmax(0,1fr) 6.4rem}#dr-owners .gb .diff{white-space:normal}
 @media (max-width:560px){.dumb{grid-template-columns:minmax(0,7.2rem) minmax(0,1fr) 2rem}.boards>div{grid-template-columns:6.6rem minmax(0,1fr) 4.6rem}}
 </style>
+<style>
+/* Layout: storefront calm. A translucent global bar with full-width flyouts, a centered hero built around the cap number, a bento overview of every section, then quiet white panels on a soft grey field. Data pages stay dense. */
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --surface-2:#ececf0;
+  --fg:#1d1d1f;
+  --muted:#6e6e73;
+  --line:#e1e1e6;
+  --brand:#0071e3;
+  --brand-ink:#ffffff;
+  --brand-soft:#e8f1fc;
+  --brand-inv:#2997ff;
+  --link:#0066cc;
+  --hot:#b64400;
+  --bar:#1d1d1f;
+  --navbg:rgba(250,250,252,.82);
+  --scrim:rgba(232,232,237,.45);
+  --seg-on:#ffffff;
+  --shadow:0 6px 28px rgba(0,0,0,.07);
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Geist","Helvetica Neue",Arial,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Geist","Helvetica Neue",Arial,sans-serif;
+  --mono:-apple-system,BlinkMacSystemFont,"SF Pro Text","Geist","Helvetica Neue",Arial,sans-serif;
+  --code:"SF Mono","Geist Mono",ui-monospace,Menlo,monospace;
+  --r:12px;
+  --r-lg:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000;--surface:#161617;--surface-2:#232326;--fg:#f5f5f7;--muted:#a1a1a6;--line:#2c2c2f;
+    --brand:#2997ff;--brand-ink:#ffffff;--brand-soft:#0c2541;--brand-inv:#0066cc;--link:#2997ff;--hot:#ff9f45;--bar:#1d1d1f;
+    --navbg:rgba(22,22,23,.8);--scrim:rgba(0,0,0,.5);--seg-on:#3a3a3e;--shadow:0 6px 28px rgba(0,0,0,.55);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000;--surface:#161617;--surface-2:#232326;--fg:#f5f5f7;--muted:#a1a1a6;--line:#2c2c2f;
+  --brand:#2997ff;--brand-ink:#ffffff;--brand-soft:#0c2541;--brand-inv:#0066cc;--link:#2997ff;--hot:#ff9f45;--bar:#1d1d1f;
+  --navbg:rgba(22,22,23,.8);--scrim:rgba(0,0,0,.5);--seg-on:#3a3a3e;--shadow:0 6px 28px rgba(0,0,0,.55);color-scheme:dark;
+}
+*{font-stretch:100%!important}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{background:var(--bg);font:16px/1.5 var(--body);letter-spacing:-.005em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body::before{background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+a{color:var(--link)}
+code{font-family:var(--code);font-size:.9em}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main{padding-block:28px 88px}
+.view{gap:28px}
 
-<header class="cmd gut">
-  <div class="wrap">
-    <a class="brand" href="#home"><span class="logo">PC</span><span><b>Plain Cap</b><small>NFL contracts in plain English</small></span></a>
-    <span class="stamp"><i></i><span id="stamp">Loading data</span></span>
-    <nav class="nav" aria-label="Sections">
-      <a href="#home" data-nav="home">Home</a>
-      <a href="#news" data-nav="news">News</a>
-      <a href="#teams" data-nav="teams">Teams</a>
-      <a href="#awards" data-nav="awards">Awards</a>
-      <a href="#onfield" data-nav="onfield">Players</a>
-      <a href="#contracts" data-nav="contracts">Contracts</a>
-      <a href="#tools" data-nav="tools">Tools</a>
-      <a href="#analytics" data-nav="analytics">Analytics</a>
-      <a href="#freeagency" data-nav="freeagency">Free agency</a>
-      <a href="#draft" data-nav="draft">Draft</a>
-      <a href="#learn" data-nav="learn">Learn</a>
-    </nav>
-  </div>
+/* ---------- global nav ---------- */
+.gn{position:sticky;top:env(safe-area-inset-top,0px);z-index:30}
+.gn-bar{background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);transition:background-color .2s}
+.gn.open .gn-bar{background:var(--surface)}
+.gn-row{display:flex;align-items:center;gap:8px;height:48px}
+.gn-brand{display:flex;align-items:center;gap:9px;color:var(--fg);text-decoration:none;font:650 1.08rem/1 var(--display);letter-spacing:-.025em;margin-right:auto;flex:none}
+.gn-brand svg{width:22px;height:22px;color:var(--fg)}
+.gn-menu{display:none}
+.gn-menu ul{display:flex;gap:2px}
+.gn-top{display:block;padding:8px 11px;color:var(--fg);opacity:.78;text-decoration:none;font:400 .8rem/1 var(--body);letter-spacing:0;border-radius:999px;transition:opacity .15s}
+.gn-top:hover,.gn-top[aria-expanded="true"],.gn-top[aria-current="page"]{opacity:1}
+.gn-top[aria-current="page"]{font-weight:600}
+.gn-tools{display:flex;align-items:center;gap:2px;flex:none}
+.gn-stamp{display:none;margin-right:6px;color:var(--muted);font:500 .72rem/1 var(--body)}
+.gn-ic{width:40px;height:40px;display:grid;place-items:center;border:0;background:none;border-radius:999px;cursor:pointer;color:var(--fg)}
+.gn-ic:hover{background:var(--surface-2)}
+.gn-ic:focus-visible,.gn-top:focus-visible,.gn-brand:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.gn-ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+@media (min-width:900px){.gn-menu{display:block;margin-right:auto}.gn-burger{display:none}.gn-brand{margin-right:0;min-width:150px}}
+@media (min-width:1180px){.gn-stamp{display:inline-flex}}
+
+.gn-fly{position:absolute;left:0;right:0;top:100%;background:var(--surface);box-shadow:0 18px 30px -18px rgba(0,0,0,.18);animation:gnIn .26s cubic-bezier(.2,.7,.2,1)}
+.gn-panel{display:flex;flex-wrap:wrap;gap:28px 64px;padding-block:30px 44px}
+.gn-col{display:grid;gap:12px;align-content:start;min-width:0}
+.gn-col h3{font:500 .74rem/1.3 var(--body);color:var(--muted)}
+.gn-col ul{display:grid;gap:9px}
+.gn-col a{color:var(--fg);text-decoration:none;font:600 .86rem/1.3 var(--body)}
+.gn-col.lead a{font:650 1.55rem/1.15 var(--display);letter-spacing:-.025em}
+.gn-col a:hover{color:var(--link)}
+.gn-teams{flex:1 1 560px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 26px;min-width:0}
+.gn-div{display:grid;gap:8px;align-content:start;min-width:0}
+.gn-div h4{font:500 .72rem/1.2 var(--body);color:var(--muted)}
+.gn-div ul{display:grid;gap:7px}
+.gn-div a{display:flex;align-items:center;gap:8px;min-width:0;font:500 .8rem/1.2 var(--body);color:var(--fg);text-decoration:none}
+.gn-div a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gn-div a:hover{color:var(--link)}
+@keyframes gnIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.gn-scrim{position:fixed;inset:0;z-index:25;background:var(--scrim);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);animation:fade .25s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+.gn-search .wrap{display:grid;gap:22px;padding-block:22px 34px;max-width:720px}
+.gn-search .search input{border:0;background:transparent;font:600 clamp(1.3rem,3vw,1.7rem)/1.2 var(--display);letter-spacing:-.02em;padding:8px 8px 8px 40px;border-radius:10px}
+.gn-search .search input:focus{outline:none;box-shadow:inset 0 -2px 0 var(--brand);border-radius:0}
+.gn-search .gs-ic{left:4px;width:24px;height:24px;stroke-width:1.7}
+.gs-quick a{font-weight:500}
+
+.gn-sheet{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 48px);bottom:0;z-index:29;background:var(--surface);overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 32px);animation:gnIn .26s cubic-bezier(.2,.7,.2,1)}
+.gn-sheet .wrap{padding-block:8px 24px}
+.gs-group{border-bottom:1px solid var(--line)}
+.gs-group summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:16px 2px;cursor:pointer;font:650 1.6rem/1.1 var(--display);letter-spacing:-.025em}
+.gs-group summary::-webkit-details-marker{display:none}
+.gs-group summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .2s}
+.gs-group[open] summary::after{transform:rotate(225deg) translateY(-1px)}
+.gs-group ul{display:grid;padding:0 2px 14px}
+.gs-group a{display:block;padding:9px 0;color:var(--fg);text-decoration:none;font:500 1.05rem/1.3 var(--body)}
+.gs-stamp{padding-top:16px}
+html.lock,html.lock body{overflow:hidden}
+
+/* bottom tab bar, phones */
+.tabbar{display:none}
+@media (max-width:899px){
+  .tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:28;background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 -1px 0 var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 6px) max(8px,env(safe-area-inset-left,0px))}
+  .tabbar a{display:grid;justify-items:center;gap:3px;padding:4px 0;color:var(--muted);text-decoration:none;font:500 .66rem/1 var(--body);border-radius:10px}
+  .tabbar a[aria-current="page"]{color:var(--brand)}
+  .tabbar a:focus-visible{outline:2px solid var(--brand)}
+  .tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  body{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 62px)}
+}
+
+/* ---------- type ---------- */
+h1.title{font:700 clamp(2rem,5vw,3.2rem)/1.06 var(--display);letter-spacing:-.03em;text-transform:none}
+h2.sec{font:700 clamp(1.3rem,2.4vw,1.7rem)/1.15 var(--display);letter-spacing:-.022em;text-transform:none}
+.eyebrow{font:600 .78rem/1.3 var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}
+.lede{font-size:1.1rem;line-height:1.5;color:var(--muted);max-width:62ch}
+.note{font-size:.82rem}
+.tc .hd b,.deal h3,.watch b,details.yearly summary,.sh-hd h3,.sh-top h3,.dpos h3,.coachcard b,.tier b,.fc-name,.faq summary,.tile b{text-transform:none!important;letter-spacing:-.015em!important;font-family:var(--display)!important}
+summary[style]{text-transform:none!important;letter-spacing:-.015em!important;font-family:var(--display)!important;font-weight:650!important}
+.kpi .k,.stiles .k,.rtile .k,.bigrow .k,.pace .k,.haw .k,.awc .aw-k{font-family:var(--body);letter-spacing:.02em}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- surfaces ---------- */
+.panel{border:0;border-radius:var(--r-lg);padding:clamp(18px,2.6vw,28px);gap:16px}
+.kpis{background:none;border:0;gap:12px;border-radius:0;overflow:visible}
+.kpi{border-radius:var(--r-lg);padding:18px 20px;transition:transform .2s,box-shadow .2s}
+a.kpi:hover,button.kpi:hover{background:var(--surface);box-shadow:var(--shadow);transform:translateY(-2px)}
+.kpi .k{font:500 .78rem/1.2 var(--body);text-transform:none;letter-spacing:0}
+.kpi .v{font:700 1.9rem/1.1 var(--display);letter-spacing:-.03em}
+.chip{border:0;background:var(--surface-2);font:500 .84rem/1 var(--body);padding:8px 14px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.seg{border:0;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{border-radius:999px;font:500 .84rem/1 var(--body);text-transform:none;letter-spacing:0;padding:8px 14px;white-space:nowrap;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.btn{border-radius:999px;font:500 .95rem/1 var(--body);text-transform:none;letter-spacing:0;padding:11px 20px}
+.btn.ghost{background:transparent;color:var(--link);border:0;padding:6px 2px}
+.btn.ghost:not(.more)::after{content:"\203A";font-size:1.2em;line-height:.8;margin-left:-2px}
+.btn.ghost:hover{text-decoration:underline}
+.btn.ghost.more{border:1px solid var(--line);padding:10px 18px;color:var(--fg);background:var(--surface)}
+select,input[type="text"],input[type="search"],input[type="number"]{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.search input{border:1px solid var(--line);border-radius:14px;padding:15px 16px 15px 44px;font-size:1.02rem;box-shadow:var(--shadow)}
+.results{border:0;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.18);overflow:auto}
+.tile{border:0;border-radius:var(--r-lg);padding:20px;transition:transform .2s,box-shadow .2s}
+.tile:hover{background:var(--surface);box-shadow:var(--shadow);transform:translateY(-2px)}
+.tile b{font:650 1.1rem/1.2 var(--display);color:var(--fg)}
+.countdown,.countdown:hover{background:var(--fg);color:var(--bg)}
+.countdown b,.countdown .big{color:var(--bg)}
+.countdown span{color:var(--bg);opacity:.72}
+.countdown .big{opacity:1}
+.mv{border:0;border-radius:var(--r-lg);padding:16px 18px}
+.mv h3{font-family:var(--display);letter-spacing:-.012em}
+.faq{border:0;border-radius:var(--r-lg)}
+.fc{border:0;border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.fc:hover{box-shadow:var(--shadow)}
+.fc-name{font:650 1rem/1.15 var(--display)!important}
+.tw{border:0;border-radius:16px}
+table.t th{background:var(--surface);box-shadow:inset 0 -1px 0 var(--line);font:600 .68rem/1.2 var(--body);letter-spacing:.04em}
+table.t td{border-top-color:var(--line)}
+dialog#sheet,dialog#picker{border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog#sheet::backdrop,dialog#picker::backdrop{background:var(--scrim);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.badge{border-radius:6px}
+
+/* ---------- home hero ---------- */
+.hx{display:grid;justify-items:center;text-align:center;gap:16px;padding-block:clamp(20px,6vw,60px) 6px}
+.hx-eb{font:600 .92rem/1.3 var(--body);color:var(--hot)}
+.hx-h{font:700 clamp(2.6rem,8.2vw,5.4rem)/1.02 var(--display);letter-spacing:-.04em;text-wrap:balance;max-width:13ch}
+.hx-sub{font:400 clamp(1.08rem,2.2vw,1.35rem)/1.42 var(--body);color:var(--muted);max-width:38ch;text-wrap:balance}
+.hx .search{width:min(100%,580px);text-align:left;margin-top:6px}
+.hx-links{display:flex;gap:10px 30px;flex-wrap:wrap;justify-content:center}
+.hx-links a{font:400 1.06rem/1.3 var(--body);color:var(--link);text-decoration:none}
+.hx-links a::after,.ex ul a::after,.ex-more::after{content:" \203A"}
+.hx-links a:hover,.ex ul a:hover,.ex-more:hover{text-decoration:underline}
+.hx-cap{width:min(100%,820px);display:grid;gap:12px;margin-top:clamp(14px,3vw,30px);text-align:left;background:var(--surface);border-radius:24px;padding:clamp(18px,3vw,28px)}
+.hx-cap .hd{display:flex;justify-content:space-between;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
+.hx-cap .hd b{font:650 1.05rem/1.2 var(--display);letter-spacing:-.015em}
+.hx-cap .hd span{font:500 .82rem/1.2 var(--body);color:var(--muted)}
+.hx-cap .stack{height:46px;border-radius:12px;gap:3px;background:none}
+.hx-cap .stack i{border-radius:8px}
+.hx-cap .stack i.sk{background:var(--surface-2);flex:1}
+.hx-cap ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px 18px;font-size:.84rem;color:var(--muted)}
+.hx-cap li{display:flex;gap:8px;align-items:baseline}
+.hx-cap li b{display:block;color:var(--fg);font:650 1.15rem/1.2 var(--display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* ---------- explore bento ---------- */
+.ex-head{display:grid;gap:8px;justify-items:center;text-align:center;padding-top:clamp(12px,3vw,28px)}
+.ex-head h2{font:700 clamp(1.9rem,4.6vw,3rem)/1.05 var(--display);letter-spacing:-.035em;text-wrap:balance}
+.ex-head p{color:var(--muted);font-size:1.1rem;max-width:46ch;text-wrap:balance}
+.ex-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.ex{grid-column:span 2;background:var(--surface);border-radius:24px;padding:clamp(22px,2.6vw,30px);display:grid;gap:10px;align-content:start;min-width:0;transition:transform .25s,box-shadow .25s}
+.ex.w3{grid-column:span 3}
+.ex.full{grid-column:1/-1}
+.ex:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.ex.inv{background:var(--fg);color:var(--bg)}
+.ex.inv p{color:var(--bg);opacity:.7}
+.ex.inv ul a,.ex.inv .ex-more{color:var(--brand-inv)}
+.ex.inv .gl{color:var(--brand-inv)}
+.ex .gl{width:36px;height:36px;color:var(--brand);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ex .live{font:600 .8rem/1.2 var(--body);color:var(--hot);min-height:1.2em}
+.ex h3{font:700 clamp(1.45rem,2.4vw,1.85rem)/1.1 var(--display);letter-spacing:-.03em;text-wrap:balance}
+.ex h3 a{color:inherit;text-decoration:none}
+.ex h3 a:hover{text-decoration:underline}
+.ex p{color:var(--muted);font-size:.98rem;max-width:44ch}
+.ex ul{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:4px}
+.ex ul a,.ex-more{color:var(--link);text-decoration:none;font-size:.94rem}
+.ex.full{grid-template-columns:auto minmax(0,1fr);gap:10px 26px;align-items:center}
+.ex.full .gl{grid-row:span 3;width:52px;height:52px}
+@media (max-width:899px){.ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ex,.ex.w3{grid-column:span 1}.ex.full{grid-template-columns:1fr}.ex.full .gl{grid-row:auto;width:36px;height:36px}}
+@media (max-width:560px){.ex-grid{grid-template-columns:minmax(0,1fr)}.ex,.ex.w3,.ex.full{grid-column:auto}}
+@media (prefers-reduced-motion:reduce){.ex,.tile,.kpi,.fc{transition:none}.ex:hover,.tile:hover,a.kpi:hover,.fc:hover{transform:none}.gn-fly,.gn-sheet,.gn-scrim{animation:none}}
+
+/* ---------- ads ---------- */
+.ad{display:none}
+.ads-live .ad,.ads-preview .ad{display:grid;place-items:center;min-height:110px;border-radius:var(--r-lg);background:var(--surface);position:relative;overflow:hidden;padding:24px 12px 12px}
+.ad::before{content:"Advertisement";position:absolute;top:8px;left:14px;font:500 .64rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ads-preview .ad:empty{box-shadow:inset 0 0 0 1.5px var(--line)}
+.ads-preview .ad:empty::after{content:"Ad space, sized to fit the screen";font-size:.85rem;color:var(--muted)}
+.ad-foot{margin-bottom:20px}
+@media (max-width:560px){.ads-live .ad,.ads-preview .ad{min-height:80px}}
+
+/* ---------- about ---------- */
+.prose{max-width:72ch}
+.prose p,.prose li{color:var(--fg)}
+.prose ul{list-style:disc;padding-left:20px;display:grid;gap:6px}
+.prose h2{margin-bottom:2px}
+
+/* ---------- footer ---------- */
+footer{border-top:0;background:var(--bg);padding-block:8px 40px;font-size:.76rem;color:var(--muted)}
+footer .wrap{gap:14px}
+.ft-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,132px),1fr));gap:22px 18px;padding-block:24px;border-block:1px solid var(--line)}
+.ft-cols h3{font:600 .76rem/1.2 var(--body);color:var(--fg);margin-bottom:10px}
+.ft-cols ul{display:grid;gap:7px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--fg);text-decoration:underline}
+.ft-src summary,#setup summary{cursor:pointer;color:var(--fg);font-weight:500}
+.ft-src ul{margin-top:8px}
+.ft-base{display:flex;flex-wrap:wrap;gap:6px 18px;padding-top:12px;border-top:1px solid var(--line)}
+.ft-base span{margin-right:auto}
+#setup{background:none;border:0}
+.sechead{min-width:0}
+.sechead>.seg{flex:0 1 auto;min-width:0;max-width:100%}
+.panel>*{min-width:0}
+
+.rtile.main{background:var(--fg);color:var(--bg)}
+.rtile.main .k,.rtile.main .s{color:var(--bg);opacity:.72}
+.countdown .eyebrow{color:var(--bg)!important;opacity:.72}
+.ossum{top:calc(env(safe-area-inset-top,0px) + 64px)}
+
+</style>
+
+<header class="gn" id="gn">
+  <div class="gn-bar gut"><div class="wrap gn-row">
+    <a class="gn-brand" href="#home" aria-label="PlainStats home"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6.5" fill="currentColor"/><rect x="5" y="10" width="14" height="4" rx="2" fill="var(--bg)" opacity=".35"/><rect x="5" y="10" width="9" height="4" rx="2" fill="var(--bg)"/></svg><span>PlainStats</span></a>
+    <nav class="gn-menu" aria-label="Sections"><ul><li class="gn-item" data-menu="news"><a class="gn-top" href="#news" data-nav="news" aria-expanded="false">News</a></li><li class="gn-item" data-menu="teams"><a class="gn-top" href="#teams" data-nav="teams" aria-expanded="false">Teams</a></li><li class="gn-item" data-menu="players"><a class="gn-top" href="#onfield" data-nav="players" aria-expanded="false">Players</a></li><li class="gn-item" data-menu="contracts"><a class="gn-top" href="#contracts" data-nav="contracts" aria-expanded="false">Contracts</a></li><li class="gn-item" data-menu="draft"><a class="gn-top" href="#draft" data-nav="draft" aria-expanded="false">Draft</a></li><li class="gn-item" data-menu="tools"><a class="gn-top" href="#tools" data-nav="tools" aria-expanded="false">Tools</a></li><li class="gn-item" data-menu="learn"><a class="gn-top" href="#learn" data-nav="learn" aria-expanded="false">Learn</a></li></ul></nav>
+    <div class="gn-tools">
+      <span class="stamp gn-stamp"><i></i><span id="stamp">Loading data</span></span>
+      <button class="gn-ic" id="gn-sbtn" type="button" aria-label="Search players and teams" aria-expanded="false" aria-controls="gn-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg></button>
+      <button class="gn-ic gn-burger" id="gn-mbtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gn-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
+    </div>
+  </div></div>
+  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="#privacy">Privacy</a></li></ul></div></div></div></div>
+  <div class="gn-fly gn-search gut" id="gn-search" hidden><div class="wrap">
+    <div class="search">
+      <label class="sr" for="q-nav">Search players and teams</label>
+      <span style="position:relative;display:block"><svg class="gs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg><input id="q-nav" type="search" placeholder="Search players and teams" autocomplete="off" aria-controls="r-nav"></span>
+      <div class="results" id="r-nav" hidden></div>
+    </div>
+    <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="#news">Latest news</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#value">Best and worst contracts</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#offseason">Offseason simulator</a></li></ul></div>
+  </div></div>
+  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>News</summary><ul><li><a href="#news">News home</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Teams</summary><ul><li><a href="#teams">Teams home</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="#onfield">Players home</a></li><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="#contracts">Contracts home</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="#draft">Draft home</a></li><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="#tools">Tools home</a></li><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="#learn">Learn home</a></li><li><a href="#about">About PlainStats</a></li><li><a href="#privacy">Privacy</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
 </header>
+<div class="gn-scrim" id="gn-scrim" hidden></div>
+<nav class="tabbar" aria-label="Quick sections">
+  <a href="#home" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+  <a href="#news" data-nav="news"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>News</span></a>
+  <a href="#teams" data-nav="teams"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z"/></svg><span>Teams</span></a>
+  <a href="#onfield" data-nav="players"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><span>Players</span></a>
+  <a href="#tools" data-nav="tools"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><span>Tools</span></a>
+</nav>
 
 <main class="gut"><div class="wrap">
 
 <!-- HOME -->
 <section class="view" id="v-home" aria-labelledby="h-home">
-  <div class="hero">
-    <div class="copy">
-      <span class="eyebrow">2026 season · salary cap $301.2M per team</span>
-      <h1 class="title" id="h-home">See where every NFL dollar goes</h1>
-      <p class="lede">Look up any player or team. Each contract shows what is really guaranteed, what he counts against the cap, and what happens if his team cuts or trades him.</p>
-    </div>
+  <div class="hx">
+    <p class="hx-eb">2026 NFL season · salary cap $301.2M per team</p>
+    <h1 class="hx-h" id="h-home">The salary cap, made simple.</h1>
+    <p class="hx-sub">NFL contracts, stats and team analytics, explained in plain English.</p>
     <div class="search">
-      <label class="eyebrow" for="q-home">Find a player or team</label>
+      <label class="sr" for="q-home">Find a player or team</label>
       <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
-      <input id="q-home" type="search" placeholder="Try Mahomes, Lions or edge" autocomplete="off" aria-controls="r-home"></span>
+      <input id="q-home" type="search" placeholder="Search Mahomes, Lions or edge rushers" autocomplete="off" aria-controls="r-home"></span>
       <div class="results" id="r-home" hidden></div>
+    </div>
+    <div class="hx-links"><a href="#teams">Browse all 32 teams</a><a href="#news">Read the latest news</a></div>
+    <div class="hx-cap" id="hx-cap" aria-live="polite">
+      <div class="hd"><b>Where the average team's $301.2M goes</b><span id="hx-cap-sub">Loading cap sheets</span></div>
+      <div class="stack" id="hx-cap-bar"><i class="sk"></i></div>
+      <ul id="hx-cap-leg">
+        <li><i class="swatch" style="background:var(--brand)"></i><span><b>—</b>Spent on the roster</span></li>
+        <li><i class="swatch" style="background:var(--c-dead)"></i><span><b>—</b>Dead money</span></li>
+        <li><i class="swatch hatch"></i><span><b>—</b>Cap room left</span></li>
+      </ul>
     </div>
   </div>
 
   <div class="kpis" id="kpis"></div>
+
+  <div class="ex-head">
+    <h2 id="h-explore">Everything on PlainStats.</h2>
+    <p>News, teams, players, contracts, the draft and front-office tools, all in one place.</p>
+  </div>
+  <div class="ex-grid" aria-labelledby="h-explore">
+    <article class="ex w3 inv">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+      <span class="live" data-live="news">Updated every morning</span>
+      <h3><a href="#news">News</a></h3>
+      <p>Trades, signings, injuries and results, each with a short note on what it means for the cap.</p>
+      <ul><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Results</a></li></ul>
+    </article>
+    <article class="ex w3">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z"/></svg>
+      <span class="live">All 32 teams</span>
+      <h3><a href="#teams">Teams</a></h3>
+      <p>Team ratings, starting lineups, depth charts and a full cap sheet for every club.</p>
+      <ul><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg>
+      <span class="live">40 to 99 play ratings</span>
+      <h3><a href="#onfield">Players</a></h3>
+      <p>Roles, trait badges and a play rating for every starter, next to what he is paid.</p>
+      <ul><li><a href="#ratings">Ratings</a></li><li><a href="#stats">Stats</a></li><li><a href="#awards">Awards</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+      <span class="live" data-live="contracts">Every active deal</span>
+      <h3><a href="#contracts">Contracts</a></h3>
+      <p>What is really guaranteed, the cap hit each year, and what a cut or trade would cost.</p>
+      <ul><li><a href="#value">Best and worst</a></li><li><a href="#rookies">Rookie deals</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+      <span class="live">Class of 2027</span>
+      <h3><a href="#freeagency">Free agency</a></h3>
+      <p>Whose contract ends next, how he is playing, and an estimate of his next deal.</p>
+      <ul><li><a href="#freeagency">See the class</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 19V11M12 19V6M17 19v-5"/></svg>
+      <span class="live">April 29 to May 1</span>
+      <h3><a href="#draft">2027 Draft</a></h3>
+      <p>A consensus big board, a model mock and what each pick will cost.</p>
+      <ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18l5-6 4 3 7-9"/><circle cx="20" cy="6" r="1.5"/></svg>
+      <span class="live">Percentiles against the league</span>
+      <h3><a href="#analytics">Cap lab</a></h3>
+      <p>Advanced contract analytics: traits, heat maps and roster health.</p>
+      <ul><li><a href="#analytics">Open the lab</a></li></ul>
+    </article>
+    <article class="ex">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5C6.5 5 9.5 5 12 6.5 14.5 5 17.5 5 20 6.5V19c-2.5-1.5-5.5-1.5-8 0-2.5-1.5-5.5-1.5-8 0z"/><path d="M12 6.5V19"/></svg>
+      <span class="live">Two sentences each</span>
+      <h3><a href="#learn">Cap 101</a></h3>
+      <p>Dead money, void years, restructures and every other word on a contract page.</p>
+      <ul><li><a href="#learn">Start learning</a></li></ul>
+    </article>
+    <article class="ex full inv">
+      <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+      <h3><a href="#tools">Play general manager.</a></h3>
+      <p>Cut, re-sign and tag players, build a lineup, check a trade, and watch your cap and team rating change.</p>
+      <ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li></ul>
+    </article>
+  </div>
+
+  <aside class="ad" data-ad="home-top" aria-label="Advertisement"></aside>
+
 
   <div class="grid2" id="home-aw" hidden>
     <div class="panel">
@@ -808,7 +1163,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   <div class="panel">
     <div class="sechead"><div><span class="eyebrow">2027 NFL Draft · April 29 to May 1</span><h2 class="sec">Top of the draft board</h2></div><a class="btn ghost" href="#draft">Big board and mock</a></div>
     <div class="fcs row" id="home-draft"></div>
-    <p class="note">Grade ring: Plain Cap's 40 to 99 prospect grade. 2026 ring: his college production this season against the other prospects at his position.</p>
+    <p class="note">Grade ring: PlainStats' 40 to 99 prospect grade. 2026 ring: his college production this season against the other prospects at his position.</p>
   </div>
 
   <div class="grid2">
@@ -835,6 +1190,8 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
     </div>
   </div>
 
+  <aside class="ad" data-ad="home-mid" aria-label="Advertisement"></aside>
+
   <div class="panel">
     <div class="sechead">
       <div><span class="eyebrow">League-wide, 2026 cap hits</span><h2 class="sec">Where the money goes, by position</h2></div>
@@ -848,20 +1205,6 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
     </ul>
   </div>
 
-  <div>
-    <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Front office tools</span><h2 class="sec">Play GM for a minute</h2></div></div>
-    <div class="tiles">
-      <a class="tile" href="#offseason"><b>Offseason simulator</b><span>Cut, re-sign, tag and sign free agents, add the draft class, and watch your 2027 cap and team rating change.</span></a>
-      <a class="tile" href="#value"><b>Best and worst contracts</b><span>Who is paid far below or above what his play is worth on today's market, plus every team's surplus.</span></a>
-      <a class="tile" href="#tools" data-tool="build"><b>Roster builder</b><span>Pick a starting lineup from any team and see how it rates against the league.</span></a>
-      <a class="tile" href="#teams"><b>Team ratings</b><span>Power ratings, starting lineups, depth charts and team traits for all 32 teams.</span></a>
-      <a class="tile" href="#tools" data-tool="cut"><b>Cut or keep</b><span>Pick a player and see the dead money and the cap space a release would free.</span></a>
-      <a class="tile" href="#tools" data-tool="trade"><b>Trade checker</b><span>Swap players between two teams and see each team's cap room after the deal.</span></a>
-      <a class="tile" href="#tools" data-tool="compare"><b>Compare players</b><span>Put two contracts side by side: pay, guarantees and cap hit.</span></a>
-      <a class="tile" href="#onfield"><b>Player ratings</b><span>Roles, trait badges and a play rating for every player, next to what he is paid.</span></a>
-      <a class="tile" href="#learn"><b>Cap 101</b><span>Dead money, void years and restructures, each in two sentences.</span></a>
-    </div>
-  </div>
 </section>
 
 <!-- NEWS: stories come from data/moves.json; each has a kind, and NEWS_TOPICS in the script groups kinds into the topic chips -->
@@ -880,6 +1223,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   </div>
   <div class="feed" id="news-feed"></div>
   <button class="btn ghost more" id="news-more" type="button">Show more news</button>
+  <aside class="ad" data-ad="news" aria-label="Advertisement"></aside>
 </section>
 
 <!-- TEAMS -->
@@ -946,7 +1290,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   </div>
 
   <div id="aw-awards" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Plain Cap ranks every player and coach for the big awards using the same play ratings, stats and team ratings you see across the site, then turns the scores into odds. Tap an award to see the full race. Everything recalculates when a new week of stats lands.</p>
+    <p class="lede">PlainStats ranks every player and coach for the big awards using the same play ratings, stats and team ratings you see across the site, then turns the scores into odds. Tap an award to see the full race. Everything recalculates when a new week of stats lands.</p>
     <div class="awboard" id="aw-board"></div>
     <div class="panel" id="aw-detail"></div>
     <details class="panel" id="aw-how">
@@ -1078,7 +1422,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
       <div><span class="eyebrow">2024 first-round picks · teams decide by early May 2027</span><h2 class="sec">Fifth-year option decisions</h2></div>
       <div id="rk-obox"></div>
       <div class="tw"><table class="t" id="rk-opt"></table></div>
-      <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. Plain Cap's read compares that price with what his play is worth on today's market.</p>
+      <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. PlainStats' read compares that price with what his play is worth on today's market.</p>
     </div>
     <div class="panel">
       <div><span class="eyebrow">Best play rating first</span><h2 class="sec">Extension watch</h2></div>
@@ -1313,7 +1657,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   </div>
 
   <div id="fa-class" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Every player whose contract ends after a given season, with how well he is playing and a Plain Cap estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
+    <p class="lede">Every player whose contract ends after a given season, with how well he is playing and a PlainStats estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
     <div class="chips" id="fa-years" role="group" aria-label="Free agent class"></div>
     <div class="kpis" id="fa-kpis"></div>
     <div class="panel">
@@ -1342,7 +1686,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
       <div id="fa-tbox"></div>
       <div class="tw"><table class="t" id="fa-table"></table></div>
       <button class="btn ghost more" id="fa-more" type="button">Show more</button>
-      <p class="note">Next-deal estimates rank each player by play rating among his position, read that rank's price off what the league pays today (Over The Cap's contract rankings, cross-checked with CBS Sports and Spotrac), adjust for his age when the deal starts, then grow it with the salary cap to the year he signs. They are Plain Cap estimates, not reports.</p>
+      <p class="note">Next-deal estimates rank each player by play rating among his position, read that rank's price off what the league pays today (Over The Cap's contract rankings, cross-checked with CBS Sports and Spotrac), adjust for his age when the deal starts, then grow it with the salary cap to the year he signs. They are PlainStats estimates, not reports.</p>
     </div>
   </div>
 
@@ -1416,7 +1760,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   <div class="kpis" id="dr-kpis"><p class="empty" style="background:var(--surface)">Loading the draft class…</p></div>
 
   <div id="dr-board" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">The top college players for the April 2027 draft, ranked by combining public big boards. Each prospect gets the same treatment as an NFL player on Plain Cap: a grade, a role, trait badges and his 2026 college numbers, plus what his rookie contract would cost.</p>
+    <p class="lede">The top college players for the April 2027 draft, ranked by combining public big boards. Each prospect gets the same treatment as an NFL player on PlainStats: a grade, a role, trait badges and his 2026 college numbers, plus what his rookie contract would cost.</p>
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow" id="dr-cards-eb">Tap a prospect for his full page</span><h2 class="sec">Top of the board</h2></div>
         <div class="seg" id="dr-sort" role="group" aria-label="Sort prospects"><button type="button" data-ds="rank" aria-pressed="true">Board rank</button><button type="button" data-ds="grade" aria-pressed="false">Grade</button><button type="button" data-ds="prod" aria-pressed="false">2026 production</button></div>
@@ -1445,7 +1789,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   </div>
 
   <div id="dr-order" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is Plain Cap's best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
+    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is PlainStats' best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
     <div class="grid2">
       <div class="panel">
         <div><span class="eyebrow">Picks in the projected first round</span><h2 class="sec">Who holds the picks</h2></div>
@@ -1460,7 +1804,7 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
       <div class="sechead"><div><span class="eyebrow" id="dr-ord-eb">Projected 2027 first round</span><h2 class="sec">Draft order and model mock</h2></div></div>
       <div id="dr-obox"></div>
       <div class="tw"><table class="t" id="dr-otable"></table></div>
-      <p class="note">Needs come from each team's 2026 roster on Plain Cap: how its starters rate on the field, and how many of their contracts end after this season. Ties in the standings are broken by point differential here; the league uses strength of schedule.</p>
+      <p class="note">Needs come from each team's 2026 roster on PlainStats: how its starters rate on the field, and how many of their contracts end after this season. Ties in the standings are broken by point differential here; the league uses strength of schedule.</p>
     </div>
   </div>
 
@@ -1496,11 +1840,38 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
   <div class="faq" id="faq-nfl"></div>
 </section>
 
+
+<!-- ABOUT + PRIVACY: needed for a public launch and for ad networks -->
+<section class="view" id="v-about" hidden aria-labelledby="h-about">
+  <div><span class="eyebrow">About</span><h1 class="title" id="h-about">About PlainStats</h1></div>
+  <div class="panel prose">
+    <p>PlainStats explains NFL contracts and the salary cap for everyday fans. Every deal shows what is really guaranteed, what the player counts against the cap each year, and what happens if his team cuts or trades him. Team pages, player ratings, the draft board and the front-office tools all build on the same numbers.</p>
+    <p>Contract figures come from Over The Cap, Spotrac and press reports. Player stats come from nflverse. Ratings, grades, estimates and award odds are PlainStats' own models built from public data. They are estimates, not official figures, and they update as new stats and reports arrive.</p>
+    <p>PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA, the NBA or any team.</p>
+  </div>
+  <div class="panel prose" id="privacy">
+    <h2 class="sec">Privacy</h2>
+    <p>You do not need an account to use PlainStats, and the site does not ask for your name or email.</p>
+    <ul>
+      <li><b>Saved settings.</b> Your favorite team, simulator moves and filters are kept in your own browser so they are there next time. They are not sent to PlainStats.</li>
+      <li><b>Advertising.</b> PlainStats is supported by ads. Third-party vendors, including Google, use cookies to serve ads based on your visits to this and other websites. Google's advertising cookies let it and its partners show ads based on those visits.</li>
+      <li><b>Your choices.</b> You can turn off personalized ads in <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ad Settings</a>, or opt out of many third-party vendors at <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener">aboutads.info</a>. Blocking cookies in your browser also works, though some saved settings will reset.</li>
+      <li><b>Visitor counts.</b> If the site measures traffic, it uses counts that do not identify you.</li>
+    </ul>
+  </div>
+  <div class="panel prose">
+    <h2 class="sec">Terms of use</h2>
+    <p>PlainStats is for information and entertainment. Numbers can be wrong or out of date, so check official sources before relying on them for anything that matters, including betting or fantasy decisions. Team names and logos belong to their owners and are used only to identify teams.</p>
+  </div>
+</section>
+
 </div></main>
 
+<aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <p id="foot-asof">Figures come from Over The Cap, Spotrac and press reports and can change. Check Over The Cap or Spotrac for official numbers. Plain Cap is not affiliated with the NFL, the NBA or any team.</p>
-  <ul id="foot-src">
+  <nav class="ft-cols" aria-label="Site map"><div><h3>News</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div><div><h3>Teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="#privacy">Privacy</a></li></ul></div></nav>
+  <p id="foot-asof">Figures come from Over The Cap, Spotrac and press reports and can change. Check Over The Cap or Spotrac for official numbers. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
+  <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://overthecap.com/salary-cap-space" target="_blank" rel="noopener">Over The Cap: cap space</a></li>
     <li><a href="https://www.spotrac.com/nfl/" target="_blank" rel="noopener">Spotrac</a></li>
     <li><a href="https://github.com/nflverse/nflverse-data/releases" target="_blank" rel="noopener">nflverse: player stats</a></li>
@@ -1516,15 +1887,17 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
     <li><a href="https://www.playerprofiler.com/?p=150729" target="_blank" rel="noopener">PlayerProfiler: Gibbs</a></li>
     <li><a href="https://www.detroitfootball.net/p/breaking-down-the-structure-of-jahmyr" target="_blank" rel="noopener">Detroit Football Network</a></li>
     <li><a href="https://atozsports.com/nfl/tennessee-titans-news/titans-jeffery-simmons-contract-details-revealed-signing-bonus-salary-cap-potential-out/" target="_blank" rel="noopener">A to Z Sports</a></li>
-  </ul>
+  </ul></details>
   <details id="setup" class="faq" style="margin-top:8px"><summary style="padding-inline:16px">Site setup</summary>
     <div style="padding:0 16px 14px;display:grid;gap:8px;max-width:70ch">
       <p>For whoever runs the site. Contract and cap figures live in <code>data/nfl.json</code>, the news feed in <code>data/moves.json</code> and season stats in <code>data/stats.json</code> (built by <code>data/build_stats.py</code> from nflverse files). A daily task refreshes all three each morning.</p>
       <p>The Draft page reads <code>data/draft.json</code>, built by <code>data/build_draft.py</code> from public big boards and the college stats in <code>data/draft_stats.txt</code> (from cfbstats). Update the ranks and stats there, rerun the script, and the board, grades, mock and rookie pay all recompute in the page.</p>
       <p>Airtable holds the featured deal breakdowns. Set <code>AIRTABLE_TOKEN</code> and <code>AIRTABLE_BASE_ID</code> (and <code>AIRTABLE_TABLE</code> if the table is not named Contracts) in Vercel, and the page reads them through <code>/api/contracts</code>. Without them, the built-in breakdowns show.</p>
       <p>Working Copy keeps the code. Edit <code>src.html</code> in Koder, run <code>build.sh</code> or copy it into <code>index.html</code>, then commit and push. Vercel redeploys on its own.</p>
+      <p>Ads stay off until you add a Google AdSense publisher ID to <code>ADS.client</code> and your live domain to <code>ADS.hosts</code> near the end of the script. Until then the slots are hidden. <button class="btn ghost more" type="button" id="ad-prev">Preview ad spots</button></p>
     </div>
   </details>
+  <div class="ft-base"><span>© 2026 PlainStats</span><a href="#about">About</a><a href="#privacy">Privacy</a><a href="#learn">Cap 101</a></div>
 </div></footer>
 
 <div id="tip" hidden></div>
@@ -1603,12 +1976,12 @@ let DEALS = [
     watch: 'Reports did not give a total guarantee, so the bar shows only the bonus as locked.' }
 ];
 const LEARN_NFL = [
-  ['How PFF data is used', 'PFF\'s full player grades are a paid product, so Plain Cap uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 25% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
+  ['How PFF data is used', 'PFF\'s full player grades are a paid product, so PlainStats uses only what PFF publishes for free during the 2026 season: its weekly quarterback and receiver rankings, the top game grades each week, Team of the Week, and rookie rankings. Preseason rankings are not used. This is a light signal: it counts for 25% of a player\'s play rating, and the rest comes from game stats and team results. For offensive linemen, PFF\'s published pass-block and run-block grades can set roles such as Road grader and Blindside protector.'],
   ['Free agency', 'When a contract ends, the player becomes a free agent and can sign with any team. The new league year, and free agency, begins on March 11, 2027. Teams can talk to agents starting March 9.'],
-  ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. Plain Cap estimates the price until the league announces it.'],
+  ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. PlainStats estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
   ['Compensatory picks', 'Teams that lose more good free agents than they sign are awarded extra draft picks the next April. That is why some teams sit out the first week of free agency.'],
-  ['How year-by-year numbers work', 'The 2026 cap hit is reported. The years after that are Plain Cap estimates built from the contract (yearly average, length, bonus), except contracts marked Reported, which use published figures. The team totals for 2027 and 2028 are Over The Cap numbers.'],
+  ['How year-by-year numbers work', 'The 2026 cap hit is reported. The years after that are PlainStats estimates built from the contract (yearly average, length, bonus), except contracts marked Reported, which use published figures. The team totals for 2027 and 2028 are Over The Cap numbers.'],
   ['Salary cap', 'The most a team can spend on players in a season. For 2026 it is $301.2M for every team, and it is a hard cap: no team can go over it.'],
   ['Cap hit', 'What one player counts against the cap this year: his salary, a slice of his signing bonus and some other bonuses. It is often very different from the cash he is paid.'],
   ['Signing bonus', 'Paid up front in cash, but split evenly over the contract for cap purposes, up to five seasons. A $20M bonus on a five-year deal counts $4M a year.'],
@@ -1622,15 +1995,15 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
-  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It blends percentiles in the stats that matter most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) against everyone at his position with enough snaps. It is Plain Cap\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It blends percentiles in the stats that matter most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) against everyone at his position with enough snaps. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, No-fly zone and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
   ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
-  ['Awards watch', 'Plain Cap scores every qualified player and coach for MVP, Offensive and Defensive Player of the Year, the two Rookie awards, Comeback Player and Coach of the Year. A score blends his play rating, his production per game, how his team is doing and a few award-specific pieces. The scores turn into odds, which are the model\'s share of the race, not betting lines.'],
+  ['Awards watch', 'PlainStats scores every qualified player and coach for MVP, Offensive and Defensive Player of the Year, the two Rookie awards, Comeback Player and Coach of the Year. A score blends his play rating, his production per game, how his team is doing and a few award-specific pieces. The scores turn into odds, which are the model\'s share of the race, not betting lines.'],
   ['Power rankings', 'All 32 teams ranked by a 0 to 100 power score: results 28%, scoring margin 28%, roster rating 24% and efficiency 20%. A team ranked above its record is playing better than it is winning; one ranked below it has been winning more than its roster or play suggests. Projected wins assume the current score holds.'],
-  ['Lineups and depth charts', 'Plain Cap builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
+  ['Lineups and depth charts', 'PlainStats builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
   ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and names the real team it most resembles.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
 ];
@@ -2426,7 +2799,7 @@ function fieldSimilar(p, n = 4) {
 }
 function fieldHTML(p) {
   if (!SD) return '<p class="empty">Season stats did not load. Reload the page to try again.</p>';
-  if (!p.sg) return '<p class="empty">Plain Cap does not rate long snappers.</p>';
+  if (!p.sg) return '<p class="empty">PlainStats does not rate long snappers.</p>';
   if (!p.st) return `<p class="empty">No 2026 snaps through Week ${THRU}. He may be injured, suspended, inactive or new to the team.</p>`;
   const s = p.st, cfg = GCFG[p.sg], snapSh = Math.max(s.osh || 0, s.dsh || 0);
   const tiles = cfg.cols.map(k => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
@@ -2973,12 +3346,17 @@ function bindSearch(input, box, onPick, withTeams = true) {
 }
 
 /* ===== routing ===== */
-const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn'];
+const VIEWS = ['home', 'news', 'teams', 'team', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
+const NAVG = { home: 'home', news: 'news', teams: 'teams', team: 'teams', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
 let curTeam = null;
 function route() {
   let h = location.hash.slice(1) || 'home';
   if (/^[pd]-/.test(h)) { PEND = h; h = LASTV; } else { LASTV = h; if (sheet.open) sheet.close(); }
   let v = h;
+  if (h === 'news' || h.startsWith('news-')) { const nk = { contracts: 'Contracts', injuries: 'Injuries', games: 'Games', coaching: 'Coaching', league: 'League' }[h.slice(5)] || 'All'; st.newsTopic = nk; st.newsLimit = 20; if (D) renderNews(); v = 'news'; }
+  if (h === 'cap' || h === 'teams') { st.tView = h === 'cap' ? 'cap' : store.get('tView', 'ratings'); v = 'teams'; if (D) renderTeamsView(); }
+  if (h === 'about' || h === 'privacy') { v = 'about'; if (h === 'privacy') setTimeout(() => { const e = $('#privacy'); if (e) e.scrollIntoView(); }, 40); }
+  if (h === 'search') { v = 'home'; setTimeout(() => window.openSearch && openSearch(), 30); }
   if (h.startsWith('team-')) { const id = h.slice(5).toUpperCase(); if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
   if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
   if (['cut', 'trade', 'compare', 'decode', 'decoder', 'builder', 'build', 'offseason'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h === 'builder' ? 'build' : h; v = 'tools'; }
@@ -2992,7 +3370,9 @@ function route() {
   if (!VIEWS.includes(v)) v = 'home';
   VIEWS.forEach(x => ($('#v-' + x).hidden = x !== v));
   const navv = v === 'team' ? 'teams' : v;
-  $$('.nav a').forEach(a => a.dataset.nav === navv ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  const ng = NAVG[v] || v;
+  $$('[data-nav]').forEach(a => a.dataset.nav === ng ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  document.title = v === 'home' ? 'PlainStats' : (({ news: 'News', teams: 'Teams', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
   if (D) {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
@@ -3218,7 +3598,7 @@ function renderTeam(id) {
   $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
   $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos', 'role'].includes(k) ? 1 : -1; } renderTeam(id); });
   wireTeamField(t);
-  document.title = `${t.name} · Plain Cap`;
+  document.title = `${t.name} · PlainStats`;
 }
 function gtdBar(p) {
   if (!p.total) return '';
@@ -3670,7 +4050,7 @@ function awWhyC(r) {
   const t = r.t, s = t.sr, p = t.pw, out = [];
   const wr = 1 + TEAMS.filter(x => x.sr.wp > s.wp).length;
   out.push(`${awRec(s)}, which is ${ord(wr)} best in the league by win rate, with a ${awPD(s.pd)} point margin a game.`);
-  out.push(`Plain Cap rates the roster ${ord(t.rk.ovr)} of 32 overall (${t.rt.ovr}), so ${p.res - p.tal > .15 ? 'the team is winning more than its talent suggests' : p.res - p.tal < -.15 ? 'the record trails the talent' : 'the record matches the talent'}.`);
+  out.push(`PlainStats rates the roster ${ord(t.rk.ovr)} of 32 overall (${t.rt.ovr}), so ${p.res - p.tal > .15 ? 'the team is winning more than its talent suggests' : p.res - p.tal < -.15 ? 'the record trails the talent' : 'the record matches the talent'}.`);
   if (s.w25 != null) out.push(`${s.since >= 2026 ? 'First year with the team. ' : ''}Last season: ${s.w25}-${s.l25}${s.t25 ? '-' + s.t25 : ''}.`);
   return out;
 }
@@ -3742,7 +4122,7 @@ function renderAwHow() {
   $('#aw-how-body').innerHTML = `<p class="note">Every player score blends a few pieces, each from 0 to 99. Players need the site's minimum playing time to be ranked (rookies and comeback players get a looser minimum and their ratings lean toward average until they play more). Odds turn the gap between scores into shares of the race.</p>
     <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px">${pieces}</ul>
     <div class="rows">${AW_DEFS.map(def => `<div><span>${esc(def.name)}</span><b style="font-family:var(--body);font-size:.82rem;text-align:right">${w(def)}</b></div>`).join('')}</div>
-    <p class="note">Coach of the Year pieces: Record is win rate against the league, Margin is points scored minus allowed per game, Beat the talent compares results with the Plain Cap roster rating, and Vs. 2025 is the change in win rate from last season.</p>`;
+    <p class="note">Coach of the Year pieces: Record is win rate against the league, Margin is points scored minus allowed per game, Beat the talent compares results with the PlainStats roster rating, and Vs. 2025 is the change in win rate from last season.</p>`;
 }
 
 /* power rankings view */
@@ -3786,7 +4166,7 @@ function renderPowerRank() {
   applyTF($('#pw-t'));
   $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule itself.${all.some(t => t.pw.move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
   $('#pw-how-body').innerHTML = `<p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
-    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the Plain Cap overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, passer rating allowed, sacks and takeaways.</li></ul>
+    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, passer rating allowed, sacks and takeaways.</li></ul>
     <p class="note">Outlook compares where a team's results rank with where its roster and efficiency rank. A gap of six spots or more means the record is hiding something (Better than record) or flattering the team (Record flatters). Tiers are fixed by rank: 1 to 4 Contender, 5 to 10 Strong, 11 to 18 In the mix, 19 to 26 Shaky, 27 to 32 Rebuilding.</p>`;
 }
 
@@ -3947,7 +4327,7 @@ function yearsHTML(p) {
       <div class="yb fa"><span class="y">${last + 1}</span><span class="note" style="grid-column:2/4">Free agent after the ${last} season${p.voidy ? ' (void years can add dead money)' : ''}</span><span class="s"></span></div></div>
     <ul class="legend" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),max-content))"><li><i class="swatch" style="background:var(--c-off)"></i><span>Base salary</span></li><li><i class="swatch" style="background:var(--brand)"></i><span>Bonuses and other</span></li></ul>
     <div class="rows"><div><span>Cap hits left, 2026 on</span><b>${mon(tot, 1)}</b></div><div><span>Share of the cap, 2026</span><b>${pct(p.cap / CAP, 1)}</b></div></div>
-    <p class="note">${p.exact ? 'These figures were reported by Over The Cap or Spotrac for this contract.' : 'The 2026 row is reported. Later years are a Plain Cap estimate built from his yearly average, contract length and bonus, and they assume pay rises toward the end of the deal. Exact figures replace the estimate when they are reported.'} The percentage is his cap hit divided by that season's cap.</p>
+    <p class="note">${p.exact ? 'These figures were reported by Over The Cap or Spotrac for this contract.' : 'The 2026 row is reported. Later years are a PlainStats estimate built from his yearly average, contract length and bonus, and they assume pay rises toward the end of the deal. Exact figures replace the estimate when they are reported.'} The percentage is his cap hit divided by that season's cap.</p>
   </div>`;
 }
 const yearCell = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? (r.src === 'estimate' ? `<span class="est">~${mon(r.cap)}</span>` : mon(r.cap)) : '<span style="color:var(--muted)">—</span>'; };
@@ -4002,7 +4382,7 @@ function renderFATable() {
   const th = (k, l, cls = 'r', title = '') => `<th class="${cls}"${f.sort === k ? ` aria-sort="${f.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-fas="${k}"${title ? ` title="${esc(title)}"` : ''}>${l}</button></th>`;
   $('#fa-tt').textContent = `${yLabel(f.year)} free agents`;
   $('#fa-tcount').textContent = `${list.length.toLocaleString()} of ${all.length.toLocaleString()} players${f.pos !== 'all' ? ' · ' + GROUP_NAME[f.pos] : ''}`;
-  $('#fa-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}${th('pos', 'Pos', '')}${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Pay now', 'r', 'Yearly average of his current deal')}${th('est', 'Est. next deal', 'r', 'Plain Cap estimate of a new yearly average')}${th('chg', 'Change', 'r', 'Estimated next deal minus pay now')}${th('cap', 'Last cap hit', 'r', 'Cap hit in the last season of his deal')}</tr></thead><tbody>` +
+  $('#fa-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}${th('pos', 'Pos', '')}${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Pay now', 'r', 'Yearly average of his current deal')}${th('est', 'Est. next deal', 'r', 'PlainStats estimate of a new yearly average')}${th('chg', 'Change', 'r', 'Estimated next deal minus pay now')}${th('cap', 'Last cap hit', 'r', 'Cap hit in the last season of his deal')}</tr></thead><tbody>` +
     (list.slice(0, f.limit).map(p => { const e = estNext(p), c = e - p.apy;
       return `<tr data-p="${p.i}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${p.ot && p.ot.length ? `<span class="otdots">${p.ot.slice(0, 3).map(([k, t]) => `<i class="${t}" title="${esc(OTRAITS[k][0])}"></i>`).join('')}</span>` : ''}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(e)}</td><td class="r"><span class="vl ${c > 0.4e6 ? 'good' : c < -0.4e6 ? 'bad' : ''}">${c > 0 ? '+' : c < 0 ? '−' : ''}${mon(Math.abs(c))}</span></td><td class="r">${mon(lastCap(p))}</td></tr>`; }).join('') || `<tr style="cursor:default"><td colspan="8" class="empty">No players match. Lower the pay floor or clear the filter.</td></tr>`) + '</tbody>';
   $('#fa-more').hidden = list.length <= f.limit;
@@ -4035,7 +4415,7 @@ function renderFACap() {
   $('#fa-heat').innerHTML = `<thead><tr><th style="text-align:left"><button type="button" data-fahs="" aria-pressed="${!hs}">Team</button></th>${FY_COLS.map(Y => `<th><button type="button" data-fahs="${Y}" aria-pressed="${hs === Y}">${Y}${data[0].y[Y].src === 'estimate' ? '*' : ''}</button></th>`).join('')}</tr></thead><tbody>` +
     data.map(r => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t))}"><td class="tm"><span>${crest(r.t.id, 20)}${esc(r.t.name)}</span></td>${FY_COLS.map(Y => { const d = r.y[Y], v = d.space, k = v >= 0 ? Math.min(1, v / 100e6) : Math.min(1, -v / 60e6); return `<td class="${v < 0 ? 'neg ' : ''}${k > .55 ? 'hi' : ''}${d.src === 'estimate' ? ' estc' : ''}" data-tip="${esc(r.t.name)} ${Y}|${v}"><i style="opacity:${(0.08 + 0.92 * k).toFixed(2)}"></i><b>${(v / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
   applyTF($('#fa-heat'));
-  $('#fa-hnote').textContent = `Cells show cap room in $M after contracts already signed. 2026 is current cap space. 2027 and 2028 are Over The Cap's tables${TY ? ' (updated ' + dayFmt(TY.asOf) + ')' : ''}. *Italic 2029 and 2030 cells are Plain Cap estimates built from each player's contract. Caps: ${FAX && FAX.capNote ? FAX.capNote : 'projected by Over The Cap.'}`;
+  $('#fa-hnote').textContent = `Cells show cap room in $M after contracts already signed. 2026 is current cap space. 2027 and 2028 are Over The Cap's tables${TY ? ' (updated ' + dayFmt(TY.asOf) + ')' : ''}. *Italic 2029 and 2030 cells are PlainStats estimates built from each player's contract. Caps: ${FAX && FAX.capNote ? FAX.capNote : 'projected by Over The Cap.'}`;
 }
 
 /* ===== tags, cuts, dates, news ===== */
@@ -4383,7 +4763,7 @@ function renderDraftBoard() {
   const list = drSorted(DP.filter(p => dr.pos === 'all' || p.grp === dr.pos));
   $('#dr-cards').innerHTML = list.slice(0, dr.limit).map(pCard).join('') || '<p class="empty">No prospects at this position yet.</p>';
   $('#dr-more').hidden = list.length <= dr.limit;
-  $('#dr-cards-eb').textContent = `${dr.pos === 'all' ? 'All positions' : DR_NAME[dr.pos] + 's'} · sorted by ${dr.sort === 'rank' ? 'board rank' : dr.sort === 'grade' ? 'Plain Cap grade' : '2026 production'} · tap for his full page`;
+  $('#dr-cards-eb').textContent = `${dr.pos === 'all' ? 'All positions' : DR_NAME[dr.pos] + 's'} · sorted by ${dr.sort === 'rank' ? 'board rank' : dr.sort === 'grade' ? 'PlainStats grade' : '2026 production'} · tap for his full page`;
   // depth bars
   const max = Math.max(...DR_GROUPS.map(G => DP.filter(p => p.grp === G).length), 1);
   $('#dr-depth').innerHTML = DR_GROUPS.filter(G => counts[G]).map(G => { const a = DP.filter(p => p.grp === G && p.crank <= 32).length, b = counts[G] - a;
@@ -4445,14 +4825,14 @@ function renderDraftHow() {
   if ($('#dr-faq').childElementCount) return;
   const src = (DX.sources || []).map(([t, u]) => `${t} (${u})`).join('; ');
   faq($('#dr-faq'), [
-    ['Board rank', 'Plain Cap blends two public big boards: WalterFootball (40%) and NFL Draft Buzz, both its own rank (30%) and its average across many outlets (30%). A player missing from a board is counted just past the end of it. The result is one consensus order, 1 to ' + DP.length + '.'],
+    ['Board rank', 'PlainStats blends two public big boards: WalterFootball (40%) and NFL Draft Buzz, both its own rank (30%) and its average across many outlets (30%). A player missing from a board is counted just past the end of it. The result is one consensus order, 1 to ' + DP.length + '.'],
     ['Prospect grade', 'A 40 to 99 score like the play rating on NFL player pages. 70% comes from board rank, because scouts see things box scores miss. 30% comes from his 2026 college production, as percentiles against the other prospects at his position. Linemen have no public blocking stats, and some players have too few games, so for them production counts as average.'],
     ['2026 production', 'Per-game college stats through ' + new Date(DX.statsThru + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric' }) + ', from cfbstats. A prospect needs three games, and a minimum workload at skill positions, before his production counts. Competition level differs by conference, so treat it as one input.'],
     ['Roles', 'One label for how his college team uses him, with the same names as NFL roles where they fit, so you can compare him with NFL players who do the same job. Each role is explained on his page.'],
     ['Trait badges', 'Skills he stands out in this season. He must clear a real bar first (for example, 0.6 sacks a game for a Sack artist), then the tier shows how he ranks among the prospects at his position: gold for the top 6%, silver for the top 16%, bronze otherwise.'],
-    ['Draft order', 'If the season ended today, using current records. Traded picks move to their new owners. Real tiebreakers use strength of schedule; Plain Cap uses point differential.'],
+    ['Draft order', 'If the season ended today, using current records. Traded picks move to their new owners. Real tiebreakers use strength of schedule; PlainStats uses point differential.'],
     ['Model mock', 'For each pick, the model looks at the 14 best players left and scores each by board rank, how badly the team needs his position, and how much teams value that position. It does not predict trades or a team\'s own board.'],
-    ['Team needs', 'Built from each team\'s 2026 roster on Plain Cap: how its starters at each position rate on the field, how many of their contracts end after this season, and an older starting quarterback.'],
+    ['Team needs', 'Built from each team\'s 2026 roster on PlainStats: how its starters at each position rate on the field, how many of their contracts end after this season, and an older starting quarterback.'],
     ['Rookie pay', 'The 2026 rookie scale for first-round picks, grown with the projected 2027 salary cap. Later-round values are rough estimates.'],
     ['Sources', src]
   ]);
@@ -4474,7 +4854,7 @@ function pStory(p) {
   const s = p.st || {}, g = p.g, out = [], m = k => DMET[k][2](s, g || 1), pl = (n, w, ws) => `${n} ${n === 1 ? w : ws || w + 's'}`;
   const ws = p.w ? `WalterFootball has him ${ord(p.w)}` : 'He is outside WalterFootball\'s top 60', bs = p.b ? `NFL Draft Buzz ${ord(p.b)}` : 'NFL Draft Buzz leaves him outside its top 50';
   const gap = p.w && p.b ? Math.abs(p.w - p.b) : null;
-  out.push(`${p.name} is No. ${p.crank} on Plain Cap's consensus board and ${p.grk === 1 ? 'the top-graded' : 'the ' + ord(p.grk) + '-best'} of the ${p.gn} ${drWords(p.grp)} on it. ${ws} and ${bs}${gap != null ? (gap <= 5 ? ', so the boards agree.' : gap >= 15 ? `, a ${gap}-spot gap, so scouts are split on him.` : '.') : '.'}`);
+  out.push(`${p.name} is No. ${p.crank} on PlainStats' consensus board and ${p.grk === 1 ? 'the top-graded' : 'the ' + ord(p.grk) + '-best'} of the ${p.gn} ${drWords(p.grp)} on it. ${ws} and ${bs}${gap != null ? (gap <= 5 ? ', so the boards agree.' : gap >= 15 ? `, a ${gap}-spot gap, so scouts are split on him.` : '.') : '.'}`);
   if (p.st && g) {
     const G = p.grp;
     if (G === 'QB') out.push(`Through ${g} games he has thrown for ${dSv(s, 'py').toLocaleString()} yards, ${pl(dSv(s, 'ptd'), 'touchdown')} and ${pl(dSv(s, 'pint'), 'interception')}, completing ${pct(m('cmp'), 0)} at ${dN1(m('ypa'))} yards a throw${dSv(s, 'ry') > 100 ? `, and he has run for ${dSv(s, 'ry')} more` : ''}.`);
@@ -4484,11 +4864,11 @@ function pStory(p) {
     else if (G === 'LB') out.push(`Through ${g} games he has ${dSv(s, 'tk')} tackles, ${dSv(s, 'tfl')} for a loss, with ${pl(dSv(s, 'sk'), 'sack')} and ${pl(dSv(s, 'pbu'), 'pass breakup')}.`);
     else out.push(`Through ${g} games he has ${pl(dSv(s, 'pbu'), 'pass breakup')} and ${pl(dSv(s, 'int'), 'interception')}, with ${pl(dSv(s, 'tk'), 'tackle')}.`);
     if (g < 4) out.push(`He has played only ${g} game${g === 1 ? '' : 's'} this season, so his numbers carry less weight than his board rank.`);
-  } else if (DCFG[p.grp].bars.length) out.push('Plain Cap has no 2026 college stats for him yet. He may be hurt or not yet listed, so his grade rests on his board rank.');
+  } else if (DCFG[p.grp].bars.length) out.push('PlainStats has no 2026 college stats for him yet. He may be hurt or not yet listed, so his grade rests on his board rank.');
   else out.push(`At ${p.ht} and ${p.wt} pounds, he has the frame teams want. Public stats do not track blocks one lineman at a time, so his grade rests on where scouts rank him.`);
-  if (p.role) out.push(`Plain Cap's role for him: ${p.role}. ${PROLE_DESC[p.role] || ''}`);
+  if (p.role) out.push(`PlainStats' role for him: ${p.role}. ${PROLE_DESC[p.role] || ''}`);
   const pk = projPick(p), sl = slotVal(pk), vt = vetTop(p.grp);
-  out.push(`${p.mock ? `In Plain Cap's model mock he goes No. ${pk} to the ${TB[p.mock.own].city} ${TB[p.mock.own].name}` : `He projects as a round ${roundOf(pk)} pick`}. A rookie deal at that slot is worth about ${mon(sl)} over four years, ${mon(sl / 4)} a year${vt ? `, or ${pct(sl / 4 / vt)} of what a top-10 veteran ${DR_WORD[p.grp]} makes` : ''}.`);
+  out.push(`${p.mock ? `In PlainStats' model mock he goes No. ${pk} to the ${TB[p.mock.own].city} ${TB[p.mock.own].name}` : `He projects as a round ${roundOf(pk)} pick`}. A rookie deal at that slot is worth about ${mon(sl)} over four years, ${mon(sl / 4)} a year${vt ? `, or ${pct(sl / 4 / vt)} of what a top-10 veteran ${DR_WORD[p.grp]} makes` : ''}.`);
   return out;
 }
 function pFits(p) {
@@ -4534,7 +4914,7 @@ function pPay(p) {
   const sal = sl - bonus, capRows = [.16, .22, .28, .34].map((f, k) => [2027 + k, bonus / 4 + sal * f]);
   return `<div class="sh" style="padding:0">
     <div class="bigrow"><div><span class="k">Projected pick</span><div class="v">No. ${pk}</div></div><div><span class="k">4-year value</span><div class="v">${mon(sl)}</div></div><div><span class="k">Per year</span><div class="v">${mon(yr)}</div></div></div>
-    <p class="note">${p.mock ? `From Plain Cap's model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
+    <p class="note">${p.mock ? `From PlainStats' model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
     <div style="display:grid;gap:6px">
       <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Signing bonus vs. salary</span><b class="num">about ${mon(bonus)} bonus</b></div>
       <div class="dbar" role="img" aria-label="Signing bonus about ${mon(bonus)}, salaries about ${mon(sl - bonus)}"><i style="width:${(bonus / sl * 100).toFixed(1)}%;background:var(--gtd)"></i><i style="width:${(100 - bonus / sl * 100).toFixed(1)}%;background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i></div>
@@ -4868,7 +5248,7 @@ function renderRookies() {
     <div class="kpi"><span class="k">Option decisions, May 2027</span><span class="v num">${opt.length}</span><span class="s">2024 first-round picks</span></div>
     <div class="kpi"><span class="k">Extension watch</span><span class="v num">${elig.filter(p => p.draft.y <= 2023).length}</span><span class="s">Eligible now; ${elig.filter(p => p.draft.y === 2024).length} more after this season</span></div>
     ${bestR ? `<button class="kpi" type="button" data-p="${bestR.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best rookie-deal value</span><span class="v good num">${sgn$(bestR.surplus)}</span><span class="s">${esc(bestR.name)}, ${esc(TB[bestR.team].name)}</span></button>` : ''}`;
-  $('#rk-opt').innerHTML = `<thead><tr><th class="r"><span>Pick</span></th><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th class="r"><span>Play</span></th><th class="r"><span>Paid now</span></th><th class="r"><span>Est. 2028 option</span></th><th class="r"><span>Plays like</span></th><th><span>Plain Cap read</span></th></tr></thead><tbody>${opt.map(p => { const pr = optPrice(p), [rd, rc] = rkRead(p, pr);
+  $('#rk-opt').innerHTML = `<thead><tr><th class="r"><span>Pick</span></th><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th class="r"><span>Play</span></th><th class="r"><span>Paid now</span></th><th class="r"><span>Est. 2028 option</span></th><th class="r"><span>Plays like</span></th><th><span>PlainStats read</span></th></tr></thead><tbody>${opt.map(p => { const pr = optPrice(p), [rd, rc] = rkRead(p, pr);
     return `<tr data-p="${p.i}" data-s="${esc(p.key)}"><td class="r">${p.draft.pick}</td><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${esc(TB[p.team].name)}${p.team !== p.draft.team && TB[p.draft.team] ? ` <small class="note">drafted by ${esc(TB[p.draft.team].name)}</small>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(pr)}</td><td class="r">${p.worth != null ? mon(p.worth) : '—'}</td><td><span class="vl ${rc}">${esc(rd)}</span></td></tr>`; }).join('') || '<tr><td colspan="9" class="empty">No 2024 first-round picks matched.</td></tr>'}</tbody>`;
   applyTF($('#rk-opt'));
   $('#rk-ext').innerHTML = `<thead><tr><th><span>Player</span></th><th><span>Pos</span></th><th><span>Team</span></th><th><span>Drafted</span></th><th class="r"><span>Play</span></th><th class="r"><span>Paid now</span></th><th class="r"><span>Est. extension</span></th><th><span>Eligible</span></th><th><span>Status</span></th></tr></thead><tbody>${elig.slice(0, 40).map(p => { const s = rkStatus(p);
@@ -5028,7 +5408,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   $('#stamp').textContent = 'Updated ' + ds;
   $('#news-asof').textContent = `NFL news · updated ${new Date(((mv && mv.asOf) || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Year-by-year figures after 2026 are estimates unless marked Reported. Plain Cap is not affiliated with the NFL, the NBA or any team.`;
+  $('#foot-asof').textContent = `Cap and contract figures as of ${ds}, from Over The Cap, Spotrac and press reports; they can change. Check Over The Cap or Spotrac for official numbers. Year-by-year figures after 2026 are estimates unless marked Reported. PlainStats is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
   attachPFF(px);
@@ -5053,6 +5433,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
   if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
   wireHS(); wireCTabs(); wireSim();
+  if (window.buildMenus) buildMenus();
   route();
   loadDraft();
 }
@@ -5065,7 +5446,120 @@ Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({
     if (po && po.rows) { PFFOL = po; px = px || { rank: {}, rookies: [], tow: [], games: [] }; px.ol = po.rows; }
     if (ol && ol.pos) d.players.forEach(p => { if (['LT','LG','C','RG','RT'].includes(p[2])) { const k = p[1] + '|' + p[0].normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'’\-]/g, '').replace(/\b(jr|sr|ii|iii|iv)\b/g, '').replace(/\s+/g, ' ').trim(); if (ol.pos[k]) p[2] = ol.pos[k]; } }); boot(d, mv, sd, se, ty, fx, yx, px); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
-if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Plain Cap Airtable base.'; } }).catch(() => {});
+if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Breakdowns load from the Airtable base.'; } }).catch(() => {});
+</script>
+<script>
+/* ===== global nav: flyouts, search, phone menu ===== */
+(() => {
+  const gn = $('#gn'), fly = $('#gn-fly'), srch = $('#gn-search'), sheetEl = $('#gn-sheet'), scrim = $('#gn-scrim');
+  const sbtn = $('#gn-sbtn'), mbtn = $('#gn-mbtn');
+  const wide = matchMedia('(hover: hover) and (min-width: 900px)');
+  let cur = null, tm = null;
+  const sync = () => {
+    const any = !fly.hidden || !srch.hidden || !sheetEl.hidden;
+    scrim.hidden = !any || !sheetEl.hidden;
+    gn.classList.toggle('open', any);
+    document.documentElement.classList.toggle('lock', !sheetEl.hidden);
+  };
+  const openMenu = k => {
+    clearTimeout(tm); srch.hidden = true; sbtn.setAttribute('aria-expanded', 'false');
+    cur = k; fly.hidden = false;
+    $$('.gn-panel', fly).forEach(p => (p.hidden = p.dataset.panel !== k));
+    $$('.gn-top').forEach(a => a.setAttribute('aria-expanded', String(a.parentElement.dataset.menu === k)));
+    sync();
+  };
+  const closeMenu = () => { clearTimeout(tm); cur = null; fly.hidden = true; $$('.gn-top').forEach(a => a.setAttribute('aria-expanded', 'false')); sync(); };
+  const closeAll = () => {
+    closeMenu(); srch.hidden = true; sheetEl.hidden = true;
+    sbtn.setAttribute('aria-expanded', 'false'); mbtn.setAttribute('aria-expanded', 'false'); mbtn.setAttribute('aria-label', 'Open menu');
+    const r = $('#r-nav'); if (r) r.hidden = true;
+    sync();
+  };
+  window.closeNav = closeAll;
+  window.openSearch = () => {
+    closeMenu(); sheetEl.hidden = true; mbtn.setAttribute('aria-expanded', 'false');
+    srch.hidden = false; sbtn.setAttribute('aria-expanded', 'true'); sync();
+    setTimeout(() => { const q = $('#q-nav'); if (q) q.focus(); }, 30);
+  };
+
+  $$('.gn-item').forEach(li => {
+    li.addEventListener('mouseenter', () => { if (!wide.matches) return; clearTimeout(tm); tm = setTimeout(() => openMenu(li.dataset.menu), cur ? 0 : 120); });
+    li.querySelector('.gn-top').addEventListener('focus', () => { if (wide.matches) openMenu(li.dataset.menu); });
+  });
+  $$('.gn-brand, .gn-tools').forEach(el => el.addEventListener('mouseenter', () => { if (wide.matches && cur) { clearTimeout(tm); tm = setTimeout(closeMenu, 120); } }));
+  fly.addEventListener('mouseenter', () => clearTimeout(tm));
+  gn.addEventListener('mouseleave', () => { if (wide.matches && cur) { clearTimeout(tm); tm = setTimeout(closeMenu, 200); } });
+  gn.addEventListener('focusout', e => { if (cur && !gn.contains(e.relatedTarget)) closeMenu(); });
+
+  sbtn.addEventListener('click', () => (srch.hidden ? openSearch() : closeAll()));
+  mbtn.addEventListener('click', () => {
+    if (!sheetEl.hidden) return closeAll();
+    closeMenu(); srch.hidden = true; sheetEl.hidden = false;
+    mbtn.setAttribute('aria-expanded', 'true'); mbtn.setAttribute('aria-label', 'Close menu'); sync();
+  });
+  scrim.addEventListener('click', closeAll);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && (cur || !srch.hidden || !sheetEl.hidden)) closeAll(); });
+  gn.addEventListener('click', e => { if (e.target.closest('.gn-fly a, .gn-sheet a, .gn-brand')) closeAll(); });
+  window.addEventListener('hashchange', closeAll);
+  wide.addEventListener && wide.addEventListener('change', closeAll);
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) { e.preventDefault(); openSearch(); }
+  });
+})();
+
+/* ===== data-driven bits of the menus and homepage, run once data loads ===== */
+function buildMenus() {
+  // teams flyout, grouped by division
+  const g = $('#gn-teams');
+  if (g) g.innerHTML = DIVS.slice(1).map(d => `<div class="gn-div"><h4>${esc(d)}</h4><ul>${TEAMS.filter(t => t.div === d).sort((a, b) => a.city.localeCompare(b.city)).map(t => `<li><a href="#team-${t.id}">${crest(t.id, 18)}<span>${esc(t.city)} ${esc(t.name)}</span></a></li>`).join('')}</ul></div>`).join('');
+  // average team cap sheet in the hero
+  const n = TEAMS.length || 1;
+  const av = k => TEAMS.reduce((s, t) => s + Math.max(0, t[k] || 0), 0) / n;
+  const a = av('active'), d = av('dead'), r = av('space'), tot = a + d + r || 1;
+  $('#hx-cap-bar').innerHTML = `<i style="width:${(a / tot * 100).toFixed(2)}%;background:var(--brand)" title="Spent on the roster"></i><i style="width:${(d / tot * 100).toFixed(2)}%;background:var(--c-dead)" title="Dead money"></i><i class="hatch" style="width:${(r / tot * 100).toFixed(2)}%" title="Cap room"></i>`;
+  const lb = $$('#hx-cap-leg b'); [a, d, r].forEach((v, i) => { if (lb[i]) lb[i].textContent = mon(v); });
+  $('#hx-cap-sub').textContent = `Average of all ${n} teams · ${pct(d / tot, 1)} is dead money`;
+  // live counts on the explore tiles
+  const nl = $('[data-live="news"]'); if (nl && typeof MOVES !== 'undefined' && MOVES.length) nl.textContent = `${MOVES.length.toLocaleString()} stories this season`;
+  const cl = $('[data-live="contracts"]'); if (cl && PL.length) cl.textContent = `${PL.length.toLocaleString()} contracts`;
+  const s = $('#stamp'), gs = $('#gs-stamp'); if (s && gs) gs.textContent = s.textContent;
+  // search in the nav uses the same index as the homepage search
+  bindSearch($('#q-nav'), $('#r-nav'), it => { window.closeNav && closeNav(); if (it.type === 'team') go('team-' + it.t.id); else openPlayer(it.p.i); });
+}
+
+/* ===== ads =====
+   To turn ads on after launch: set client to your AdSense publisher ID (ca-pub-…),
+   list the live domains in hosts, and optionally give each slot its AdSense slot ID.
+   Slots stay hidden everywhere else, including inside Claude. */
+const ADS = {
+  client: '',
+  hosts: ['fan-cap-tracker.vercel.app'],
+  slots: { 'home-top': '', 'home-mid': '', news: '', footer: '' }
+};
+(() => {
+  const root = document.documentElement;
+  const live = ADS.client && ADS.hosts.includes(location.hostname);
+  if (live) {
+    root.classList.add('ads-live');
+    const sc = document.createElement('script');
+    sc.async = true; sc.crossOrigin = 'anonymous';
+    sc.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(ADS.client);
+    document.head.appendChild(sc);
+    $$('.ad').forEach(el => {
+      const ins = document.createElement('ins');
+      ins.className = 'adsbygoogle'; ins.style.display = 'block'; ins.style.width = '100%';
+      ins.dataset.adClient = ADS.client; ins.dataset.adFormat = 'auto'; ins.dataset.fullWidthResponsive = 'true';
+      const id = ADS.slots[el.dataset.ad]; if (id) ins.dataset.adSlot = id;
+      el.appendChild(ins);
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    });
+  }
+  const pv = $('#ad-prev');
+  const setPrev = on => { root.classList.toggle('ads-preview', on); if (pv) pv.textContent = on ? 'Hide ad spots' : 'Preview ad spots'; };
+  setPrev(!live && store.get('adprev', false));
+  if (pv) pv.addEventListener('click', () => { const on = !root.classList.contains('ads-preview'); store.set('adprev', on); setPrev(on); });
+})();
+
 </script>
 </body></html>
 </body></html>
