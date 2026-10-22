@@ -1,0 +1,28 @@
+/* Shared styles for the standalone pages (privacy, terms, 404). Same tokens as the main site; follows the system light/dark setting. */
+:root{--bg:#f5f5f7;--surface:#fff;--fg:#1d1d1f;--muted:#636368;--line:#e1e1e6;--link:#0066cc;--brand:#0071e3;--brand-ink:#fff;--r:12px;--r-lg:20px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--surface:#161617;--fg:#f5f5f7;--muted:#a1a1a6;--line:#2c2c2f;--link:#2997ff;--brand:#2997ff;--brand-ink:#000;color-scheme:dark}}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Geist","Helvetica Neue",Arial,sans-serif;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+a{color:var(--link)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:12px;background:var(--surface);padding:8px 12px;border-radius:8px;z-index:5}
+header,main,footer{max-width:760px;margin:0 auto;padding-left:16px;padding-right:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:20px;padding-bottom:8px}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--fg);text-decoration:none;font-weight:700;font-size:1.1rem;letter-spacing:-.01em}
+.brand img{width:28px;height:28px;border-radius:7px;display:block}
+header nav a{margin-left:16px;font-size:.95rem}
+main{padding-top:18px;padding-bottom:40px}
+.panel{background:var(--surface);border-radius:var(--r-lg);padding:clamp(20px,4vw,36px)}
+h1{font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.12;letter-spacing:-.02em;margin:0 0 6px}
+h2{font-size:1.2rem;line-height:1.25;letter-spacing:-.01em;margin:28px 0 6px}
+p,ul{margin:0 0 12px}
+ul{padding-left:1.2em}
+li{margin-bottom:6px}
+.meta{color:var(--muted);font-size:.9rem;margin-bottom:18px}
+.btn{display:inline-block;background:var(--brand);color:var(--brand-ink);text-decoration:none;font-weight:600;padding:11px 20px;border-radius:999px}
+.links{display:flex;flex-wrap:wrap;gap:8px 18px;margin:14px 0 22px}
+footer{color:var(--muted);font-size:.85rem;padding-top:4px;padding-bottom:36px}
+footer a{color:var(--muted)}
+footer a+a{margin-left:14px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
