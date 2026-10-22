@@ -1,4 +1,4 @@
-// Vercel Edge function: draws the social card (Open Graph image) for a PlainStats page.
+// Vercel function (Node runtime; @vercel/og's edge build can't compile its wasm there): draws the social card (Open Graph image) for a PlainStats page.
 //   /api/og?k=players&s=patrick-mahomes&v=2026-10-22
 //     k  players | teams | draft | pages        s  the page's slug        v  data date, only there so X and Discord re-fetch after a refresh
 //
@@ -8,8 +8,6 @@
 // shows initials instead. If anything fails the request redirects to the static /og-image.png so a shared link never gets a broken image.
 import { ImageResponse } from '@vercel/og';
 import { card, W, H } from './_og-layout.js';
-
-export const config = { runtime: 'edge' };
 
 const KINDS = new Set(['players', 'teams', 'draft', 'pages']);
 // Cards change when the daily refresh runs, so keep them a day at the CDN and let stale ones serve while a new one draws.
