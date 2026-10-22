@@ -1001,6 +1001,8 @@ footer a:hover{color:var(--fg);text-decoration:underline}
 .rtile.main .k,.rtile.main .s{color:var(--bg);opacity:.72}
 .countdown .eyebrow{color:var(--bg)!important;opacity:.72}
 .ossum{top:calc(env(safe-area-inset-top,0px) + 64px)}
+.hx.hx-s{padding-top:0;padding-bottom:clamp(14px,3vw,28px);min-height:0}
+.ex-head{padding-bottom:clamp(12px,2.5vw,22px)}
 
 </style>
 
@@ -1038,9 +1040,13 @@ footer a:hover{color:var(--fg);text-decoration:underline}
 
 <!-- HOME -->
 <section class="view" id="v-home" aria-labelledby="h-home">
-  <div class="hx">
-    <h1 class="sr" id="h-home">PlainStats</h1>
-    <p class="hx-sub">Player ratings, team rankings, news, the draft and free agency, all explained in plain English. Search any player or team to start.</p>
+  <h1 class="sr" id="h-home">PlainStats</h1>
+  <div class="kpis" id="kpis" hidden></div>
+
+  <div class="ex-head">
+    <h2 id="h-explore">Everything on PlainStats.</h2>
+  </div>
+  <div class="hx hx-s">
     <div class="search">
       <label class="sr" for="q-home">Find a player or team</label>
       <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
@@ -1049,12 +1055,6 @@ footer a:hover{color:var(--fg);text-decoration:underline}
     </div>
   </div>
 
-  <div class="kpis" id="kpis" hidden></div>
-
-  <div class="ex-head">
-    <h2 id="h-explore">Everything on PlainStats.</h2>
-    <p>News, teams, players, contracts, the draft and front-office tools, all in one place.</p>
-  </div>
   <div class="ex-grid" aria-labelledby="h-explore">
     <article class="ex w3 inv">
       <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
