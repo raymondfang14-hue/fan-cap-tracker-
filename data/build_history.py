@@ -6,6 +6,9 @@ Needs in <dir>: stats_player_week_<S>.csv for every season from the first season
 through the current one, and draft_picks.csv. Download with curl -sSL from
 https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_<S>.csv and
 https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_picks.csv
+Also needs snap_counts_<S>.csv for the same seasons and players.csv (nflverse releases: snap_counts, players). Games played
+come from the snap counts (a game counts when the player took any snap), because the weekly stats file has no row for a
+player with no recorded stat, such as an offensive lineman. Those players get a season line with games and team only.
 Regular-season games only. Writes data/history.json and data/drafted.json next to this script."""
 import csv, json, os, sys, datetime
 from collections import defaultdict
@@ -38,6 +41,12 @@ MAXK = {'fgl': lambda r: num(r['fg_long'])}
 clean = lambda d: {k: (round(v, 1) if isinstance(v, float) and v != int(v) else int(v)) for k, v in d.items() if v}
 
 players = {}
+# pfr id -> gsis id, name and position from players.csv
+PFR = {}
+pcsv = os.path.join(D, 'players.csv')
+if os.path.exists(pcsv):
+    for r in csv.DictReader(open(pcsv, encoding='utf-8')):
+        if r['pfr_id'] and r['gsis_id']: PFR[r['pfr_id']] = (r['gsis_id'], r['display_name'], r['position'])
 for S in range(FIRST, CUR + 1):
     path = os.path.join(D, f'stats_player_week_{S}.csv')
     if not os.path.exists(path):
@@ -45,6 +54,7 @@ for S in range(FIRST, CUR + 1):
     rows = [r for r in csv.DictReader(open(path, encoding='utf-8')) if r['season_type'] == 'REG']
     for r in rows:
         pid = r['player_id']
+        if not pid: continue  # a row with no player id would merge many players into one
         p = players.setdefault(pid, {'id': pid, 'n': r['player_display_name'] or r['player_name'], 'pos': r['position'], 'seasons': {}, 'wk': []})
         p['n'] = r['player_display_name'] or p['n']; p['pos'] = r['position'] or p['pos']
         s = p['seasons'].setdefault(S, {'teams': defaultdict(int), 'g': 0, 'v': defaultdict(float), 'fgl': 0})
@@ -55,6 +65,26 @@ for S in range(FIRST, CUR + 1):
             line = clean({k: f(r) for k, f in F.items()})
             p['wk'].append([int(r['week']), tf(r['opponent_team']), t, line])
 
+# games played from snap counts
+snapg = defaultdict(lambda: defaultdict(lambda: defaultdict(set)))   # gsis -> season -> team -> game ids
+for S in range(FIRST, CUR + 1):
+    path = os.path.join(D, f'snap_counts_{S}.csv')
+    if not os.path.exists(path): print('missing', path); continue
+    for r in csv.DictReader(open(path, encoding='utf-8')):
+        if r['game_type'] != 'REG' or r['pfr_player_id'] not in PFR: continue
+        if num(r['offense_snaps']) + num(r['defense_snaps']) + num(r['st_snaps']) <= 0: continue
+        gid, nm, ps = PFR[r['pfr_player_id']]
+        snapg[gid][S][tf(r['team'])].add(r['game_id'])
+        if gid not in players: players[gid] = {'id': gid, 'n': nm, 'pos': ps or r['position'], 'seasons': {}, 'wk': []}
+for gid, byS in snapg.items():
+    p = players[gid]
+    for S, byT in byS.items():
+        n = sum(len(v) for v in byT.values())
+        s = p['seasons'].get(S)
+        if s is None:
+            s = p['seasons'][S] = {'teams': defaultdict(int), 'g': 0, 'v': defaultdict(float), 'fgl': 0}
+            for t, v in byT.items(): s['teams'][t] += len(v)
+        if n > s['g']: s['g'] = n
 out = []
 for p in players.values():
     sea = {}

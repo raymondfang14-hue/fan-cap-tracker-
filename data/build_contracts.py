@@ -45,6 +45,39 @@ for r in ROST: byKey.setdefault((nn(r['full_name']), tfix(r['team'])), r)
 byName = {}
 for r in ROST: byName.setdefault(nn(r['full_name']), []).append(r)
 
+# Names differ between sources (Matt/Matthew, Greg/Gregory, Mike/Michael): fall back to last name + first initial on the same team.
+byLast = {}
+for r in ROST: byLast.setdefault((nn(r['last_name']), tfix(r['team'])), []).append(r)
+def roster_row(name, team):
+    r = byKey.get((nn(name), team))
+    if r: return r
+    c = byName.get(nn(name), [])
+    if len(c) == 1: return c[0]
+    parts = name.split()
+    if len(parts) >= 2:
+        last = nn(' '.join(p for p in parts[1:] if nn(p) not in ('jr', 'sr', 'ii', 'iii', 'iv', 'v')) or parts[-1])
+        first = nn(parts[0])[:1]
+        c = [x for x in byLast.get((last, team), []) if nn(x['first_name'])[:1] == first]
+        if len(c) == 1: return c[0]
+    return None
+
+# Players on no 2026 roster row (injured reserve, retired, off the list) still need an id for their stats: use nflverse players.csv.
+PLY = {}
+try:
+    for r in csv.DictReader(open(NV + 'players.csv')):
+        if r['gsis_id'] and (r['last_season'] or '0') >= str(SEASON - 2):
+            PLY.setdefault(nn(r['display_name']), []).append(r['gsis_id'])
+            PLY.setdefault(('l', nn(r['last_name']), nn(r['display_name'].split()[0])[:1]), []).append(r['gsis_id'])
+except FileNotFoundError: pass
+def gid_alt(name):
+    c = PLY.get(nn(name), [])
+    if len(c) == 1: return c[0]
+    w = [x for x in name.split() if nn(x) not in ('jr', 'sr', 'ii', 'iii', 'iv', 'v')]
+    if len(w) >= 2:
+        c = PLY.get(('l', nn(' '.join(w[1:])), nn(w[0])[:1]), [])
+        if len(c) == 1: return c[0]
+    return ''
+
 picks, probowl, dteam, pfr = {}, {}, {}, {}
 for r in csv.DictReader(open(NV + 'draft_picks.csv')):
     if r['gsis_id']:
@@ -162,7 +195,7 @@ for p in D['players']:
     row = list(p[:15]) + [None] * (15 - len(p[:15]))
     name, team = row[0], row[1]
     key = (nn(name), team)
-    r = byKey.get(key) or (byName.get(nn(name), [None])[0] if len(byName.get(nn(name), [])) == 1 else None)
+    r = roster_row(name, team)
     if r: seen.add(r['gsis_id'])
     prov, sid, ver, sb = 'u', -1, '', None
     lg = L.get(key)
@@ -202,7 +235,7 @@ for p in D['players']:
         a = age_of(r)
         if a: row[3] = a
     count[prov] += 1
-    out.append(row + [prov, sid, ver, sb])
+    out.append(row + [prov, sid, ver, sb, r['gsis_id'] if r else gid_alt(name)])
 
 # ledger deals for players not yet in the table (new signings): add them from the report
 have = {(nn(r[0]), r[1]) for r in out}
@@ -223,7 +256,7 @@ for (k, team), lg in L.items():
         yrs = int(lg['years']); row[10] = round((sb or 0) / min(yrs, 5) + (row[4] - (sb or 0)) / yrs * 0.6)
         row[12] = round((sb or 0) / min(yrs, 5)); row[11] = row[10] - row[12]
     if seen is not None and r: seen.add(r['gsis_id'])
-    out.append(row + ['r', src_id(lg['source'], lg['url']), ver, sb]); count['r'] += 1
+    out.append(row + ['r', src_id(lg['source'], lg['url']), ver, sb, r['gsis_id'] if r else '']); count['r'] += 1
 
 # rostered draft picks and undrafted rookies missing from the old list
 added = 0
@@ -237,7 +270,7 @@ for r in ROST:
     elif not r['draft_number'] and int(r['rookie_year'] or 0) >= SEASON - 1:
         minimum_row(row, int(r['years_exp'] or 0))
     else: continue
-    out.append(row + ['f', CBA_SRC, 'tagfecb', None]); count['f'] += 1; added += 1
+    out.append(row + ['f', CBA_SRC, 'tagfecb', None, r['gsis_id']]); count['f'] += 1; added += 1
 
 # Unverified rows keep only name, team, position and age: PlainStats does not publish a dollar figure it cannot source.
 HIDE = [4, 5, 6, 7, 8, 10, 11, 12, 13, 14]
@@ -254,4 +287,4 @@ D['prov'] = {'asOf': datetime.date.today().isoformat(), 'counts': count, 'added'
 json.dump(D, open('data/nfl.json', 'w'), separators=(',', ':'))
 json.dump({'asOf': D['prov']['asOf'], 'note': 'Year-by-year cap hits PlainStats calculates itself: rookie contracts from the rookie scale and CBA minimums (data/cba.json), plus exercised fifth-year options. Each row: [base salary, bonus counted, cap hit].', 'contracts': YC},
           open('data/years_calc.json', 'w'), separators=(',', ':'))
-print('rows', len(out), count, 'added', added, 'sources', len(SRC))
+print('rows', len(out), 'with gsis id', sum(1 for x in out if x[19]), count, 'added', added, 'sources', len(SRC))

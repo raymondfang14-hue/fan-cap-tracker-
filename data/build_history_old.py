@@ -5,7 +5,9 @@ Usage: python3 -I data/build_history_old.py <dir with stats_player_reg_<S>.csv> 
 Needs in <dir>: stats_player_reg_<S>.csv (or reg_<S>.csv) for every season from the first season up to the season
 before data/history.json starts. Download with curl -sSL from
 https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_reg_<S>.csv
-Roster matching: a roster player is matched to nflverse by the gsis id already in data/history.json (name + team),
+Snap counts: also needs snap_counts_<S>.csv for 2013 on and players.csv in <dir>. A season with no box-score row (offensive
+linemen, special teamers) is filled with games and team from the snap counts, so every season he played shows up.
+Roster matching: a roster player with a gsis id in data/nfl.json (row index 19) uses it directly; otherwise a roster player is matched to nflverse by the gsis id already in data/history.json (name + team),
 otherwise by an exact normalized name + position group that is unique in the old data. Run it again whenever a
 player joins a team (the daily refresh does) so new signings pick up earlier seasons. When a new season starts,
 history.json moves its window forward (build_history.py drops last season's weekly game log by itself, since
@@ -52,6 +54,7 @@ byname = {}        # normalized name -> [(group, team)] for roster players with 
 for row in roster:
     name, team, pos = row[0], row[1], row[2]
     k = nk(name); r = hk.get(k + '|' + team)
+    if len(row) > 19 and row[19]: want[row[19]] = team; continue
     if r and (hg(r['pos']) == hg(pos) or hg(pos) == 'X' or hg(r['pos']) == 'X'): want[r['id']] = team
     else: byname.setdefault(k, []).append((hg(pos), team))
 
@@ -67,6 +70,27 @@ for S in range(FIRST, LAST + 1):
         if fgl: line['fgl'] = int(fgl)
         p = players.setdefault(r['player_id'], {'id': r['player_id'], 'n': r['player_display_name'] or r['player_name'], 'pos': r['position'], 's': {}})
         p['pos'] = r['position'] or p['pos']; p['s'][str(S)] = line
+# 2b) games from snap counts (2013 on) fill seasons with no box-score row
+PFR = {}
+if os.path.exists(os.path.join(D, 'players.csv')):
+    for r in csv.DictReader(open(os.path.join(D, 'players.csv'), encoding='utf-8')):
+        if r['pfr_id'] and r['gsis_id']: PFR[r['pfr_id']] = (r['gsis_id'], r['display_name'], r['position'])
+SG = {}   # gsis -> season -> team -> game ids
+for S in range(max(FIRST, 2013), LAST + 1):
+    path = os.path.join(D, f'snap_counts_{S}.csv')
+    if not os.path.exists(path): print('missing snap counts', S); continue
+    for r in csv.DictReader(open(path, encoding='utf-8')):
+        if r['game_type'] != 'REG' or r['pfr_player_id'] not in PFR: continue
+        if num(r['offense_snaps']) + num(r['defense_snaps']) + num(r['st_snaps']) <= 0: continue
+        gid = PFR[r['pfr_player_id']][0]
+        if gid in want: SG.setdefault(gid, {}).setdefault(S, {}).setdefault(tf(r['team']), set()).add(r['game_id'])
+for gid, byS in SG.items():
+    p = players.get(gid)
+    if p is None: _, nm, ps = next(v for v in PFR.values() if v[0] == gid); p = players[gid] = {'id': gid, 'n': nm, 'pos': ps, 's': {}}
+    for S, byT in byS.items():
+        n = sum(len(v) for v in byT.values()); ln = p['s'].get(str(S))
+        if ln is None: p['s'][str(S)] = {'g': n, 't': max(byT, key=lambda t: len(byT[t]))}
+        elif n > ln.get('g', 0): ln['g'] = n
 # 3) name matching for roster players without an id
 nm = {}
 for p in players.values(): nm.setdefault(nk(p['n']), []).append(p)

@@ -2151,7 +2151,7 @@ function prepare(d, mv) {
   D = d;
   TEAMS = d.teams.map(t => Object.assign({}, t, { active: t.off + t.defn + t.st }));
   TEAMS.forEach(t => { t.eff = t.active + t.dead + t.space; TB[t.id] = t; });
-  PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8], voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, group: POSGROUP[r[2]] || 'ST' }));
+  PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8], voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, gid: r[19] || '', group: POSGROUP[r[2]] || 'ST' }));
   PL.forEach(p => { if (p.total > 0 && p.gtd > p.total) p.gtd = p.total; if (p.fg > p.gtd) p.fg = p.gtd; p.gtdp = p.total > 0 ? p.gtd / p.total : 0; p.yrs = p.apy > 0 ? Math.max(1, Math.round(p.total / p.apy)) : 1; p.key = (p.name + ' ' + p.team + ' ' + TB[p.team].name + ' ' + TB[p.team].city + ' ' + p.pos).toLowerCase(); });
   // A contract with no sourced figure (prov 'u') is hidden: no dollars are shown and it stays out of every ranking.
   PL.forEach(p => { p.hid = p.prov === 'u'; });
@@ -5129,13 +5129,14 @@ function mergeOld(o) {
   o.players.forEach(x => {
     let r = byId.get(x.id);
     if (!r) { r = { id: x.id, n: x.n, pos: x.pos, s: {}, hg: HG[x.pos] || 'X' }; HIST.players.push(r); byId.set(x.id, r); const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r); if (!HIDX.kt[k + '|' + x.ct]) HIDX.kt[k + '|' + x.ct] = r; }
-    r.old = x.s;
+    r.old = x.s; if (HIDX.id) HIDX.id.set(x.id, r);
   });
   HIST.oldFirst = o.seasons[0];
   PL.forEach(p => { p._h = undefined; });
 }
 const HG = { QB: 'QB', RB: 'RB', FB: 'RB', HB: 'RB', WR: 'WR', TE: 'TE', T: 'OL', G: 'OL', C: 'OL', OT: 'OL', OG: 'OL', OL: 'OL', DE: 'DL', DT: 'DL', NT: 'DL', DL: 'DL', EDGE: 'DL', OLB: 'LB', ILB: 'LB', MLB: 'LB', LB: 'LB', CB: 'DB', DB: 'DB', S: 'DB', FS: 'DB', SS: 'DB', SAF: 'DB', K: 'K', PK: 'K', P: 'P' };
 const HG_NAME = { QB: 'Quarterbacks', RB: 'Running backs', WR: 'Wide receivers', TE: 'Tight ends', DL: 'Defensive line', LB: 'Linebackers', DB: 'Defensive backs', K: 'Kickers', P: 'Punters', OL: 'Offensive line' };
+const HGCOMPAT = { DLLB: 1, LBDL: 1, DBLB: 1, LBDB: 1 };
 const hgOfP = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.pos === 'LS' ? 'X' : ({ QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', LT: 'OL', LG: 'OL', C: 'OL', RG: 'OL', RT: 'OL', EDGE: 'DL', DT: 'DL', LB: 'LB', CB: 'DB', S: 'DB' }[p.group] || 'X');
 const hv = (l, k) => (l && l[k]) || 0;
 const hInt = v => (v == null ? '—' : Math.round(v).toLocaleString());
@@ -5172,7 +5173,8 @@ const HCOLS = {
 const HKEY = { QB: 'pyd', RB: 'ryd', WR: 'reyd', TE: 'reyd', DL: 'dsk', LB: 'tk', DB: 'pd', K: 'fgm', P: 'pun', OL: 'g', X: 'g' };
 const HLEAD = { QB: ['pyd', 'ptd', 'ryd'], RB: ['ryd', 'rtd', 'reyd'], WR: ['reyd', 'rec', 'retd'], TE: ['reyd', 'rec', 'retd'], DL: ['dsk', 'tfl', 'qbh'], LB: ['tk', 'dsk', 'tfl'], DB: ['dint', 'pd', 'tk'], K: ['fgm', 'fgp', 'fgl'], P: ['pun', 'pavg', 'pi20'] };
 function indexHist() {
-  HIDX = { kt: {}, n: {}, pl: new Map() };
+  HIDX = { kt: {}, n: {}, pl: new Map(), id: new Map() };
+  HIST.players.forEach(r => { if (r.id) HIDX.id.set(r.id, r); });
   const cur = String(HIST.current);
   HIST.players.forEach(r => {
     r.hg = HG[r.pos] || 'X'; const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r);
@@ -5186,8 +5188,9 @@ function histOf(p) {
   const k0 = nkey(p.name), w = k0.split(' '), ks = [k0];
   if (ALIAS[k0]) ks.push(ALIAS[k0]); if (NICK[w[0]]) ks.push([NICK[w[0]]].concat(w.slice(1)).join(' '));
   const g = hgOfP(p); let r = null;
+  if (p.gid && HIDX.id.has(p.gid)) return (p._h = HIDX.id.get(p.gid));
   for (const k of ks) { const x = HIDX.kt[k + '|' + p.team]; if (x && (x.hg === g || g === 'X' || x.hg === 'X')) { r = x; break; } }
-  if (!r) for (const k of ks) { const L = (HIDX.n[k] || []).filter(x => x.hg === g); if (L.length === 1) { r = L[0]; break; } }
+  if (!r) for (const k of ks) { const L = (HIDX.n[k] || []).filter(x => x.hg === g || HGCOMPAT[g + x.hg]); if (L.length === 1) { r = L[0]; break; } }
   return (p._h = r || null);
 }
 const hsSum = lines => { const t = {}; lines.forEach(l => Object.entries(l).forEach(([k, v]) => { if (typeof v === 'number' && k !== 'fgl') t[k] = (t[k] || 0) + v; })); t.fgl = Math.max(0, ...lines.map(l => l.fgl || 0)) || undefined; return t; };
