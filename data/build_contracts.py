@@ -203,6 +203,27 @@ for p in D['players']:
     count[prov] += 1
     out.append(row + [prov, sid, ver, sb])
 
+# ledger deals for players not yet in the table (new signings): add them from the report
+have = {(nn(r[0]), r[1]) for r in out}
+for (k, team), lg in L.items():
+    if (k, team) in have: continue
+    r = byKey.get((k, team))
+    row = blank(lg['name'], team, lg['pos'] or (pos_of(r) if r else ''), age_of(r) if r else None)
+    ver, sb = '', None
+    for col, i, ch in [('total', 4, 't'), ('apy', 5, 'a'), ('gtd', 6, 'g'), ('fully_gtd', 7, 'f'), ('end', 8, 'e'), ('cap2026', 10, 'c'), ('bonus', 12, 'b')]:
+        v = (lg.get(col) or '').strip()
+        if not v: continue
+        v = int(float(v))
+        if col == 'bonus': sb = v; ver += ch; continue
+        row[i] = v; ver += ch
+    if row[5] is None and row[4] and lg.get('years'): row[5] = round(row[4] / int(lg['years']))
+    if row[8] is None and lg.get('years') and lg.get('signed'): row[8] = int(lg['signed'][:4]) + int(lg['years']) - (0 if lg['signed'][5:7] > '02' else 1)
+    if row[10] is None and row[4] and lg.get('years'):  # estimate this year's cap hit from the terms
+        yrs = int(lg['years']); row[10] = round((sb or 0) / min(yrs, 5) + (row[4] - (sb or 0)) / yrs * 0.6)
+        row[12] = round((sb or 0) / min(yrs, 5)); row[11] = row[10] - row[12]
+    if seen is not None and r: seen.add(r['gsis_id'])
+    out.append(row + ['r', src_id(lg['source'], lg['url']), ver, sb]); count['r'] += 1
+
 # rostered draft picks and undrafted rookies missing from the old list
 added = 0
 for r in ROST:
