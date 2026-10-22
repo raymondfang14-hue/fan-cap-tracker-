@@ -59,7 +59,7 @@ async function toDataUri(url) {
   }
 }
 
-export default async function handler(request) {
+async function handler(request) {
   const url = new URL(request.url);
   const kind = url.searchParams.get('k');
   const slug = url.searchParams.get('s') || '';
@@ -81,3 +81,6 @@ export default async function handler(request) {
     return fallback();
   }
 }
+
+// Web-standard handler shape: Vercel's Node runtime then passes a real Request (with a full URL) and accepts a Response back.
+export default { fetch: handler };
