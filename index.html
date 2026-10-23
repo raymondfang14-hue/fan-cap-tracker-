@@ -4953,7 +4953,7 @@ function renderOFTab() {
   $$('#of-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ot2 === of.tab)));
   $('#of-ratings').hidden = of.tab !== 'ratings'; $('#of-stats').hidden = of.tab !== 'stats';
   $('#h-onfield').textContent = of.tab === 'stats' ? 'Season stats' : 'Players on the field';
-  if (of.tab === 'stats') { if (!HIST) $('#hs-body').innerHTML = '<p class="empty">Loading season stats…</p>'; loadHist().then(renderHS).catch(() => { $('#hs-body').innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; }); }
+  if (of.tab === 'stats') { if (!HIST) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>'; loadHist().then(renderHS).catch(() => { $('#hs-leaders').innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; }); }
 }
 function renderHS() {
   const cur = HIST.current; if (hsx.season == null) hsx.season = cur;

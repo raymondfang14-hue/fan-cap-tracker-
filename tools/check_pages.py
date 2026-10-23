@@ -8,7 +8,7 @@ Without --url it serves this repo locally, so it tests what you are about to pus
 import argparse, asyncio, functools, http.server, os, sys, threading
 
 VIEWS = ['home', 'news', 'teams', 'team-KC', 'contracts', 'rankings', 'awards', 'draft',
-         'tools', 'builder', 'cut', 'trade', 'compare', 'learn']
+         'tools', 'builder', 'cut', 'trade', 'compare', 'learn', 'stats']
 SHARE_VIEWS = ['teams', 'contracts', 'rankings', 'draft']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,6 +46,11 @@ async def main(args):
                             await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
                         except Exception:
                             problems.append(f'{size}/{scheme} #{v}: no visible "Share this" button on any chart or table')
+                    if v == 'stats':  # the Season stats table must fill with player rows
+                        try:
+                            await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)
+                        except Exception:
+                            problems.append(f'{size}/{scheme} #stats: the Season stats table has no rows')
                     if args.shots:
                         os.makedirs(args.shots, exist_ok=True)
                         await page.screenshot(path=os.path.join(args.shots, f'{v}-{size}-{scheme}.png'))
