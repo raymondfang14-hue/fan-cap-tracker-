@@ -732,27 +732,6 @@ tr.hs-tot td{background:var(--surface-2);font-weight:600}
 .cvr .vv{display:grid;justify-items:end;text-align:right}
 .cvr .vv b{font:700 .98rem/1.1 var(--mono)}
 .vl.warn{color:var(--warn)}
-/* offseason simulator */
-.osim{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
-.ossum{position:sticky;top:calc(env(safe-area-inset-top,0px) + 108px)}
-@media (max-width:960px){.osim{grid-template-columns:minmax(0,1fr)}.ossum{position:static;order:-1}}
-.osl{display:grid;gap:2px}
-.osr{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) auto;gap:10px;align-items:center;padding:7px 4px;border-top:1px solid var(--line)}
-.osl>.osr:first-child,.osl>div>.osr:first-of-type{border-top:0}
-.osr .nm{display:flex;gap:10px;align-items:center;min-width:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:0}
-.osr .nm .av{box-shadow:0 0 0 2px var(--c2);font-size:.8rem}
-.osr .nm>span{display:grid;min-width:0}
-.osr .nm b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.osr small{font-size:.74rem;color:var(--muted)}
-.osr .nums{display:grid;min-width:0}
-.osr .nums b{font:700 .92rem/1.2 var(--mono)}
-.seg.sm button{padding:6px 8px;font-size:.66rem}
-@media (max-width:640px){.osr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.osr .seg{grid-column:1/-1;justify-self:start;flex-wrap:wrap}}
-
-#dr-owners .gb{grid-template-columns:6.6rem minmax(0,1fr) 6.4rem}#dr-owners .gb .diff{white-space:normal}
-@media (max-width:560px){.dumb{grid-template-columns:minmax(0,7.2rem) minmax(0,1fr) 2rem}.boards>div{grid-template-columns:6.6rem minmax(0,1fr) 4.6rem}}
-</style>
-<style>
 /* Layout: storefront calm. A translucent global bar with full-width flyouts, a centered hero built around the cap number, a bento overview of every section, then quiet white panels on a soft grey field. Data pages stay dense. */
 :root{
   --bg:#f5f5f7;
@@ -1084,16 +1063,16 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
       <button class="gn-ic gn-burger" id="gn-mbtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gn-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
     </div>
   </div></div>
-  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
+  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
   <div class="gn-fly gn-search gut" id="gn-search" hidden><div class="wrap">
     <div class="search">
       <label class="sr" for="q-nav">Search players and teams</label>
       <span style="position:relative;display:block"><svg class="gs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg><input id="q-nav" type="search" placeholder="Search players and teams" autocomplete="off" aria-controls="r-nav"></span>
       <div class="results" id="r-nav" hidden></div>
     </div>
-    <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="#news">Latest news</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#value">Best and worst contracts</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#offseason">Offseason simulator</a></li></ul></div>
+    <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="#news">Latest news</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#value">Best and worst contracts</a></li><li><a href="#mock">Mock draft</a></li></ul></div>
   </div></div>
-  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="#teams">Teams home</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="#onfield">Players home</a></li><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="#contracts">Contracts home</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="#draft">Draft home</a></li><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="#tools">Tools home</a></li><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="#news">News home</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="#learn">Learn home</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
+  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="#teams">Teams home</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="#onfield">Players home</a></li><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="#contracts">Contracts home</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="#draft">Draft home</a></li><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="#tools">Tools home</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="#news">News home</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="#learn">Learn home</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
 </header>
 <div class="gn-scrim" id="gn-scrim" hidden></div>
 <nav class="tabbar" aria-label="Quick sections">
@@ -1185,7 +1164,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
       <svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
       <h3><a href="#tools">Play general manager.</a></h3>
       <p>Cut, re-sign and tag players, build a lineup, check a trade, and watch your cap and team rating change.</p>
-      <ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li></ul>
+      <ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li></ul>
     </article>
   </div>
 
@@ -1454,9 +1433,6 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
           <th class="r" data-k="total"><button type="button">Total</button></th>
           <th class="r" data-k="gtdp"><button type="button">Guaranteed</button></th>
           <th class="r" data-k="cap"><button type="button">2026 cap hit</button></th>
-          <th class="r" data-k="y2027"><button type="button" title="Estimated unless reported">2027</button></th>
-          <th class="r" data-k="y2028"><button type="button" title="Estimated unless reported">2028</button></th>
-          <th class="r" data-k="y2029"><button type="button" title="Estimated unless reported">2029</button></th>
           <th class="r" data-k="end"><button type="button">Free agent</button></th>
         </tr></thead>
         <tbody></tbody>
@@ -1522,33 +1498,11 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
   <div class="sechead">
     <div><span class="eyebrow">Front office tools</span><h1 class="title" id="h-tools">Play general manager</h1></div>
     <div class="seg" id="toolnav" role="group" aria-label="Tool">
-      <button type="button" data-t="offseason" aria-pressed="false">Offseason</button>
       <button type="button" data-t="build" aria-pressed="false">Roster builder</button>
       <button type="button" data-t="cut" aria-pressed="true">Cut or keep</button>
       <button type="button" data-t="trade" aria-pressed="false">Trade</button>
       <button type="button" data-t="compare" aria-pressed="false">Compare</button>
       <button type="button" data-t="decode" aria-pressed="false">Decode</button>
-    </div>
-  </div>
-
-  <div id="tool-offseason" hidden>
-    <div class="osim">
-      <div style="display:grid;gap:16px;min-width:0;align-content:start">
-        <div class="panel">
-          <div class="sechead"><div><span class="eyebrow">Offseason simulator · 2027</span><h2 class="sec">Plan your team's offseason</h2></div><label class="f" for="os-team">Team<select id="os-team"></select></label></div>
-          <p class="note">Release or restructure contracts, keep or tag your free agents, sign other teams' free agents and add your draft class. The cap math and the team rating update as you go, and your moves are saved in this browser for each team.</p>
-        </div>
-        <div class="panel"><div><span class="eyebrow" id="os-fa-n"></span><h2 class="sec">Your free agents</h2></div><div class="osl" id="os-fa-body"></div></div>
-        <div class="panel"><div><span class="eyebrow">2027 contracts of $2M or more · biggest savings first</span><h2 class="sec">Releases and restructures</h2></div><div class="osl" id="os-cut-body"></div>
-          <p class="note">A release before June 1 counts all of his leftover signing bonus in 2027; after June 1 the rest moves to 2028. A restructure turns 2027 salary above the minimum into bonus spread over up to five years, lowering 2027 and adding to later years. Estimates use each contract's bonus proration and do not include guaranteed salary, which some deals have.</p></div>
-        <div class="panel"><div><span class="eyebrow">Players on other teams whose deals end after 2026</span><h2 class="sec">Sign free agents</h2></div>
-          <label class="f" for="os-q">Search<input id="os-q" type="search" placeholder="Player, team or position" autocomplete="off"></label>
-          <div class="chips posseg" id="os-pos" role="group" aria-label="Position"></div>
-          <div class="osl" id="os-sign-body"></div>
-          <p class="note">Costs are a first-year cap hit, about 85% of the Est. next deal yearly average, since new contracts usually start low.</p></div>
-        <div class="panel"><div><span class="eyebrow">Projected picks</span><h2 class="sec">Draft class</h2></div><div id="os-draft-body"></div></div>
-      </div>
-      <div class="panel ossum" id="os-sum"><div><span class="eyebrow">Your 2027 cap</span><h2 class="sec">Where you stand</h2></div><div id="os-sum-body" style="display:grid;gap:14px"></div></div>
     </div>
   </div>
 
@@ -1724,13 +1678,12 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 </section>
 
 <!-- LEARN -->
-<!-- FREE AGENCY: classes, projected cap space by year, tags and key dates. Built in the script (free agency section) from data/nfl.json, data/teamyears.json, data/freeagency.json and data/years_exact.json -->
+<!-- FREE AGENCY: free agent classes, tags and key dates. Built in the script (free agency section) from data/nfl.json and data/freeagency.json -->
 <section class="view" id="v-freeagency" hidden aria-labelledby="h-freeagency">
   <div class="sechead">
     <div><span class="eyebrow" id="fa-eyebrow">Free agency tracker</span><h1 class="title" id="h-freeagency">Free agency</h1></div>
     <div class="seg" id="fa-tab" role="group" aria-label="Free agency view">
       <button type="button" data-ft="class" aria-pressed="true">Free agents</button>
-      <button type="button" data-ft="cap" aria-pressed="false">Cap space</button>
       <button type="button" data-ft="tags" aria-pressed="false">Tags, cuts, dates</button>
     </div>
   </div>
@@ -1766,33 +1719,6 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
       <div class="tw"><table class="t" id="fa-table"></table></div>
       <button class="btn ghost more" id="fa-more" type="button">Show more</button>
       <p class="note">Next-deal estimates rank each player by play rating among his position, read that rank's price off what teams pay today in PlainStats' contract table, adjust for his age when the deal starts, then grow it with the salary cap to the year he signs. They are PlainStats estimates, not reports.</p>
-    </div>
-  </div>
-
-  <div id="fa-cap" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">What each team has left under the cap in future seasons after the contracts it has already signed. 2026 is each team's current cap space; later years are built from every contract on this site.</p>
-    <div class="controls">
-      <div class="chips" id="fa-cyears" role="group" aria-label="Season"></div>
-      <label class="f" for="fa-growth">Cap growth after 2028<select id="fa-growth"><option value="0.04">+4% a year</option><option value="0.07">+7% a year</option><option value="0.09">+9% a year</option></select></label>
-    </div>
-    <div class="kpis" id="fa-ckpis"></div>
-    <div class="grid2">
-      <div class="panel">
-        <div class="sechead"><div><span class="eyebrow" id="fa-cbar-eb">Room under the cap</span><h2 class="sec" id="fa-cbar-t">Projected cap space</h2></div></div>
-        <div class="chips" id="fa-cdiv" role="group" aria-label="Division"></div>
-        <div class="hbars" id="fa-cbars"></div>
-      </div>
-      <div class="panel">
-        <div><span class="eyebrow">Average team</span><h2 class="sec">Room by season</h2></div>
-        <div class="cols" id="fa-ccols"></div>
-        <p class="note" id="fa-cnote"></p>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="sechead"><div><span class="eyebrow">Tap a season to sort · tap a row to open the team</span><h2 class="sec">Cap space, every team, every year</h2></div><span class="scale-key">Less <i></i> More</span></div>
-      <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-heat" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
-      <div class="tw" style="border:0;background:none"><table class="heat fa-heat" id="fa-heat"></table></div>
-      <p class="note" id="fa-hnote"></p>
     </div>
   </div>
 
@@ -1942,7 +1868,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 
 <aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="#offseason">Offseason simulator</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>News</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
+  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#cut">Cut or keep</a></li><li><a href="#compare">Compare players</a></li><li><a href="#decode">Contract decoder</a></li></ul></div><div><h3>News</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
   <p id="foot-asof">Contract figures come from news reports, team announcements, the rookie pay scale and the CBA, and can change. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
   <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents" target="_blank" rel="noopener">NFL Football Operations: minimum salaries and tenders</a></li>
@@ -2047,7 +1973,6 @@ const LEARN_NFL = [
   ['Franchise tag', 'A team can keep one expiring player by paying him the average of the five biggest deals at his position, for one year. Tags must be placed by March 3, 2027. PlainStats estimates the price until the league announces it.'],
   ['Restricted and exclusive rights', 'Players with fewer than four years of experience can be tendered a one-year offer by their team. A restricted free agent can take outside offers, and his team can match; the team may also keep him on an exclusive-rights tender.'],
   ['Compensatory picks', 'Teams that lose more good free agents than they sign are awarded extra draft picks the next April. That is why some teams sit out the first week of free agency.'],
-  ['How year-by-year numbers work', 'Rookie contracts are calculated year by year from the rookie pay scale. For other deals, the years after 2026 are PlainStats estimates built from the contract (yearly average, length, bonus). Team totals for later years add up those player estimates.'],
   ['Salary cap', 'The most a team can spend on players in a season. For 2026 it is $301.2M for every team, and it is a hard cap: no team can go over it.'],
   ['Cap hit', 'What one player counts against the cap this year: his salary, a slice of his signing bonus and some other bonuses. It is often very different from the cash he is paid.'],
   ['Signing bonus', 'Paid up front in cash, but split evenly over the contract for cap purposes, up to five seasons. A $20M bonus on a five-year deal counts $4M a year.'],
@@ -2081,7 +2006,7 @@ const st = {
   lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tTraits: [], tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'cut', tView: store.get('tView', 'ratings'), cut: null, cutWhen: 'post',
-  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], cmpMode: 'contract', shTab: store.get('shTab', 'field')
+  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], cmpMode: 'contract', shTab: (t => (t === 'years' ? 'contract' : t))(store.get('shTab', 'field'))
 };
 
 /* ===== table filters ===== */
@@ -3182,7 +3107,7 @@ function tstatsHTML(t, side) {
 let tpMode = 'snaps', tpSide = store.get('tpSide', 'off');
 function teamFieldHTML(t) {
   if (!SD) return '<div class="panel"><p class="empty">Season stats did not load, so team ratings, lineups and the depth chart are not available. Reload the page to try again.</p></div>';
-  return `<div class="jump" role="group" aria-label="Jump to section">${[['tp-rat', 'Ratings'], ['tp-line', 'Lineup'], ['tp-stats', 'Team stats'], ['tp-depth', 'Depth chart'], ['tp-cap', 'Salary cap'], ['tp-years', 'Cap by year'], ['tp-roster', 'Roster']].map(([id, l]) => `<button type="button" class="chip" data-jump="${id}">${l}</button>`).join('')}</div>
+  return `<div class="jump" role="group" aria-label="Jump to section">${[['tp-rat', 'Ratings'], ['tp-line', 'Lineup'], ['tp-stats', 'Team stats'], ['tp-depth', 'Depth chart'], ['tp-cap', 'Salary cap'], ['tp-roster', 'Roster']].map(([id, l]) => `<button type="button" class="chip" data-jump="${id}">${l}</button>`).join('')}</div>
   <div class="grid2" id="tp-rat">
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Through Week ${THRU} · from starters' play ratings</span><h2 class="sec">Team ratings</h2></div></div>
@@ -3437,7 +3362,7 @@ function route() {
   if (h === 'search') { v = 'home'; setTimeout(() => window.openSearch && openSearch(), 30); }
   if (h.startsWith('team-')) { const id = h.slice(5).toUpperCase(); if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
   if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
-  if (['cut', 'trade', 'compare', 'decode', 'decoder', 'builder', 'build', 'offseason'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h === 'builder' ? 'build' : h; v = 'tools'; }
+  if (['cut', 'trade', 'compare', 'decode', 'decoder', 'builder', 'build', 'offseason'].includes(h)) { st.tool = h === 'decoder' ? 'decode' : h === 'builder' ? 'build' : h === 'offseason' ? 'cut' : h; v = 'tools'; }
   if (['ratings-teams', 'power', 'lineups', 'depth'].includes(h)) v = 'teams';
   if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
   if (h === 'nba') v = 'learn';
@@ -3630,7 +3555,6 @@ function renderTeam(id) {
       ${top ? `<button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Biggest cap hit</span><span class="v num">${mon(top.cap)}</span><span class="s">${esc(top.name)}, ${esc(posTag(top.pos))}</span></button>` : ''}
     </div>
     ${teamFieldHTML(t)}
-    ${teamYearsHTML(t)}
     <div class="panel" id="tp-cap">
       <div class="sechead"><div><span class="eyebrow">Top six 2026 cap hits</span><h2 class="sec">Core contracts</h2></div>
         <div style="display:flex;gap:12px;align-items:center" data-tip="hh|${id}"><span class="eyebrow">Cap health</span><span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}" style="font-size:2rem">${t.health}</span><span class="note">${ord(t.r_health)} of 32</span></div></div>
@@ -3743,7 +3667,7 @@ function renderTable() {
   list.sort((a, b) => ((a[c.sort] ?? -1) - (b[c.sort] ?? -1)) * c.dir);
   $('#c-count').textContent = `${list.length.toLocaleString()} of ${PL.length.toLocaleString()} contracts`;
   $$('#c-table th[data-k]').forEach(th => th.dataset.k === c.sort ? th.setAttribute('aria-sort', c.dir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
-  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}${p.hid ? ' <span class="srcb old" title="No sourced contract figure yet">verifying</span>' : ''}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${yearCell(p, 2027)}</td><td class="r">${yearCell(p, 2028)}</td><td class="r">${yearCell(p, 2029)}</td><td class="r">${p.end || '—'}</td></tr>`).join('') || `<tr><td colspan="11" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
+  $('#c-table tbody').innerHTML = list.slice(0, c.limit).map(p => `<tr data-p="${p.i}"><td><span class="pn"><span class="pos">${esc(posTag(p.pos))}</span>${esc(p.name)}${p.hid ? ' <span class="srcb old" title="No sourced contract figure yet">verifying</span>' : ''}</span></td><td>${badge(p.team)}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.apy)}</td><td class="r">${mon(p.total)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.cap)}</td><td class="r">${p.end || '—'}</td></tr>`).join('') || `<tr><td colspan="8" class="empty">No contracts match. Clear the filter or pick another team.</td></tr>`;
   $('#c-more').hidden = list.length <= c.limit;
 }
 function buildContractControls() {
@@ -3814,8 +3738,7 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
-    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
-    <div id="sh-years" ${st.shTab === 'years' ? '' : 'hidden'}>${yearsHTML(p)}</div>
+    <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
     <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'contract' ? '' : 'hidden'}>
@@ -3869,8 +3792,7 @@ sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); })
 function showTool(t) {
   st.tool = t;
   $$('#toolnav button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
-  ['offseason', 'build', 'cut', 'trade', 'compare', 'decode'].forEach(x => ($('#tool-' + x).hidden = x !== t));
-  if (t === 'offseason') renderSim();
+  ['build', 'cut', 'trade', 'compare', 'decode'].forEach(x => ($('#tool-' + x).hidden = x !== t));
   if (t === 'build') renderBuilder(); if (t === 'cut') renderCut(); if (t === 'trade') renderTrade(); if (t === 'compare') renderCompare(); if (t === 'decode') renderDecode();
 }
 const DC_PRESETS = [['Simmons', 149.97, 5, 100, 20], ['Olave', 124, 4, 90.01, 35], ['Gibbs', 67.5, 3, 51.5, 15], ['Kraft', 75, 4, 26.5, 26.5]];
@@ -4347,52 +4269,14 @@ $('#toolnav').onclick = e => { const b = e.target.closest('button'); if (b) show
 $('#cut-when').onclick = e => { const b = e.target.closest('button'); if (b) { st.cutWhen = b.dataset.w; renderCut(); } };
 faq($('#faq-nfl'), LEARN_NFL);
 
-/* ===== free agency, projected cap by year, year by year contracts =====
-   Year by year cap hits: calculated when data/years_calc.json has the contract (rookie deals), otherwise estimated from the contract's yearly
-   average, length, bonus and 2026 cap hit. Team cap space for later years adds up the player-level numbers
-   (data/teamyears.json); later years add up the player-level numbers. Dates and cap projections live in data/freeagency.json. */
+/* ===== free agency: free agent classes, next-deal estimates, tags and dates. Dates and cap projections live in data/freeagency.json. =====
+   PlainStats does not show season-by-season cap hits: reports rarely publish them, so nothing here is built on year-by-year figures. */
 const FY_R = 0.1, FY_FLOOR = 0.8e6, FY_MAX = 2035, FY_COLS = [2026, 2027, 2028, 2029, 2030];
 let TY = null, FAX = null, YX = null, PAYQ = {}, TAGP = {};
 const FA_YEARS = [2027, 2028, 2029, 2030, 2031];
-st.fa = { tab: store.get('faTab', 'class'), year: 2027, pos: 'all', min: 5e6, team: 'all', q: '', sort: 'play', dir: -1, limit: 60, cy: 2027, growth: null, div: 'All', hs: null };
+st.fa = { tab: (t => (t === 'cap' ? 'class' : t))(store.get('faTab', 'class')), year: 2027, pos: 'all', min: 5e6, team: 'all', q: '', sort: 'play', dir: -1, limit: 60, cy: 2027, growth: null, div: 'All', hs: null };
 const qtile = (arr, q) => { if (!arr.length) return 0; const x = Math.max(0, Math.min(1, q)) * (arr.length - 1), i = Math.floor(x); return arr[i] + (arr[Math.min(arr.length - 1, i + 1)] - arr[i]) * (x - i); };
 
-function yearModel(p) {
-  if (p.hid) { p.yr = null; return; }
-  // Reported deal with no confirmed cap hits yet: lay out his seasons at the reported yearly average instead of guessing a split.
-  const capOk = p.cap != null && (p.prov !== 'r' || p.ver.includes('c'));
-  if (!capOk && !(p.apy && p.end)) { p.yr = []; p.exact = false; p.yrLast = p.end ? p.end - 1 : 2026; return; }
-  if (!capOk) {
-    const last = Math.max(2026, Math.min(p.end - 1, FY_MAX)), yrs = p.total ? Math.round(p.total / p.apy) : 0, first = yrs ? Math.max(2026, last - yrs + 1) : 2026;
-    p.yr = []; for (let y = 2026; y <= last; y++) p.yr.push(y >= first ? { y, base: null, bonus: null, cap: p.apy, src: 'avg' } : { y, base: null, bonus: null, cap: 0, src: 'prior' });
-    p.exact = false; p.yrLast = last; return;
-  }
-  const cap = p.cap || 0, bonus = Math.min(p.bonus || 0, cap), base = p.base != null ? Math.min(p.base, cap) : Math.max(0, cap - bonus);
-  const last = Math.max(2026, Math.min((p.end || 2027) - 1, FY_MAX)), n = last - 2025;
-  let rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
-  const ex = YX && YX.contracts && YX.contracts[p.name + '|' + p.team];
-  if (ex) {
-    rows = Object.keys(ex).map(Number).filter(y => y >= 2026 && y <= FY_MAX).sort((a, b) => a - b).map(y => ({ y, base: ex[y][0], bonus: ex[y][1], cap: ex[y][2], src: 'calc' }));
-    if (rows.length) { p.yr = rows; p.exact = true; p.yrLast = rows[rows.length - 1].y; return; }
-    rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
-  }
-  if (n > 1 && cap > 0) {
-    const yrs = p.apy ? Math.round(p.total / p.apy) : n, nn = p.voidy ? Math.min(n, yrs) : n, m = n - 1;
-    let Sf = p.apy * nn - cap;
-    if (!(Sf >= cap * 0.3 * m)) Sf = cap * m * 0.9;
-    const w = Array.from({ length: m }, (_, i) => Math.pow(1 + FY_R, i)), fl = bonus + FY_FLOOR, hit = new Array(m).fill(0);
-    let free = w.map((_, i) => i), rem = Sf;
-    for (let it = 0; it < 4 && free.length; it++) {
-      const sw = free.reduce((s, i) => s + w[i], 0); let clamped = false;
-      for (const i of [...free]) { const v = rem * w[i] / sw; if (v < fl) { hit[i] = fl; rem -= fl; free = free.filter(x => x !== i); clamped = true; } }
-      if (!clamped) { free.forEach(i => (hit[i] = Math.max(fl, rem * w[i] / sw))); break; }
-    }
-    for (let i = 0; i < m; i++) { const h = hit[i] || fl; rows.push({ y: 2027 + i, base: Math.max(0, h - bonus), bonus, cap: h, src: 'estimate' }); }
-  }
-  p.yr = rows; p.exact = false; p.yrLast = last;
-}
-const capAt = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? r.cap : 0; };
-const lastCap = p => (p.yr && p.yr.length ? p.yr[p.yr.length - 1].cap : p.cap || 0);
 /* Est. next deal: rank the player among his position by play rating, read that rank's price off today's league-wide pay list
    (PlainStats contract table, data/market.json), adjust for his age when the new deal starts, then grow it to the cap of the year he signs. */
 let MKT = null, MKTPAY = null;
@@ -4429,14 +4313,12 @@ function estNext(p) {
   return Math.max(0.9e6, Math.round(p._eb * g / 1e5) * 1e5);
 }
 function analyzeYears() {
-  PL.forEach(yearModel);
   PAYQ = {}; TAGP = {};
   GROUP_ORDER.forEach(g => {
     PAYQ[g] = PL.filter(p => p.group === g && p.apy > 0).map(p => p.apy).sort((a, b) => a - b);
     const top = PL.filter(p => p.group === g).sort((a, b) => b.apy - a.apy).slice(0, 5);
     TAGP[g] = { est: top.reduce((s, p) => s + p.apy, 0) / Math.max(1, top.length), top };
   });
-  PL.forEach(p => { [2027, 2028, 2029].forEach(y => (p['y' + y] = capAt(p, y))); });
 }
 const faGrowth = () => st.fa.growth != null ? st.fa.growth : (FAX && FAX.capGrowth) || 0.07;
 function capOfYear(y) {
@@ -4445,74 +4327,29 @@ function capOfYear(y) {
   if (FAX && FAX.capByYear && FAX.capByYear[y]) return FAX.capByYear[y];
   return capOfYear(y - 1) * (1 + faGrowth());
 }
-function teamYear(t, y) {
-  if (y === 2026) return { cap: t.eff, space: t.space, committed: t.active + t.dead, dead: t.dead, n: t.roster, src: 'reported' };
-  const r = TY && TY.years && TY.years[y] && TY.years[y].teams && TY.years[y].teams[t.id], cap = capOfYear(y);
-  if (r) return { cap, space: r.space, committed: r.active + r.dead, dead: r.dead, n: r.n, src: 'reported' };
-  const live = t.ros.filter(p => p.yrLast >= y), hits = live.reduce((s, p) => s + capAt(p, y), 0);
-  return { cap, space: cap - hits, committed: hits, dead: 0, n: live.length, src: 'estimate' };
-}
 const faClass = y => PL.filter(p => (y >= 2031 ? p.end >= 2031 : p.end === y));
 const yLabel = y => (y >= 2031 ? '2031+' : String(y));
 const fmtRoom = v => (v < 0 ? '−' : '') + '$' + Math.abs(v / 1e6).toFixed(0) + 'M';
 const dayFmt = iso => new Date(iso + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-
-/* player sheet: year by year */
-function yearsHTML(p) {
-  if (p.hid) return `<p class="empty">${VERIFYING}. Year-by-year cap hits appear once a report confirms his deal.</p>`;
-  if (!p.yr || !p.yr.length) return `<p class="empty">${!p.end ? 'His contract length is being verified. Year-by-year figures appear once a report confirms when the deal ends.' : !(p.prov !== 'r' || p.ver.includes('c')) || p.cap == null ? `Signed through the ${p.end - 1} season. Season-by-season figures appear once a report confirms the money in his deal.` : 'No contract years to show.'}</p>`;
-  if (p.yr.some(r => r.src === 'avg')) {
-    const rows = p.yr, last = rows[rows.length - 1].y, ny = rows.filter(r => r.src === 'avg').length, firstNew = rows.find(r => r.src === 'avg').y;
-    return `<div style="display:grid;gap:12px">
-    <div class="sechead" style="margin:0"><div><span class="eyebrow">Seasons under contract</span><h3 class="sec" style="font-size:1.15rem">Year by year</h3></div><span class="srcb">Yearly average</span></div>
-    <div class="ybars">${rows.map(r => r.src === 'avg' ? `<div class="yb"><span class="y">${r.y}</span><span style="display:grid;gap:3px;min-width:0"><span class="st" role="img" aria-label="${r.y}: reported average ${mon(r.cap)}"><i style="width:100%;background:var(--brand);opacity:.55"></i></span><small class="note">Average per year</small></span><span class="v">${mon(r.cap)}</span><span class="s">${pct(r.cap / capOfYear(r.y), 1)}</span></div>` : `<div class="yb"><span class="y">${r.y}</span><span class="note" style="grid-column:2/4">On his earlier contract; that season's cap hit isn't confirmed yet</span><span class="s"></span></div>`).join('')}
-      <div class="yb fa"><span class="y">${last + 1}</span><span class="note" style="grid-column:2/4">Free agent after the ${last} season${p.voidy ? ' (void years can add dead money)' : ''}</span><span class="s"></span></div></div>
-    <div class="rows"><div><span>Seasons left on this deal</span><b>${ny} ${ny === 1 ? 'season' : 'seasons'}, ${firstNew}${ny > 1 ? '–' + last : ''}</b></div><div><span>Average per year</span><b>${mon(p.apy, 1)}</b></div></div>
-    <p class="note">The reports PlainStats found give his total and length but not his season-by-season cap hits, so each season shows his reported yearly average. Real cap hits usually start lower and rise. The percentage is that average divided by the season's cap.</p>
-  </div>`;
-  }
-  const rows = p.yr, maxc = Math.max(...rows.map(r => r.cap), 1), tot = rows.reduce((s, r) => s + r.cap, 0), est = rows.some(r => r.src === 'estimate');
-  const last = rows[rows.length - 1].y;
-  return `<div style="display:grid;gap:12px">
-    <div class="sechead" style="margin:0"><div><span class="eyebrow">Cap hit by season</span><h3 class="sec" style="font-size:1.15rem">Year by year</h3></div><span class="srcb ${p.exact ? 'calc' : ''}">${p.exact ? 'Calculated' : est ? 'Later years estimated' : (PROV[p.prov] || PROV.u)[0]}</span></div>
-    <div class="ybars">${rows.map(r => `<div class="yb"><span class="y">${r.y}</span><span style="display:grid;gap:3px;min-width:0"><span class="st" role="img" aria-label="${r.y}: base salary ${mon(r.base)}, bonuses and other ${mon(r.bonus)}"><i style="width:${(r.base / maxc * 100).toFixed(1)}%;background:var(--c-off)"></i><i style="width:${(r.bonus / maxc * 100).toFixed(1)}%;background:var(--brand)"></i></span><small class="note">Base ${mon(r.base)} · bonuses ${mon(r.bonus)}</small></span><span class="v ${r.src === 'estimate' ? 'est' : ''}">${r.src === 'estimate' ? '~' : ''}${mon(r.cap)}</span><span class="s">${pct(r.cap / capOfYear(r.y), 1)}</span></div>`).join('')}
-      <div class="yb fa"><span class="y">${last + 1}</span><span class="note" style="grid-column:2/4">Free agent after the ${last} season${p.voidy ? ' (void years can add dead money)' : ''}</span><span class="s"></span></div></div>
-    <ul class="legend" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),max-content))"><li><i class="swatch" style="background:var(--c-off)"></i><span>Base salary</span></li><li><i class="swatch" style="background:var(--brand)"></i><span>Bonuses and other</span></li></ul>
-    <div class="rows"><div><span>Cap hits left, 2026 on</span><b>${mon(tot, 1)}</b></div><div><span>Share of the cap, 2026</span><b>${pct(p.cap / CAP, 1)}</b></div></div>
-    <p class="note">${p.exact ? 'PlainStats calculated these from his draft slot, the rookie pay scale and the CBA minimum salaries' + (p.yr.length > 4 ? ', plus his fifth-year option' : '') + '.' : 'Later years are a PlainStats estimate built from his yearly average, contract length and bonus, and they assume pay rises toward the end of the deal. Reported figures replace the estimate when they become available.'} The percentage is his cap hit divided by that season's cap.</p>
-  </div>`;
-}
-const yearCell = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r && r.src !== 'prior' ? (r.src === 'estimate' || r.src === 'avg' ? `<span class="est" ${r.src === 'avg' ? 'title="Reported yearly average"' : ''}>~${mon(r.cap)}</span>` : mon(r.cap)) : '<span style="color:var(--muted)">—</span>'; };
-
-/* team page: cap room by season */
-function teamYearsHTML(t) {
-  const ys = [2026, 2027, 2028, 2029, 2030].map(y => [y, teamYear(t, y)]);
-  const mx = Math.max(...ys.map(([, d]) => Math.max(d.committed, d.cap)));
-  return `<div class="panel" id="tp-years"><div class="sechead"><div><span class="eyebrow">Contracts already signed for each season</span><h2 class="sec">Cap room by year</h2></div><a class="btn ghost" href="#freeagency">Free agency</a></div>
-    <div class="cols" style="height:190px">${ys.map(([y, d]) => `<div class="col" data-tip="${esc(t.name)} ${y}|${d.space}"><span class="amt">${d.space < 0 ? '−' : ''}${mon(Math.abs(d.space), 0)}</span><i class="bx" style="height:${(d.committed / mx * 100).toFixed(1)}%;${d.space < 0 ? 'background:var(--bad)' : ''}"></i><span class="lab">${y}${d.src === 'estimate' ? '*' : ''}</span></div>`).join('')}</div>
-    <p class="note">Bars show money committed to players already under contract; the number above each bar is room left under that year's cap. *Years after 2026 are estimated from player contracts. Teams add draft picks and free agents before every season, so real room ends up lower.</p></div>`;
-}
 
 /* ===== free agent classes ===== */
 function faRows() {
   const f = st.fa, q = f.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let list = faClass(f.year).filter(p => p.apy >= f.min && (f.pos === 'all' || p.group === f.pos) && (f.team === 'all' || p.team === f.team));
   if (q.length) list = list.filter(p => { const t = TB[p.team], h = (p.name + ' ' + t.city + ' ' + t.name + ' ' + p.team + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase(); return q.every(x => h.includes(x)); });
-  const V = { name: p => p.name, pos: p => p.group, age: p => p.age || 0, play: p => (p.play == null ? -1 : p.play), apy: p => p.apy, est: estNext, chg: p => estNext(p) - p.apy, cap: lastCap }[f.sort] || (p => p.apy);
+  const V = { name: p => p.name, pos: p => p.group, age: p => p.age || 0, play: p => (p.play == null ? -1 : p.play), apy: p => p.apy, est: estNext, chg: p => estNext(p) - p.apy }[f.sort] || (p => p.apy);
   return list.sort((a, b) => { const x = V(a), y = V(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * f.dir || b.apy - a.apy; });
 }
 function renderFAClass() {
   const f = st.fa, all = faClass(f.year), floor = all.filter(p => p.apy >= f.min);
   $('#fa-years').innerHTML = FA_YEARS.map(Y => `<button type="button" class="chip" data-fay="${Y}" aria-pressed="${Y === f.year}">${yLabel(Y)} class <span class="num" style="opacity:.7">${faClass(Y).filter(p => p.apy >= 5e6).length}</span></button>`).join('');
   const best = [...all].filter(p => p.play != null).sort((a, b) => b.play - a.play || b.apy - a.apy)[0];
-  const money = all.reduce((s, p) => s + lastCap(p), 0), top80 = all.filter(p => p.play >= 80).length;
-  const rooms = TEAMS.map(t => teamYear(t, Math.min(f.year, 2031)));
+  const money = all.reduce((s, p) => s + (p.apy || 0), 0), top80 = all.filter(p => p.play >= 80).length;
   $('#fa-kpis').innerHTML = `
     <div class="kpi"><span class="k">${yLabel(f.year)} free agents</span><span class="v num">${all.length.toLocaleString()}</span><span class="s">${all.filter(p => p.apy >= 5e6).length} earn $5M+ a year</span></div>
-    <div class="kpi"><span class="k">Money coming off</span><span class="v num">${mon(money, 0)}</span><span class="s">Final-season cap hits of the class</span></div>
+    <div class="kpi"><span class="k">Pay coming off</span><span class="v num">${mon(money, 0)}</span><span class="s">Yearly averages of the class</span></div>
     <div class="kpi"><span class="k">Rated 80 or better</span><span class="v good num">${top80}</span><span class="s">Players playing at a high level</span></div>
-    ${best ? `<button class="kpi" type="button" data-p="${best.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best player in class</span><span class="v num">${best.play}</span><span class="s">${esc(best.name)}, ${esc(TB[best.team].name)}</span></button>` : ''}
-    <div class="kpi"><span class="k">Teams with $50M+ room</span><span class="v num">${rooms.filter(r => r.space >= 50e6).length}</span><span class="s">${yLabel(f.year)} cap room${rooms[0].src === 'estimate' ? ' (estimated)' : ''}</span></div>`;
+    ${best ? `<button class="kpi" type="button" data-p="${best.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Best player in class</span><span class="v num">${best.play}</span><span class="s">${esc(best.name)}, ${esc(TB[best.team].name)}</span></button>` : ''}`;
   $('#fa-board-t').textContent = `Top of the ${yLabel(f.year)} class`;
   const topList = [...all].filter(p => p.play != null).sort((a, b) => b.play - a.play || b.apy - a.apy).slice(0, 10);
   $('#fa-board').innerHTML = (topList.length ? topList.map(fieldCard) : [...all].sort((a, b) => b.apy - a.apy).slice(0, 10).map(faceCard)).join('') || '<p class="empty">No players yet.</p>';
@@ -4521,9 +4358,9 @@ function renderFAClass() {
   const mx = Math.max(1, ...rows.map(r => r.sum));
   $('#fa-posbars').innerHTML = rows.map(r => `<button type="button" class="fap" data-fapos="${r.g}" aria-pressed="${f.pos === r.g}"><span>${GROUP_NAME[r.g]}</span><span class="track"><i style="width:${(r.sum / mx * 100).toFixed(1)}%;background:${SIDE_VAR[GROUP_SIDE[r.g]]}"></i></span><span class="val">${mon(r.sum, 0)}<small>${r.n} player${r.n === 1 ? '' : 's'}</small></span></button>`).join('') || '<p class="empty">No players at this pay floor.</p>';
   // teams
-  const trows = TEAMS.map(t => { const ps = all.filter(p => p.team === t.id && p.apy >= 1e6), bestp = [...ps].sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy)[0]; return { t, n: ps.length, sum: ps.reduce((s, p) => s + lastCap(p), 0), best: bestp, room: teamYear(t, Math.min(f.year, 2031)) }; }).sort((a, b) => b.sum - a.sum);
-  $('#fa-teams').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Team</span></th><th class="r"><span>Players</span></th><th class="r"><span>Expiring $</span></th><th><span>Top pending free agent</span></th><th class="r"><span>Room ${yLabel(f.year)}</span></th></tr></thead><tbody>` +
-    trows.map((r, n) => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t) + ' ' + (r.best ? r.best.name.toLowerCase() : ''))}"><td class="r">${n + 1}</td><td><span class="pn">${crest(r.t.id, 20)}${esc(r.t.city)} ${esc(r.t.name)}</span></td><td class="r">${r.n}</td><td class="r">${mon(r.sum, 0)}</td><td>${r.best ? `<button type="button" class="tlink" data-p="${r.best.i}">${esc(r.best.name)}</button> <span class="note">${esc(posTag(r.best.pos))}${r.best.play != null ? ' · ' + r.best.play : ''}</span>` : '—'}</td><td class="r${r.room.src === 'estimate' ? ' est' : ''}">${r.room.src === 'estimate' ? '~' : ''}${fmtRoom(r.room.space)}</td></tr>`).join('') + '</tbody>';
+  const trows = TEAMS.map(t => { const ps = all.filter(p => p.team === t.id && p.apy >= 1e6), bestp = [...ps].sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy)[0]; return { t, n: ps.length, sum: ps.reduce((s, p) => s + (p.apy || 0), 0), best: bestp }; }).sort((a, b) => b.sum - a.sum);
+  $('#fa-teams').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Team</span></th><th class="r"><span>Players</span></th><th class="r"><span>Expiring $ a year</span></th><th><span>Top pending free agent</span></th></tr></thead><tbody>` +
+    trows.map((r, n) => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t) + ' ' + (r.best ? r.best.name.toLowerCase() : ''))}"><td class="r">${n + 1}</td><td><span class="pn">${crest(r.t.id, 20)}${esc(r.t.city)} ${esc(r.t.name)}</span></td><td class="r">${r.n}</td><td class="r">${mon(r.sum, 0)}</td><td>${r.best ? `<button type="button" class="tlink" data-p="${r.best.i}">${esc(r.best.name)}</button> <span class="note">${esc(posTag(r.best.pos))}${r.best.play != null ? ' · ' + r.best.play : ''}</span>` : '—'}</td></tr>`).join('') + '</tbody>';
   applyTF($('#fa-teams'));
   // controls
   $('#fa-pos').innerHTML = ['all'].concat(GROUP_ORDER).map(g => `<button type="button" class="chip" data-fp="${g}" aria-pressed="${f.pos === g}">${g === 'all' ? 'All positions' : g}</button>`).join('');
@@ -4534,43 +4371,12 @@ function renderFATable() {
   const th = (k, l, cls = 'r', title = '') => `<th class="${cls}"${f.sort === k ? ` aria-sort="${f.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-fas="${k}"${title ? ` title="${esc(title)}"` : ''}>${l}</button></th>`;
   $('#fa-tt').textContent = `${yLabel(f.year)} free agents`;
   $('#fa-tcount').textContent = `${list.length.toLocaleString()} of ${all.length.toLocaleString()} players${f.pos !== 'all' ? ' · ' + GROUP_NAME[f.pos] : ''}`;
-  $('#fa-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}${th('pos', 'Pos', '')}${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Pay now', 'r', 'Yearly average of his current deal')}${th('est', 'Est. next deal', 'r', 'PlainStats estimate of a new yearly average')}${th('chg', 'Change', 'r', 'Estimated next deal minus pay now')}${th('cap', 'Last cap hit', 'r', 'Cap hit in the last season of his deal')}</tr></thead><tbody>` +
+  $('#fa-table').innerHTML = `<thead><tr>${th('name', 'Player', '')}${th('pos', 'Pos', '')}${th('age', 'Age')}${th('play', 'Play')}${th('apy', 'Pay now', 'r', 'Yearly average of his current deal')}${th('est', 'Est. next deal', 'r', 'PlainStats estimate of a new yearly average')}${th('chg', 'Change', 'r', 'Estimated next deal minus pay now')}</tr></thead><tbody>` +
     (list.slice(0, f.limit).map(p => { const e = estNext(p), c = e - p.apy;
-      return `<tr data-p="${p.i}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${p.ot && p.ot.length ? `<span class="otdots">${p.ot.slice(0, 3).map(([k, t]) => `<i class="${t}" title="${esc(OTRAITS[k][0])}"></i>`).join('')}</span>` : ''}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(e)}</td><td class="r"><span class="vl ${c > 0.4e6 ? 'good' : c < -0.4e6 ? 'bad' : ''}">${c > 0 ? '+' : c < 0 ? '−' : ''}${mon(Math.abs(c))}</span></td><td class="r">${mon(lastCap(p))}</td></tr>`; }).join('') || `<tr style="cursor:default"><td colspan="8" class="empty">No players match. Lower the pay floor or clear the filter.</td></tr>`) + '</tbody>';
+      return `<tr data-p="${p.i}"><td><span class="pn">${crest(p.team, 18)}${esc(p.name)}${p.ot && p.ot.length ? `<span class="otdots">${p.ot.slice(0, 3).map(([k, t]) => `<i class="${t}" title="${esc(OTRAITS[k][0])}"></i>`).join('')}</span>` : ''}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td class="r">${p.age || '—'}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${mon(p.apy)}</td><td class="r est">~${mon(e)}</td><td class="r"><span class="vl ${c > 0.4e6 ? 'good' : c < -0.4e6 ? 'bad' : ''}">${c > 0 ? '+' : c < 0 ? '−' : ''}${mon(Math.abs(c))}</span></td></tr>`; }).join('') || `<tr style="cursor:default"><td colspan="8" class="empty">No players match. Lower the pay floor or clear the filter.</td></tr>`) + '</tbody>';
   $('#fa-more').hidden = list.length <= f.limit;
 }
 
-/* ===== cap space by year ===== */
-function renderFACap() {
-  const f = st.fa, y = f.cy, g = $('#fa-growth'); g.value = String(faGrowth());
-  $('#fa-cyears').innerHTML = FY_COLS.map(Y => `<button type="button" class="chip" data-fcy="${Y}" aria-pressed="${Y === y}">${Y}${teamYear(TEAMS[0], Y).src === 'estimate' ? '*' : ''}</button>`).join('');
-  const rows = TEAMS.map(t => ({ t, d: teamYear(t, y) })), est = rows[0].d.src === 'estimate';
-  const sorted = [...rows].sort((a, b) => b.d.space - a.d.space), avg = rows.reduce((s, r) => s + r.d.space, 0) / rows.length, over = rows.filter(r => r.d.space < 0).length;
-  const most = sorted[0], least = sorted[sorted.length - 1];
-  $('#fa-ckpis').innerHTML = `
-    <div class="kpi"><span class="k">${y} salary cap</span><span class="v num">${mon(capOfYear(y), 1)}</span><span class="s">${y > 2026 ? ('PlainStats projection: grows ' + pct(faGrowth()) + ' a year') : 'Set by the league'}</span></div>
-    <div class="kpi"><span class="k">Average room</span><span class="v num">${fmtRoom(avg)}</span><span class="s">Per team${est ? ', estimated' : ''}</span></div>
-    <a class="kpi" href="#team-${most.t.id}"><span class="k">Most room</span><span class="v good num">${fmtRoom(most.d.space)}</span><span class="s">${esc(most.t.city)} ${esc(most.t.name)}</span></a>
-    <a class="kpi" href="#team-${least.t.id}"><span class="k">Least room</span><span class="v ${least.d.space < 0 ? 'bad' : ''} num">${fmtRoom(least.d.space)}</span><span class="s">${esc(least.t.city)} ${esc(least.t.name)}</span></a>
-    <div class="kpi"><span class="k">Teams over the cap</span><span class="v ${over ? 'bad' : ''} num">${over}</span><span class="s">Before moves to clear room</span></div>`;
-  divChips($('#fa-cdiv'), f.div, d => { f.div = d; renderFACap(); });
-  const list = sorted.filter(r => f.div === 'All' || r.t.div === f.div), mx = Math.max(1, ...rows.map(r => Math.abs(r.d.space)));
-  $('#fa-cbar-t').textContent = `${y} cap space`;
-  $('#fa-cbar-eb').textContent = est ? 'Estimated from player contracts' : 'Current cap space';
-  $('#fa-cbars').innerHTML = list.map(r => `<button type="button" class="hb${r.t.id === favTeam ? ' me' : ''}" data-team="${r.t.id}"><span class="rk">${sorted.indexOf(r) + 1}</span>${badge(r.t.id)}<span class="track"><i class="fill" style="width:${(Math.abs(r.d.space) / mx * 100).toFixed(2)}%;background:${r.d.space < 0 ? 'var(--bad)' : 'var(--good)'}"></i></span><span class="val" style="${r.d.space < 0 ? 'color:var(--bad)' : ''}">${r.d.space < 0 ? '−' : ''}${mon(Math.abs(r.d.space))}</span></button>`).join('');
-  const avgs = FY_COLS.map(Y => { const rs = TEAMS.map(t => teamYear(t, Y)); return [Y, rs.reduce((s, r) => s + r.space, 0) / rs.length, rs[0].src]; }), am = Math.max(1, ...avgs.map(a => Math.abs(a[1])));
-  $('#fa-ccols').innerHTML = avgs.map(([Y, v, s]) => `<div class="col"><span class="amt">${s === 'estimate' ? '~' : ''}${fmtRoom(v)}</span><i class="bx" style="height:${(Math.max(0, v) / am * 100).toFixed(1)}%"></i><span class="lab">${Y}</span></div>`).join('');
-  $('#fa-cnote').textContent = 'Average room per team in each season, after contracts already signed. Room grows in later years because few deals run that long; teams fill it with draft picks, extensions and free agents.';
-  // heatmap
-  const hs = f.hs, data = TEAMS.map(t => ({ t, y: Object.fromEntries(FY_COLS.map(Y => [Y, teamYear(t, Y)])) }));
-  data.sort((a, b) => hs ? b.y[hs].space - a.y[hs].space : (a.t.city + a.t.name).localeCompare(b.t.city + b.t.name));
-  $('#fa-heat').innerHTML = `<thead><tr><th style="text-align:left"><button type="button" data-fahs="" aria-pressed="${!hs}">Team</button></th>${FY_COLS.map(Y => `<th><button type="button" data-fahs="${Y}" aria-pressed="${hs === Y}">${Y}${data[0].y[Y].src === 'estimate' ? '*' : ''}</button></th>`).join('')}</tr></thead><tbody>` +
-    data.map(r => `<tr data-team="${r.t.id}" data-s="${esc(teamHay(r.t))}"><td class="tm"><span>${crest(r.t.id, 20)}${esc(r.t.name)}</span></td>${FY_COLS.map(Y => { const d = r.y[Y], v = d.space, k = v >= 0 ? Math.min(1, v / 100e6) : Math.min(1, -v / 60e6); return `<td class="${v < 0 ? 'neg ' : ''}${k > .55 ? 'hi' : ''}${d.src === 'estimate' ? ' estc' : ''}" data-tip="${esc(r.t.name)} ${Y}|${v}"><i style="opacity:${(0.08 + 0.92 * k).toFixed(2)}"></i><b>${(v / 1e6).toFixed(0)}</b></td>`; }).join('')}</tr>`).join('') + '</tbody>';
-  applyTF($('#fa-heat'));
-  $('#fa-hnote').textContent = `Cells show cap room in $M after contracts already signed. 2026 is current cap space. *Italic cells for later years are PlainStats estimates built from each player's contract. Caps: ${FAX && FAX.capNote ? FAX.capNote : 'PlainStats projection.'}`;
-}
-
-/* ===== tags, cuts, dates, news ===== */
 function renderFATags() {
   const cal = (FAX && FAX.calendar) || [], now = new Date(), next = cal.findIndex(c => new Date(c.date + 'T23:59:00') >= now);
   const lg = cal.find(c => /league year/i.test(c.label)), days = lg ? Math.ceil((new Date(lg.date + 'T16:00:00-05:00') - now) / 864e5) : null;
@@ -4593,13 +4399,13 @@ function renderFATags() {
 }
 
 function renderFA() {
-  if (!D || !PL.length || !PL[0].yr) return;
+  if (!D || !PL.length) return;
   const f = st.fa;
   $$('#fa-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ft === f.tab)));
-  $('#fa-class').hidden = f.tab !== 'class'; $('#fa-cap').hidden = f.tab !== 'cap'; $('#fa-tags').hidden = f.tab !== 'tags';
+  $('#fa-class').hidden = f.tab !== 'class'; $('#fa-tags').hidden = f.tab !== 'tags';
   $('#fa-eyebrow').textContent = `Free agency tracker · ${TY ? 'cap tables updated ' + dayFmt(TY.asOf) : 'contract data through ' + dayFmt(D.asOf)}`;
-  $('#h-freeagency').textContent = { class: 'Upcoming free agents', cap: 'Cap space by year', tags: 'Tags, cuts and key dates' }[f.tab];
-  if (f.tab === 'class') renderFAClass(); else if (f.tab === 'cap') renderFACap(); else renderFATags();
+  $('#h-freeagency').textContent = { class: 'Upcoming free agents', tags: 'Tags, cuts and key dates' }[f.tab];
+  if (f.tab === 'class') renderFAClass(); else renderFATags();
 }
 function wireFA() {
   const f = st.fa;
@@ -4614,9 +4420,6 @@ function wireFA() {
   document.addEventListener('input', e => { const i = e.target.closest && e.target.closest('input[data-tf="fa-table"]'); if (i) { f.q = i.value; f.limit = 60; renderFATable(); } });
   $('#fa-more').onclick = () => { f.limit += 60; renderFATable(); };
   $('#fa-table').addEventListener('click', e => { const b = e.target.closest('[data-fas]'); if (b) { e.stopPropagation(); const k = b.dataset.fas; if (f.sort === k) f.dir *= -1; else { f.sort = k; f.dir = ['name', 'pos', 'age'].includes(k) ? 1 : -1; } renderFATable(); } });
-  $('#fa-cyears').onclick = e => { const b = e.target.closest('[data-fcy]'); if (b) { f.cy = +b.dataset.fcy; renderFACap(); } };
-  $('#fa-growth').onchange = e => { f.growth = +e.target.value; renderFACap(); };
-  $('#fa-heat').addEventListener('click', e => { const b = e.target.closest('[data-fahs]'); if (b) { e.stopPropagation(); f.hs = b.dataset.fahs ? +b.dataset.fahs : null; renderFACap(); } });
 }
 
 /* ===== draft: 2027 big board, prospect pages, order, mock and rookie pay ===== */
@@ -5440,121 +5243,6 @@ function wireCTabs() {
   ['cv-tbox:cv-teams:Filter teams by name, city or division', 'cv-fbox:cv-table:Filter by player, team or position', 'rk-obox:rk-opt:Filter by player or team', 'rk-ebox:rk-ext:Filter by player, team or position', 'rk-tbox:rk-table:Filter by player, team, position or college'].forEach(s => { const [b, t, l] = s.split(':'); $('#' + b).outerHTML = tfBox(t, l); });
 }
 
-/* ===== offseason simulator: a team's 2027 cap after cuts, restructures, re-signings, tags, free agents and the rookie class ===== */
-const OS_YEAR = 2027;
-const os = { team: null, m: null, pos: 'all', q: '', fa: 12, cut: 12 };
-const osKey = id => 'osim.' + id;
-const osBlank = () => ({ cut: {}, rst: {}, keep: {}, add: [], rookies: true });
-function osLoad(id) { os.team = id; const s = store.get(osKey(id), null); os.m = s && s.cut ? Object.assign(osBlank(), s) : osBlank(); }
-const osSave = () => store.set(osKey(os.team), os.m);
-const capY = () => capOfYear(OS_YEAR);
-const hit27 = p => capAt(p, OS_YEAR) || 0;
-const under27 = p => (p.end || 0) > OS_YEAR;
-const fa27 = p => p.end === OS_YEAR;
-const left27 = p => Math.max(1, (p.end || OS_YEAR + 1) - OS_YEAR);
-function bonus27(p) { const r = p.yr && p.yr.find(x => x.y === OS_YEAR); const b = r ? Math.min(r.bonus || 0, r.cap) : (p.bonus || 0); return Math.max(0, Math.min(b, hit27(p))); }
-function base27(p) { const r = p.yr && p.yr.find(x => x.y === OS_YEAR); return r ? Math.max(0, r.base || 0) : Math.max(0, hit27(p) - bonus27(p)); }
-function cutCost(p, when) {
-  const b = bonus27(p), n = left27(p), h = hit27(p);
-  const dead = when === 'pre' ? Math.min(h, b) + b * (n - 1) : Math.min(h, b), later = when === 'pre' ? 0 : b * (n - 1);
-  return { dead, later, save: h - dead, gtdRisk: p.gtdp >= 0.6 && n >= 2 };
-}
-function rstSave(p) { const n = Math.min(5, left27(p)), conv = Math.max(0, base27(p) - 1.25e6); return n >= 2 ? { save: conv * (n - 1) / n, conv, n } : { save: 0, conv: 0, n }; }
-const reCost = p => 0.85 * estNext(p);
-const tagCost = p => (TAGP[p.group] ? TAGP[p.group].est : estNext(p)) * capY() / CAP;
-function osPicks() {
-  const out = [], id = os.team;
-  const own = DR_ORDER.find(o => o.orig === id), slot = own ? own.pick : 16;
-  DR_ORDER.filter(o => o.own === id).forEach(o => out.push({ r: 1, n: o.pick, via: o.via, p: o.p, est: false }));
-  for (let r = 2; r <= 7; r++) out.push({ r, n: 32 * (r - 1) + slot, est: true });
-  out.forEach(x => (x.cost = slotVal(x.n) / 4));
-  return out;
-}
-function osCalc() {
-  const t = TB[os.team], m = os.m, ty = TY && TY.years && TY.years[OS_YEAR] && TY.years[OS_YEAR].teams[os.team];
-  const start = ty ? ty.space : teamYear(t, OS_YEAR).space;
-  const ros = PL.filter(p => p.team === os.team);
-  let cuts = 0, dead = 0, rst = 0, keep = 0, adds = 0, rook = 0; const lines = [];
-  Object.entries(m.cut).forEach(([i, w]) => { const p = PL[i]; if (!p) return; const c = cutCost(p, w); cuts += c.save; dead += c.dead; lines.push([`Release ${p.name}${w === 'post' ? ' (after June 1)' : ''}`, c.save]); });
-  Object.keys(m.rst).forEach(i => { const p = PL[i]; if (!p || m.cut[i]) return; const r = rstSave(p); rst += r.save; lines.push([`Restructure ${p.name}`, r.save]); });
-  Object.entries(m.keep).forEach(([i, w]) => { const p = PL[i]; if (!p) return; const c = w === 'tag' ? tagCost(p) : reCost(p); keep += c; lines.push([`${w === 'tag' ? 'Franchise tag' : 'Re-sign'} ${p.name}`, -c]); });
-  m.add.forEach(i => { const p = PL[i]; if (!p) return; const c = reCost(p); adds += c; lines.push([`Sign ${p.name} (${TB[p.team].name})`, -c]); });
-  const picks = osPicks(); if (m.rookies) { rook = picks.reduce((s, x) => s + x.cost, 0); lines.push([`Draft class (${picks.length} picks)`, -rook]); }
-  const room = start + cuts + rst - keep - adds - rook;
-  const pool = ros.filter(p => under27(p) && !m.cut[p.i]).concat(ros.filter(p => fa27(p) && m.keep[p.i])).concat(m.add.map(i => PL[i]).filter(Boolean));
-  const L = buildLineup(pool, 'best'), u = unitRaw(L), rt = rateAll(u), rk = rankAll(u);
-  const gone = Object.values(t.L).filter(p => !pool.includes(p));
-  return { start, cuts, dead, rst, keep, adds, rook, room, lines, rt, rk, gone, picks, ty: !!ty };
-}
-function osRow(p, nums, btns, extra = '') {
-  return `<div class="osr"><button type="button" class="nm" data-p="${p.i}">${avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))} · ${p.age ? 'age ' + p.age + ' · ' : ''}${p.play != null ? 'play ' + p.play : 'not rated'}${extra}</small></span></button><span class="nums">${nums}</span><span class="seg sm" role="group" aria-label="Move for ${esc(p.name)}">${btns}</span></div>`;
-}
-const osBtn = (act, i, val, label, on) => `<button type="button" data-osa="${act}" data-i="${i}" data-v="${val}" aria-pressed="${!!on}">${label}</button>`;
-function renderSim() {
-  if (!D) return;
-  if (!os.team || !TB[os.team]) osLoad(favTeam && TB[favTeam] ? favTeam : (DR_ORDER[0] ? DR_ORDER[0].own : 'KC'));
-  const t = TB[os.team], m = os.m, sel = $('#os-team');
-  if (!sel.options.length) sel.innerHTML = [...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(x => `<option value="${x.id}">${esc(x.city)} ${esc(x.name)}</option>`).join('');
-  sel.value = os.team;
-  const R = osCalc(), ros = PL.filter(p => p.team === os.team);
-  // summary
-  $('#os-sum-body').innerHTML = `
-    <div class="out"><span class="eyebrow">${OS_YEAR} cap room after your moves</span><span class="v ${R.room >= 0 ? 'good' : 'bad'}">${R.room < 0 ? '−' : ''}${mon(Math.abs(R.room))}</span><span class="note">${OS_YEAR} cap ${mon(capY())} (projected). ${R.room < 0 ? 'Over the cap: make more room before the new league year on March 11.' : 'Room left to spend.'}</span></div>
-    <div class="rows">
-      <div><span>Room with contracts already signed${R.ty ? '' : ' (estimate)'}</span><b>${mon(R.start)}</b></div>
-      <div><span>Saved by releases</span><b class="down">+${mon(R.cuts)}</b></div>
-      <div><span>Saved by restructures</span><b class="down">+${mon(R.rst)}</b></div>
-      <div><span>Re-signings and tags</span><b class="up">−${mon(R.keep)}</b></div>
-      <div><span>Outside free agents</span><b class="up">−${mon(R.adds)}</b></div>
-      <div><span>Rookie class</span><b class="up">−${mon(R.rook)}</b></div>
-      ${R.dead ? `<div><span>Dead money from releases</span><b>${mon(R.dead)}</b></div>` : ''}
-    </div>
-    <div style="display:grid;gap:8px"><span class="eyebrow">Projected ${OS_YEAR} roster rating · best players at each spot</span>${rtilesHTML(R.rt, R.rk, 'Would rank ')}${ubarsHTML(R.rt, R.rk, { label: t.city + ' ' + t.name + ' now', rt: t.rt })}<span class="note">Black tick: today's ${esc(t.name)}. Uses 2026 play ratings; rookies are not rated yet and players do not age.</span></div>
-    ${R.gone.length ? `<div style="display:grid;gap:4px"><span class="eyebrow">Current starters not on the ${OS_YEAR} roster</span><span class="note">${R.gone.map(p => esc(p.name)).join(', ')}</span></div>` : ''}
-    ${R.lines.length ? `<div style="display:grid;gap:4px"><span class="eyebrow">Your moves</span><div class="rows">${R.lines.map(([l, v]) => `<div><span>${esc(l)}</span><b class="${v >= 0 ? 'down' : 'up'}">${v >= 0 ? '+' : '−'}${mon(Math.abs(v))}</b></div>`).join('')}</div></div>` : ''}
-    <button type="button" class="btn ghost" id="os-reset">Reset ${esc(t.name)} moves</button>`;
-  // own free agents
-  const fas = ros.filter(fa27).sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy);
-  $('#os-fa-body').innerHTML = (fas.slice(0, os.fa).map(p => { const k = m.keep[p.i];
-    return osRow(p, `<b>${mon(reCost(p))}</b><small>re-sign, first-year cap · tag ${mon(tagCost(p))}</small>`, osBtn('keep', p.i, '', 'Let go', !k) + osBtn('keep', p.i, 're', 'Re-sign', k === 're') + osBtn('keep', p.i, 'tag', 'Tag', k === 'tag'), ` · paid ${mon(p.apy)} now`); }).join('') || '<p class="empty">No players with deals ending after 2026.</p>') + (fas.length > os.fa ? `<button type="button" class="btn ghost more" data-osmore="fa">Show all ${fas.length}</button>` : '');
-  $('#os-fa-n').textContent = `${fas.length} players whose deals end after the 2026 season`;
-  // cuts and restructures
-  const cutl = ros.filter(p => under27(p) && hit27(p) >= 2e6).map(p => ({ p, c: cutCost(p, 'post'), r: rstSave(p) })).sort((a, b) => b.c.save - a.c.save);
-  $('#os-cut-body').innerHTML = (cutl.slice(0, os.cut).map(({ p, c, r }) => { const w = m.cut[p.i], pre = cutCost(p, 'pre');
-    return osRow(p, `<b>${mon(hit27(p))}</b><small>${OS_YEAR} cap hit · cut saves ${mon(pre.save)}, after June 1 ${mon(c.save)}${r.save >= 1e6 ? ` · restructure saves ${mon(r.save)}` : ''}${c.gtdRisk ? ' · <span class="up">may have guaranteed 2027 pay</span>' : ''}</small>`,
-      osBtn('cut', p.i, '', 'Keep', !w && !m.rst[p.i]) + osBtn('cut', p.i, 'pre', 'Cut', w === 'pre') + osBtn('cut', p.i, 'post', 'Cut after June 1', w === 'post') + (r.save >= 1e6 ? osBtn('rst', p.i, '1', 'Restructure', !!m.rst[p.i] && !w) : '')); }).join('') || '<p class="empty">No contracts of $2M or more for 2027.</p>') + (cutl.length > os.cut ? `<button type="button" class="btn ghost more" data-osmore="cut">Show all ${cutl.length}</button>` : '');
-  // free agent market
-  const q = os.q.trim().toLowerCase();
-  const pool = PL.filter(p => fa27(p) && p.team !== os.team && (os.pos === 'all' || p.group === os.pos) && (!q || p.key.includes(q))).sort((a, b) => (b.play ?? 0) - (a.play ?? 0) || b.apy - a.apy);
-  $('#os-pos').innerHTML = ['all'].concat(GROUP_ORDER).map(g => `<button type="button" class="chip" data-osp="${g}" aria-pressed="${os.pos === g}">${g === 'all' ? 'All' : g}</button>`).join('');
-  const added = m.add.map(i => PL[i]).filter(Boolean);
-  $('#os-sign-body').innerHTML = (added.length ? `<div style="display:grid;gap:2px"><span class="eyebrow">Signed</span>${added.map(p => osRow(p, `<b>${mon(reCost(p))}</b><small>first-year cap hit</small>`, osBtn('add', p.i, '0', 'Remove', false), ` · from ${esc(TB[p.team].name)}`)).join('')}</div>` : '') +
-    `<div style="display:grid;gap:2px"><span class="eyebrow">Best available</span>${pool.filter(p => !m.add.includes(p.i)).slice(0, 10).map(p => osRow(p, `<b>${mon(reCost(p))}</b><small>est. first-year cap · ${esc(TB[p.team].name)}</small>`, osBtn('add', p.i, '1', 'Sign', false))).join('') || '<p class="empty">No one matches.</p>'}</div>`;
-  // draft
-  const picks = R.picks;
-  $('#os-draft-body').innerHTML = `<label style="display:flex;gap:8px;align-items:center;font-size:.9rem"><input type="checkbox" id="os-rook" ${m.rookies ? 'checked' : ''}> Count the ${OS_YEAR} rookie class against the cap</label>
-    <div class="rows">${picks.map(x => `<div><span>Round ${x.r}, No. ${x.n}${x.est ? ' (est.)' : ''}${x.via ? ` · via ${esc(TB[x.via].name)}` : ''}${x.p ? ` · model pick: <button type="button" class="tlink" data-dp="${x.p.i}">${esc(x.p.name)}</button>` : ''}</span><b>${mon(x.cost)}</b></div>`).join('')}</div>
-    <p class="note">First-round slots come from today's projected order on the Draft page. Rounds 2 to 7 assume the team keeps its own pick in each round. Costs are the rookie scale's yearly average, grown with the cap.</p>`;
-}
-function wireSim() {
-  const box = $('#tool-offseason');
-  $('#os-team').onchange = e => { osLoad(e.target.value); renderSim(); };
-  box.addEventListener('click', e => {
-    const b = e.target.closest('[data-osa]');
-    if (b) { e.stopPropagation(); const i = b.dataset.i, v = b.dataset.v, m = os.m, a = b.dataset.osa;
-      if (a === 'keep') { if (v) m.keep[i] = v; else delete m.keep[i]; }
-      if (a === 'cut') { if (v) { m.cut[i] = v; delete m.rst[i]; } else { delete m.cut[i]; delete m.rst[i]; } }
-      if (a === 'rst') { delete m.cut[i]; if (m.rst[i]) delete m.rst[i]; else m.rst[i] = 1; }
-      if (a === 'add') { const n = +i; m.add = m.add.filter(x => x !== n); if (v === '1') m.add.push(n); }
-      osSave(); renderSim(); return; }
-    const mo = e.target.closest('[data-osmore]'); if (mo) { os[mo.dataset.osmore] = 999; renderSim(); return; }
-    const ps = e.target.closest('[data-osp]'); if (ps) { os.pos = ps.dataset.osp; renderSim(); return; }
-    if (e.target.closest('#os-reset')) { os.m = osBlank(); osSave(); renderSim(); }
-  });
-  box.addEventListener('change', e => { if (e.target.id === 'os-rook') { os.m.rookies = e.target.checked; osSave(); renderSim(); } });
-  $('#os-q').addEventListener('input', e => { os.q = e.target.value; renderSim(); });
-}
-
 /* ===== boot ===== */
 function boot(d, mv, sd, se, ty, fx, yx, px) {
   SEAS = se; TY = ty; FAX = fx; YX = yx;
@@ -5563,7 +5251,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   const ds = dt.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   $('#stamp').textContent = 'Updated ' + ds;
   $('#news-asof').textContent = `NFL news · updated ${new Date(((mv && mv.asOf) || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  $('#foot-asof').textContent = `Contract figures as of ${ds}. PlainStats builds them from news reports and team announcements, the rookie pay scale and the CBA; players whose contracts are not confirmed yet show "Contract being verified" with no dollar figures. Year-by-year figures after 2026 are estimates unless marked Calculated. PlainStats is not affiliated with the NFL, the NBA or any team.`;
+  $('#foot-asof').textContent = `Contract figures as of ${ds}. PlainStats builds them from news reports and team announcements, the rookie pay scale and the CBA; players whose contracts are not confirmed yet show "Contract being verified" with no dollar figures. PlainStats is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
   attachPFF(px);
@@ -5587,7 +5275,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   const pm = PL.find(p => p.name === 'Patrick Mahomes'), jb = PL.find(p => p.name === 'Josh Allen' && p.pos === 'QB');
   st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
   if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
-  wireHS(); wireCTabs(); wireSim();
+  wireHS(); wireCTabs();
   if (window.buildMenus) buildMenus();
   route();
   loadDraft();
@@ -5595,7 +5283,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
 const API = /vercel\.app$|localhost$|(^|\.)plainstatsnfl\.com$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), Promise.resolve(null), getJSON('data/freeagency.json').catch(() => null), getJSON('data/years_calc.json').catch(() => null), Promise.resolve(null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), Promise.resolve(null), getJSON('data/market.json').catch(() => null)])
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), Promise.resolve(null), getJSON('data/freeagency.json').catch(() => null), Promise.resolve(null), Promise.resolve(null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), Promise.resolve(null), getJSON('data/market.json').catch(() => null)])
   .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po, mk]) => { if (as && as.teams) ASSETS = as; if (mk && mk.ladder) MKT = mk;
     if (sd && ow && ow.teams) { OLWK = ow.thru || 0; sd.teams = sd.teams || {}; Object.entries(ow.teams).forEach(([t, v]) => { sd.teams[t] = Object.assign(sd.teams[t] || {}, v); }); }
     if (po && po.rows) { PFFOL = po; px = px || { rank: {}, rookies: [], tow: [], games: [] }; px.ol = po.rows; }

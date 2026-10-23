@@ -45,7 +45,6 @@ SEASON = json.loads((DATA / 'season.json').read_text())
 HIST = json.loads((DATA / 'history.json').read_text())
 DRAFT = json.loads((DATA / 'draft.json').read_text())
 ASSETS = json.loads((DATA / 'espn_assets.json').read_text())
-YEARS = json.loads((DATA / 'years_calc.json').read_text()).get('contracts', {})
 FA = json.loads((DATA / 'freeagency.json').read_text())
 LEDGER = {}
 with open(DATA / 'ledger.csv', newline='') as fh:
@@ -503,12 +502,6 @@ def build_player(p):
     else:
         rows.append(('Contract', 'Contract being verified'))
 
-    yr_html = ''
-    yc = YEARS.get(f'{p.name}|{p.team}')
-    if yc and p.prov == 'f':
-        yr_rows = ''.join(f'<tr><td>{esc(y)}</td><td class="r">{mon(v[0])}</td><td class="r">{mon(v[1])}</td><td class="r">{mon(v[2])}</td></tr>' for y, v in sorted(yc.items()))
-        yr_html = f'<h2>Cap hit by season</h2><div class="card scroll"><table><thead><tr><th>Season</th><th class="r">Base salary</th><th class="r">Bonus counted</th><th class="r">Cap hit</th></tr></thead><tbody>{yr_rows}</tbody></table></div><p class="note">Calculated by PlainStats. Later seasons can change if a team picks up an option or the player is traded.</p>'
-
     stats_html = ''
     if p.s26 and p.s26.get('g'):
         lines = stat_lines(p.s26)
@@ -519,7 +512,7 @@ def build_player(p):
     img_html = f'<img src="{esc(img)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     spa = f'/#p-{slugify(p.name)}-{p.team.lower()}'
     body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
-            f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{yr_html}{stats_html}'
+            f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a></p>'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>')
