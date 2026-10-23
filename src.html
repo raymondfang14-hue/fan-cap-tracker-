@@ -1533,6 +1533,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
     </div>
     <div class="cmp" id="cmp-out"></div>
   </div>
+  <div class="panel" id="tool-send" style="gap:8px"><p class="note" style="margin:0"><b>Know someone who argues about the NFL?</b> Send them this tool.</p><button type="button" class="btn ghost" id="tool-send-btn">Send to a friend</button></div>
   <p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p>
 </section>
 
@@ -4782,8 +4783,20 @@ const SITE_URL = 'https://www.plainstatsnfl.com/';
 const slugify = s => String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[.'’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const pSlug = p => 'p-' + slugify(p.name) + '-' + p.team.toLowerCase();
 const dSlug = p => 'd-' + p.id;
+// Links people share. Player and prospect links point at the generated page (/players/<name>, /draft/<name>) so a chat or post shows that
+// player's own card; everything else is the app address. Every link carries utm_ tags so analytics can tell which share brought a visit.
+let PAGEMAP = null, PAGEMAPP = null;
+const loadPageMap = () => PAGEMAPP || (PAGEMAPP = getJSON('data/pageslugs.json').then(m => (PAGEMAP = m)).catch(() => null));
+function shareUrl(h, medium) {
+  const q = '?utm_source=share&utm_medium=' + medium + '&utm_campaign=' + (/^p-/.test(h) ? 'player' : /^d-/.test(h) ? 'prospect' : (h || 'home')).replace(/[^a-z0-9_-]/gi, '');
+  let page = '';
+  if (PAGEMAP && /^p-/.test(h) && PAGEMAP.p && PAGEMAP.p[h]) page = 'players/' + PAGEMAP.p[h];
+  else if (PAGEMAP && /^d-/.test(h) && PAGEMAP.d && PAGEMAP.d[h]) page = 'draft/' + PAGEMAP.d[h];
+  return page ? SITE_URL + page + q : SITE_URL + q + (h ? '#' + h : '');
+}
 let LASTV = 'home', PEND = null;
 function sheetLink(h) {
+  loadPageMap();
   const cur = location.hash.slice(1);
   if (cur !== h) { try { if (/^[pd]-/.test(cur)) history.replaceState(null, '', '#' + h); else history.pushState(null, '', '#' + h); } catch (e) {} }
   const box = $('#sheet-body .sh-top > div:last-child');
@@ -4814,10 +4827,22 @@ openProspect = function (i) { _openProspectBase(i); const p = DP[i]; if (p) shee
 sheet.addEventListener('close', () => { if (/^[pd]-/.test(location.hash.slice(1))) { try { history.replaceState(null, '', '#' + (LASTV || 'home')); } catch (e) {} } });
 document.addEventListener('click', e => {
   const b = e.target.closest('.cplink'); if (!b) return; e.stopPropagation();
-  const url = SITE_URL + '#' + b.dataset.link;
+  const url = shareUrl(b.dataset.link, 'copylink');
+  if (window.gtag) gtag('event', 'share', { method: 'copy_link', content_type: 'sheet', item_id: b.dataset.link });
   const fail = () => { b.textContent = 'Copy this link'; if (!b.nextElementSibling || !b.nextElementSibling.classList.contains('cpbox')) b.insertAdjacentHTML('afterend', `<input class="cpbox" readonly value="${esc(url)}" aria-label="Link to this page">`); const i = b.nextElementSibling; i.focus(); i.select(); };
   try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => (b.textContent = 'Copy link'), 2200); }, fail); } catch (err) { fail(); }
 }, true);
+
+
+document.addEventListener('click', async e => {
+  if (!e.target.closest('#tool-send-btn')) return;
+  const url = shareUrl(location.hash.slice(1) || 'tools', 'tool');
+  if (window.gtag) gtag('event', 'share', { method: 'send_friend', content_type: 'tool', item_id: location.hash.slice(1) || 'tools' });
+  try {
+    if (navigator.share) await navigator.share({ title: 'PlainStats', text: 'Try this NFL tool on PlainStats', url });
+    else { await navigator.clipboard.writeText(url); const b = e.target.closest('#tool-send-btn'); b.textContent = 'Link copied'; setTimeout(() => (b.textContent = 'Send to a friend'), 2200); }
+  } catch (err) { /* sharing was cancelled */ }
+});
 
 /* ===== season stats: data/history.json (2023 on, regular season) ===== */
 let HIST = null, HIDX = null, HISTP = null;
@@ -5446,7 +5471,7 @@ const ADS = {
     dlg.innerHTML = '<div class="ps-dlg-h"><h2 id="ps-dlg-t">Share this</h2><button type="button" class="ps-dlg-x" data-a="close" aria-label="Close">&times;</button></div>'
       + '<div class="ps-dlg-img"><img alt="Preview of the image you are about to share"></div>'
       + '<p class="note ps-dlg-note">The image includes a small PlainStats watermark.</p>'
-      + '<div class="ps-dlg-a"><button type="button" class="btn" data-a="share" hidden>Share</button><button type="button" class="btn ghost" data-a="save">Save image</button><button type="button" class="btn ghost" data-a="copy" hidden>Copy image</button></div>';
+      + '<div class="ps-dlg-a"><button type="button" class="btn" data-a="share" hidden>Share</button><button type="button" class="btn ghost" data-a="save">Save image</button><button type="button" class="btn ghost" data-a="copy" hidden>Copy image</button><button type="button" class="btn ghost" data-a="link">Copy link</button></div>';
     document.body.appendChild(dlg);
     dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
     dlg.addEventListener('close', () => { if (curUrl) { URL.revokeObjectURL(curUrl); curUrl = ''; } });
@@ -5454,6 +5479,8 @@ const ADS = {
   }
   function openPreview({ blob, heading }) {
     const file = new File([blob], 'plainstats-' + slugOf(heading) + '.png', { type: 'image/png' });
+    loadPageMap();
+    const link = () => shareUrl(location.hash.slice(1), 'image');
     const d = ensureDialog();
     if (curUrl) URL.revokeObjectURL(curUrl);
     curUrl = URL.createObjectURL(blob);
@@ -5467,8 +5494,9 @@ const ADS = {
       if (!a) return;
       if (a === 'close') return d.close();
       try {
-        if (a === 'share') await navigator.share({ files: [file], title: heading, text: heading + ' · plainstatsnfl.com' });
+        if (a === 'share') await navigator.share({ files: [file], title: heading, text: heading + ' ' + link() });
         if (a === 'copy') { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('Image copied'); }
+        if (a === 'link') { await navigator.clipboard.writeText(link()); toast('Link copied'); }
         if (a === 'save') { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; document.body.appendChild(l); l.click(); l.remove(); }
         if (window.gtag) gtag('event', 'share', { method: 'image_' + a, content_type: 'panel', item_id: slugOf(heading) });
       } catch (err) { if (!err || err.name !== 'AbortError') toast('That did not work here. Try Save image instead.'); }

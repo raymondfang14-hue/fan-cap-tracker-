@@ -98,6 +98,14 @@ def esc(s):
     return html.escape(str(s), quote=True)
 
 
+# data/pageslugs.json: lets the app's Copy link button hand out the page address (rich preview card) instead of a #hash address.
+PAGEMAP = {'p': {}, 'd': {}}
+
+
+# Vercel Web Analytics (cookieless page counts). Only runs on the live domains; the file is 404 until it is switched on in the Vercel dashboard.
+VA = "<script>if(/(^|\\.)plainstatsnfl\\.com$/.test(location.hostname)){window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};var s=document.createElement('script');s.defer=true;s.src='/_vercel/insights/script.js';document.head.appendChild(s)}</script>"
+
+
 def mon(n, d=1):
     if n is None:
         return None
@@ -427,7 +435,7 @@ def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), ca
         crumb_html = '<nav class="crumbs" aria-label="Breadcrumb">' + ' › '.join(
             f'<a href="{esc(u)}">{esc(n)}</a>' for n, u in crumbs[:-1]) + (' › ' if len(crumbs) > 1 else '') + esc(crumbs[-1][0]) + '</nav>'
     meta_robots = f'<meta name="robots" content="{robots}">' if robots else ''
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}{VA}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
 
 
 def faq_html(faq):
@@ -511,6 +519,7 @@ def build_player(p):
     img = headshot(p.name, p.team)
     img_html = f'<img src="{esc(img)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     spa = f'/#p-{slugify(p.name)}-{p.team.lower()}'
+    PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
     body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
             f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
             f'{faq_html(faq)}'
@@ -692,6 +701,7 @@ def college_stats(st):
 
 
 def build_prospect(pr):
+    PAGEMAP['d']['d-' + pr['id']] = pr['slug']
     school = SCHOOLS.get(pr['sch'], [pr['sch']])[0]
     role = GRPNAME.get(pr['grp'], pr['grp'])
     cls = CLASSNAME.get(pr.get('cls'), '')
@@ -834,6 +844,7 @@ def main():
     build_sitemap()
     build_nav()
     build_og_data()
+    (ROOT / 'data' / 'pageslugs.json').write_text(json.dumps(PAGEMAP, separators=(',', ':'), sort_keys=True), encoding='utf-8')
     print(f'social cards {sum(len(c) for c in OG.values())}', end=' | ')
     print(f'players {len(PAGES)} of {len(PLAYERS)} | teams {len(TEAMS)} x3 | draft {len(PROS)} | sitemap urls {len(URLS) + 3}')
 
