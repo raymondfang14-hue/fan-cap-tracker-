@@ -2162,7 +2162,7 @@ function prepare(d, mv) {
   D = d;
   TEAMS = d.teams.map(t => Object.assign({}, t, { active: t.off + t.defn + t.st }));
   TEAMS.forEach(t => { t.eff = t.active + t.dead + t.space; TB[t.id] = t; });
-  PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8], voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, gid: r[19] || '', group: POSGROUP[r[2]] || 'ST' }));
+  PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8] != null ? r[8] + 1 : null /* data stores the final season; the page works in free-agency years */, voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, gid: r[19] || '', group: POSGROUP[r[2]] || 'ST' }));
   PL.forEach(p => { if (p.total > 0 && p.gtd > p.total) p.gtd = p.total; if (p.fg > p.gtd) p.fg = p.gtd; p.gtdp = p.total > 0 ? p.gtd / p.total : 0; p.yrs = p.apy > 0 ? Math.max(1, Math.round(p.total / p.apy)) : 1; p.key = (p.name + ' ' + p.team + ' ' + TB[p.team].name + ' ' + TB[p.team].city + ' ' + p.pos).toLowerCase(); });
   // A contract with no sourced figure (prov 'u') is hidden: no dollars are shown and it stays out of every ranking.
   PL.forEach(p => { p.hid = p.prov === 'u'; });
@@ -2206,7 +2206,7 @@ const TRAITS = {
 function analyze() {
   const by = {};
   PL.forEach(p => { (by[p.pos] = by[p.pos] || []).push(p); });
-  PL.forEach(p => { p.yl = Math.max(1, p.end - 2026); p.capShare = (p.cap || 0) / CAP; p.deadR = p.cap ? Math.min(2, (p.dpost || 0) / p.cap) : 0; });
+  PL.forEach(p => { p.yl = Math.max(1, (p.end || 2027) - 2026); p.capShare = (p.cap || 0) / CAP; p.deadR = p.cap ? Math.min(2, (p.dpost || 0) / p.cap) : 0; });
   Object.values(by).forEach(list => {
     const vl = list.filter(x => !x.hid), col = k => vl.map(x => x[k]);
     const A = { apy: col('apy'), gtdp: col('gtdp'), cap: col('capShare'), dead: col('deadR'), yl: col('yl'), age: vl.map(x => -(x.age || 30)) };
@@ -3367,8 +3367,15 @@ document.addEventListener('scroll', hideTip, { passive: true });
 function story(p) {
   const t = TB[p.team], out = [];
   if (p.hid) return [`${p.name} plays for the ${t.city} ${t.name}. PlainStats has no sourced contract figure for him yet, so we are not showing one. It appears here once a news report confirms it.`];
-  out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year. He can become a free agent in ${p.end}.`);
+  const fa = p.end ? ` He can become a free agent in ${p.end}.` : ' When his deal ends is still being verified.';
+  if (!(p.total > 0)) {
+    out.push(`${p.name} plays for the ${t.city} ${t.name}. Reports confirm parts of his contract, but not its total value yet.${fa}`);
+    if (p.gtd > 0) out.push(`${mon(p.gtd)} of it is reported as guaranteed.`);
+    return out;
+  }
+  out.push(`${p.name} is on a ${p.yrs === 1 ? 'one-year' : p.yrs + '-year'} deal with the ${t.city} ${t.name} worth ${mon(p.total)}, or ${mon(p.apy)} a year.${fa}`);
   if (p.total > 0 && p.gtd > 0) out.push(`${mon(p.gtd)} of it (${pct(p.gtdp)}) is guaranteed${p.fg > 0 && p.fg < p.gtd ? `, and ${mon(p.fg)} of that was locked in the day he signed` : ''}.`);
+  else if (p.gtd == null) out.push('How much of it is guaranteed is still being verified.');
   else out.push('None of the money is guaranteed, so the team could release him and owe nothing more.');
   if (p.total > 1e6) out.push(`By yearly pay he is the ${p.rank === 1 ? 'highest-paid' : ord(p.rank) + ' highest-paid'} ${POS_WORD[p.pos] || 'player at his spot'} in the league.`);
   if (p.cap != null) {
@@ -3806,7 +3813,7 @@ function openPlayer(i) {
   const p = PL[i]; if (!p) return; const t = TB[p.team];
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
-    <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : 'free agent ' + p.end + (p.voidy ? ' (void years)' : '')}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="years" aria-pressed="${st.shTab === 'years'}">Year by year</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-years" ${st.shTab === 'years' ? '' : 'hidden'}>${yearsHTML(p)}</div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
@@ -4352,6 +4359,14 @@ const qtile = (arr, q) => { if (!arr.length) return 0; const x = Math.max(0, Mat
 
 function yearModel(p) {
   if (p.hid) { p.yr = null; return; }
+  // Reported deal with no confirmed cap hits yet: lay out his seasons at the reported yearly average instead of guessing a split.
+  const capOk = p.cap != null && (p.prov !== 'r' || p.ver.includes('c'));
+  if (!capOk && !(p.apy && p.end)) { p.yr = []; p.exact = false; p.yrLast = p.end ? p.end - 1 : 2026; return; }
+  if (!capOk) {
+    const last = Math.max(2026, Math.min(p.end - 1, FY_MAX)), yrs = p.total ? Math.round(p.total / p.apy) : 0, first = yrs ? Math.max(2026, last - yrs + 1) : 2026;
+    p.yr = []; for (let y = 2026; y <= last; y++) p.yr.push(y >= first ? { y, base: null, bonus: null, cap: p.apy, src: 'avg' } : { y, base: null, bonus: null, cap: 0, src: 'prior' });
+    p.exact = false; p.yrLast = last; return;
+  }
   const cap = p.cap || 0, bonus = Math.min(p.bonus || 0, cap), base = p.base != null ? Math.min(p.base, cap) : Math.max(0, cap - bonus);
   const last = Math.max(2026, Math.min((p.end || 2027) - 1, FY_MAX)), n = last - 2025;
   let rows = [{ y: 2026, base, bonus: Math.max(0, cap - base), cap, src: 'reported' }];
@@ -4445,7 +4460,17 @@ const dayFmt = iso => new Date(iso + 'T12:00:00').toLocaleDateString([], { month
 /* player sheet: year by year */
 function yearsHTML(p) {
   if (p.hid) return `<p class="empty">${VERIFYING}. Year-by-year cap hits appear once a report confirms his deal.</p>`;
-  if (!p.yr || !p.yr.length) return '<p class="empty">No contract years to show.</p>';
+  if (!p.yr || !p.yr.length) return `<p class="empty">${!p.end ? 'His contract length is being verified. Year-by-year figures appear once a report confirms when the deal ends.' : !(p.prov !== 'r' || p.ver.includes('c')) || p.cap == null ? `Signed through the ${p.end - 1} season. Season-by-season figures appear once a report confirms the money in his deal.` : 'No contract years to show.'}</p>`;
+  if (p.yr.some(r => r.src === 'avg')) {
+    const rows = p.yr, last = rows[rows.length - 1].y, ny = rows.filter(r => r.src === 'avg').length, firstNew = rows.find(r => r.src === 'avg').y;
+    return `<div style="display:grid;gap:12px">
+    <div class="sechead" style="margin:0"><div><span class="eyebrow">Seasons under contract</span><h3 class="sec" style="font-size:1.15rem">Year by year</h3></div><span class="srcb">Yearly average</span></div>
+    <div class="ybars">${rows.map(r => r.src === 'avg' ? `<div class="yb"><span class="y">${r.y}</span><span style="display:grid;gap:3px;min-width:0"><span class="st" role="img" aria-label="${r.y}: reported average ${mon(r.cap)}"><i style="width:100%;background:var(--brand);opacity:.55"></i></span><small class="note">Average per year</small></span><span class="v">${mon(r.cap)}</span><span class="s">${pct(r.cap / capOfYear(r.y), 1)}</span></div>` : `<div class="yb"><span class="y">${r.y}</span><span class="note" style="grid-column:2/4">On his earlier contract; that season's cap hit isn't confirmed yet</span><span class="s"></span></div>`).join('')}
+      <div class="yb fa"><span class="y">${last + 1}</span><span class="note" style="grid-column:2/4">Free agent after the ${last} season${p.voidy ? ' (void years can add dead money)' : ''}</span><span class="s"></span></div></div>
+    <div class="rows"><div><span>Seasons left on this deal</span><b>${ny} ${ny === 1 ? 'season' : 'seasons'}, ${firstNew}${ny > 1 ? '–' + last : ''}</b></div><div><span>Average per year</span><b>${mon(p.apy, 1)}</b></div></div>
+    <p class="note">The reports PlainStats found give his total and length but not his season-by-season cap hits, so each season shows his reported yearly average. Real cap hits usually start lower and rise. The percentage is that average divided by the season's cap.</p>
+  </div>`;
+  }
   const rows = p.yr, maxc = Math.max(...rows.map(r => r.cap), 1), tot = rows.reduce((s, r) => s + r.cap, 0), est = rows.some(r => r.src === 'estimate');
   const last = rows[rows.length - 1].y;
   return `<div style="display:grid;gap:12px">
@@ -4457,7 +4482,7 @@ function yearsHTML(p) {
     <p class="note">${p.exact ? 'PlainStats calculated these from his draft slot, the rookie pay scale and the CBA minimum salaries' + (p.yr.length > 4 ? ', plus his fifth-year option' : '') + '.' : 'Later years are a PlainStats estimate built from his yearly average, contract length and bonus, and they assume pay rises toward the end of the deal. Reported figures replace the estimate when they become available.'} The percentage is his cap hit divided by that season's cap.</p>
   </div>`;
 }
-const yearCell = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r ? (r.src === 'estimate' ? `<span class="est">~${mon(r.cap)}</span>` : mon(r.cap)) : '<span style="color:var(--muted)">—</span>'; };
+const yearCell = (p, y) => { const r = p.yr && p.yr.find(x => x.y === y); return r && r.src !== 'prior' ? (r.src === 'estimate' || r.src === 'avg' ? `<span class="est" ${r.src === 'avg' ? 'title="Reported yearly average"' : ''}>~${mon(r.cap)}</span>` : mon(r.cap)) : '<span style="color:var(--muted)">—</span>'; };
 
 /* team page: cap room by season */
 function teamYearsHTML(t) {
