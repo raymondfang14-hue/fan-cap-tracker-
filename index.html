@@ -1045,6 +1045,22 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 .ps-dlg-note{margin-top:10px}
 .ps-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);z-index:70;max-width:min(92vw,420px);padding:11px 16px;border-radius:999px;background:var(--fg);color:var(--bg);font:600 .85rem/1.3 var(--body);text-align:center}
 
+
+/* compare: three or four players side by side */
+.cmpn-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cmpn{display:grid;grid-template-columns:minmax(76px,.9fr) repeat(var(--n),minmax(80px,1.2fr));gap:10px 10px;align-items:start;font-size:.86rem;min-width:calc(76px + var(--n) * 90px)}
+.cmpn .lab{position:sticky;left:0;background:var(--surface);z-index:1}
+.cmpn .ot{white-space:normal;max-width:100%}
+.cmpn .lab{font:600 .76rem/1.25 var(--body);color:var(--muted)}
+.cmpn .hd{display:flex;gap:6px;align-items:flex-start;min-width:0}
+.cmpn .hd .nm{display:grid;gap:4px;min-width:0}
+.cmpn .hd b{font:600 .84rem/1.2 var(--body);overflow-wrap:anywhere}
+.cmpn .cn b{font:600 .86rem/1.2 var(--mono)}
+.cmpn .cn.win b{color:var(--good)}
+.cmpn .cn.wrap{display:flex;flex-wrap:wrap;gap:4px}
+.cmpn .b{display:block;height:8px;border-radius:2px;margin-top:5px}
+#tool-compare .cmp-rm{margin-top:6px}
+@media (min-width:700px){.cmpn-hint{display:none}}
 </style>
 
 <header class="gn" id="gn">
@@ -1057,7 +1073,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
       <button class="gn-ic gn-burger" id="gn-mbtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gn-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
     </div>
   </div></div>
-  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="#compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
+  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="#compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
   <div class="gn-fly gn-search gut" id="gn-search" hidden><div class="wrap">
     <div class="search">
       <label class="sr" for="q-nav">Search players and teams</label>
@@ -1066,7 +1082,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
     </div>
     <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="#news">Latest news</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#value">Best and worst contracts</a></li><li><a href="#mock">Mock draft</a></li></ul></div>
   </div></div>
-  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="#teams">Teams home</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="#onfield">Players home</a></li><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="#contracts">Contracts home</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="#draft">Draft home</a></li><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="#tools">Tools home</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="#news">News home</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="#learn">Learn home</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
+  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="#teams">Teams home</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="#onfield">Players home</a></li><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="#contracts">Contracts home</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="#draft">Draft home</a></li><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="#tools">Tools home</a></li><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="#news">News home</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="#learn">Learn home</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
 </header>
 <div class="gn-scrim" id="gn-scrim" hidden></div>
 <nav class="tabbar" aria-label="Quick sections">
@@ -1505,8 +1521,10 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
         <div class="controls">
           <label class="f" for="bld-team">Start from a team<select id="bld-team"></select></label>
           <button type="button" class="btn ghost" id="bld-best" style="align-self:end">Best on paper</button>
+          <button type="button" class="btn ghost" id="bld-rand" style="align-self:end">Randomize all</button>
           <button type="button" class="btn ghost" id="bld-clear" style="align-self:end">Clear</button>
         </div>
+        <p class="note" id="bld-rand-note" role="status" hidden></p>
         <div id="bld-field" style="display:grid;gap:10px"></div>
         <div id="bld-list"></div>
       </div>
@@ -1523,16 +1541,19 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
   </div>
 
   <div id="tool-compare" hidden class="panel">
-    <div class="sechead"><h2 class="sec">Compare two players</h2>
+    <div class="sechead"><h2 class="sec">Compare up to four players</h2>
       <div class="seg" id="cmp-mode" role="group" aria-label="What to compare">
         <button type="button" data-cm="contract" aria-pressed="true">Contracts</button>
         <button type="button" data-cm="stats" aria-pressed="false">Stats and analytics</button>
       </div>
     </div>
     <div class="vs">
-      <div class="pick"><label class="f" for="cmp-a">First player<input id="cmp-a" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-ar" hidden></div></div>
-      <div class="pick"><label class="f" for="cmp-b">Second player<input id="cmp-b" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-br" hidden></div></div>
+      <div class="pick" id="cmp-pick-0"><label class="f" for="cmp-a">First player<input id="cmp-a" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-ar" hidden></div></div>
+      <div class="pick" id="cmp-pick-1"><label class="f" for="cmp-b">Second player<input id="cmp-b" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-br" hidden></div></div>
+      <div class="pick" id="cmp-pick-2" hidden><label class="f" for="cmp-c">Third player<input id="cmp-c" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-cr" hidden></div><button type="button" class="btn ghost cmp-rm" data-i="2">Remove</button></div>
+      <div class="pick" id="cmp-pick-3" hidden><label class="f" for="cmp-d">Fourth player<input id="cmp-d" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="cmp-dr" hidden></div><button type="button" class="btn ghost cmp-rm" data-i="3">Remove</button></div>
     </div>
+    <div><button type="button" class="btn ghost" id="cmp-add">Add a player</button></div>
     <div class="cmp" id="cmp-out"></div>
   </div>
   <div class="panel" id="tool-send" style="gap:8px"><p class="note" style="margin:0"><b>Know someone who argues about the NFL?</b> Send them this tool.</p><button type="button" class="btn ghost" id="tool-send-btn">Send to a friend</button></div>
@@ -1825,7 +1846,7 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 
 <aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare two players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
+  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="#teams">All 32 teams</a></li><li><a href="#rankings">Power rankings</a></li><li><a href="#cap">Cap room by team</a></li></ul></div><div><h3>Players</h3><ul><li><a href="#ratings">Player ratings</a></li><li><a href="#stats">Season stats</a></li><li><a href="#awards">Awards watch</a></li><li><a href="#search">Search every player</a></li><li><a href="#compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="#contracts">All contracts</a></li><li><a href="#value">Best and worst deals</a></li><li><a href="#rookies">Rookie deals</a></li><li><a href="#freeagency">Free agency</a></li><li><a href="#analytics">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="#bigboard">Big board</a></li><li><a href="#mock">Mock draft</a></li><li><a href="#rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="#builder">Roster builder</a></li><li><a href="#trade">Trade checker</a></li><li><a href="#compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="#news">All news</a></li><li><a href="#news-contracts">Contract moves</a></li><li><a href="#news-injuries">Injuries</a></li><li><a href="#news-games">Game results</a></li><li><a href="#news-coaching">Coaching changes</a></li><li><a href="#news-league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="#learn">Cap 101</a></li><li><a href="#about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
   <p id="foot-asof">Contract figures come from news reports, team announcements, the rookie pay scale and the CBA, and can change. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
   <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents" target="_blank" rel="noopener">NFL Football Operations: minimum salaries and tenders</a></li>
@@ -1963,7 +1984,7 @@ const st = {
   lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tTraits: [], tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
   c: { q: '', team: 'all', group: 'all', sort: 'apy', dir: -1, limit: 50 },
   roster: { sort: 'cap', dir: -1 }, tool: 'build', tView: store.get('tView', 'ratings'),
-  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() } }, cmp: [null, null], cmpMode: 'contract', shTab: (t => (t === 'years' ? 'contract' : t))(store.get('shTab', 'field'))
+  trade: { a: 'KC', b: 'DAL', out: { a: new Set(), b: new Set() }, q: { a: '', b: '' }, pos: { a: '', b: '' } }, cmp: [null, null], cmpMode: 'contract', shTab: (t => (t === 'years' ? 'contract' : t))(store.get('shTab', 'field'))
 };
 
 /* ===== table filters ===== */
@@ -3172,7 +3193,19 @@ function wireBuilder() {
   $('#tool-build').addEventListener('click', e => { const b = e.target.closest('[data-slot]'); if (b) { e.stopPropagation(); openPicker(b.dataset.slot); } });
   $('#bld-team').onchange = e => { const id = e.target.value; if (!TB[id]) return; bld.L = Object.assign({}, TB[id].L); bld.from = id; e.target.value = ''; saveBld(); renderBuilder(); };
   $('#bld-best').onclick = () => { bld.L = buildLineup(PL, 'best'); bld.from = null; saveBld(); renderBuilder(); };
-  $('#bld-clear').onclick = () => { bld.L = {}; bld.from = null; saveBld(); renderBuilder(); };
+  $('#bld-clear').onclick = () => { bld.L = {}; bld.from = null; $('#bld-rand-note').hidden = true; saveBld(); renderBuilder(); };
+  $('#bld-rand').onclick = () => {   // a random player at every spot, drawn only from players who have a play rating
+    const pool = PL.filter(p => p.play != null), used = new Set(), L = {}, open = [];
+    SLOTS.forEach(sl => {
+      const c = pool.filter(p => !used.has(p) && slotOK(sl, p));
+      if (!c.length) { open.push(sl.lab); return; }
+      const p = c[Math.floor(Math.random() * c.length)]; L[sl.id] = p; used.add(p);
+    });
+    bld.L = L; bld.from = null; saveBld(); renderBuilder();
+    const note = $('#bld-rand-note');
+    note.textContent = open.length ? `Randomized from rated players. No rated player was available at ${[...new Set(open)].join(', ')}, so ${open.length === 1 ? 'that spot is' : 'those spots are'} open.` : 'Randomized: every spot has a random player who has a play rating. Tap again for a new lineup.';
+    note.hidden = false;
+  };
 }
 
 /* ===== tooltip ===== */
@@ -3690,17 +3723,44 @@ function showTool(t) {
   ['build', 'trade', 'compare'].forEach(x => ($('#tool-' + x).hidden = x !== t));
   if (t === 'build') renderBuilder(); if (t === 'trade') renderTrade(); if (t === 'compare') renderCompare();
 }
+function tradeRoster(side) {
+  const id = st.trade[side], toks = (st.trade.q[side] || '').trim().toLowerCase().split(/\s+/).filter(Boolean), pos = st.trade.pos[side];
+  let all = PL.filter(p => p.team === id && p.cap).sort((a, b) => b.cap - a.cap);
+  const filtered = toks.length > 0 || !!pos;
+  if (toks.length) all = all.filter(p => { const h = (p.name + ' ' + posTag(p.pos)).toLowerCase(); return toks.every(t => h.includes(t)); });
+  if (pos) all = all.filter(p => posTag(p.pos) === pos);
+  return { list: filtered ? all : all.slice(0, 40), total: all.length, filtered };
+}
+function drawTradeList(side) {
+  const set = st.trade.out[side], { list, total, filtered } = tradeRoster(side);
+  $(`#tr-${side}-list`).innerHTML = list.length ? list.map(p => `<label><input type="checkbox" data-side="${side}" value="${p.i}"${set.has(p.i) ? ' checked' : ''}><span class="pos">${esc(posTag(p.pos))}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</span><span class="num">${mon(p.cap)}</span></label>`).join('') : '<p class="empty">Nobody on this team matches.</p>';
+  drawTradeNote(side, list.length, total, filtered);
+}
+function drawTradeNote(side, shown, total, filtered) {
+  if (shown == null) { const r = tradeRoster(side); shown = r.list.length; total = r.total; filtered = r.filtered; }
+  const n = st.trade.out[side].size;
+  $(`#tr-${side}-n`).textContent = (filtered ? `${shown} ${shown === 1 ? 'match' : 'matches'}` : `Top ${shown} cap hits shown · search to find anyone`) + (n ? ` · ${n} picked to send` : '');
+}
 function tradeSide(side) {
-  const id = st.trade[side], t = TB[id], set = st.trade.out[side];
-  const roster = PL.filter(p => p.team === id && p.cap).sort((a, b) => b.cap - a.cap).slice(0, 40);
+  const id = st.trade[side], t = TB[id];
+  const poss = [...new Set(PL.filter(p => p.team === id && p.cap).map(p => posTag(p.pos)))].sort();
+  if (st.trade.pos[side] && !poss.includes(st.trade.pos[side])) st.trade.pos[side] = '';
   $('#tr-' + side).innerHTML = `
     <label class="f" for="tr-${side}-sel">${side === 'a' ? 'Team one' : 'Team two'}<select id="tr-${side}-sel">${[...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(x => `<option value="${x.id}"${x.id === id ? ' selected' : ''}>${esc(x.city)} ${esc(x.name)}</option>`).join('')}</select></label>
     <div style="display:flex;gap:10px;align-items:center">${badge(id)}<span class="note">${mon(t.space)} of room now · pick who they send away</span></div>
-    <div class="trade-list">${roster.map(p => `<label><input type="checkbox" data-side="${side}" value="${p.i}"${set.has(p.i) ? ' checked' : ''}><span class="pos">${esc(posTag(p.pos))}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</span><span class="num">${mon(p.cap)}</span></label>`).join('')}</div>`;
-  $(`#tr-${side}-sel`).onchange = e => { const v = e.target.value; const other = side === 'a' ? 'b' : 'a'; if (v === st.trade[other]) return (e.target.value = id); st.trade[side] = v; st.trade.out[side] = new Set(); renderTrade(); };
+    <div class="controls">
+      <label class="f" for="tr-${side}-q" style="flex:1 1 150px">Find a player<input id="tr-${side}-q" type="search" placeholder="Name or position" autocomplete="off" value="${esc(st.trade.q[side])}"></label>
+      <label class="f" for="tr-${side}-pos">Position<select id="tr-${side}-pos"><option value="">All</option>${poss.map(x => `<option value="${esc(x)}"${x === st.trade.pos[side] ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
+    </div>
+    <p class="note" id="tr-${side}-n" aria-live="polite"></p>
+    <div class="trade-list" id="tr-${side}-list"></div>`;
+  drawTradeList(side);
+  $(`#tr-${side}-q`).oninput = e => { st.trade.q[side] = e.target.value; drawTradeList(side); };
+  $(`#tr-${side}-pos`).onchange = e => { st.trade.pos[side] = e.target.value; drawTradeList(side); };
+  $(`#tr-${side}-sel`).onchange = e => { const v = e.target.value; const other = side === 'a' ? 'b' : 'a'; if (v === st.trade[other]) return (e.target.value = id); st.trade[side] = v; st.trade.out[side] = new Set(); st.trade.q[side] = ''; st.trade.pos[side] = ''; renderTrade(); };
 }
-function renderTrade() {
-  tradeSide('a'); tradeSide('b');
+function renderTrade() { tradeSide('a'); tradeSide('b'); renderTradeOut(); }
+function renderTradeOut() {
   const sal = p => Math.max(0, (p.cap || 0) - (p.bonus || 0));
   const sum = (s, f) => [...s].reduce((a, i) => a + f(PL[i]), 0);
   const A = TB[st.trade.a], B = TB[st.trade.b], oa = st.trade.out.a, ob = st.trade.out.b;
@@ -3716,7 +3776,7 @@ function renderTrade() {
     <div class="vs">${card(A, aAfter, names(ob), names(oa), deadA)}${card(B, bAfter, names(oa), names(ob), deadB)}</div>
     <p class="note">A rough check. The team getting a player takes on his salary; the team sending him keeps this season's bonus slice and the rest of his bonus becomes 2027 dead money. Real in-season trades only move the salary for the weeks left, so actual numbers will be smaller.</p>`;
 }
-document.addEventListener('change', e => { const c = e.target; if (c.matches('.trade-list input')) { const s = st.trade.out[c.dataset.side]; c.checked ? s.add(+c.value) : s.delete(+c.value); renderTrade(); } });
+document.addEventListener('change', e => { const c = e.target; if (c.matches('.trade-list input')) { const s = st.trade.out[c.dataset.side]; c.checked ? s.add(+c.value) : s.delete(+c.value); renderTradeOut(); drawTradeNote(c.dataset.side); } });
 function radarSVG(a, b) {
   const R = 100, cx = 140, cy = 128, N = P_DEFS.length;
   const pt = (i, v) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(ang) * R * v, cy + Math.sin(ang) * R * v]; };
@@ -3755,11 +3815,66 @@ function cmpStatsHTML(a, b) {
   }
   return out;
 }
+const CMP_COLS = ['var(--brand)', 'var(--c-def)', 'var(--c-st)', 'var(--c-dead)'];
+function radarMulti(ps) {
+  const R = 100, cx = 140, cy = 128, N = P_DEFS.length;
+  const pt = (i, v) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(ang) * R * v, cy + Math.sin(ang) * R * v]; };
+  let g = '';
+  [0.25, 0.5, 0.75, 1].forEach(r => { g += `<polygon points="${P_DEFS.map((_, i) => pt(i, r).join(',')).join(' ')}" fill="none" stroke="var(--line)"></polygon>`; });
+  P_DEFS.forEach((d, i) => { const [x, y] = pt(i, 1), [lx, ly] = pt(i, 1.2); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"></line><text x="${lx}" y="${ly + 3}" text-anchor="${lx < cx - 5 ? 'end' : lx > cx + 5 ? 'start' : 'middle'}">${d[1]}</text>`; });
+  const poly = (p, c) => `<polygon points="${P_DEFS.map((d, i) => pt(i, Math.max(.03, p[d[0]])).join(',')).join(' ')}" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="2"></polygon>`;
+  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="0 0 280 256" style="max-width:340px" role="img" aria-label="Percentile radar comparing ${esc(ps.map(p => p.name).join(', '))}">${g}${ps.map((p, i) => poly(p, CMP_COLS[i])).join('')}</svg>
+    <ul class="legend" style="grid-template-columns:repeat(2,max-content)">${ps.map((p, i) => `<li><i class="swatch" style="background:${CMP_COLS[i]}"></i><span>${esc(p.name)}</span></li>`).join('')}</ul>
+    <span class="note">Percentiles at each player's own position.</span></div>`;
+}
+/* three or four players: one column per player, label on the left */
+function cmpGrid(ps, rows) {
+  const head = '<div class="cn lab"></div>' + ps.map((p, i) => `<div class="cn hd"><i class="swatch" style="background:${CMP_COLS[i]}"></i><span class="nm">${badge(p.team)}<b>${esc(p.name)}</b></span></div>`).join('');
+  const body = rows.map(r => `<div class="cn lab" title="${esc(r.sub || '')}">${esc(r.lab)}</div>` + r.cells.map((c, i) => `<div class="cn${c.win ? ' win' : ''}${c.wrap ? ' wrap' : ''}">${c.html}${c.bar != null ? `<i class="b" style="width:${Math.max(0, c.bar * 100).toFixed(0)}%;background:${CMP_COLS[i]}"></i>` : ''}</div>`).join('')).join('');
+  return `<div class="cmpn-wrap"><div class="cmpn" style="--n:${ps.length}">${head}${body}</div></div><p class="note cmpn-hint">On a small screen, scroll sideways to see every player.</p>`;
+}
+function cmpContractN(ps) {
+  const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
+  const rows = [{ lab: 'Play rating', cells: ps.map(p => ({ html: `<b>${p.play ?? '—'}</b>` })) }].concat(rowsDef.map(([lab, k, f]) => {
+    const m = Math.max(1e-9, ...ps.map(p => p[k] || 0)), bar = k !== 'age' && k !== 'end';
+    return { lab, cells: ps.map(p => ({ html: `<b>${f(p[k])}</b>`, bar: bar ? (p[k] || 0) / m : null })) }; }));
+  return cmpGrid(ps, rows);
+}
+function cmpStatsN(ps) {
+  const withSt = ps.filter(p => p.st);
+  if (withSt.length < 2) return cmpGrid(ps, []) + `<p class="empty">Fewer than two of these players have 2026 stats yet, so there is nothing to compare.</p>`;
+  const keysOf = p => { const c = GCFG[p.sg]; return c ? [...new Set(c.bars.map(x => x[0]).concat(c.cols))] : []; };
+  const same = withSt.every(p => p.sg === withSt[0].sg);
+  let keys = keysOf(withSt[0]).filter(k => withSt.every(p => keysOf(p).includes(k))).filter(k => MET[k]);
+  const best = vals => { const v = vals.filter(x => x != null); const m = v.length ? Math.max(...v) : null; return vals.map(x => x != null && m != null && v.length > 1 && x === m && v.filter(y => y === m).length === 1); };
+  const rows = [
+    { lab: 'Play rating', cells: ps.map(p => ({ html: `<b>${p.play ?? '—'}</b>` })) },
+    { lab: same ? SG_NAME[withSt[0].sg] + ' rank' : 'Position rank', cells: ps.map(p => ({ html: `<b>${p.prk ? '#' + p.prk + ' of ' + p.pn : '—'}</b>` })) },
+    { lab: 'Roles', cells: ps.map(p => ({ wrap: true, html: (p.roles || []).slice(0, 3).map(r => `<span class="role sm">${esc(r)}</span>`).join('') || '—' })) },
+    { lab: 'Traits', cells: ps.map(p => ({ wrap: true, html: p.ot && p.ot.length ? p.ot.map(otChip).join('') : '<span class="note">None</span>' })) },
+    { lab: 'Games', cells: ps.map(p => ({ html: p.st ? `<b>${p.st.g || 0}</b> <span class="note">(${p.st.gs || 0} started)</span>` : '<span class="note">No 2026 stats</span>' })) }
+  ];
+  keys.forEach(k => {
+    const raw = ps.map(p => (p.st ? MET[k][2](p) : null)), pc = ps.map(p => (p.st && MET[k][2](p) != null && p.pc[k] != null ? p.pc[k] : null)), win = best(pc);
+    rows.push({ lab: MET[k][0], sub: MET[k][1], cells: ps.map((p, i) => ({ html: `<b>${raw[i] == null ? '—' : MET[k][3](raw[i])}</b>${p.fq && p.rk[k] ? ` <span class="note">#${p.rk[k][0]}</span>` : ''}`, bar: pc[i], win: win[i] })) });
+  });
+  const note = keys.length ? `<p class="note">Bars show where each player ranks against qualified players at his position (longer is better, even for stats where lower is better). Green marks the best number. ${ps.filter(p => !p.fq).length ? esc(ps.filter(p => !p.fq).map(p => p.name).join(', ')) + ' has not played enough to qualify for rankings.' : ''}</p>` : `<p class="note">These players are measured on different stats, so only the ratings above line up. Pick players at the same position for a stat-by-stat comparison.</p>`;
+  return cmpGrid(ps, rows) + note;
+}
 function renderCompare() {
-  const [a, b] = st.cmp.map(i => (i == null ? null : PL[i]));
-  if (a) $('#cmp-a').value = a.name; if (b) $('#cmp-b').value = b.name;
+  const n = st.cmp.length;
+  [0, 1, 2, 3].forEach(i => { const el = $('#cmp-' + 'abcd'[i]), id = st.cmp[i]; if (el) el.value = id != null && PL[id] ? PL[id].name : (i < n && document.activeElement === el ? el.value : ''); });
+  [0, 1, 2, 3].forEach(i => { const box = $('#cmp-pick-' + i); if (box) box.hidden = i >= n; });
+  $('#cmp-add').hidden = n >= 4;
   $$('#cmp-mode button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.cm === st.cmpMode)));
-  if (!a || !b) { $('#cmp-out').innerHTML = `<p class="empty">${a ? 'Now pick a second player.' : 'Pick two players to compare.'}</p>`; return; }
+  const ps = st.cmp.map(i => (i == null ? null : PL[i])).filter(Boolean);
+  if (ps.length < 2) { $('#cmp-out').innerHTML = `<p class="empty">${ps.length ? 'Now pick another player.' : 'Pick two to four players to compare.'}</p>`; return; }
+  if (ps.length > 2) {
+    const faces = `<div class="fcs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ps.map(faceCard).join('')}</div>`;
+    $('#cmp-out').innerHTML = st.cmpMode === 'stats' ? cmpStatsN(ps) : `<div class="vs" style="align-items:center">${radarMulti(ps)}${faces}</div>${cmpContractN(ps)}`;
+    return;
+  }
+  const [a, b] = ps;
   if (st.cmpMode === 'stats') { $('#cmp-out').innerHTML = cmpStatsHTML(a, b); return; }
   const radar = radarSVG(a, b);
   const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
@@ -5154,6 +5269,10 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   $('#cmp-mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; st.cmpMode = b.dataset.cm; renderCompare(); };
   bindSearch($('#cmp-a'), $('#cmp-ar'), it => { st.cmp[0] = it.p.i; renderCompare(); }, false);
   bindSearch($('#cmp-b'), $('#cmp-br'), it => { st.cmp[1] = it.p.i; renderCompare(); }, false);
+  bindSearch($('#cmp-c'), $('#cmp-cr'), it => { st.cmp[2] = it.p.i; renderCompare(); }, false);
+  bindSearch($('#cmp-d'), $('#cmp-dr'), it => { st.cmp[3] = it.p.i; renderCompare(); }, false);
+  $('#cmp-add').onclick = () => { if (st.cmp.length < 4) { st.cmp.push(null); renderCompare(); const el = $('#cmp-' + 'abcd'[st.cmp.length - 1]); if (el) el.focus(); } };
+  $$('#tool-compare .cmp-rm').forEach(b => (b.onclick = () => { st.cmp.splice(+b.dataset.i, 1); renderCompare(); }));
   const pm = PL.find(p => p.name === 'Patrick Mahomes'), jb = PL.find(p => p.name === 'Josh Allen' && p.pos === 'QB');
   st.cmp = [pm ? pm.i : null, jb ? jb.i : null];
   if (favTeam && TB[favTeam]) { st.trade.a = favTeam; st.trade.b = favTeam === 'DAL' ? 'KC' : 'DAL'; }
