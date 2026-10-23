@@ -893,6 +893,7 @@ table.t td{border-top-color:var(--line)}
 dialog#sheet,dialog#picker,dialog#fix{border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
 dialog#fix{border:0;padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 40px);background:var(--surface);color:var(--fg)}
 dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{background:var(--scrim);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+@media (max-width:760px){dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none}}
 .badge{border-radius:6px}
 
 /* ---------- home hero ---------- */
@@ -4819,6 +4820,7 @@ const _openPlayerBase = openPlayer;
 openPlayer = function (i) {
   _openPlayerBase(i); const p = PL[i]; if (!p) return;
   sheetLink(pSlug(p));
+  loadHist().then(() => loadHistOld()).catch(() => {});   // warm the Stats tab in the background
   const tabs = $('#sh-tabs');
   if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b && b.dataset.tab === 'stats') fillStats(p); });
   if (st.shTab === 'stats') fillStats(p);
@@ -4850,7 +4852,7 @@ let HIST = null, HIDX = null, HISTP = null;
 const loadHist = () => HISTP || (HISTP = getJSON('data/history.json').then(h => { HIST = h; indexHist(); return h; }));
 /* older seasons (before 2023): season totals only, current-roster players, loaded when a Stats tab opens */
 let HOLDP = null;
-const loadHistOld = () => HOLDP || (HOLDP = loadHist().then(() => getJSON('data/history_old.json')).then(o => { mergeOld(o); return o; }).catch(() => null));
+const loadHistOld = () => HOLDP || (HOLDP = Promise.all([loadHist(), getJSON('data/history_old.json')]).then(([, o]) => { mergeOld(o); return o; }).catch(() => null));
 function mergeOld(o) {
   const byId = new Map(HIST.players.map(r => [r.id, r]));
   o.players.forEach(x => {
@@ -4923,8 +4925,10 @@ function histOf(p) {
 const hsSum = lines => { const t = {}; lines.forEach(l => Object.entries(l).forEach(([k, v]) => { if (typeof v === 'number' && k !== 'fgl') t[k] = (t[k] || 0) + v; })); t.fgl = Math.max(0, ...lines.map(l => l.fgl || 0)) || undefined; return t; };
 function fillStats(p) {
   const box = $('#sh-stats'); if (!box) return;
+  if (box.dataset.full === '1') return;   // this card already shows the full table
   if (!HIST) box.innerHTML = '<p class="empty">Loading season stats…</p>';
-  loadHist().then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).then(() => loadHistOld()).then(() => { if ($('#sh-stats') === box) box.innerHTML = statsHTML(p); }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
+  loadHistOld();   // start the older-seasons download now, in parallel with the main file
+  loadHist().then(() => { if ($('#sh-stats') === box && !box.dataset.full) box.innerHTML = statsHTML(p); }).then(() => loadHistOld()).then(() => { if ($('#sh-stats') === box) { box.innerHTML = statsHTML(p); box.dataset.full = '1'; } }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
 }
 function statsHTML(p) {
   const r = histOf(p), g = hgOfP(p), cols = HCOLS[g].map(k => HC[k]), cur = String(HIST.current);
