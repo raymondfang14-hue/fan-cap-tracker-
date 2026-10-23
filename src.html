@@ -565,10 +565,13 @@ table.t td .pscore{font-size:.86rem;min-width:2.1rem}
 .blist{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .blist button{display:grid;grid-template-columns:3.2rem auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer;font-size:.84rem}
 .blist button:first-child{border-top:0}
-.blist .blrow{display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:1px solid var(--line);background:var(--surface)}
+.blist .blrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;border-top:1px solid var(--line);background:var(--surface)}
 .blist .blrow>button{border-top:0}
 .blist .blrow>.blcard{display:block;padding:6px 12px;border-left:1px solid var(--line);color:var(--brand);font-weight:600}
 .blist .unit+.blrow{border-top:0}
+.blist .blrow>.blrm{display:block;padding:6px 14px;border-left:1px solid var(--line);color:var(--muted);font-size:1.2rem;line-height:1;font-weight:500}
+.blist .blrow>.blrm:hover{color:var(--bad);background:var(--surface-2)}
+@media (max-width:480px){.blist button{grid-template-columns:2.5rem auto minmax(0,1fr) auto;gap:6px;padding:6px 8px;font-size:.8rem}.blist .blrow>.blcard{padding:6px 9px}.blist .blrow>.blrm{padding:6px 11px}}
 .blist button:hover{background:var(--brand-soft)}
 .blist .sl{font:700 .66rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .blist b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -3148,7 +3151,7 @@ function renderBuilder() {
   $('#bld-field').innerHTML = lineupFieldHTML(L, true, bld.on);
   const groups = [['Offense', ['QB', 'RB', 'WR1', 'WR2', 'WR3', 'TE', 'LT', 'LG', 'C', 'RG', 'RT']], ['Defense', ['EDGE1', 'IDL1', 'IDL2', 'EDGE2', 'LB1', 'LB2', 'CB1', 'CB2', 'CB3', 'S1', 'S2']], ['Specialists', ['K', 'P', 'LS']]];
   $('#bld-list').innerHTML = `<div class="blist">${groups.map(([n, ids]) => `<div class="unit">${n}</div>` + ids.map(id => { const s = SLOT[id], p = L[id];
-    return `<div class="blrow"><button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}</button>${p ? `<button type="button" class="blcard" data-p="${p.i}" aria-label="Open ${esc(p.name)}'s player card">Card</button>` : ''}</div>`; }).join('')).join('')}</div>`;
+    return `<div class="blrow"><button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}</button>${p ? `<button type="button" class="blcard" data-p="${p.i}" aria-label="Open ${esc(p.name)}'s player card">Card</button><button type="button" class="blrm" data-rm="${id}" title="Remove ${esc(p.name)} from this spot" aria-label="Remove ${esc(p.name)} from the lineup">×</button>` : ''}</div>`; }).join('')).join('')}</div>`;
   // output
   const near = [...TEAMS].map(t => ({ t, d: Math.sqrt(UNITS.reduce((s, [k]) => s + (t.rt[k] - rt[k]) ** 2, 0)) })).sort((a, b) => a.d - b.d)[0];
   const cmpT = TB[bld.from] || near.t;
@@ -3203,7 +3206,9 @@ picker.addEventListener('click', e => { if (e.target === picker) closePicker(); 
 picker.addEventListener('cancel', () => { bld.on = null; setTimeout(() => { saveBld(); renderBuilder(); }, 0); });
 function wireBuilder() {
   loadBld();
-  $('#tool-build').addEventListener('click', e => { const b = e.target.closest('[data-slot]'); if (b) { e.stopPropagation(); openPicker(b.dataset.slot); } });
+  $('#tool-build').addEventListener('click', e => {
+    const r = e.target.closest('[data-rm]'); if (r) { e.stopPropagation(); delete bld.L[r.dataset.rm]; $('#bld-rand-note').hidden = true; saveBld(); renderBuilder(); return; }
+    const b = e.target.closest('[data-slot]'); if (b) { e.stopPropagation(); openPicker(b.dataset.slot); } });
   $('#bld-team').onchange = e => { const id = e.target.value; if (!TB[id]) return; bld.L = Object.assign({}, TB[id].L); bld.from = id; e.target.value = ''; saveBld(); renderBuilder(); };
   $('#bld-best').onclick = () => { bld.L = buildLineup(PL, 'best'); bld.from = null; saveBld(); renderBuilder(); };
   $('#bld-clear').onclick = () => { bld.L = {}; bld.from = null; $('#bld-rand-note').hidden = true; saveBld(); renderBuilder(); };
