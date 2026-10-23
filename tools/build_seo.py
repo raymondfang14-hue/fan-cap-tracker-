@@ -322,7 +322,7 @@ def player_faq(p, f):
     if f['end'] or f['years']:
         a = f"{poss(n)} contract"
         if f['years']:
-            a += f" is {f['years']} years"
+            a += f" is {f['years']} year{'' if f['years'] == 1 else 's'}"
             a += f" and runs through {f['end']}." if f['end'] else '.'
         else:
             a += f" runs through the {f['end']} season."
@@ -496,7 +496,7 @@ def build_player(p):
         rows.append(('Age', esc(p.age)))
     if has_deal:
         if f['years']:
-            rows.append(('Contract length', f"{f['years']} years"))
+            rows.append(('Contract length', f"{f['years']} year{'' if f['years'] == 1 else 's'}"))
         rows += [('Total value', mon(f['total'])), ('Average per year', mon(f['apy'])), ('Guaranteed', mon(f['gtd'])),
                  ('Fully guaranteed at signing', mon(f['fg'])), ('Signing bonus', mon(f['sb'])),
                  ('Runs through', f['end']), (f'{SEASON_YEAR} cap hit', mon(f['cap']))]
