@@ -26,6 +26,8 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 - Share links: Copy link, Share this and Send to a friend build their address with `shareUrl()` in `src.html` (utm_ tags, and `/players/<name>` or `/draft/<name>` when the page exists). `build_seo.py` writes `data/pageslugs.json` for that lookup; do not edit it by hand.
 
+- Season stats load from small files in `data/hist/` (built by `data/build_hist_split.py`, run by `build_history.py` and `build_history_old.py`): `meta.json`, `s<year>.json`, and 64 player shards `p<NN>.json` keyed by gsis id. The page never loads `history.json` / `history_old.json` (build inputs, kept out of the deployment). Match players by `gid`, never by team, so mid-season trades stay one record.
+
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
 - `python3 -I tools/check_ledger.py` checks `data/ledger.csv` for missing sources, totals that don't add up and duplicates. After adding ledger rows, have the `ledger-checker` agent compare them with their source links.
