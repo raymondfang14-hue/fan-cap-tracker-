@@ -14,7 +14,7 @@ Every NFL contract and team salary cap in plain English, for everyday fans.
 Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Cap Tracker base). The function already points at the Cap Tracker base and its deals table; set `AIRTABLE_BASE_ID` or `AIRTABLE_TABLE` only to use a different one. Without them the page shows its built-in breakdowns.
 
 ## Views
-Open a view directly with its anchor (`#teams` has the power ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
+Open a view directly with its anchor (`#teams` has the roster ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
 
 ## Search pages (players/, teams/, draft/, sitemap.xml)
 `python3 -I tools/build_seo.py` turns the data files into crawlable pages: one for every player with a confirmed contract or 2026 stats, three per team (overview, cap space, dead money), one per draft prospect, and hub pages for teams, players and the draft. Each has its own title, description, plain-English summary, FAQ and schema markup (Person, SportsTeam, FAQPage, BreadcrumbList), and the script rewrites `sitemap.xml` and `tools/seo-nav.html` (the team links `build.sh` adds to the bottom of the home page). Players whose contract is still being verified get `noindex` and stay out of the sitemap until a named report confirms the deal. Run it after every data refresh, then `./build.sh`, then commit.
