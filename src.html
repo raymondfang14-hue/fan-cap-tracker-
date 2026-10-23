@@ -565,6 +565,10 @@ table.t td .pscore{font-size:.86rem;min-width:2.1rem}
 .blist{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .blist button{display:grid;grid-template-columns:3.2rem auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 10px;border:0;border-top:1px solid var(--line);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer;font-size:.84rem}
 .blist button:first-child{border-top:0}
+.blist .blrow{display:grid;grid-template-columns:minmax(0,1fr) auto;border-top:1px solid var(--line);background:var(--surface)}
+.blist .blrow>button{border-top:0}
+.blist .blrow>.blcard{display:block;padding:6px 12px;border-left:1px solid var(--line);color:var(--brand);font-weight:600}
+.blist .unit+.blrow{border-top:0}
 .blist button:hover{background:var(--brand-soft)}
 .blist .sl{font:700 .66rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .blist b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1045,21 +1049,30 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 .ps-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);z-index:70;max-width:min(92vw,420px);padding:11px 16px;border-radius:999px;background:var(--fg);color:var(--bg);font:600 .85rem/1.3 var(--body);text-align:center}
 
 
-/* compare: three or four players side by side */
-.cmpn-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.cmpn{display:grid;grid-template-columns:minmax(76px,.9fr) repeat(var(--n),minmax(80px,1.2fr));gap:10px 10px;align-items:start;font-size:.86rem;min-width:calc(76px + var(--n) * 90px)}
-.cmpn .lab{position:sticky;left:0;background:var(--surface);z-index:1}
-.cmpn .ot{white-space:normal;max-width:100%}
-.cmpn .lab{font:600 .76rem/1.25 var(--body);color:var(--muted)}
+/* compare: three or four players. Desktop: a column per player. Phone: one block per stat, a line per player. */
+.cmpn{display:grid;gap:0;font-size:.86rem}
+.cmpn .cr{display:grid;grid-template-columns:minmax(92px,.9fr) repeat(var(--n),minmax(0,1.2fr));gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}
+.cmpn .cr.hdr{border-top:0}
+.cmpn .lab{font:600 .78rem/1.25 var(--body);color:var(--muted)}
 .cmpn .hd{display:flex;gap:6px;align-items:flex-start;min-width:0}
 .cmpn .hd .nm{display:grid;gap:4px;min-width:0}
 .cmpn .hd b{font:600 .84rem/1.2 var(--body);overflow-wrap:anywhere}
 .cmpn .cn b{font:600 .86rem/1.2 var(--mono)}
 .cmpn .cn.win b{color:var(--good)}
-.cmpn .cn.wrap{display:flex;flex-wrap:wrap;gap:4px}
+.cmpn .cn .pn{display:none}
+.cmpn .cn.wrap .val{display:flex;flex-wrap:wrap;gap:4px}
+.cmpn .ot{white-space:normal;max-width:100%}
 .cmpn .b{display:block;height:8px;border-radius:2px;margin-top:5px}
+@media (max-width:700px){
+  .cmpn .cr.hdr{display:none}
+  .cmpn .cr{display:block;padding:12px 0}
+  .cmpn .cr>.lab{color:var(--fg);font-weight:700;font-size:.84rem;margin-bottom:6px}
+  .cmpn .cn:not(.lab){display:grid;grid-template-columns:7.2rem minmax(3.6rem,max-content) minmax(0,1fr);gap:8px;align-items:center;padding:3px 0}
+  .cmpn .cn .pn{display:flex;gap:6px;align-items:center;min-width:0;color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cmpn .cn .b{margin:0;height:8px;align-self:center}
+  .cmpn .cn.wrap{grid-template-columns:7.2rem minmax(0,1fr);align-items:start}
+}
 #tool-compare .cmp-rm{margin-top:6px}
-@media (min-width:700px){.cmpn-hint{display:none}}
 </style>
 
 <header class="gn" id="gn">
@@ -3135,7 +3148,7 @@ function renderBuilder() {
   $('#bld-field').innerHTML = lineupFieldHTML(L, true, bld.on);
   const groups = [['Offense', ['QB', 'RB', 'WR1', 'WR2', 'WR3', 'TE', 'LT', 'LG', 'C', 'RG', 'RT']], ['Defense', ['EDGE1', 'IDL1', 'IDL2', 'EDGE2', 'LB1', 'LB2', 'CB1', 'CB2', 'CB3', 'S1', 'S2']], ['Specialists', ['K', 'P', 'LS']]];
   $('#bld-list').innerHTML = `<div class="blist">${groups.map(([n, ids]) => `<div class="unit">${n}</div>` + ids.map(id => { const s = SLOT[id], p = L[id];
-    return `<button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}</button>`; }).join('')).join('')}</div>`;
+    return `<div class="blrow"><button type="button" data-slot="${id}"><span class="sl">${esc(id === 'WR3' ? 'Slot' : id === 'CB3' ? 'Nickel' : id.replace(/[12]$/, '').replace('IDL', 'DT'))}</span>${p ? crest(p.team, 18) : '<span style="width:18px"></span>'}<b${p ? '' : ' style="color:var(--muted);font-weight:500"'}>${p ? esc(p.name) : 'Open · tap to pick'}</b>${p ? (p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '<span class="pscore" style="--pc:var(--c-space)">—</span>') : '<span></span>'}</button>${p ? `<button type="button" class="blcard" data-p="${p.i}" aria-label="Open ${esc(p.name)}'s player card">Card</button>` : ''}</div>`; }).join('')).join('')}</div>`;
   // output
   const near = [...TEAMS].map(t => ({ t, d: Math.sqrt(UNITS.reduce((s, [k]) => s + (t.rt[k] - rt[k]) ** 2, 0)) })).sort((a, b) => a.d - b.d)[0];
   const cmpT = TB[bld.from] || near.t;
@@ -3168,7 +3181,7 @@ function openPicker(id) {
     <div class="controls"><label class="f" for="pk-q" style="flex:1 1 200px">Search<input id="pk-q" type="search" placeholder="Name or team" autocomplete="off"></label>
       <div class="seg" id="pk-sort" role="group" aria-label="Sort players" style="align-self:end">${[['play', 'Best play'], ['name', 'A to Z']].map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${bld.sort === k}">${l}</button>`).join('')}</div></div>
     <div class="pklist" id="pk-list"></div>
-    <div class="controls" style="justify-content:space-between"><span class="note">Players already in your lineup move to this spot if picked.</span>${cur ? '<button type="button" class="btn ghost" id="pk-clear">Leave this spot open</button>' : ''}</div>`;
+    <div class="controls" style="justify-content:space-between"><span class="note">Players already in your lineup move to this spot if picked.</span>${cur ? `<span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ghost" id="pk-card">View ${esc(lastName(cur.name))}'s card</button><button type="button" class="btn ghost" id="pk-clear">Leave this spot open</button></span>` : ''}</div>`;
   const draw = () => {
     const { list, used } = bldAvailable(s);
     $('#pk-list').innerHTML = list.map(p => { const at = used.get(p);
@@ -3181,6 +3194,7 @@ function openPicker(id) {
     Object.keys(bld.L).forEach(k => { if (bld.L[k] === p) delete bld.L[k]; }); bld.L[id] = p; closePicker(); };
   $('#pk-x').onclick = closePicker;
   const c = $('#pk-clear'); if (c) c.onclick = () => { delete bld.L[id]; closePicker(); };
+  const cd = $('#pk-card'); if (cd) cd.onclick = () => { const pl = cur; closePicker(); openPlayer(pl.i); };
   if (!picker.open) { try { picker.showModal(); } catch (e) { picker.setAttribute('open', ''); } }
   renderBuilder();
 }
@@ -3828,9 +3842,10 @@ function radarMulti(ps) {
 }
 /* three or four players: one column per player, label on the left */
 function cmpGrid(ps, rows) {
-  const head = '<div class="cn lab"></div>' + ps.map((p, i) => `<div class="cn hd"><i class="swatch" style="background:${CMP_COLS[i]}"></i><span class="nm">${badge(p.team)}<b>${esc(p.name)}</b></span></div>`).join('');
-  const body = rows.map(r => `<div class="cn lab" title="${esc(r.sub || '')}">${esc(r.lab)}</div>` + r.cells.map((c, i) => `<div class="cn${c.win ? ' win' : ''}${c.wrap ? ' wrap' : ''}">${c.html}${c.bar != null ? `<i class="b" style="width:${Math.max(0, c.bar * 100).toFixed(0)}%;background:${CMP_COLS[i]}"></i>` : ''}</div>`).join('')).join('');
-  return `<div class="cmpn-wrap"><div class="cmpn" style="--n:${ps.length}">${head}${body}</div></div><p class="note cmpn-hint">On a small screen, scroll sideways to see every player.</p>`;
+  const short = p => p.name.charAt(0) + '. ' + lastName(p.name);
+  const head = `<div class="cr hdr"><div class="cn lab"></div>${ps.map((p, i) => `<div class="cn hd"><i class="swatch" style="background:${CMP_COLS[i]}"></i><span class="nm">${badge(p.team)}<b>${esc(p.name)}</b></span></div>`).join('')}</div>`;
+  const body = rows.map(r => `<div class="cr"><div class="cn lab" title="${esc(r.sub || '')}">${esc(r.lab)}</div>${r.cells.map((c, i) => `<div class="cn${c.win ? ' win' : ''}${c.wrap ? ' wrap' : ''}"><span class="pn"><i class="swatch" style="background:${CMP_COLS[i]}"></i>${esc(short(ps[i]))}</span><span class="val">${c.html}</span>${c.bar != null ? `<i class="b" style="width:${Math.max(0, c.bar * 100).toFixed(0)}%;background:${CMP_COLS[i]}"></i>` : ''}</div>`).join('')}</div>`).join('');
+  return `<div class="cmpn" style="--n:${ps.length}">${head}${body}</div>`;
 }
 function cmpContractN(ps) {
   const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
