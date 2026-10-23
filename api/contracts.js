@@ -30,14 +30,6 @@ function toContract(f) {
     sources: sourcesOf(f)
   };
   if (f.ThisSeasonCapHit !== undefined && f.ThisSeasonCapHit !== '') c.hit = num(f.ThisSeasonCapHit);
-  if (f.TableRows) {
-    c.table = {
-      title: f.TableTitle || 'Cap hit by year',
-      cols: parts(f.TableCols || ''),
-      rows: lines(f.TableRows).map(parts),
-      note: f.TableNote || ''
-    };
-  }
   return c;
 }
 
