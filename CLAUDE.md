@@ -34,3 +34,6 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 ## Shipping
 - Push changes to GitHub without asking first (standing instruction from the owner).
 - Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
+
+## Keeping the setup private
+- `.vercelignore` keeps notes, build scripts, `src.html`, `tools/` and raw sources (`data/*.py`, `*.csv`, `*.txt`, `cba.json`, `years_calc.json`) out of the public deployment. If the page starts loading a new `data/` file, make sure it is not matched there. Keep the GitHub repo private.

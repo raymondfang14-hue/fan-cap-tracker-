@@ -1,0 +1,16 @@
+# Keep the build setup, notes and raw sources out of the public deployment.
+# The site itself only needs the html pages, assets, api/, og-data/ and the data/*.json files it loads.
+CLAUDE.md
+README.md
+build.sh
+src.html
+tools
+.claude
+.mcp.json
+.gitignore
+__pycache__
+data/*.py
+data/*.csv
+data/*.txt
+data/cba.json
+data/years_calc.json
