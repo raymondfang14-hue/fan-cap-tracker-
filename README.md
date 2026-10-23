@@ -50,3 +50,6 @@ The Draft page covers the 2027 class: a big board, a full page for each prospect
 - Contracts > Best & worst: market value is today's price for a player who ranks where he ranks on the field (data/market.json), minus his yearly pay.
 - Contracts > Rookie deals: draft classes matched to contracts by name and team; fifth-year option prices are rough CBA estimates.
 - Tools > Offseason: 2027 cap room is estimated from every contract on the site; release, restructure, re-sign, tag and free-agent costs are PlainStats estimates, and moves are saved per team in the browser.
+
+## Hosted "Suggest a fix" form
+Every "Suggest a fix" link (the app footer, player sheets, and the footer of each generated page) can open a Tally or Google Form instead of an email. Set `const FIX_FORM = '...'` in `src.html` (one line, read by `tools/build_seo.py` too); `{page}`, `{about}` and `{kind}` in the address are filled in with the page address, the player or team and the fix type. Tally: add hidden fields named `page` and `about`. Google Forms: use the "Get pre-filled link" address with `{page}` as the value. Empty keeps the old email form. When it is set, update the "Suggest a fix" paragraph in `privacy.html` (it says the form only opens an email app), then rerun `python3 -I tools/build_seo.py` and `./build.sh`.

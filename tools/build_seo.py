@@ -23,12 +23,22 @@ Data rules (CLAUDE.md) are enforced here, not just in the page:
 
 Re-run after every data refresh (build.sh does it too), then commit the generated folders and sitemap.xml.
 """
-import csv, datetime as dt, html, json, pathlib, re, shutil, unicodedata
+import csv, datetime as dt, html, json, pathlib, re, shutil, unicodedata, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / 'data'
 SITE = 'https://www.plainstatsnfl.com'
 EMAIL = 'info@plainstatsnfl.com'
+# The hosted fix form lives in src.html (const FIX_FORM = '...'); empty means the pages fall back to a mailto link.
+_ff = re.search(r"const FIX_FORM = '([^']*)'", (ROOT / 'src.html').read_text(encoding='utf-8'))
+FIX_FORM = _ff.group(1) if _ff else ''
+
+FIX_ATTR = ' target="_blank" rel="noopener"' if FIX_FORM else ''
+
+def fix_href(path):
+    if FIX_FORM:
+        return html.escape(FIX_FORM.replace('{page}', urllib.parse.quote(SITE + path, safe='')).replace('{about}', urllib.parse.quote(path, safe='')).replace('{kind}', ''), quote=True)
+    return f'mailto:{EMAIL}?subject=Suggest%20a%20fix%3A%20{html.escape(path)}'
 
 NFL = json.loads((DATA / 'nfl.json').read_text())
 SEASON = json.loads((DATA / 'season.json').read_text())
@@ -418,7 +428,7 @@ def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), ca
         crumb_html = '<nav class="crumbs" aria-label="Breadcrumb">' + ' › '.join(
             f'<a href="{esc(u)}">{esc(n)}</a>' for n, u in crumbs[:-1]) + (' › ' if len(crumbs) > 1 else '') + esc(crumbs[-1][0]) + '</nav>'
     meta_robots = f'<meta name="robots" content="{robots}">' if robots else ''
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="mailto:{EMAIL}?subject=Suggest%20a%20fix%3A%20{esc(path)}">Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
 
 
 def faq_html(faq):

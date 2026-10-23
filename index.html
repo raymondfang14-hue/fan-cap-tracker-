@@ -3754,10 +3754,15 @@ function buildContractControls() {
 
 /* ===== suggest a fix ===== */
 const fixDlg = $('#fix'), FIXTO = 'info@plainstatsnfl.com';
+// Hosted "Suggest a fix" form (Tally or Google Forms). Leave '' to use the email form below. tools/build_seo.py reads this same line for the static pages.
+// {page} {about} {kind} in the address are filled in (Tally hidden fields take ?page=...; Google Forms needs ?entry.NNN={page}). Update privacy.html when this is set.
+const FIX_FORM = '';
+const fixFormURL = ctx => FIX_FORM.replace(/\{(page|about|kind)\}/g, (_, k) => encodeURIComponent(k === 'page' ? ctx.link : k === 'about' ? (ctx.label || document.title || '') : (ctx.kind || '')));
 let fixCtx = { label: '', link: '' };
 function openFix(ctx) {
   fixCtx = ctx || { label: '', link: location.href };
   if (!fixCtx.link) fixCtx.link = location.href;
+  if (FIX_FORM) { window.open(fixFormURL(fixCtx), '_blank', 'noopener'); return; }
   $('#fx-ctx').textContent = fixCtx.label ? 'About: ' + fixCtx.label : 'About: ' + (document.title || 'this page');
   $('#fx-kind').value = fixCtx.kind || 'Contract figure'; $('#fx-msg').value = ''; $('#fx-url').value = '';
   fixHint();
