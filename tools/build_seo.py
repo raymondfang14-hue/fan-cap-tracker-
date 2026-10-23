@@ -105,6 +105,18 @@ PAGEMAP = {'p': {}, 'd': {}}
 # Vercel Web Analytics (cookieless page counts). Only runs on the live domains; the file is 404 until it is switched on in the Vercel dashboard.
 VA = "<script>if(/(^|\\.)plainstatsnfl\\.com$/.test(location.hostname)){window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};var s=document.createElement('script');s.defer=true;s.src='/_vercel/insights/script.js';document.head.appendChild(s)}</script>"
 
+# Google Analytics 4, same rules as the app (src.html): live domain only, nothing loads until the visitor clicks Accept,
+# and the choice is shared through the same localStorage key (pc.consent) so a visitor is asked once across the whole site.
+GA = ("<script>(function(){if(!/(^|\\.)plainstatsnfl\\.com$/.test(location.hostname))return;var ID='G-PLKGBKTLC3',K='pc.consent',c=null;"
+      "try{c=JSON.parse(localStorage.getItem(K))}catch(e){}"
+      "function load(){if(window.__ga)return;window.__ga=1;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+ID;document.head.appendChild(s);"
+      "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config',ID,{anonymize_ip:true})}"
+      "function decide(v){try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}var b=document.getElementById('consent');if(b)b.remove();if(v==='yes')load()}"
+      "if(c==='yes')load();else if(c===null)document.addEventListener('DOMContentLoaded',function(){var b=document.createElement('div');b.className='consent';b.id='consent';b.setAttribute('role','dialog');b.setAttribute('aria-label','Cookie choices');"
+      "b.innerHTML='<p>PlainStats uses cookies for visit counts. You can accept, or decline and still use everything. <a href=\"/privacy\">Details</a></p><div class=\"row\"><button type=\"button\" data-c=\"no\">Decline</button><button type=\"button\" data-c=\"yes\">Accept</button></div>';"
+      "b.addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(t)decide(t.dataset.c)});document.body.appendChild(b)})})();</script>")
+
+
 
 def mon(n, d=1):
     if n is None:
@@ -407,7 +419,11 @@ table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:
 .faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
 ul.list{columns:2 220px;list-style:none;padding:0;margin:0}ul.list li{padding:3px 0;break-inside:avoid}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
-footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}"""
+footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}
+.consent{position:fixed;z-index:60;left:12px;right:12px;bottom:12px;max-width:560px;margin-inline:auto;background:var(--sf);color:var(--fg);border:1px solid var(--ln);border-radius:18px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.18);display:grid;gap:12px;font-size:.88rem;line-height:1.45}
+.consent p{margin:0;color:var(--mu)}.consent a{color:var(--lk)}.consent .row{display:flex;gap:10px;justify-content:flex-end}
+.consent button{font:inherit;font-weight:600;border-radius:980px;padding:8px 16px;cursor:pointer;border:1px solid var(--ln);background:transparent;color:var(--fg)}.consent button[data-c=yes]{background:var(--br);border-color:var(--br);color:#fff}
+@media(min-width:900px){.consent{left:20px;right:auto;bottom:20px;margin:0}}"""
 
 
 def ld(obj):
@@ -435,7 +451,7 @@ def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), ca
         crumb_html = '<nav class="crumbs" aria-label="Breadcrumb">' + ' › '.join(
             f'<a href="{esc(u)}">{esc(n)}</a>' for n, u in crumbs[:-1]) + (' › ' if len(crumbs) > 1 else '') + esc(crumbs[-1][0]) + '</nav>'
     meta_robots = f'<meta name="robots" content="{robots}">' if robots else ''
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}{VA}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}{VA}{GA}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
 
 
 def faq_html(faq):
