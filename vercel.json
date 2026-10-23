@@ -27,5 +27,18 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "fan-cap-tracker.vercel.app"
+        }
+      ],
+      "destination": "https://www.plainstatsnfl.com/:path*",
+      "permanent": true
+    }
   ]
 }

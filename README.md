@@ -46,7 +46,7 @@ The Draft page covers the 2027 class: a big board, a full page for each prospect
 
 ## Season stats, links, value, rookie deals (#stats, #p-..., #value, #rookies)
 - `data/history.json`: regular-season box scores for every player from 2023 to the current season, plus this season's game log, built by `python3 -I data/build_history.py <dir> <season>` from nflverse `stats_player_week_<S>.csv` files. `data/drafted.json` (the last six draft classes, from nflverse `draft_picks.csv`) is written by the same script. `data/history_old.json` holds season totals (no game logs) from 1999 up to the season before history.json starts, only for players on a current roster; `python3 -I data/build_history_old.py <dir>` builds it from nflverse `stats_player_reg_<S>.csv` and re-matches the roster, so new signings pick up earlier seasons, and the page loads it only when a player's Stats tab opens. Weekly game logs are kept for the current season only. All of these load only when someone opens the Season stats tab, a player's Stats tab, or the Contracts page tabs.
-- Links: every player opens at `#p-<first-last>-<team>` and every draft prospect at `#d-<id>`; the player and prospect pages have a Copy link button that copies the Vercel address.
+- Links: every player opens at `#p-<first-last>-<team>` and every draft prospect at `#d-<id>`; the player and prospect pages have a Copy link button that copies the www.plainstatsnfl.com address.
 - Contracts > Best & worst: market value is today's price for a player who ranks where he ranks on the field (data/market.json), minus his yearly pay.
 - Contracts > Rookie deals: draft classes matched to contracts by name and team; fifth-year option prices are rough CBA estimates.
 

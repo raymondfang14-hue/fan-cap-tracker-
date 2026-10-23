@@ -677,13 +677,6 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 .cal .past{opacity:.55}
 @media (max-width:560px){.cal a,.cal div{grid-template-columns:minmax(0,1fr)}.yb{grid-template-columns:2.8rem minmax(0,1fr) 4.6rem}.yb .s{display:none}.fap{grid-template-columns:5rem minmax(0,1fr) 5rem}}
 
-.pffbox{display:grid;gap:8px;padding:12px 14px;border-radius:var(--r);background:var(--surface-2);box-shadow:inset 3px 0 0 var(--gold)}
-.pffg{display:flex;gap:20px;flex-wrap:wrap}
-.pffg>div{display:grid;gap:2px}
-.pffg small{font:600 .6rem/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.pffg b{font:800 1.4rem/1 var(--display);font-stretch:80%}
-.pffg span{font-size:.78rem;color:var(--muted)}
-.pffl{display:grid;gap:3px;font-size:.84rem;color:var(--muted);padding-left:1.1rem;list-style:disc}
 /* draft page */
 .row-btn{border:0;background:none;padding:0;cursor:pointer;text-align:left;color:inherit;font:inherit}
 .row-btn:hover b,.row-btn:hover{color:var(--brand)}
@@ -1013,11 +1006,11 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
    The first layer set small labels in tracked all-caps mono. The storefront look reads them in sentence case,
    in the body face, so labels stop shouting over the numbers they describe. */
 .bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.awc .aw-k,.watch b,.cmprow .lab,.fc-nums small,.ring,
-.heat th,.pvps .q,.bigplay small,.pffg small,table.t th,.tier b,.vlab,.coachcard b,.sh-top h3,.dpos h3,
+.heat th,.pvps .q,.bigplay small,table.t th,.tier b,.vlab,.coachcard b,.sh-top h3,.dpos h3,
 .blist .sl,.blist .unit,.rkpill,.slot .sp,.kind,.outlook,.rookie,.srcb,.role,.ad::before,
 .tt-row>small,.cplink,.fieldd .los span,.drow .dn{
   text-transform:none!important;letter-spacing:0!important;font-family:var(--body)!important}
-.bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.fc-nums small,.bigplay small,.pffg small,.tt-row>small{font-size:.74rem!important;font-weight:500!important}
+.bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.fc-nums small,.bigplay small,.tt-row>small{font-size:.74rem!important;font-weight:500!important}
 table.t th{font-size:.76rem!important;font-weight:600!important}
 .kind,.outlook,.rookie,.srcb,.role{font-size:.72rem!important;font-weight:600!important;border-radius:6px}
 /* A word-valued tile shrinks to fit its tile instead of breaking mid-word ("Quarterback s"). */
@@ -2332,10 +2325,6 @@ const ROLE_DESC = {
   'Two-way tight end': 'Plays most snaps and is part of the passing game.',
   'Rotational tight end': 'Shares time at tight end.',
   'Depth tight end': 'Rarely on the field on offense.',
-  'Blindside protector': 'A tackle whose PFF pass-block grades this season average 84 or better, well ahead of his run blocking.',
-  'Pass-pro specialist': 'An interior lineman whose PFF pass-block grades this season average 84 or better, well ahead of his run blocking.',
-  'Road grader': 'A lineman whose PFF run-block grades this season average 85 or better, ahead of his pass blocking.',
-  'Two-way anchor': 'PFF pass-block grades of 84+ and run-block grades of 85+ this season.',
   'Every-snap starter': 'Has played at least 97% of his team\'s offensive snaps.',
   'Starter': 'A regular starter on the line.',
   'Fill-in starter': 'Has started part of the season, often for an injured player.',
@@ -2484,7 +2473,6 @@ const ROLES = {
     ['Two-way tight end', 'u', p => (p.st.opg || 0) >= .55],
     ['Rotational tight end', 'u', p => (p.st.opg || 0) >= .2], ['Depth tight end', 'u', () => true]]),
   OL: mkRoles([
-    ['__pff', null, p => !!pffRole(p)],
     ['Flag magnet', null, p => { const s = p.st; return (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1 && p.fq && pcv(p, 'penr') <= .12; }],
     ['Penalty-free starter', null, p => { const s = p.st; return (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1 && !sm(p).pen && (s.osn || 0) >= 30 * W(); }],
     ['Line quarterback', null, p => { const s = p.st; return p.sg === 'C' && (s.opg || 0) >= .6 && s.g >= (s.tg || THRU) - 1; }],
@@ -2555,7 +2543,6 @@ const ROLES = {
     ['Net master', null, Qd(p => pcv(p, 'pnet') >= .8)],
     ['Workhorse punter', null, Qd(p => (sm(p).pun || 0) / gp(p) >= 4)]], 'Punter')
 };
-{ const olr = ROLES.OL; ROLES.OL = p => olr(p).map(r => r === '__pff' ? pffRole(p) : r); }
 OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
 // On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
 // Traits are percentile tiers (gold 94+, silver 84+, bronze 72+) on stats that no role is built on, so a trait never repeats a role.
@@ -2630,56 +2617,7 @@ function attachStats(sd) {
   });
 }
 
-/* ===== PFF public in-season data: weekly QB/WR rankings, top game grades, Team of the Week, rookie rankings (weighted lightly) ===== */
-let PFF = null, PFFOL = null, OLWK = 0;
-const PFF_W = 0.25;
-const PFFH = { QB: ['QB'], RB: ['RB'], HB: ['RB'], WR: ['WR'], TE: ['TE'], OL: OL_G, EDGE: ['EDGE'], DT: ['DT'], LB: ['LB'], CB: ['CB'], S: ['S'], DB: ['CB', 'S'], DEF: ['EDGE', 'DT', 'LB', 'CB', 'S'] };
-const PFF_FAC = { pb: 'pass block', rb: 'run block', pas: 'passing', rec: 'receiving', cov: 'coverage', rd: 'run defense', pr: 'pass rush', rush: 'rushing' };
-function attachPFF(px) {
-  PFF = px; PL.forEach(p => { p.pff = null; p.pffol = null; });
-  if (!px) return;
-  const canon = k => { const w = k.split(' '); w[0] = NICK[w[0]] || w[0]; return w.join(' '); };
-  const variants = k => [...new Set([k, canon(k), ALIAS[k], ALIAS[k] && canon(ALIAS[k])].filter(Boolean))];
-  const byK = {};
-  PL.forEach(p => variants(nkey(p.name)).forEach(k => ((byK[k] = byK[k] || []).includes(p) || byK[k].push(p))));
-  const sideOf = g => GROUP_SIDE[g] || 'st';
-  const find = (n, t, pos) => { const gs = PFFH[pos]; if (!gs) return null; const all = [...new Set(variants(nkey(n)).flatMap(k => byK[k] || []))], inG = all.filter(p => gs.includes(p.group)), inS = all.filter(p => sideOf(p.group) === sideOf(gs[0]));
-    return inG.find(p => p.team === t) || inS.find(p => p.team === t) || all.find(p => p.team === t) || (inG.length === 1 ? inG[0] : inS.length === 1 ? inS[0] : null); };
-  const get = p => p.pff || (p.pff = { rank: null, rookie: null, tow: [], games: [] });
-  Object.entries(px.rank || {}).forEach(([g, rows]) => rows.forEach(e => { const p = find(e.n, e.t, g); if (p) get(p).rank = { g, r: e.r, n: rows.length, grade: e.g, note: e.note }; }));
-  (px.rookies || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).rookie = { r: e.r, grade: e.g }; });
-  (px.tow || []).forEach(([wk, n, t, pos]) => { const p = find(n, t, pos); if (p) get(p).tow.push(wk); });
-  (px.games || []).forEach(e => { const p = find(e.n, e.t, e.pos); if (p) get(p).games.push(e); });
-  (px.ol || []).forEach(e => { const p = find(e.n, e.t, 'OL'); if (p) (p.pffol = p.pffol || []).push(e); });
-}
-const pffFac = (p, k) => { const v = (p.pff.games || []).map(x => x.f && x.f[k]).filter(v => v != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
-function pffSig(p) {
-  const f = p.pff; if (!f) return null; const parts = [];
-  if (f.rank) parts.push(1 - (f.rank.r - 1) / (f.rank.n - 1));
-  if (f.rookie) parts.push(0.6 + 0.4 * (1 - (f.rookie.r - 1) / 14));
-  const gs = f.games.map(x => x.ovr).filter(v => v != null);
-  if (f.games.length || f.tow.length) { const g = gs.length ? Math.max(0, Math.min(1, (gs.reduce((a, b) => a + b, 0) / gs.length - 70) / 30)) : 0.5; parts.push(Math.min(1, 0.5 + 0.1 * f.tow.length + 0.35 * g)); }
-  return parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null;
-}
-function pffRole(p) {
-  if (!p.pff || !OL_G.includes(p.group)) return null;
-  const pb = pffFac(p, 'pb'), rb = pffFac(p, 'rb'); if (pb == null && rb == null) return null;
-  const pe = pb != null && pb >= 84, re = rb != null && rb >= 85;
-  if (pe && re) return 'Two-way anchor';
-  if (pe && (rb == null || pb - rb >= 8)) return /^(LT|RT)$/.test(p.pos) ? 'Blindside protector' : 'Pass-pro specialist';
-  if (re && (pb == null || rb - pb >= 5)) return 'Road grader';
-  return null;
-}
-const pffHTML = p => { const f = p.pff; if (!f || !(f.rank || f.rookie || f.tow.length || f.games.length)) return '';
-  const it = (k, v, s) => `<div><small>${k}</small><b class="num">${v}</b><span>${s}</span></div>`, bits = [];
-  if (f.rank) bits.push(it(`Weekly ${f.rank.g} ranking`, '#' + f.rank.r, `of ${f.rank.n}${f.rank.grade != null ? ' · grade ' + f.rank.grade.toFixed(1) : ''}`));
-  if (f.rookie) bits.push(it('Rookie rank', '#' + f.rookie.r, `${f.rookie.grade.toFixed(1)} through Week 5`));
-  if (f.tow.length) bits.push(it('Team of the Week', f.tow.length + '×', 'Week' + (f.tow.length > 1 ? 's ' : ' ') + [...new Set(f.tow)].sort((a, b) => a - b).join(', ')));
-  const gl = f.games.map(x => `Week ${x.wk}: ${x.ovr != null ? x.ovr.toFixed(1) + ' overall' : 'top performer'}${Object.keys(x.f || {}).length ? ' (' + Object.entries(x.f).map(([k, v]) => `${PFF_FAC[k] || k} ${v.toFixed(1)}`).join(', ') + ')' : ''}`);
-  return `<div class="pffbox"><span class="eyebrow">PFF this season · public weekly pages</span><div class="pffg">${bits.join('')}</div>${gl.length ? `<ul class="pffl">${gl.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}<p class="note">PFF only publishes grades for its top performers each week, so a missing grade does not mean a bad week. These pages count for ${Math.round(PFF_W * 100)}% of his rating.</p></div>`; };
-const pffolHTML = p => { const r = p.pffol; if (!r || !r.length) return '';
-  const lab = (PFFOL && PFFOL.labels) || {};
-  return `<div class="pffbox"><span class="eyebrow">PFF figures on him this season · free public pages</span><ul class="pffl">${r.map(x => `<li>${esc((lab[x.sc] || 'Recent') + ': ' + x.bits.join(' · '))}</li>`).join('')}</ul><p class="note">PFF names only some linemen in its free weekly articles, so a lineman who is not listed here was simply not mentioned. These figures are shown for context and do not change his rating.</p></div>`; };
+let OLWK = 0;
 function calcTraits(p, g) {
   Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
     if (groups !== 'ALL' && !groups.includes(g)) return;
@@ -2709,7 +2647,6 @@ function analyzeField() {
     const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
     const cs = qs.map(comp);
     qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
-    qs.forEach(p => { const sg = pffSig(p); if (sg != null) { p.spct = p.playPct; p.playPct = (1 - PFF_W) * p.spct + PFF_W * sg; p.play = Math.round(40 + 59 * p.playPct); } });
     [...qs].sort((a, b) => b.playPct - a.playPct || b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
     all.forEach(p => { p.roles = ROLES[g](p); p.role = p.roles[0] || ''; });
     all.forEach(p => calcTraits(p, g));
@@ -2770,8 +2707,6 @@ function fieldHTML(p) {
       </div>
     </div>
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
-    ${pffHTML(p)}
-    ${pffolHTML(p)}
     ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
     <div class="stiles">${tiles}</div>
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
@@ -4789,7 +4724,7 @@ function pScout(p) {
 function pPay(p) {
   const pk = projPick(p), sl = slotVal(pk), yr = sl / 4, vt = vetTop(p.grp), r1 = pk <= 32;
   const bonus = r1 ? sl * (pk <= 10 ? .66 : .55) : sl * .3;
-  const sal = sl - bonus, capRows = [.16, .22, .28, .34].map((f, k) => [2027 + k, bonus / 4 + sal * f]);
+  const sal = sl - bonus;
   return `<div class="sh" style="padding:0">
     <div class="bigrow"><div><span class="k">Projected pick</span><div class="v">No. ${pk}</div></div><div><span class="k">4-year value</span><div class="v">${mon(sl)}</div></div><div><span class="k">Per year</span><div class="v">${mon(yr)}</div></div></div>
     <p class="note">${p.mock ? `From PlainStats's model mock, where the ${esc(TB[p.mock.own].name)} take him.` : `He is not in the model's first round, so this uses his board rank plus a small cushion: round ${roundOf(pk)}.`} 2027 values are estimates from the 2026 rookie scale, grown with the cap.</p>
@@ -4798,7 +4733,6 @@ function pPay(p) {
       <div class="dbar" role="img" aria-label="Signing bonus about ${mon(bonus)}, salaries about ${mon(sl - bonus)}"><i style="width:${(bonus / sl * 100).toFixed(1)}%;background:var(--gtd)"></i><i style="width:${(100 - bonus / sl * 100).toFixed(1)}%;background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i></div>
       <ul class="legend"><li><i class="swatch" style="background:var(--gtd)"></i><span>Signing bonus, paid up front<b>${mon(bonus)}</b></span></li><li><i class="swatch" style="background:${r1 ? 'var(--gtd2)' : 'var(--c-space)'}"></i><span>Salaries, years 1 to 4${r1 ? ', guaranteed' : ''}<b>${mon(sl - bonus)}</b></span></li></ul>
     </div>
-    <div style="display:grid;gap:6px"><span class="eyebrow">Estimated cap hit by year</span><div class="cols" style="height:140px">${capRows.map(([y, v]) => `<div class="col"><span class="amt">${mon(v)}</span><span class="bx" style="height:${(v / capRows[3][1] * 100).toFixed(0)}%"></span><span class="lab">${y}</span></div>`).join('')}</div></div>
     ${vt ? `<div style="display:grid;gap:6px"><div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Vs. a top-10 veteran ${esc(DR_WORD[p.grp])}</span><b class="num">${mon(vt)} a year</b></div><div class="meter"><i style="width:${Math.min(100, yr / vt * 100).toFixed(1)}%"></i></div><span class="note">His rookie deal would cost ${pct(yr / vt)} as much, saving about ${mon(Math.max(0, vt - yr))} a year if he plays like a top-10 starter.</span></div>` : ''}
     <div class="rows">
       <div><span>Contract length</span><b>4 years${r1 ? ' + 5th-year option' : ''}</b></div>
@@ -4846,7 +4780,7 @@ function renderHomeDraft() {
 }
 
 /* ===== shareable links: #p-<name>-<team> opens a player, #d-<id> a draft prospect ===== */
-const SITE_URL = 'https://fan-cap-tracker.vercel.app/';
+const SITE_URL = 'https://www.plainstatsnfl.com/';
 const slugify = s => String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[.'’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const pSlug = p => 'p-' + slugify(p.name) + '-' + p.team.toLowerCase();
 const dSlug = p => 'd-' + p.id;
@@ -5177,7 +5111,6 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   $('#foot-asof').textContent = `Contract figures as of ${ds}. PlainStats builds them from news reports and team announcements, the rookie pay scale and the CBA; players whose contracts are not confirmed yet show "Contract being verified" with no dollar figures. PlainStats is not affiliated with the NFL, the NBA or any team.`;
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
-  attachPFF(px);
   analyzeField();
   if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   analyzeTeams(); analyzeYears(); wireFA(); wireBuilder();
@@ -5207,7 +5140,6 @@ route();
 Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), Promise.resolve(null), getJSON('data/freeagency.json').catch(() => null), Promise.resolve(null), Promise.resolve(null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), Promise.resolve(null), getJSON('data/market.json').catch(() => null)])
   .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po, mk]) => { if (as && as.teams) ASSETS = as; if (mk && mk.ladder) MKT = mk;
     if (sd && ow && ow.teams) { OLWK = ow.thru || 0; sd.teams = sd.teams || {}; Object.entries(ow.teams).forEach(([t, v]) => { sd.teams[t] = Object.assign(sd.teams[t] || {}, v); }); }
-    if (po && po.rows) { PFFOL = po; px = px || { rank: {}, rookies: [], tow: [], games: [] }; px.ol = po.rows; }
     if (ol && ol.pos) d.players.forEach(p => { if (['LT','LG','C','RG','RT'].includes(p[2])) { const k = p[1] + '|' + p[0].normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'’\-]/g, '').replace(/\b(jr|sr|ii|iii|iv)\b/g, '').replace(/\s+/g, ' ').trim(); if (ol.pos[k]) p[2] = ol.pos[k]; } }); boot(d, mv, sd, se, ty, fx, yx, px); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; $('#kpis').innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
 if (API) getJSON(API).then(j => { if (j && Array.isArray(j.contracts) && j.contracts.length) { DEALS = j.contracts.map(c => Object.assign({ facts: [], bar: [] }, c)); if (D) renderDeals(); $('#deals-src').textContent = 'Each breakdown is checked against the named reports linked on its card.'; } }).catch(() => {});
