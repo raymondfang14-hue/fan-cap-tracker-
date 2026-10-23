@@ -901,6 +901,9 @@ table.t td{border-top-color:var(--line)}
 dialog#sheet,dialog#picker,dialog#fix{border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
 dialog#fix{border:0;padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 40px);background:var(--surface);color:var(--fg)}
 dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{background:var(--scrim);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+#sheet-body>div{contain:layout style}
+.seg button,.chip,.sim,.fc{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media (max-width:760px){dialog#sheet,dialog#picker{box-shadow:none}.fc,.kpi,.tile{transition:none}}
 @media (max-width:760px){dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none}}
 .badge{border-radius:6px}
 
@@ -1911,6 +1914,8 @@ table.t th{font-size:.76rem!important;font-weight:600!important}
 /* ===== helpers ===== */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+/* run low-priority work (prefetching season stats, saving the tab choice) when the browser is idle */
+const idle = window.requestIdleCallback ? f => requestIdleCallback(f, { timeout: 2500 }) : f => setTimeout(f, 80);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // Links and images from data files only ever point at http(s). Anything else (javascript:, data:) becomes empty.
 const safeUrl = u => /^https?:\/\//i.test(String(u || '').trim()) ? esc(String(u).trim()) : '';
@@ -2068,7 +2073,7 @@ document.addEventListener('input', e => {
   const table = c.closest('table'), key = colKey(table); (COLF[key] = COLF[key] || {})[c.dataset.cf] = c.value; applyTF(table);
 });
 let cfQueued = false;
-new MutationObserver(() => { if (cfQueued) return; cfQueued = true; requestAnimationFrame(() => { cfQueued = false; enhanceTables(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+new MutationObserver(muts => { if (cfQueued || muts.every(m => m.target.closest && m.target.closest('#sheet-body'))) return; cfQueued = true; requestAnimationFrame(() => { cfQueued = false; enhanceTables(); }); }).observe(document.documentElement, { childList: true, subtree: true });
 document.addEventListener('DOMContentLoaded', enhanceTables);
 document.addEventListener('input', e => {
   const i = e.target.closest && e.target.closest('input[data-tf]'); if (!i) return;
@@ -2729,6 +2734,7 @@ function fieldSimilar(p, n = 4) {
   return PL.filter(q => q !== p && q.sg === p.sg && q.fq).map(q => { const b = v(q); const d = Math.sqrt(a.reduce((s, x, i) => s + (x - b[i]) ** 2, 0) / keys.length); return { q, sim: Math.round(100 * (1 - d)) }; })
     .sort((x, y) => y.sim - x.sim).slice(0, n);
 }
+const fieldSimHTML = p => fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('');
 function fieldHTML(p) {
   if (!SD) return '<p class="empty">Season stats did not load. Reload the page to try again.</p>';
   if (!p.sg) return '<p class="empty">PlainStats does not rate long snappers.</p>';
@@ -2752,7 +2758,7 @@ function fieldHTML(p) {
     ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
     ${verdict}
     ${OL_G.includes(p.sg) ? '<p class="note">No free source tracks every block one lineman at a time, so his rating blends playing time, penalties and how the whole line performs: his team\'s pass protection and run success from play-by-play (through Week ${OLWK}), sack rate and yards before contact. </p>' : ''}
-    ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims">${fieldSimilar(p).map(({ q, sim }) => `<button type="button" class="sim" data-p="${q.i}">${avatar(q)}<span><b>${esc(q.name)}</b><small>${esc(q.role)} · ${esc(TB[q.team].name)} · play ${q.play}</small></span><span class="pc">${sim}%</span></button>`).join('')}</div></div>` : ''}
+    ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims" id="sh-fsim"></div></div>` : ''}
   </div>`;
 }
 
@@ -3722,7 +3728,7 @@ function openPlayer(i) {
     </div>
     <div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.posCount} ${esc(POS_WORD[p.pos] || p.pos)}s</span>${pbarsHTML(p)}</div>
     <div class="story">${story(p).map(s => `<p>${esc(s)}</p>`).join('')}</div>
-    <div style="display:grid;gap:6px"><span class="eyebrow">Most similar contracts</span>${simHTML(p)}</div>
+    <div style="display:grid;gap:6px"><span class="eyebrow">Most similar contracts</span><div id="sh-sim"></div></div>
     ${provHTML(p)}
     <div class="rows">
       <div><span>Base salary 2026</span><b>${mon(p.base)}</b></div>
@@ -3738,7 +3744,7 @@ function openPlayer(i) {
     <p class="note" style="margin:14px 0 0">Something look wrong? <button type="button" class="fixl" data-act="fix">Suggest a fix</button></p>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
-  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; store.set('shTab', st.shTab); $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('#sh-field').hidden = st.shTab !== 'field'; $('#sh-contract').hidden = st.shTab !== 'contract'; $('#sh-years').hidden = st.shTab !== 'years'; $('#sh-stats').hidden = st.shTab !== 'stats'; };
+  $('#sh-tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; st.shTab = b.dataset.tab; $$('#sh-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); ['field', 'contract', 'stats'].forEach(k => { const el = $('#sh-' + k); if (el) el.hidden = st.shTab !== k; }); idle(() => store.set('shTab', st.shTab)); };
   $$('#sheet-body [data-act]').forEach(b => b.onclick = () => {
     if (b.dataset.act === 'fix') { openFix({ label: `${p.name}, ${TB[p.team].name} (${posTag(p.pos)})`, link: location.href, kind: 'Contract figure' }); return; }
     sheet.close();
@@ -4963,13 +4969,20 @@ function openPending() {
     const p = DP.find(q => dSlug(q) === PEND); PEND = null; if (p) openProspect(p.i);
   }
 }
+function fillSims(p, which) {   // the two similar-player lists are the heaviest part of a card, so they fill in after it is on screen
+  const a = $('#sh-sim'), b = $('#sh-fsim');   // each list is built once, when its tab is first shown or when the browser is idle
+  if (a && !a.dataset.d && (!which || which === 'contract')) { a.dataset.d = 1; a.innerHTML = simHTML(p).replace(/^<div class="sims">|<\/div>$/g, ''); a.className = 'sims'; }
+  if (b && !b.dataset.d && (!which || which === 'field')) { b.dataset.d = 1; b.innerHTML = fieldSimHTML(p); }
+}
 const _openPlayerBase = openPlayer;
 openPlayer = function (i) {
   _openPlayerBase(i); const p = PL[i]; if (!p) return;
   sheetLink(pSlug(p));
-  loadHist().then(() => loadHistOld()).catch(() => {});   // warm the Stats tab in the background
-  const tabs = $('#sh-tabs');
-  if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b && b.dataset.tab === 'stats') fillStats(p); });
+  const tabs = $('#sh-tabs'), sbox = $('#sh-stats');
+  // build the Stats pane while the browser is idle so the tab opens instantly
+  if (p.gid) loadShard(p.gid).then(() => idle(() => { if (sbox && sbox.isConnected && $('#sh-stats') === sbox) fillStats(p); })).catch(() => {});   // this player's stats file is about 20 KB
+  idle(() => { if ($('#sh-tabs') === tabs) fillSims(p); });
+  if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; const k = b.dataset.tab; requestAnimationFrame(() => { fillSims(p, k); if (k === 'stats') fillStats(p); }); });   // let the tab paint first, then fill it
   if (st.shTab === 'stats') fillStats(p);
 };
 const _openProspectBase = openProspect;
@@ -4994,22 +5007,23 @@ document.addEventListener('click', async e => {
   } catch (err) { /* sharing was cancelled */ }
 });
 
-/* ===== season stats: data/history.json (2023 on, regular season) ===== */
-let HIST = null, HIDX = null, HISTP = null;
-const loadHist = () => HISTP || (HISTP = getJSON('data/history.json').then(h => { HIST = h; indexHist(); return h; }));
-/* older seasons (before 2023): season totals only, current-roster players, loaded when a Stats tab opens */
-let HOLDP = null;
-const loadHistOld = () => HOLDP || (HOLDP = Promise.all([loadHist(), getJSON('data/history_old.json')]).then(([, o]) => { mergeOld(o); return o; }).catch(() => null));
-function mergeOld(o) {
-  const byId = new Map(HIST.players.map(r => [r.id, r]));
-  o.players.forEach(x => {
-    let r = byId.get(x.id);
-    if (!r) { r = { id: x.id, n: x.n, pos: x.pos, s: {}, hg: HG[x.pos] || 'X' }; HIST.players.push(r); byId.set(x.id, r); const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r); if (!HIDX.kt[k + '|' + x.ct]) HIDX.kt[k + '|' + x.ct] = r; }
-    r.old = x.s; if (HIDX.id) HIDX.id.set(x.id, r);
-  });
-  HIST.oldFirst = o.seasons[0];
-  PL.forEach(p => { p._h = undefined; });
-}
+/* ===== season stats: small files in data/hist/ (built by data/build_hist_split.py) =====
+   meta.json (tiny), s<year>.json (season totals, for Players > Season stats) and p<NN>.json (every season plus this year's game log for
+   about 50 players, for a player's Stats tab). Players are matched by gsis id, never by team, so a mid-season trade does not split anyone. */
+let HIST = null, HMETAP = null;
+const getJSONR = u => getJSON(u).catch(() => new Promise(r => setTimeout(r, 700)).then(() => getJSON(u)));   // one retry for a weak signal
+const loadMeta = () => HMETAP || (HMETAP = getJSONR('data/hist/meta.json').then(m => (HIST = m)).catch(e => { HMETAP = null; throw e; }));
+const histShard = id => (+String(id).replace(/\D/g, '') || 0) % ((HIST && HIST.shards) || 64);   // same rule as build_hist_split.py
+const SHP = {}, SHREC = new Map();
+const shardDone = id => !id || (HIST && SHP[histShard(id)] && SHP[histShard(id)].done);
+const loadShard = id => loadMeta().then(() => {
+  const n = histShard(id);
+  return SHP[n] || (SHP[n] = getJSONR('data/hist/p' + String(n).padStart(2, '0') + '.json').then(d => { d.players.forEach(r => { r.hg = HG[r.pos] || 'X'; SHREC.set(r.id, r); }); SHP[n].done = true; return d; }).catch(e => { delete SHP[n]; throw e; }));
+});
+const SEAP = {}, SEAROWS = {};
+const loadSeason = y => loadMeta().then(() => SEAP[y] || (SEAP[y] = getJSONR('data/hist/s' + y + '.json').then(d => { SEAROWS[y] = d.players.map(([id, n, pos, l]) => ({ id, n, pos, hg: HG[pos] || 'X', s: { [y]: l } })); return d; }).catch(e => { delete SEAP[y]; throw e; })));
+let PLG = null;
+const plOf = id => { if (!PLG) { PLG = new Map(); PL.forEach(p => { if (p.gid) PLG.set(p.gid, p); }); } return PLG.get(id); };
 const HG = { QB: 'QB', RB: 'RB', FB: 'RB', HB: 'RB', WR: 'WR', TE: 'TE', T: 'OL', G: 'OL', C: 'OL', OT: 'OL', OG: 'OL', OL: 'OL', DE: 'DL', DT: 'DL', NT: 'DL', DL: 'DL', EDGE: 'DL', OLB: 'LB', ILB: 'LB', MLB: 'LB', LB: 'LB', CB: 'DB', DB: 'DB', S: 'DB', FS: 'DB', SS: 'DB', SAF: 'DB', K: 'K', PK: 'K', P: 'P' };
 const HG_NAME = { QB: 'Quarterbacks', RB: 'Running backs', WR: 'Wide receivers', TE: 'Tight ends', DL: 'Defensive line', LB: 'Linebackers', DB: 'Defensive backs', K: 'Kickers', P: 'Punters', OL: 'Offensive line' };
 const HGCOMPAT = { DLLB: 1, LBDL: 1, DBLB: 1, LBDB: 1 };
@@ -5048,35 +5062,19 @@ const HCOLS = {
 };
 const HKEY = { QB: 'pyd', RB: 'ryd', WR: 'reyd', TE: 'reyd', DL: 'dsk', LB: 'tk', DB: 'pd', K: 'fgm', P: 'pun', OL: 'g', X: 'g' };
 const HLEAD = { QB: ['pyd', 'ptd', 'ryd'], RB: ['ryd', 'rtd', 'reyd'], WR: ['reyd', 'rec', 'retd'], TE: ['reyd', 'rec', 'retd'], DL: ['dsk', 'tfl', 'qbh'], LB: ['tk', 'dsk', 'tfl'], DB: ['dint', 'pd', 'tk'], K: ['fgm', 'fgp', 'fgl'], P: ['pun', 'pavg', 'pi20'] };
-function indexHist() {
-  HIDX = { kt: {}, n: {}, pl: new Map(), id: new Map() };
-  HIST.players.forEach(r => { if (r.id) HIDX.id.set(r.id, r); });
-  const cur = String(HIST.current);
-  HIST.players.forEach(r => {
-    r.hg = HG[r.pos] || 'X'; const k = nkey(r.n); (HIDX.n[k] = HIDX.n[k] || []).push(r);
-    Object.values(r.s).forEach(l => [l.t].concat(l.tt || []).forEach(t => { if (!HIDX.kt[k + '|' + t]) HIDX.kt[k + '|' + t] = r; }));
-  });
-  HIST.players.forEach(r => { const l = r.s[cur]; if (l) HIDX.kt[nkey(r.n) + '|' + l.t] = r; });
-  PL.forEach(p => { p._h = undefined; const r = histOf(p); if (r && !HIDX.pl.has(r)) HIDX.pl.set(r, p); });
-}
-function histOf(p) {
-  if (!HIDX) return null; if (p._h !== undefined) return p._h;
-  const k0 = nkey(p.name), w = k0.split(' '), ks = [k0];
-  if (ALIAS[k0]) ks.push(ALIAS[k0]); if (NICK[w[0]]) ks.push([NICK[w[0]]].concat(w.slice(1)).join(' '));
-  const g = hgOfP(p); let r = null;
-  if (p.gid && HIDX.id.has(p.gid)) return (p._h = HIDX.id.get(p.gid));
-  for (const k of ks) { const x = HIDX.kt[k + '|' + p.team]; if (x && (x.hg === g || g === 'X' || x.hg === 'X')) { r = x; break; } }
-  if (!r) for (const k of ks) { const L = (HIDX.n[k] || []).filter(x => x.hg === g || HGCOMPAT[g + x.hg]); if (L.length === 1) { r = L[0]; break; } }
-  return (p._h = r || null);
-}
+const histOf = p => (p.gid && SHREC.get(p.gid)) || null;
 const hsSum = lines => { const t = {}; lines.forEach(l => Object.entries(l).forEach(([k, v]) => { if (typeof v === 'number' && k !== 'fgl') t[k] = (t[k] || 0) + v; })); t.fgl = Math.max(0, ...lines.map(l => l.fgl || 0)) || undefined; return t; };
 function fillStats(p) {
   const box = $('#sh-stats'); if (!box) return;
   if (box.dataset.full === '1') return;   // this card already shows the full table
-  if (!HIST) box.innerHTML = '<p class="empty">Loading season stats…</p>';
-  loadHistOld();   // start the older-seasons download now, in parallel with the main file
-  loadHist().then(() => { if ($('#sh-stats') === box && !box.dataset.full) box.innerHTML = statsHTML(p); }).then(() => loadHistOld()).then(() => { if ($('#sh-stats') === box) { box.innerHTML = statsHTML(p); box.dataset.full = '1'; } }).catch(() => { box.innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; });
+  const fail = msg => { if ($('#sh-stats') === box) box.innerHTML = `<div class="empty"><p>${msg}</p><button type="button" class="btn ghost more" data-stretry>Try again</button></div>`; };
+  const show = () => { if ($('#sh-stats') !== box) return; try { box.innerHTML = statsHTML(p); box.dataset.full = '1'; } catch (e) { console.error('stats tab', e); fail('Could not show this player\'s stats.'); } };
+  box._p = p;
+  if (HIST && shardDone(p.gid)) return show();
+  box.innerHTML = '<p class="empty">Loading season stats…</p>';
+  (p.gid ? loadShard(p.gid) : loadMeta()).then(show).catch(() => fail('Season stats did not load. Check your connection.'));
 }
+document.addEventListener('click', e => { const b = e.target.closest('[data-stretry]'); if (!b) return; const box = b.closest('#sh-stats'); if (box && box._p) { box.dataset.full = ''; fillStats(box._p); } });
 function statsHTML(p) {
   const r = histOf(p), g = hgOfP(p), cols = HCOLS[g].map(k => HC[k]), cur = String(HIST.current);
   if (!r) return `<p class="empty">No NFL regular-season stats on file since ${HIST.oldFirst || HIST.seasons[0]}. He may be a rookie who has not played, injured all of that time, or listed under a different name.</p>`;
@@ -5104,7 +5102,12 @@ function renderOFTab() {
   $$('#of-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ot2 === of.tab)));
   $('#of-ratings').hidden = of.tab !== 'ratings'; $('#of-stats').hidden = of.tab !== 'stats';
   $('#h-onfield').textContent = of.tab === 'stats' ? 'Season stats' : 'Players on the field';
-  if (of.tab === 'stats') { if (!HIST) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>'; loadHist().then(renderHS).catch(() => { $('#hs-leaders').innerHTML = '<p class="empty">Season stats did not load. Reload the page to try again.</p>'; }); }
+  if (of.tab === 'stats') loadHS();
+}
+function loadHS() {   // one season file at a time (about 130 KB), loaded when that season is shown
+  const fail = () => { $('#hs-leaders').innerHTML = '<div class="empty"><p>Season stats did not load.</p><button type="button" class="btn ghost more" id="hs-retry">Try again</button></div>'; $('#hs-retry').onclick = loadHS; };
+  if (!HIST || !SEAROWS[hsx.season ?? (HIST && HIST.current)]) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>';
+  loadMeta().then(() => { if (hsx.season == null) hsx.season = HIST.current; const y = hsx.season; return loadSeason(y).then(() => { if (hsx.season === y) renderHS(); }); }).catch(fail);
 }
 function renderHS() {
   const cur = HIST.current; if (hsx.season == null) hsx.season = cur;
@@ -5112,7 +5115,7 @@ function renderHS() {
   if (!hsx.sort || !HCOLS[g].includes(hsx.sort)) { hsx.sort = HKEY[g]; hsx.dir = -1; }
   $('#hs-seasons').innerHTML = [...HIST.seasons].reverse().map(y => `<button type="button" class="chip" data-hss="${y}" aria-pressed="${y === hsx.season}">${y}${y === cur ? ` · thru Week ${HIST.thru}` : ''}</button>`).join('');
   $('#hs-groups').innerHTML = ['QB', 'RB', 'WR', 'TE', 'DL', 'LB', 'DB', 'K', 'P'].map(x => `<button type="button" data-hsg="${x}" aria-pressed="${x === g}">${x}</button>`).join('');
-  const rows = HIST.players.filter(r => r.hg === g && r.s[S] && r.s[S].g > 0).map(r => ({ r, l: r.s[S], p: HIDX.pl.get(r) }));
+  const rows = (SEAROWS[S] || []).filter(r => r.hg === g && r.s[S].g > 0).map(r => ({ r, l: r.s[S], p: plOf(r.id) }));
   const c = HC[hsx.sort];
   rows.sort((a, b) => ((c[2](a.l) ?? -1e9) - (c[2](b.l) ?? -1e9)) * hsx.dir || hv(b.l, 'g') - hv(a.l, 'g'));
   // leaders
@@ -5128,7 +5131,7 @@ function renderHS() {
 }
 function wireHS() {
   $('#of-tab').onclick = e => { const b = e.target.closest('[data-ot2]'); if (b) go(b.dataset.ot2 === 'stats' ? 'stats' : 'onfield'); };
-  $('#hs-seasons').onclick = e => { const b = e.target.closest('[data-hss]'); if (b) { hsx.season = +b.dataset.hss; hsx.limit = 60; renderHS(); } };
+  $('#hs-seasons').onclick = e => { const b = e.target.closest('[data-hss]'); if (b) { hsx.season = +b.dataset.hss; hsx.limit = 60; loadHS(); } };
   $('#hs-groups').onclick = e => { const b = e.target.closest('[data-hsg]'); if (b) { hsx.g = b.dataset.hsg; hsx.limit = 60; hsx.sort = null; renderHS(); } };
   $('#hs-more').onclick = () => { hsx.limit += 60; renderHS(); };
   $('#hs-table').addEventListener('click', e => { const b = e.target.closest('[data-hsk]'); if (b) { e.stopPropagation(); const k = b.dataset.hsk; if (hsx.sort === k) hsx.dir *= -1; else { hsx.sort = k; hsx.dir = -1; } renderHS(); } });
@@ -5312,6 +5315,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   if (window.buildMenus) buildMenus();
   route();
   loadDraft();
+  idle(() => loadMeta().catch(() => {}));
 }
 const API = /vercel\.app$|localhost$|(^|\.)plainstatsnfl\.com$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));

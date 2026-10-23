@@ -9,7 +9,8 @@ https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_pi
 Also needs snap_counts_<S>.csv for the same seasons and players.csv (nflverse releases: snap_counts, players). Games played
 come from the snap counts (a game counts when the player took any snap), because the weekly stats file has no row for a
 player with no recorded stat, such as an offensive lineman. Those players get a season line with games and team only.
-Regular-season games only. Writes data/history.json and data/drafted.json next to this script."""
+Regular-season games only. Writes data/history.json and data/drafted.json next to this script, then runs
+data/build_hist_split.py, which writes the small files in data/hist/ that the page actually loads."""
 import csv, json, os, sys, datetime
 from collections import defaultdict
 
@@ -113,3 +114,7 @@ json.dump({'asOf': datetime.date.today().isoformat(), 'source': 'nflverse-data r
           open(os.path.join(HERE, 'drafted.json'), 'w'), separators=(',', ':'))
 print(len(out), 'players,', 'seasons', hist['seasons'], 'thru week', thru, '|', len(dr), 'draft picks',
       os.path.getsize(os.path.join(HERE, 'history.json')), 'bytes')
+
+# the page loads small split files (data/hist/), not these two; rebuild them now
+import subprocess
+subprocess.run([sys.executable, '-I', os.path.join(HERE, 'build_hist_split.py')], check=True)

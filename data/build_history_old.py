@@ -108,3 +108,7 @@ out.sort(key=lambda r: r['n'])
 json.dump({'asOf': datetime.date.today().isoformat(), 'seasons': [FIRST, LAST], 'note': 'Regular-season totals only, current NFL rosters. nflverse stats_player_reg.',
            'players': out}, open(os.path.join(HERE, 'history_old.json'), 'w'), separators=(',', ':'))
 print(len(out), 'players with seasons', FIRST, '-', LAST, '| matched by name only:', matched_name, '|', os.path.getsize(os.path.join(HERE, 'history_old.json')), 'bytes')
+
+# the page loads small split files (data/hist/), not these two; rebuild them now
+import subprocess
+subprocess.run([sys.executable, '-I', os.path.join(HERE, 'build_hist_split.py')], check=True)
