@@ -1117,6 +1117,26 @@ tr.gm-div:hover{background:none}
 .gseed b{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gseed small{display:block;color:var(--muted);font-size:.74rem;font-weight:400}
 .gseed .v{font:600 .86rem/1 var(--body);font-variant-numeric:tabular-nums;text-align:right}
+.pp-confs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:14px 22px;min-width:0}
+.pp-conf{display:grid;gap:10px;min-width:0;align-content:start}
+.pp-conf h3{font:650 1rem/1.2 var(--display);letter-spacing:-.01em;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.pp-conf h3 small{font:500 .74rem/1 var(--body);color:var(--muted)}
+.pp-round{font:600 .74rem/1.2 var(--body);color:var(--muted);margin-top:2px}
+.pp-games{display:grid;gap:8px}
+.pp-game{display:grid;border-radius:var(--r);background:var(--surface-2);overflow:hidden}
+.pp-team{display:grid;grid-template-columns:1.5rem auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 10px;border:0;background:none;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;min-width:0}
+.pp-team+.pp-team{border-top:1px solid var(--line)}
+.pp-team:hover{background:var(--brand-soft)}
+.pp-team:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+.pp-team .sd{font:600 .78rem/1 var(--mono);color:var(--muted);text-align:center}
+.pp-team .nm{min-width:0;display:grid;gap:1px}
+.pp-team .nm b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp-team .nm small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp-team .v{font:600 .82rem/1 var(--mono);text-align:right;white-space:nowrap}
+.pp-team .v small{display:block;font:500 .68rem/1.3 var(--body);color:var(--muted)}
+.pp-game.bye .pp-team{background:color-mix(in srgb,var(--brand) 9%,transparent)}
+.pp-hunt{display:grid;gap:0;border-top:1px dashed var(--line);padding-top:6px}
+.pp-hunt .pp-team{padding:5px 10px}
 .gm-cut{padding:4px;font-size:.72rem;color:var(--muted);border-top:1px dashed var(--line)}
 
 /* home: minimal hero search, popular pages, everything else */
@@ -1430,6 +1450,12 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   <div id="gm-proj" hidden style="display:grid;gap:16px;min-width:0">
     <p class="lede">The PlainStats game model rates every team from its results, picks every game and plays out the rest of the season thousands of times, playoffs included. It updates every week after Monday night.</p>
     <div class="kpis" id="gm-pkpis"></div>
+    <section class="panel pp" aria-labelledby="h-pp">
+      <div class="sechead"><div><span class="eyebrow" id="gm-pp-eb">Playoff picture</span><h2 class="sec" id="h-pp">If the season ended today</h2></div>
+        <div class="seg" id="gm-pp-mode" role="group" aria-label="Playoff picture"><button type="button" data-pp="now" aria-pressed="true">Today</button><button type="button" data-pp="proj" aria-pressed="false">Projected</button></div></div>
+      <div class="pp-confs" id="gm-pp"></div>
+      <p class="note" id="gm-pp-note"></p>
+    </section>
     <div class="grid2">
       <div class="panel"><div><span class="eyebrow">Chance to make the playoffs</span><h2 class="sec">AFC playoff odds</h2></div><div class="obars" id="gm-odds-AFC"></div></div>
       <div class="panel"><div><span class="eyebrow">Chance to make the playoffs</span><h2 class="sec">NFC playoff odds</h2></div><div class="obars" id="gm-odds-NFC"></div></div>
@@ -5587,6 +5613,46 @@ function renderStandings() {
     (field[7] ? `<div class="gm-cut">First team out: ${esc(TB[field[7]].name)} (${gPct(T[field[7]].po)})</div>` : '');
 }
 const GPCOLS = [['name', 'Team', ''], ['elo', 'Rating', 'r'], ['now', 'Now', 'r'], ['pw', 'Proj. record', 'r'], ['dv', 'Division', 'r'], ['po', 'Playoffs', 'r'], ['by', 'No. 1 seed', 'r'], ['cf', 'Conf. title', 'r'], ['sb', 'Super Bowl', 'r']];
+/* Playoff picture: seven teams a conference, No. 1 gets the bye, wild-card round 7 at 2, 6 at 3, 5 at 4.
+   Today = the seeds if the season ended now (build_projections.py, simplified tiebreakers).
+   Projected = the model's most likely field: in each division the team that won it most often in the simulations,
+   ordered by projected record, then the three other teams that made the playoffs most often. */
+function ppField(c, mode) {
+  const T = GPROJ.teams, ids = TEAMS.filter(t => t.div.startsWith(c)).map(t => t.id);
+  if (mode === 'now') return (GPROJ.seedsNow || {})[c] || [];
+  const divs = [...new Set(ids.map(id => TB[id].div))];
+  const lead = divs.map(d => ids.filter(id => TB[id].div === d).sort((a, b) => T[b].dv - T[a].dv || T[b].pw - T[a].pw)[0]).sort((a, b) => T[b].pw - T[a].pw || T[b].by - T[a].by);
+  const wc = ids.filter(id => !lead.includes(id)).sort((a, b) => T[b].po - T[a].po || T[b].pw - T[a].pw).slice(0, 3);
+  return lead.concat(wc);
+}
+function renderPlayoffPicture() {
+  const box = $('#gm-pp'); if (!box || !GPROJ) return;
+  const T = GPROJ.teams, mode = gm.pp || 'now';
+  $$('#gm-pp-mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pp === mode)));
+  $('#h-pp').textContent = mode === 'now' ? 'If the season ended today' : 'The model\'s projected bracket';
+  $('#gm-pp-eb').textContent = mode === 'now' ? `Playoff picture · through Week ${GPROJ.thru}` : `Playoff picture · ${GPROJ.sims.toLocaleString()} simulated seasons`;
+  const rec = id => { const x = T[id]; if (mode === 'now') return gRec(x.w, x.l, x.t); const w = Math.round(x.pw), t = Math.round(x.pt || 0); return gRec(w, Math.max(0, 17 - w - t), t); };   // whole games that add up to 17
+  const row = (id, seed, sub) => { const t = TB[id], x = T[id];
+    return `<button type="button" class="pp-team" data-team="${id}"><span class="sd">${seed || ''}</span>${crest(id, 22)}<span class="nm"><b>${esc(t.city)} ${esc(t.name)}</b><small>${sub}</small></span><span class="v">${rec(id)}<small>${gPct(x.po)} playoffs</small></span></button>`; };
+  const sub = (id, i) => i < 4 ? (mode === 'now' ? 'Leads the ' : 'Projected to win the ') + esc(TB[id].div) : 'Wild card';
+  box.innerHTML = ['AFC', 'NFC'].map(c => {
+    const F = ppField(c, mode);
+    if (F.length < 7) return `<div class="pp-conf"><h3>${c}</h3><p class="empty">No games played yet.</p></div>`;
+    const game = (a, b) => `<div class="pp-game" role="group" aria-label="No. ${b + 1} ${esc(TB[F[b]].name)} at No. ${a + 1} ${esc(TB[F[a]].name)}">${row(F[b], b + 1, sub(F[b], b))}${row(F[a], a + 1, sub(F[a], a) + ' · home')}</div>`;
+    const hunt = TEAMS.filter(t => t.div.startsWith(c) && !F.includes(t.id)).map(t => t.id).sort((a, b) => mode === 'now'
+      ? ((T[b].w + T[b].t / 2) - (T[a].w + T[a].t / 2)) || (T[a].l - T[b].l) || (T[b].po - T[a].po) : T[b].po - T[a].po).slice(0, 3);
+    return `<div class="pp-conf"><h3>${c} <small>Super Bowl favorite: ${esc(TB[[...F].sort((a, b) => T[b].sb - T[a].sb)[0]].name)}</small></h3>
+      <span class="pp-round">First-round bye</span>
+      <div class="pp-game bye">${row(F[0], 1, sub(F[0], 0) + ' · home field throughout')}</div>
+      <span class="pp-round">Wild Card round</span>
+      <div class="pp-games">${game(1, 6)}${game(2, 5)}${game(3, 4)}</div>
+      <span class="pp-round">In the hunt</span>
+      <div class="pp-hunt">${hunt.map(id => row(id, '', esc(TB[id].div))).join('')}</div></div>`;
+  }).join('');
+  $('#gm-pp-note').textContent = mode === 'now'
+    ? 'Seeds 1 to 4 go to the division leaders by record, 5 to 7 to the best other records. Ties use the main NFL tiebreakers in simplified form: head-to-head, division record, conference record, then strength of victory. In the divisional round, the No. 1 seed hosts the lowest seed left. Playoff chances come from the model\'s simulated seasons.'
+    : 'Division winners are the teams that won each division most often in the simulated seasons, seeded by projected record; the wild cards are the three other teams that made the playoffs most often. Records are projected final records.';
+}
 function renderGProj() {
   if (!GPROJ) { $('#gm-pkpis').innerHTML = '<p class="empty" style="background:var(--surface)">The model did not load.</p>'; return; }
   const T = GPROJ.teams, ids = TEAMS.map(t => t.id), M = GPROJ.model, bt = M.backtest || {}, pk = M.picks || { w: 0, l: 0 };
@@ -5597,6 +5663,7 @@ function renderGProj() {
     <a class="kpi" href="${pathOf('team-' + best[0])}"><span class="k">Best projected record</span><span class="v num">${Math.round(T[best[0]].pw)}-${Math.round(T[best[0]].pl)}</span><span class="s">${esc(TB[best[0]].city)} ${esc(TB[best[0]].name)}</span></a>
     <div class="kpi fit"><span class="k">Closest division race</span><span class="v num">${esc(race.d)}</span><span class="s">${race.L.slice(0, 2).map(id => `${esc(TB[id].name)} ${gPct(T[id].dv)}`).join(' vs. ')}</span></div>
     <div class="kpi"><span class="k">Model picks this season</span><span class="v num">${pk.w}-${pk.l}</span><span class="s">${pk.w + pk.l ? Math.round(pk.w / (pk.w + pk.l) * 100) + '% right' : 'No games yet'}${bt.acc ? ` · ${Math.round(bt.acc * 100)}% in ${bt.from}-${bt.to} tests` : ''}</span></div>`;
+  renderPlayoffPicture();
   ['AFC', 'NFC'].forEach(c => { const L = ids.filter(id => TB[id].div.startsWith(c)).sort((a, b) => T[b].po - T[a].po);
     $('#gm-odds-' + c).innerHTML = L.map((id, i) => `<button type="button" class="ob" data-team="${id}"><span class="rk">${i + 1}</span><span class="nm">${crest(id, 18)}<span>${esc(TB[id].name)}</span></span><span class="track"><i style="width:${T[id].po.toFixed(1)}%"></i></span><span class="val">${gPct(T[id].po)}</span></button>`).join(''); });
   const V = { name: id => TB[id].city + TB[id].name, elo: id => T[id].elo, now: id => (T[id].w + T[id].t / 2) / Math.max(1, T[id].w + T[id].l + T[id].t), pw: id => T[id].pw, dv: id => T[id].dv, po: id => T[id].po, by: id => T[id].by, cf: id => T[id].cf, sb: id => T[id].sb };
@@ -5622,6 +5689,7 @@ function wireGames() {
   $('#gm-tab').onclick = e => { const b = e.target.closest('[data-gt]'); if (b) go({ scores: 'scores', standings: 'standings', proj: 'projections' }[b.dataset.gt]); };
   $('#gm-weeks').onclick = e => { const b = e.target.closest('[data-gw]'); if (b) { gm.week = +b.dataset.gw; renderScores(); } };
   $('#gm-conf').onclick = e => { const b = e.target.closest('[data-gc]'); if (b) { gm.conf = b.dataset.gc; store.set('gmConf', gm.conf); renderStandings(); } };
+  $('#gm-pp-mode').onclick = e => { const b = e.target.closest('[data-pp]'); if (b) { gm.pp = b.dataset.pp; renderPlayoffPicture(); } };
   $('#gm-pt').addEventListener('click', e => { const b = e.target.closest('[data-gps]'); if (!b) return; e.stopPropagation(); const k = b.dataset.gps; if (gm.ps === k) gm.pd *= -1; else { gm.ps = k; gm.pd = k === 'name' ? 1 : -1; } renderGProj(); });
   $('#gm-st-box').outerHTML = tfBox('gm-st', 'Filter teams by name, city or division');
   $('#gm-pt-box').outerHTML = tfBox('gm-pt', 'Filter teams by name, city or division');
@@ -5629,7 +5697,7 @@ function wireGames() {
 
 /* ===== search everything: pages, teams, players, prospects, this season's games, news and Cap 101 terms ===== */
 const SPAGES = [['scores', 'Scores and schedule', 'games week results score schedule kickoff picks'], ['standings', 'Standings', 'division record seeds wild card playoff picture'],
-  ['projections', 'Playoff projections', 'odds super bowl chances model simulation elo predictions'], ['ratings', 'Player ratings', 'play rating best players roles traits positions'],
+  ['projections', 'Playoff projections', 'odds super bowl chances model simulation elo predictions playoff picture bracket wild card bye'], ['ratings', 'Player ratings', 'play rating best players roles traits positions'],
   ['stats', 'Season stats', 'passing rushing receiving yards touchdowns sacks leaders box score fantasy'], ['contracts', 'Contracts', 'deals salary guaranteed cap hit every contract'],
   ['value', 'Best and worst contracts', 'surplus value overpaid bargain'], ['rookies', 'Rookie contracts', 'draft pick fifth-year option extension'],
   ['freeagency', 'Free agency', 'free agents expiring next deal class 2027'], ['fa-tags', 'Tags and key dates', 'franchise tag calendar league year deadline'],
