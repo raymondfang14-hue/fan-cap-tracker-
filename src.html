@@ -3829,7 +3829,7 @@ function openPlayer(i) {
     <div style="display:grid;gap:6px">
       <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">How much is guaranteed</span><b class="num">${mon(p.gtd)} of ${mon(p.total)}</b></div>
       <div class="dbar" role="img" aria-label="Locked at signing ${mon(p.fg)}, guaranteed later ${mon(p.gtd - p.fg)}, not guaranteed ${mon(p.total - p.gtd)}"><i style="width:${fgW.toFixed(1)}%;background:var(--gtd)"></i><i style="width:${ogW.toFixed(1)}%;background:var(--gtd2)"></i><i class="hatch" style="width:${(100 - fgW - ogW).toFixed(1)}%"></i></div>
-      <ul class="legend"><li><i class="swatch" style="background:var(--gtd)"></i><span>Locked at signing<b>${mon(p.fg)}</b></span></li><li><i class="swatch" style="background:var(--gtd2)"></i><span>Guaranteed later<b>${mon(p.gtd - p.fg)}</b></span></li><li><i class="swatch hatch"></i><span>Not guaranteed<b>${mon(p.total - p.gtd)}</b></span></li></ul>
+      <ul class="legend"><li><i class="swatch" style="background:var(--gtd)"></i><span>Locked at signing<b>${mon(p.fg)}</b></span></li><li><i class="swatch" style="background:var(--gtd2)"></i><span>Guaranteed later<b>${p.gtd != null && p.fg != null ? mon(p.gtd - p.fg) : '—'}</b></span></li><li><i class="swatch hatch"></i><span>Not guaranteed<b>${p.gtd != null && p.total != null ? mon(p.total - p.gtd) : '—'}</b></span></li></ul>
     </div>
     <div style="display:grid;gap:6px">
       <div style="display:flex;justify-content:space-between;font-size:.84rem"><span class="eyebrow">Pay rank at ${esc(posTag(p.pos))}</span><b>${ord(p.rank)} of ${p.posCount}</b></div>

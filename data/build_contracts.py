@@ -5,6 +5,8 @@ Usage:  python3 -I data/build_contracts.py <folder with roster_<season>.csv and 
 Sources, in order of priority (each player row ends with a provenance code, a source index and the fields it verifies):
   r  REPORTED  data/ledger.csv: one row per deal, taken from a named news report or team announcement, with its URL.
                Fields the report states replace the old figures; fields it leaves blank are kept and listed as unverified.
+               A player whose rookie deal (f) is replaced by a reported extension loses all the formula figures first,
+               so rookie-scale guarantees and cap hits never sit next to the new deal.
   f  FORMULA   rookie contracts for the 2023-2026 draft classes, computed from the draft slot with the rookie scale in
                data/cba.json (anchored to real signings) and the CBA minimum salaries. Undrafted rookies get the minimum.
   m  MINIMUM   veterans on one-year league-minimum deals, valued with the CBA minimum salary table.
@@ -201,7 +203,9 @@ for p in D['players']:
     lg = L.get(key)
     if lg:
         prov, sid = 'r', src_id(lg['source'], lg['url'])
-        F = [('total', 4, 't'), ('apy', 5, 'a'), ('gtd', 6, 'g'), ('fully_gtd', 7, 'f'), ('end', 8, 'e'), ('cap2026', 10, 'c'), ('bonus', 12, 'b')]
+        if len(p) > 15 and p[15] == 'f':  # a rookie deal replaced by a reported new deal: the formula figures no longer apply
+            row[4:15] = [None] * 5 + [0] + [None] * 5
+        F =[('total', 4, 't'), ('apy', 5, 'a'), ('gtd', 6, 'g'), ('fully_gtd', 7, 'f'), ('end', 8, 'e'), ('cap2026', 10, 'c'), ('bonus', 12, 'b')]
         for col, i, ch in F:
             v = (lg.get(col) or '').strip()
             if v:
