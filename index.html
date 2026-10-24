@@ -2053,7 +2053,7 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
-  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It blends percentiles in the stats that matter most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) against everyone at his position with enough snaps. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average; a corner thrown at too rarely to have coverage stats is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, No-fly zone and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
@@ -2295,6 +2295,7 @@ const f1 = v => v.toFixed(1), f2 = v => v.toFixed(2), pc1 = v => (v * 100).toFix
 const i0 = v => Math.round(v).toLocaleString(), h1 = v => (Math.round(v * 2) / 2).toString();
 const nz = v => (Number.isFinite(v) ? v : null);
 const covOK = p => (sm(p).dtg || 0) >= 1.2 * W();
+const TOV_FF = 1.2;   // a forced fumble is worth slightly more than an interception in the takeaways stat
 const tch = p => (sm(p).car || 0) + (sm(p).rec || 0);
 // key: [label, sub, value(p), format, lowerIsBetter, short]
 const MET = {
@@ -2364,7 +2365,7 @@ const MET = {
   tgr: ['Targets faced', 'per 100 snaps', p => p.st && p.st.dsn ? (sm(p).dtg || 0) / p.st.dsn * 100 : null, f1, 0, 'Tgt/100'],
   plyg: ['Plays on the ball', 'passes defended plus 2× INTs, a game', p => ((sm(p).pd || 0) + 2 * (sm(p).dint || 0)) / gp(p), f2, 0, 'Ball/G'],
   pdt: ['Passes defended', '', p => sm(p).pd || 0, i0, 0, 'PD'],
-  tov: ['Takeaways', 'INTs plus forced fumbles a game', p => ((sm(p).dint || 0) + (sm(p).ff || 0)) / gp(p), f2, 0, 'TO/G'],
+  tov: ['Takeaways', 'INTs plus forced fumbles a game (a forced fumble counts 1.2)', p => ((sm(p).dint || 0) + TOV_FF * (sm(p).ff || 0)) / gp(p), f2, 0, 'TO/G'],
   fgm: ['Field goals', 'made', p => sm(p).fga ? (sm(p).fgm || 0) : null, i0, 0, 'FGM'],
   fgp: ['Field goal rate', '', p => sm(p).fga ? (sm(p).fgp || 0) : null, pc0, 0, 'FG%'],
   fg40: ['From 40 and out', 'make rate', p => sm(p).fg40a ? (sm(p).fg40m || 0) / sm(p).fg40a : null, pc0, 0, '40+%'],
@@ -2394,13 +2395,13 @@ const SG_NAME = Object.assign({}, GROUP_NAME, { WR: 'Wide receiver', K: 'Kicker'
 const sgOf = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.group === 'ST' ? null : p.group;
 // q: qualifier per week played, bars: weighted percentile mix behind the play rating, cols: table and stat tiles
 const recBars = [['ryg', .22], ['tsh', .14], ['ypt', .14], ['xepa', .16], ['cat', .06], ['yac', .07], ['rtdg', .12], ['drpp', .05], ['fdpt', .04]];
-const rushDef = [['prsr', .26], ['sckg', .18], ['prsg', .14], ['tflg', .16], ['dsh', .1], ['mtp', .06], ['tov', .1]];
+const rushDef = [['prsr', .26], ['sckg', .18], ['tflg', .16], ['dsh', .1], ['mtp', .06], ['tov', .1]];   // pressures a game left out: pressure rate already counts it
 const GCFG = {
   QB: { q: p => (sm(p).att || 0) >= 12 * W(), need: () => `${12 * W()} passes`, bars: [['epa', .3], ['cpoe', .15], ['ny', .15], ['tdp', .1], ['intp', .1], ['skp', .05], ['pydg', .1], ['rydg', .05]], cols: ['pyd', 'ptdt', 'qint', 'epa', 'cpoe', 'ny', 'rush'] },
   RB: { q: p => tch(p) >= 6 * W(), need: () => `${6 * W()} touches`, bars: [['scrg', .25], ['ypc', .13], ['yco', .14], ['repa', .12], ['btt', .1], ['recg', .1], ['tdg', .11], ['fumt', .05]], cols: ['rush', 'ypc', 'yco', 'recy', 'tdt', 'btt'] },
   WR: { q: p => (sm(p).tgt || 0) >= 2.5 * W(), need: () => `${2.5 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
   TE: { q: p => (sm(p).tgt || 0) >= 2 * W(), need: () => `${2 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
-  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .35], ['penr', .15], ['tpbwr', .15], ['trbwr', .15], ['tskp', .1], ['tybc', .1]], cols: ['snaps', 'osh', 'penr', 'tpbwr', 'trbwr'] },
+  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .25], ['penr', .25], ['tpbwr', .15], ['trbwr', .15], ['tskp', .1], ['tybc', .1]], cols: ['snaps', 'osh', 'penr', 'tpbwr', 'trbwr'] },
   EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
   DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
   LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .2], ['tflg', .14], ['mtp', .14], ['pra', .14], ['prsg', .1], ['plyg', .1], ['dsh', .12], ['tov', .06]], cols: ['tkt', 'tflt', 'sck', 'prst', 'pdt', 'pra'] },
@@ -2528,6 +2529,15 @@ const ROLE_DESC = {
   'Special teams ace': 'A depth player who earns his spot on special teams, 20+ snaps a game.'
 };
 const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
+// The play rating skips a stat a player has no value for (its weight is spread over the rest), with one exception:
+// a qualified corner targeted too rarely to have coverage stats is scored on how rarely he is thrown at instead
+// (his targets-per-snap percentile, flipped: the less he is targeted, the higher), because being avoided is the point.
+const COVK = ['pra', 'ypta', 'cmpa'];
+const ratePc = (p, k) => {
+  if (p.pc && p.pc[k] != null) return p.pc[k];
+  if (p.sg === 'CB' && COVK.includes(k) && p.pc && p.pc.tgr != null) return 1 - p.pc.tgr;
+  return null;
+};
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
 // Roles: every rule that fits a player is kept. A rule in a group ('u' etc.) only counts if no earlier rule in the same group matched;
 // the fallback applies only when nothing else matched. Order = priority, so roles[0] is the headline role.
@@ -2759,9 +2769,11 @@ function analyzeField() {
       const ranked = qs.filter(p => f(p) != null).sort((a, b) => low ? f(a) - f(b) : f(b) - f(a));
       ranked.forEach((p, n) => (p.rk[k] = [n + 1, ranked.length]));
     });
-    const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { s += wt * pcv(p, k); w += wt; }); return s / w; };
+    const comp = p => { let s = 0, w = 0; cfg.bars.forEach(([k, wt]) => { const v = ratePc(p, k); if (v != null) { s += wt * v; w += wt; } }); return w ? s / w : 0.5; };
     const cs = qs.map(comp);
-    qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.playPct); });
+    // play rating is a grade: the weighted blend itself on a 40 to 99 scale, not a forced ranking (a strong group can
+    // have many high grades). playPct, his rank within the position, still drives pay value, next-deal estimates and awards.
+    qs.forEach(p => { p.comp = comp(p); p.playPct = pctRank(cs, p.comp); p.play = Math.round(40 + 59 * p.comp); });
     [...qs].sort((a, b) => b.playPct - a.playPct || b.comp - a.comp).forEach((p, n) => { p.prk = n + 1; p.pn = qs.length; });
     all.forEach(p => { p.roles = ROLES[g](p); p.role = p.roles[0] || ''; });
     all.forEach(p => calcTraits(p, g));
