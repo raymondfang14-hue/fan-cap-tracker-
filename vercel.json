@@ -40,5 +40,135 @@
       "destination": "https://www.plainstatsnfl.com/:path*",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/scores",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/standings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/projections",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/news/:topic(contracts|injuries|games|coaching|league)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/team-ratings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cap-room",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/power-rankings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/awards",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/player-ratings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/stats",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contracts",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/best-worst-contracts",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rookie-contracts",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/free-agency",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/free-agency/key-dates",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cap-lab",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/big-board",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/mock-draft",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rookie-pay",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/draft-guide",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/roster-builder",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/trade-checker",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/compare",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cap-101",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/search",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/setup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/team/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/player/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/prospect/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/game/:id",
+      "destination": "/index.html"
+    }
   ]
 }

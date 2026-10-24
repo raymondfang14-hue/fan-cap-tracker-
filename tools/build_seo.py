@@ -534,7 +534,7 @@ def build_player(p):
 
     img = headshot(p.name, p.team)
     img_html = f'<img src="{esc(img)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
-    spa = f'/#p-{slugify(p.name)}-{p.team.lower()}'
+    spa = f'/player/{slugify(p.name)}-{p.team.lower()}'
     PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
     body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
             f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
@@ -627,7 +627,7 @@ def build_team(t):
     title = f"{full}: cap space, contracts and roster | PlainStats"
     desc = clip(summary, 158)
     body = (f'<div class="id">{logo}<h1>{esc(full)} cap space, contracts and roster</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/#team-{tid}">Open the {esc(nick)} page in the app</a></li></ul>'
+            f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li></ul>'
             f'{top_html}{faq_html(faq)}{roster_html}'
             f'<p class="note">Team cap figures are PlainStats\' latest team totals as of {esc(ASOF)}. Player contracts are being re-sourced one by one from named reports, so team totals can change.</p>')
     team_ld = {'@type': 'SportsTeam', 'name': full, 'sport': 'American football', 'url': SITE + path, 'memberOf': {'@type': 'SportsOrganization', 'name': 'National Football League'}}
@@ -657,7 +657,7 @@ def build_team(t):
     top2 = reported_table(top, f'{esc(nick)} contracts confirmed by named reports')
     body = (f'<h1>How much cap space do the {esc(nick)} have?</h1><p class="lede">{esc(answer)}</p>{facts_html(facts)}'
             f'<p class="note">Team totals are PlainStats\' latest figures as of {esc(ASOF)}; individual contracts are being re-sourced from named reports, so these can shift.</p>{top2}{faq_html(faq)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/#team-{tid}">Open in the app</a></li></ul>')
+            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)])]
     write(f'teams/{slug}/cap.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)], card=og_add('teams', f'{slug}-cap', **card_space)))
@@ -678,7 +678,7 @@ def build_team(t):
     body = (f'<h1>{esc(nick)} dead money</h1><p class="lede">{esc(answer)}</p>'
             f'{facts_html([("Dead money", mon(t["dead"])), ("Rank in the NFL", ordn(t["r_dead"]) + " most of 32"), ("Share of the cap", f"{t['dead'] / CAP * 100:.1f}%")])}'
             f'{dead_tbl}<p class="note">The five biggest dead-money charges are PlainStats\' latest team figures as of {esc(ASOF)} and can change as contracts are re-sourced.</p>{faq_html(faq)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/#team-{tid}">Open in the app</a></li></ul>')
+            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)])]
     write(f'teams/{slug}/dead-money.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)], card=og_add('teams', f'{slug}-dead-money', **card_dead)))
@@ -749,7 +749,7 @@ def build_prospect(pr):
     img_html = f'<img src="{esc(img)}" alt="{esc(pr["name"])}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     body = (f'<div class="id">{img_html}<h1>{esc(pr["name"])}: 2027 NFL Draft profile</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}{stat_html}{faq_html(faq)}'
             f'<p class="note">Ranks are from WalterFootball (updated {esc(BOARDS.get("w", {}).get("updated", ""))}) and NFL Draft Buzz (updated {esc(BOARDS.get("b", {}).get("updated", ""))}).</p>'
-            f'<p><a class="cta" href="/#d-{esc(pr["id"])}">See {esc(pr["name"])} in the PlainStats app</a></p><p><a href="/draft">All 2027 draft prospects</a></p>')
+            f'<p><a class="cta" href="/prospect/{esc(pr["id"])}">See {esc(pr["name"])} in the PlainStats app</a></p><p><a href="/draft">All 2027 draft prospects</a></p>')
     person = {'@type': 'Person', 'name': pr['name'], 'jobTitle': f'College {role}', 'alumniOf': {'@type': 'CollegeOrUniversity', 'name': school}, 'url': SITE + path}
     if img:
         person['image'] = img
@@ -825,11 +825,20 @@ def build_nav():
         '<nav aria-label="Browse PlainStats" style="max-width:1100px;margin:0 auto;padding:8px 20px 48px;color:var(--muted);font:.85rem/2 var(--body)">'
         '<strong style="color:var(--fg)">Browse:</strong> <a href="/teams">All teams</a> <a href="/players">Players</a> <a href="/draft">2027 Draft</a><br>' + teams.replace('</a> <a', '</a> · <a') + '</nav>\n', encoding='utf-8')
 
+# App pages (one URL per section of the single-page app; vercel.json sends them to index.html)
+APP_URLS = [('/scores', '0.9', 'daily'), ('/standings', '0.9', 'weekly'), ('/projections', '0.8', 'weekly'), ('/news', '0.8', 'daily'),
+            ('/player-ratings', '0.8', 'weekly'), ('/stats', '0.8', 'weekly'), ('/contracts', '0.9', 'daily'), ('/power-rankings', '0.8', 'weekly'),
+            ('/mock-draft', '0.8', 'weekly'), ('/big-board', '0.7', 'weekly'), ('/free-agency', '0.8', 'weekly'), ('/free-agency/key-dates', '0.5', 'monthly'),
+            ('/team-ratings', '0.7', 'weekly'), ('/cap-room', '0.8', 'daily'), ('/awards', '0.6', 'weekly'), ('/best-worst-contracts', '0.6', 'weekly'),
+            ('/rookie-contracts', '0.6', 'weekly'), ('/rookie-pay', '0.5', 'monthly'), ('/draft-guide', '0.4', 'monthly'), ('/cap-lab', '0.5', 'weekly'),
+            ('/roster-builder', '0.6', 'weekly'), ('/trade-checker', '0.5', 'weekly'), ('/compare', '0.5', 'weekly'), ('/cap-101', '0.6', 'monthly'),
+            ('/about', '0.3', 'monthly')]
+
 
 def build_sitemap():
     lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
              f'  <url><loc>{SITE}/</loc><lastmod>{ASOF}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>']
-    for path, pri, freq in sorted(URLS, key=lambda u: (-float(u[1]), u[0])):
+    for path, pri, freq in sorted(URLS + APP_URLS, key=lambda u: (-float(u[1]), u[0])):
         lines.append(f'  <url><loc>{SITE}{esc(path)}</loc><lastmod>{ASOF}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>')
     for path in ('/privacy', '/terms'):
         lines.append(f'  <url><loc>{SITE}{path}</loc><lastmod>{ASOF}</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>')

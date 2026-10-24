@@ -14,7 +14,24 @@ Every NFL contract and team salary cap in plain English, for everyday fans.
 Add `AIRTABLE_TOKEN` (a personal access token with `data.records:read` on the Cap Tracker base). The function already points at the Cap Tracker base and its deals table; set `AIRTABLE_BASE_ID` or `AIRTABLE_TABLE` only to use a different one. Without them the page shows its built-in breakdowns.
 
 ## Views
-Open a view directly with its anchor (`#teams` has the roster ratings, and each `#team-XX` page has ratings, traits, lineup and depth chart): `#home`, `#news`, `#teams`, `#team-KC` (any team code), `#contracts`, `#tools`, `#builder` (Roster Builder), `#cut`, `#trade`, `#compare`, `#decode`, `#learn`.
+Every section, tab, team, player, prospect and game has its own clean URL. On plainstatsnfl.com (and localhost or vercel.app) they are real paths; `vercel.json` rewrites them to index.html and the page routes on `location.pathname` (`ROUTES`, `pathOf()`, `keyOfPath()`, `go()` in src.html). In the artifact preview the same keys use the `#hash` instead. Old `/#key` links are moved to their path on load.
+
+| Page | URL | Page | URL |
+|---|---|---|---|
+| Home | `/` | Contracts | `/contracts` |
+| Scores | `/scores` | Best and worst deals | `/best-worst-contracts` |
+| Standings | `/standings` | Rookie deals | `/rookie-contracts` |
+| Playoff projections | `/projections` | Free agency | `/free-agency`, `/free-agency/key-dates` |
+| News | `/news`, `/news/<contracts\|injuries\|games\|coaching\|league>` | Cap lab | `/cap-lab` |
+| Team ratings | `/team-ratings` | Big board, mock draft | `/big-board`, `/mock-draft` |
+| Cap room | `/cap-room` | Rookie pay, draft guide | `/rookie-pay`, `/draft-guide` |
+| Power rankings, awards | `/power-rankings`, `/awards` | Roster builder, trade checker, compare | `/roster-builder`, `/trade-checker`, `/compare` |
+| Player ratings, season stats | `/player-ratings`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
+| A team | `/team/<code>` (e.g. `/team/kc`) | A game | `/game/<id>` (e.g. `/game/2026-07-ne-chi`) |
+
+A player card opens at `/players/<name>` when the player has a static search page, else `/player/<first-last>-<team>`; a prospect at `/draft/<name>`, else `/prospect/<id>`. Typing those static URLs directly gives the static page, which links into the app. `/players`, `/teams` and `/draft` stay the static hubs, so no app path may use them. When adding a page: add it to `ROUTES` (and `PTITLE`, `SPAGES` for search) in src.html, to `rewrites` in vercel.json and to `APP_URLS` in tools/build_seo.py (sitemap). index.html has `<base href="/">` (build.sh) so relative data/ URLs work on deep paths.
+
+The home search (`searchEverything()` in src.html) searches pages, teams, players, prospects, this and last week's games, news headlines and Cap 101 terms.
 
 ## Search pages (players/, teams/, draft/, sitemap.xml)
 `python3 -I tools/build_seo.py` turns the data files into crawlable pages: one for every player with a confirmed contract or 2026 stats, three per team (overview, cap space, dead money), one per draft prospect, and hub pages for teams, players and the draft. Each has its own title, description, plain-English summary, FAQ and schema markup (Person, SportsTeam, FAQPage, BreadcrumbList), and the script rewrites `sitemap.xml` and `tools/seo-nav.html` (the team links `build.sh` adds to the bottom of the home page). Players whose contract is still being verified get `noindex` and stay out of the sitemap until a named report confirms the deal. Run it after every data refresh, then `./build.sh`, then commit.
@@ -46,7 +63,7 @@ The Draft page covers the 2027 class: a big board, a full page for each prospect
 
 ## Season stats, links, value, rookie deals (#stats, #p-..., #value, #rookies)
 - `data/history.json`: regular-season box scores for every player from 2023 to the current season, plus this season's game log, built by `python3 -I data/build_history.py <dir> <season>` from nflverse `stats_player_week_<S>.csv` files. `data/drafted.json` (the last six draft classes, from nflverse `draft_picks.csv`) is written by the same script. `data/history_old.json` holds season totals (no game logs) from 1999 up to the season before history.json starts, only for players on a current roster; `python3 -I data/build_history_old.py <dir>` builds it from nflverse `stats_player_reg_<S>.csv` and re-matches the roster, so new signings pick up earlier seasons, and the page loads it only when a player's Stats tab opens. Weekly game logs are kept for the current season only. The page does not load history.json or history_old.json (they are build inputs, kept out of the deployment by .vercelignore; tools/build_seo.py still reads history.json). Both build scripts end by running `python3 -I data/build_hist_split.py`, which writes the small files the page loads from `data/hist/`: `meta.json`, one `s<year>.json` per season (totals, for Players > Season stats) and 64 shards `p<NN>.json` (a player's every season plus this year's game log, about 18 KB each, for the Stats tab). Players are keyed by gsis id, so a player traded mid-season stays one record (season line `t` = team with most games, `tt` = all teams). The page matches contract players to stats by `gid` (row index 19 of data/nfl.json). The files load only when someone opens the Season stats tab or a player's Stats tab.
-- Links: every player opens at `#p-<first-last>-<team>` and every draft prospect at `#d-<id>`; the player and prospect pages have a Copy link button that copies the www.plainstatsnfl.com address.
+- Links: every player and draft prospect has its own URL (see Views); the player and prospect pages have a Copy link button that copies the www.plainstatsnfl.com address.
 - Contracts > Best & worst: market value is today's price for a player who ranks where he ranks on the field (data/market.json), minus his yearly pay.
 - Contracts > Rookie deals: draft classes matched to contracts by name and team; fifth-year option prices are rough CBA estimates.
 

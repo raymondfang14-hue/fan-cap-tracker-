@@ -9,6 +9,8 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - Every table needs a filter search. The Roster Builder shows no contract costs.
 - Must work on phones: the owner edits from Koder / Working Copy on iPhone.
 
+- Every page has a clean URL (README "Views"). A new section needs an entry in `ROUTES` in src.html, `rewrites` in vercel.json and `APP_URLS` in `tools/build_seo.py`. Never give an app page a path under `/players`, `/teams` or `/draft` (static pages). Link with `href="/path"` or `pathOf(key)`, never `#key`.
+
 ## Data rules
 - Never copy Over The Cap, Spotrac or other restricted sources. Contract figures come from `data/ledger.csv` (named report + URL), CBA calculations (`data/cba.json`, `data/rookie_scale.py`) or stay unverified.
 - A contract figure without a named report shows "Contract being verified". Do not guess numbers.
@@ -28,7 +30,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 - Season stats load from small files in `data/hist/` (built by `data/build_hist_split.py`, run by `build_history.py` and `build_history_old.py`): `meta.json`, `s<year>.json`, and 64 player shards `p<NN>.json` keyed by gsis id. The page never loads `history.json` / `history_old.json` (build inputs, kept out of the deployment). Match players by `gid`, never by team, so mid-season trades stay one record.
 
-- Games tab (`#scores`, `#standings`, `#projections`): `data/schedule.json` (daily, `data/build_schedule.py`) and `data/projections.json` (weekly, `data/build_projections.py`, PlainStats Elo model). Never use the betting columns in nflverse games.csv. This week's game pages use `data/gameday.json` (daily, `data/build_gameday.py`: official injury report via nflverse plus injury-adjusted picks) and live weather from api.weather.gov (public domain, fetched in the browser; the sandbox can't reach it).
+- Games tab (`/scores`, `/standings`, `/projections`, game pages `/game/<id>`): `data/schedule.json` (daily, `data/build_schedule.py`) and `data/projections.json` (weekly, `data/build_projections.py`, PlainStats Elo model). Never use the betting columns in nflverse games.csv. This week's game pages use `data/gameday.json` (daily, `data/build_gameday.py`: official injury report via nflverse plus injury-adjusted picks) and live weather from api.weather.gov (public domain, fetched in the browser; the sandbox can't reach it).
 
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
