@@ -1,6 +1,96 @@
 {
- "asOf": "2026-10-23",
+ "asOf": "2026-10-24",
  "moves": [
+  {
+   "iso": "2026-10-23",
+   "date": "Oct 23",
+   "kind": "Release",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Ogbonnia Okoronkwo"
+   ],
+   "head": "49ers release DL Ogbonnia Okoronkwo",
+   "plain": "San Francisco released the defensive lineman on Oct. 23. No other detail was reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/transactions"
+  },
+  {
+   "iso": "2026-10-23",
+   "date": "Oct 23",
+   "kind": "Release",
+   "teams": [
+    "MIN"
+   ],
+   "players": [
+    "DeeJay Dallas",
+    "Tristan Leigh"
+   ],
+   "head": "Vikings release RB DeeJay Dallas and T Tristan Leigh",
+   "plain": "Minnesota cut both players and added OLB Jihad Ward to the practice squad. No contract terms were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/transactions"
+  },
+  {
+   "iso": "2026-10-23",
+   "date": "Oct 23",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Elijah Arroyo"
+   ],
+   "head": "Seahawks place TE Elijah Arroyo on IR after shoulder surgery",
+   "plain": "Arroyo will miss the rest of the season. Seattle also activated RB Zach Charbonnet from the PUP list on Oct. 22.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/transactions"
+  },
+  {
+   "iso": "2026-10-23",
+   "date": "Oct 23",
+   "kind": "Injury",
+   "teams": [
+    "NYG"
+   ],
+   "players": [
+    "Tremaine Edmunds"
+   ],
+   "head": "Giants LB Tremaine Edmunds out for the season with a torn chest muscle",
+   "plain": "Edmunds is done for 2026. He signed a three-year, $36 million deal with the Giants this year.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
+  },
+  {
+   "iso": "2026-10-23",
+   "date": "Oct 23",
+   "kind": "Injury",
+   "teams": [
+    "CHI"
+   ],
+   "players": [
+    "Cole Kmet"
+   ],
+   "head": "Bears place TE Cole Kmet on injured reserve with a serious knee injury",
+   "plain": "Kmet left Thursday's game on a cart and is reportedly out for the season. Rookie Sam Roush should see more snaps behind Colston Loveland.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/chicago-bears-news-rumors"
+  },
+  {
+   "iso": "2026-10-22",
+   "date": "Oct 22",
+   "kind": "Game",
+   "teams": [
+    "CHI",
+    "NE"
+   ],
+   "players": [],
+   "head": "Bears beat Patriots 30-24 on Thursday night",
+   "plain": "Chicago held on in the Week 7 Thursday game. Tight end Cole Kmet was hurt late in the fourth quarter.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/"
+  },
   {
    "iso": "2026-10-21",
    "date": "Oct 21",
