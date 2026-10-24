@@ -2053,7 +2053,7 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
-  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average; a corner thrown at too rarely to have coverage stats is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average; a corner who plays at least half his team\'s defensive snaps but is thrown at too rarely to have coverage stats is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, No-fly zone and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
@@ -2532,10 +2532,11 @@ const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
 // The play rating skips a stat a player has no value for (its weight is spread over the rest), with one exception:
 // a qualified corner targeted too rarely to have coverage stats is scored on how rarely he is thrown at instead
 // (his targets-per-snap percentile, flipped: the less he is targeted, the higher), because being avoided is the point.
+// Only for corners on the field for at least half of their team's defensive snaps; a part-timer's coverage stats are just left out.
 const COVK = ['pra', 'ypta', 'cmpa'];
 const ratePc = (p, k) => {
   if (p.pc && p.pc[k] != null) return p.pc[k];
-  if (p.sg === 'CB' && COVK.includes(k) && p.pc && p.pc.tgr != null) return 1 - p.pc.tgr;
+  if (p.sg === 'CB' && COVK.includes(k) && p.pc && p.pc.tgr != null && p.st && (p.st.dsh || 0) >= 0.5) return 1 - p.pc.tgr;   // starters only (half his team's defensive snaps or more)
   return null;
 };
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
