@@ -1118,6 +1118,43 @@ tr.gm-div:hover{background:none}
 .gseed small{display:block;color:var(--muted);font-size:.74rem;font-weight:400}
 .gseed .v{font:600 .86rem/1 var(--body);font-variant-numeric:tabular-nums;text-align:right}
 .gm-cut{padding:4px;font-size:.72rem;color:var(--muted);border-top:1px dashed var(--line)}
+.gd-open{border:0;background:none;padding:0;color:var(--link);font:600 .8rem/1 var(--body);cursor:pointer}
+.gd-open:hover{text-decoration:underline}
+.gtag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:6px;background:var(--surface-2);color:var(--muted);font:500 .68rem/1.2 var(--body)}
+.gd-top{display:grid;gap:10px;margin:-18px -18px 0;padding:16px 18px;background:var(--surface-2)}
+.gd-top .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gd-vs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;text-align:center}
+.gd-vs .tm{display:grid;justify-items:center;gap:4px;min-width:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;padding:0}
+.gd-vs .tm b{font:650 1.02rem/1.15 var(--display);letter-spacing:-.015em}
+.gd-vs .tm small{color:var(--muted);font-size:.78rem}
+.gd-vs .mid{display:grid;gap:2px;justify-items:center}
+.gd-vs .mid b{font:700 1.7rem/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.gd-vs .mid small{color:var(--muted);font-size:.76rem}
+.gd-sec{display:grid;gap:8px}
+.gd-sec>h4{font:600 .82rem/1.2 var(--body);color:var(--muted)}
+.gd-rows>div{display:grid;grid-template-columns:minmax(6.5rem,1fr) minmax(0,1.5fr);gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:.88rem}
+.gd-rows>div:first-child{border-top:0}
+.gd-rows span{color:var(--muted)}
+.gd-rows b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.gd-cmp{display:grid;gap:0;font-size:.86rem}
+.gd-cmp>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.gd-cmp>div:first-child{border-top:0}
+.gd-cmp .l{text-align:left;font-weight:600;font-variant-numeric:tabular-nums}
+.gd-cmp .r{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.gd-cmp .k{text-align:center;color:var(--muted);font-size:.78rem}
+.gd-cmp small{color:var(--muted);font-weight:400;font-size:.72rem}
+.gd-cmp .bt{color:var(--good)}
+.ilist{display:grid;gap:0}
+.irow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 2px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left;color:inherit;font:inherit}
+.irow:first-child{border-top:0}
+button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
+.irow b{display:block;font-weight:600;font-size:.88rem}
+.irow small{display:block;color:var(--muted);font-size:.74rem}
+.ist{display:inline-block;min-width:5.6rem;text-align:center;padding:3px 6px;border-radius:6px;font:600 .7rem/1.2 var(--body);background:var(--surface-2);color:var(--muted)}
+.ist.out{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.ist.dbt{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.ist.qst{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.irow .hit{font:600 .78rem/1 var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
 </style>
 
 <header class="gn" id="gn">
@@ -5372,9 +5409,9 @@ function wireCTabs() {
 
 /* ===== games: scores (data/schedule.json, daily), standings and the game model (data/projections.json, weekly) ===== */
 const gm = { tab: 'scores', week: null, conf: store.get('gmConf', 'AFC'), ps: 'po', pd: -1, wired: false };
-let GSCHED = null, GPROJ = null, GMP = null;
-const loadGames = () => GMP || (GMP = Promise.all([getJSONR('data/schedule.json'), getJSONR('data/projections.json').catch(() => null)])
-  .then(([s, p]) => { GSCHED = s; GPROJ = p; return s; }).catch(e => { GMP = null; throw e; }));
+let GSCHED = null, GPROJ = null, GDAY = null, GMP = null;
+const loadGames = () => GMP || (GMP = Promise.all([getJSONR('data/schedule.json'), getJSONR('data/projections.json').catch(() => null), getJSONR('data/gameday.json').catch(() => null)])
+  .then(([s, p, d]) => { GSCHED = s; GPROJ = p; GDAY = d; return s; }).catch(e => { GMP = null; throw e; }));
 // [id, week, gameday, gametime, away, home, awayScore, homeScore, ot, neutral site]
 const gFinal = g => g[6] != null && g[7] != null;
 const gTime = t => { if (!t) return 'Time TBA'; const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'} ET`; };
@@ -5405,7 +5442,8 @@ function renderGames() {
   }).catch(() => { $('#gm-days').innerHTML = '<div class="empty"><p>The schedule did not load.</p><button type="button" class="btn ghost more" id="gm-retry">Try again</button></div>'; $('#gm-retry').onclick = renderGames; });
 }
 function gCard(g, R) {
-  const [id, , , time, a, h, as, hs, ot, site] = g, fin = gFinal(g), P = GPROJ && GPROJ.games[id];
+  const [id, wk, , time, a, h, as, hs, ot, site] = g, fin = gFinal(g), P0 = GPROJ && GPROJ.games[id], K = !fin && gPick(id), P = K ? [K.p, K.hs, K.as] : P0;
+  const live = GDAY && GDAY.games[id] && wk === GDAY.week;
   const team = (t, sc, lost) => { const T = TB[t] || { city: t, name: '' }, r = R[t]; return `<button type="button" class="gteam${lost ? ' lost' : ''}" data-team="${t}">${crest(t, 26)}<span class="nm"><b>${esc(T.city)} ${esc(T.name)}</b><small>${r ? gRec(r.w, r.l, r.t) : ''}</small></span><span class="sc">${sc == null ? '' : sc}</span></button>`; };
   let model = '';
   if (P) {
@@ -5415,11 +5453,114 @@ function gCard(g, R) {
     if (fin) {
       const right = hs !== as && (ph >= 0.5) === (hs > as);
       model = `<div class="gmodel"><span class="ln"><span>Model picked <b>${esc(fav)} ${fp}%</b> · projected ${esc(a)} ${pa_s}, ${esc(h)} ${ph_s}</span><span class="gpick ${hs === as ? '' : right ? 'good' : 'bad'}">${hs === as ? 'Tie' : right ? 'Right' : 'Missed'}</span></span>${bar}</div>`;
-    } else model = `<div class="gmodel"><span class="ln"><span>Model: <b>${esc(fav)} ${fp}%</b></span><span>Projected ${esc(a)} ${pa_s}, ${esc(h)} ${ph_s}</span></span>${bar}</div>`;
+    } else model = `<div class="gmodel"><span class="ln"><span>Model: <b>${esc(fav)} ${fp}%</b>${K && K.inj ? '<span class="gtag">injuries</span>' : ''}${K && K.wx ? '<span class="gtag">weather</span>' : ''}</span><span>Projected ${esc(a)} ${pa_s}, ${esc(h)} ${ph_s}</span></span>${bar}</div>`;
   }
   const status = fin ? `Final${ot ? '/OT' : ''}` : gTime(time);
-  return `<article class="gcard">${team(a, as, fin && as < hs)}${team(h, hs, fin && hs < as)}${model}<div class="gmeta"><span class="st">${status}</span><span>${site ? esc(site) : `at ${esc(TB[h] ? TB[h].city : h)}`}</span></div></article>`;
+  return `<article class="gcard">${team(a, as, fin && as < hs)}${team(h, hs, fin && hs < as)}${model}<div class="gmeta"><span class="st">${status}</span><span>${site ? esc(site) : `at ${esc(TB[h] ? TB[h].city : h)}`}</span>${live ? `<button type="button" class="gd-open" data-gd="${id}">Game details, injuries ›</button>` : ''}</div></article>`;
 }
+
+/* ----- this week's games: injuries (data/gameday.json, daily) and live weather (US National Weather Service, public domain) ----- */
+const WXP = {}, WX = {}, WXF = {};
+const wxMph = s => { const m = String(s || '').match(/\d+/g); return m ? Math.max(...m.map(Number)) : 0; };
+function wxFor(gid) {   // forecast for kickoff at an open-air US stadium; null when there is none
+  const G = GDAY && GDAY.games[gid]; if (!G || !G.ll || !G.kick) return Promise.resolve(null);
+  if (WXP[gid]) return WXP[gid];
+  const k = Date.parse(G.kick); if (k - Date.now() > 6.5 * 864e5 || Date.now() - k > 6 * 36e5) return Promise.resolve(null);
+  return (WXP[gid] = fetch(`https://api.weather.gov/points/${G.ll[0]},${G.ll[1]}`).then(r => r.ok ? r.json() : Promise.reject())
+    .then(j => fetch(j.properties.forecastHourly)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(j => { const P = j.properties.periods.find(x => Date.parse(x.startTime) <= k && k < Date.parse(x.endTime)); if (!P) return null;
+      return (WX[gid] = { t: P.temperature, wind: wxMph(P.windSpeed), dir: P.windDirection, pop: (P.probabilityOfPrecipitation || {}).value || 0, sky: P.shortForecast, at: j.properties.updateTime || j.properties.generatedAt }); })
+    .catch(() => { delete WXP[gid]; WXF[gid] = 1; return null; }));
+}
+function wxAdj(w) {   // what weather does to the pick: less scoring in wind, rain, snow and deep cold, and a closer game in high wind
+  const out = { dt: 0, sc: 1, notes: [] }; if (!w) return out;
+  if (w.wind > 12) { const x = Math.min(5, 0.3 * (w.wind - 12)); out.dt -= x; out.sc *= 1 - Math.min(0.12, 0.008 * (w.wind - 12)); out.notes.push(`wind ${w.wind} mph, about ${x.toFixed(1)} fewer points`); }
+  if (w.pop >= 50 && /snow|flurr|sleet/i.test(w.sky)) { out.dt -= 3; out.notes.push('snow likely, about 3 fewer points'); }
+  else if (w.pop >= 50 && /rain|shower|storm|drizzle/i.test(w.sky)) { out.dt -= 1.5; out.notes.push('rain likely, about 1.5 fewer points'); }
+  if (w.t <= 25) { out.dt -= 1; out.notes.push(`${w.t}°F, about 1 fewer point`); }
+  return out;
+}
+function gPick(gid) {   // [home win chance, home pts, away pts, adjusted for injuries and weather?] for this week; season pick otherwise
+  const G = GDAY && GDAY.games[gid], base = GPROJ && GPROJ.games[gid];
+  if (!G) return base ? { p: base[0], hs: base[1], as: base[2], inj: false, wx: false } : null;
+  const w = wxAdj(WX[gid]), p0 = Math.min(Math.max(G.adj[0], 1e-4), 1 - 1e-4), d = 400 * Math.log10(p0 / (1 - p0)) * w.sc;
+  const p = 1 / (1 + 10 ** (-d / 400)), tot = G.adj[1] + G.adj[2] + w.dt, sp = d / ((GPROJ && GPROJ.model.ptsPerElo) || 25);
+  let hs = Math.round(tot / 2 + sp / 2), as = Math.round(tot / 2 - sp / 2);
+  if (p > .5 && hs <= as) hs = as + 1; if (p < .5 && as <= hs) as = hs + 1;
+  return { p, hs, as, inj: Math.abs(G.adj[0] - G.base[0]) >= 0.005, wx: !!w.notes.length, w };
+}
+function gWxLoad(week) {   // fetch this week's forecasts, then redraw the cards once
+  if (!GDAY || week !== GDAY.week) return;
+  const ids = GSCHED.games.filter(g => g[1] === week && !gFinal(g)).map(g => g[0]).filter(id => GDAY.games[id] && GDAY.games[id].ll && !WXP[id]);
+  if (ids.length) Promise.all(ids.map(wxFor)).then(() => { if (gm.tab === 'scores' && gm.week === week) renderScores(); });
+}
+const IST = { Out: 'out', Doubtful: 'dbt', Questionable: 'qst' };
+function gdInjHTML(gid, t) {
+  const G = GDAY && GDAY.games[gid], L = (G && G.inj[t]) || [];
+  if (!L.length) return '<p class="note">No one on this team\'s injury report this week.</p>';
+  const byG = new Map(PL.filter(p => p.gid).map(p => [p.gid, p]));
+  return `<div class="ilist">${L.map(([n, pos, st, inj, prac, gid2, sh, hit]) => { const pl = byG.get(gid2), tag = pl ? 'button' : 'div';
+    return `<${tag} ${pl ? `type="button" data-p="${pl.i}"` : ''} class="irow"><span class="ist ${IST[st] || ''}">${esc(st || ({ 'Did Not Participate': 'Did not practice', 'Limited Participation': 'Limited practice', 'Full Participation': 'Full practice' }[prac] || 'Listed'))}</span><span><b>${esc(n)} <small style="display:inline">${esc(pos)}</small></b><small>${esc(inj || 'Not listed')}${prac ? ' · ' + esc(prac) : ''}${sh ? ` · ${Math.round(sh * 100)}% of snaps` : ''}</small></span><span class="hit">${hit ? '−' + hit.toFixed(1) : ''}</span></${tag}>`; }).join('')}</div>`;
+}
+function gdStatsHTML(a, h) {
+  const A = TB[a], H = TB[h], PA = GPROJ && GPROJ.teams[a], PH = GPROJ && GPROJ.teams[h], R = gLiveRecords();
+  const row = (k, va, vh, better) => { const ba = better === 'a', bh = better === 'h'; return `<div><span class="l${ba ? ' bt' : ''}">${va}</span><span class="k">${esc(k)}</span><span class="r${bh ? ' bt' : ''}">${vh}</span></div>`; };
+  const cmp = (x, y, low) => x == null || y == null || x === y ? '' : (low ? x < y : x > y) ? 'a' : 'h';
+  const g = id => { const r = R[id]; return Math.max(1, r.w + r.l + r.t); };
+  const pf = id => GSCHED.games.filter(x => gFinal(x) && (x[4] === id || x[5] === id)).reduce((s, x) => s + (x[4] === id ? x[6] : x[7]), 0) / g(id);
+  const pa = id => GSCHED.games.filter(x => gFinal(x) && (x[4] === id || x[5] === id)).reduce((s, x) => s + (x[4] === id ? x[7] : x[6]), 0) / g(id);
+  let rows = row('Record', gRec(R[a].w, R[a].l, R[a].t), gRec(R[h].w, R[h].l, R[h].t), '') +
+    row('Points a game', pf(a).toFixed(1), pf(h).toFixed(1), cmp(pf(a), pf(h))) + row('Points allowed a game', pa(a).toFixed(1), pa(h).toFixed(1), cmp(pa(a), pa(h), true));
+  if (PA && PH) rows += row('Elo rating', `${PA.elo} <small>${ord(PA.eloRk)}</small>`, `${PH.elo} <small>${ord(PH.eloRk)}</small>`, cmp(PA.elo, PH.elo));
+  if (A.ts && H.ts) ['ypg', 'epa', 'pypg', 'rypg', 'skp', 'sckg', 'tovg', 'pra', 'peng'].forEach(k => { const d = TSDEF[k]; rows += row(d[0], `${d[3](A.ts[k])} <small>${ord(A.tr[k])}</small>`, `${d[3](H.ts[k])} <small>${ord(H.tr[k])}</small>`, cmp(A.tr[k], H.tr[k], true)); });
+  if (A.rt && H.rt) rows += row('PlainStats roster rating', `${A.rt.ovr} <small>${ord(A.rk.ovr)}</small>`, `${H.rt.ovr} <small>${ord(H.rk.ovr)}</small>`, cmp(A.rt.ovr, H.rt.ovr));
+  const lead = id => { const ps = PL.filter(p => p.team === id && p.st); const top = (f, lab, fmt) => { const p = [...ps].sort((x, y) => f(y) - f(x))[0]; return p && f(p) > 0 ? `<button type="button" class="irow" data-p="${p.i}"><span class="ist">${lab}</span><span><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))}</small></span><span class="hit">${fmt(f(p))}</span></button>` : ''; };
+    return top(p => sm(p).pyd || 0, 'Passing', v => i0(v) + ' yds') + top(p => sm(p).ryd || 0, 'Rushing', v => i0(v) + ' yds') + top(p => sm(p).ryds || 0, 'Receiving', v => i0(v) + ' yds') + top(p => sm(p).sck || 0, 'Sacks', h1) + top(p => sm(p).tk || 0, 'Tackles', i0); };
+  const last = id => GSCHED.games.filter(x => gFinal(x) && (x[4] === id || x[5] === id)).slice(-3).reverse().map(x => { const home = x[5] === id, us = home ? x[7] : x[6], th = home ? x[6] : x[7], o = home ? x[4] : x[5];
+    return `<div><span>Wk ${x[1]} ${home ? 'vs' : 'at'} ${esc(o)}</span><b>${us > th ? 'W' : us < th ? 'L' : 'T'} ${us}-${th}</b></div>`; }).join('') || '<div><span>No games yet</span><b></b></div>';
+  return `<div class="gd-sec"><h4>${esc(A.name)} vs. ${esc(H.name)}, 2026 per game · green is better · rank of 32</h4><div class="gd-cmp">${rows}</div></div>
+    <div class="grid2" style="gap:14px"><div class="gd-sec"><h4>${esc(A.name)} leaders</h4><div class="ilist">${lead(a) || '<p class="note">No stats yet.</p>'}</div></div><div class="gd-sec"><h4>${esc(H.name)} leaders</h4><div class="ilist">${lead(h) || '<p class="note">No stats yet.</p>'}</div></div></div>
+    <div class="grid2" style="gap:14px"><div class="gd-sec"><h4>${esc(A.name)}: last three</h4><div class="gd-rows">${last(a)}</div></div><div class="gd-sec"><h4>${esc(H.name)}: last three</h4><div class="gd-rows">${last(h)}</div></div></div>`;
+}
+function gdPreviewHTML(gid, a, h) {
+  const G = GDAY.games[gid], k = gPick(gid), w = WX[gid], An = TB[a].name, Hn = TB[h].name;
+  const fav = (p) => p >= .5 ? `${esc(Hn)} ${Math.round(p * 100)}%` : `${esc(An)} ${Math.round((1 - p) * 100)}%`;
+  const ca = COLORS[a] || 'var(--c-def)', ch = COLORS[h] || 'var(--brand)';
+  const wxBox = G.roof === 'indoor' ? `<p class="note">Indoors at ${esc(G.stadium)}, so weather does not change the pick.</p>`
+    : !G.ll ? `<p class="note">No National Weather Service forecast for ${esc(G.stadium)}${G.roof === 'unknown' ? ' (outside the US)' : ''}, so weather does not change the pick.</p>`
+    : !w ? `<p class="note" id="gd-wx-note">${WXF[gid] ? 'The forecast did not load, so weather does not change the pick.' : WXP[gid] ? 'Loading the forecast…' : 'The kickoff forecast comes out about a week before the game.'}</p>`
+    : `<div class="stiles"><div><span class="k">Temperature</span><div class="v num">${w.t}°F</div></div><div><span class="k">Wind</span><div class="v num">${w.wind} mph</div><span class="s">${esc(w.dir || '')}</span></div><div><span class="k">Rain or snow</span><div class="v num">${w.pop}%</div></div><div><span class="k">Sky</span><div class="v" style="font-size:1rem">${esc(w.sky)}</div></div></div><p class="note">Hourly forecast for kickoff at ${esc(G.stadium)}, from the National Weather Service (api.weather.gov).</p>`;
+  const injT = (t, pen) => pen ? `−${pen.toFixed(1)} rating points` : 'no change';
+  return `<div class="gd-sec"><h4>Model pick</h4>
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b style="font:700 1.25rem/1.1 var(--display)">${fav(k.p)}</b><span class="note">Projected ${esc(a)} ${k.as}, ${esc(h)} ${k.hs}</span></div>
+      <span class="gprob"><i style="width:${((1 - k.p) * 100).toFixed(1)}%;background:${ca}"></i><i style="width:${(k.p * 100).toFixed(1)}%;background:${ch}"></i></span>
+      <div class="gd-rows"><div><span>Season model, before injuries and weather</span><b>${fav(G.base[0])} · ${G.base[2]}-${G.base[1]}</b></div>
+        <div><span>${esc(An)} injuries</span><b>${injT(a, G.pen[0])}</b></div><div><span>${esc(Hn)} injuries</span><b>${injT(h, G.pen[1])}</b></div>
+        <div><span>After injuries</span><b>${fav(G.adj[0])} · ${G.adj[2]}-${G.adj[1]}</b></div>
+        <div><span>Weather</span><b>${k.w && k.w.notes.length ? esc(k.w.notes.join('; ')) : G.roof === 'indoor' ? 'indoors' : 'no change'}</b></div></div></div>
+    <div class="gd-sec"><h4>Weather at kickoff</h4><div id="gd-wx">${wxBox}</div></div>
+    <div class="gd-sec"><h4>Biggest injury absences</h4><div class="ilist">${[[a, An], [h, Hn]].flatMap(([t, nm]) => (G.inj[t] || []).filter(x => x[7] >= 1).slice(0, 3).map(x => `<div class="irow"><span class="ist ${IST[x[2]] || ''}">${esc(x[2] || (x[4] === 'Did Not Participate' ? 'Did not practice' : 'Limited practice'))}</span><span><b>${esc(x[0])} <small style="display:inline">${esc(x[1])} · ${esc(nm)}</small></b><small>${esc(x[3] || '')}</small></span><span class="hit">−${x[7].toFixed(1)}</span></div>`)).join('') || '<p class="note">No starter-level absences on either report yet.</p>'}</div></div>`;
+}
+function openGame(gid) {
+  const g = GSCHED && GSCHED.games.find(x => x[0] === gid), G = GDAY && GDAY.games[gid]; if (!g || !G) return;
+  const [, wk, day, time, a, h, as, hs, ot] = g, R = gLiveRecords(), A = TB[a], H = TB[h], fin = gFinal(g);
+  const tab = ['pre', 'stats', 'inj'].includes(gm.gdTab) ? gm.gdTab : 'pre';
+  const tm = (t, T) => `<button type="button" class="tm" data-team="${t}">${crest(t, 44)}<b>${esc(T.city)} ${esc(T.name)}</b><small>${gRec(R[t].w, R[t].l, R[t].t)}</small></button>`;
+  $('#sheet-body').innerHTML = `
+    <div class="gd-top"><div class="row"><span class="eyebrow">Week ${wk} · ${esc(gDay(day))}${fin ? '' : ' · ' + gTime(time)}</span><button class="x" type="button" aria-label="Close" id="sh-x">×</button></div>
+      <div class="gd-vs">${tm(a, A)}<span class="mid">${fin ? `<b>${as}-${hs}</b><small>Final${ot ? '/OT' : ''}</small>` : `<b>at</b><small>${esc(G.stadium)}</small>`}</span>${tm(h, H)}</div>
+      <h3 id="sh-name" class="sr">${esc(A.name)} at ${esc(H.name)}</h3></div>
+    <div class="seg shtabs" id="gd-tabs" role="group" aria-label="Game view"><button type="button" data-gdt="pre" aria-pressed="${tab === 'pre'}">Preview</button><button type="button" data-gdt="stats" aria-pressed="${tab === 'stats'}">Team stats</button><button type="button" data-gdt="inj" aria-pressed="${tab === 'inj'}">Injury report</button></div>
+    <div id="gd-pre" style="display:grid;gap:16px" ${tab === 'pre' ? '' : 'hidden'}>${gdPreviewHTML(gid, a, h)}</div>
+    <div id="gd-stats" style="display:grid;gap:16px" ${tab === 'stats' ? '' : 'hidden'}>${gdStatsHTML(a, h)}</div>
+    <div id="gd-inj" style="display:grid;gap:16px" ${tab === 'inj' ? '' : 'hidden'}><div class="gd-sec"><h4>${esc(A.city)} ${esc(A.name)}</h4>${gdInjHTML(gid, a)}</div><div class="gd-sec"><h4>${esc(H.city)} ${esc(H.name)}</h4>${gdInjHTML(gid, h)}</div>
+      <p class="note">The NFL's official injury report, via nflverse, as of ${esc(gShort(GDAY.asOf))}. Game statuses (Out, Doubtful, Questionable) come out two days before kickoff; before that the latest practice report shows. The number on the right is how many rating points the model takes off for that player: his chance of missing the game times what his position is worth, scaled by his share of snaps.</p></div>`;
+  if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
+  $('#sh-x').onclick = () => sheet.close();
+  $('#gd-tabs').onclick = e => { const b = e.target.closest('[data-gdt]'); if (!b) return; gm.gdTab = b.dataset.gdt; $$('#gd-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); ['pre', 'stats', 'inj'].forEach(k => ($('#gd-' + k).hidden = k !== gm.gdTab)); };
+  if (G.ll && !WX[gid]) wxFor(gid).then(() => { const box = $('#gd-pre'); if (box && $('#gd-tabs') && sheet.open) box.innerHTML = gdPreviewHTML(gid, a, h); });
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-gd]'); if (!b) return; e.stopPropagation(); openGame(b.dataset.gd); }, true);
 function renderScores() {
   const W = GSCHED.weeks, R = gLiveRecords(), cur = gCurWeek();
   $('#gm-weeks').innerHTML = Array.from({ length: W }, (_, i) => i + 1).map(w => `<button type="button" class="chip" data-gw="${w}" aria-pressed="${w === gm.week}">Week ${w}${w === cur ? ' · now' : ''}</button>`).join('');
@@ -5432,7 +5573,8 @@ function renderScores() {
   const byes = TEAMS.filter(t => !games.some(g => g[4] === t.id || g[5] === t.id)).map(t => t.id);
   const pk = GPROJ && GPROJ.model.picks;
   $('#gm-sum').innerHTML = [`<span><b>${games.length}</b> games · ${fin.length} final</span>`, called ? `<span>Model this week: <b>${right}-${called - right}</b></span>` : '', pk && pk.w + pk.l ? `<span>Model this season: <b>${pk.w}-${pk.l}</b> (${Math.round(pk.w / (pk.w + pk.l) * 100)}%) as of ${gShort(GPROJ.asOf)}</span>` : '', byes.length && byes.length < 32 ? `<span>Bye: ${byes.map(esc).join(', ')}</span>` : ''].join('');
-  $('#gm-note').textContent = `Scores update every morning from nflverse game results. Kickoff times are Eastern. ${GPROJ ? 'Model picks and projected scores come from the PlainStats game model, which updates every Tuesday; see Projections for how it works.' : 'Model picks did not load.'}`;
+  gWxLoad(gm.week);
+  $('#gm-note').textContent = `Scores update every morning from nflverse game results. Kickoff times are Eastern. ${GPROJ ? `Model picks come from the PlainStats game model (updated every Tuesday); this week's picks also count the official injury report (updated daily${GDAY ? ', last ' + gShort(GDAY.asOf) : ''}) and the kickoff weather forecast. Tap Game details for injuries, weather and team stats.` : 'Model picks did not load.'}`;
 }
 function renderStandings() {
   $$('#gm-conf button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.gc === gm.conf)));
@@ -5484,6 +5626,7 @@ function renderGProj() {
       <li><b>Team ratings:</b> every team has an Elo rating built from every game since 1999. A win takes points from the loser; a bigger margin moves more points, and beating a weaker team moves fewer. Ratings drift ${Math.round(M.regress * 100)}% back toward average each offseason.</li>
       <li><b>Each game:</b> the rating gap, plus ${M.hfa} points for the home team (none at neutral sites), sets the win chance. Every ${M.ptsPerElo} rating points is worth about one point on the scoreboard. Projected scores split each matchup's expected total, from both teams' points scored and allowed this season, by that spread.</li>
       <li><b>The rest of the season:</b> every remaining game is played out ${GPROJ.sims.toLocaleString()} times. Ratings move inside each simulated season, so streaks carry forward. Division winners and wild cards are decided with simplified NFL tiebreakers, then the playoffs are played: seven teams per conference, a bye for the No. 1 seed, home games for the higher seed and a neutral Super Bowl.</li>
+      <li><b>Injuries and weather (this week's games):</b> each player on the NFL's official injury report counts by his chance of missing the game (Out 1, Doubtful 0.85, Questionable 0.3; before game statuses exist, did not practice 0.35 and limited 0.1), times what his position is worth (a starting quarterback is worth far more than anyone else), times his share of snaps this season. Wind over 12 mph, likely rain or snow, and temperatures of 25°F or lower take points off the projected total, and high wind makes the game closer. Weather comes from the National Weather Service for open-air US stadiums. The season simulations use the ratings only.</li>
       <li><b>Track record:</b> ${bt.acc ? `tested on ${bt.games.toLocaleString()} regular-season games from ${bt.from} to ${bt.to}, it picked ${Math.round(bt.acc * 100)}% of winners. ` : ''}This season it is ${pk.w}-${pk.l}.</li>
     </ul>
     <p class="note">Scores update every morning. Standings, ratings and projections update every Tuesday after Monday Night Football. The model knows nothing about injuries, trades or weather, so treat it as a starting point, not a forecast you can bank on.</p>`;
