@@ -42,6 +42,10 @@ for r in csv.DictReader(open(NV + f'roster_{SEASON}.csv')):
     k = r['gsis_id']
     if k not in ro or int(r['week']) > int(ro[k]['week']): ro[k] = r
 ROST = [r for r in ro.values() if r['status'] in ('ACT', 'RES', 'DEV', 'INA', 'EXE')]
+# any roster row this season, whatever the status (cut or waived players keep their stats): same name and team first
+ANY = {}
+for r in ro.values(): ANY.setdefault((nn(r['full_name']), tfix(r['team'])), r)
+gid_any = lambda name, team: (ANY.get((nn(name), team)) or {}).get('gsis_id', '')
 byKey = {}
 for r in ROST: byKey.setdefault((nn(r['full_name']), tfix(r['team'])), r)
 byName = {}
@@ -55,6 +59,7 @@ def roster_row(name, team):
     if r: return r
     c = byName.get(nn(name), [])
     if len(c) == 1: return c[0]
+    if (nn(name), team) in ANY: return None   # he is on this team's list under exactly this name (cut, waived): never borrow a teammate's row
     parts = name.split()
     if len(parts) >= 2:
         last = nn(' '.join(p for p in parts[1:] if nn(p) not in ('jr', 'sr', 'ii', 'iii', 'iv', 'v')) or parts[-1])
@@ -235,11 +240,12 @@ for p in D['players']:
         expect = minsal(vsb['countsAsCredited'], SEASON) if exp >= vsb['minCredited'] else minsal(exp, SEASON)
         if abs(row[10] - expect) <= 0.25 * expect:
             minimum_row(row, exp); prov, sid, ver = 'm', src_id(CBA['minSalary']['src'][0], CBA['minSalary']['src'][1]), 'tagfecb'
-    if r:
-        a = age_of(r)
+    ar = r or ANY.get(key)
+    if ar:
+        a = age_of(ar)
         if a: row[3] = a
     count[prov] += 1
-    out.append(row + [prov, sid, ver, sb, r['gsis_id'] if r else gid_alt(name)])
+    out.append(row + [prov, sid, ver, sb, r['gsis_id'] if r else (gid_any(name, team) or gid_alt(name))])
 
 # ledger deals for players not yet in the table (new signings): add them from the report
 have = {(nn(r[0]), r[1]) for r in out}
@@ -276,6 +282,23 @@ for r in ROST:
     else: continue
     out.append(row + ['f', CBA_SRC, 'tagfecb', None, r['gsis_id']]); count['f'] += 1; added += 1
 
+# One row per player: the old list and the roster can spell a name differently (Andres / Andy Borregales), which
+# added the same player twice. Keep the better-sourced row (r > m > p > f > u), then the roster's spelling.
+RANK = {'r': 0, 'm': 1, 'p': 2, 'f': 3, 'u': 4}
+ROSTER_NAME = {r['gsis_id']: r['full_name'] for r in ro.values()}
+best, dups = {}, 0
+for i, row in enumerate(out):
+    g = row[19]
+    if not g: continue
+    j = best.get(g)
+    if j is None: best[g] = i; continue
+    a, c = out[j], row
+    keep = min((a, c), key=lambda x: (RANK.get(x[15], 9), x[0] != ROSTER_NAME.get(g, x[0])))
+    best[g] = j if keep is a else i; dups += 1
+drop = {i for i, row in enumerate(out) if row[19] and best[row[19]] != i}
+out = [row for i, row in enumerate(out) if i not in drop]
+count = {k: sum(1 for x in out if x[15] == k) for k in count}
+
 # Unverified rows keep only name, team, position and age: PlainStats does not publish a dollar figure it cannot source.
 HIDE = [4, 5, 6, 7, 8, 10, 11, 12, 13, 14]
 for row in out:
@@ -291,4 +314,4 @@ D['prov'] = {'asOf': datetime.date.today().isoformat(), 'counts': count, 'added'
 json.dump(D, open('data/nfl.json', 'w'), separators=(',', ':'))
 json.dump({'asOf': D['prov']['asOf'], 'note': 'Year-by-year cap hits PlainStats calculates itself: rookie contracts from the rookie scale and CBA minimums (data/cba.json), plus exercised fifth-year options. Each row: [base salary, bonus counted, cap hit].', 'contracts': YC},
           open('data/years_calc.json', 'w'), separators=(',', ':'))
-print('rows', len(out), 'with gsis id', sum(1 for x in out if x[19]), count, 'added', added, 'sources', len(SRC))
+print('rows', len(out), 'duplicates merged', dups, 'with gsis id', sum(1 for x in out if x[19]), count, 'added', added, 'sources', len(SRC))

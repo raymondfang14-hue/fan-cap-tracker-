@@ -1,12 +1,19 @@
 """Build Plain Cap data/stats.json from nflverse weekly files.
-Usage: python3 -I build_stats.py <dir with nflverse csvs> <season> <out.json>
-Needs: stats_player_week_<S>.csv, snap_counts_<S>.csv, advstats_week_{def,pass,rush,rec}_<S>.csv
+Usage: python3 -I build_stats.py <dir with nflverse csvs> <season> <out.json> [last week]
+(last week: optional; leave out to use every week in the files, give it to skip a week still being played)
+Needs: stats_player_week_<S>.csv, snap_counts_<S>.csv, advstats_week_{def,pass,rush,rec}_<S>.csv, players.csv
 from https://github.com/nflverse/nflverse-data/releases/download/<tag>/<file>
-(tags: stats_player, snap_counts, pfr_advstats)."""
+(tags: stats_player, snap_counts, pfr_advstats, players).
+
+Players are matched across files by id, never by name: snap counts and advanced stats use the PFR id, box scores
+use the gsis id, and players.csv links the two. Names differ between files (Greg / Gregory Rousseau), so name
+matching split one player into two records and his card showed zero tackles. Name + team is only a fallback for
+the few players players.csv cannot link. Each output row carries "gid" (gsis id), which the page matches on."""
 import csv, json, re, sys, os, datetime
 from collections import defaultdict
 D, S, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
-rd = lambda f: list(csv.DictReader(open(os.path.join(D, f), encoding='utf-8')))
+LAST = int(sys.argv[4]) if len(sys.argv) > 4 else 99
+rd = lambda f: [r for r in csv.DictReader(open(os.path.join(D, f), encoding='utf-8')) if not r.get('week') or int(r['week']) <= LAST]
 num = lambda v: float(v) if v not in ('', None, 'NA') else 0.0
 SUF = re.compile(r'\b(jr|sr|ii|iii|iv|v)\b')
 def norm(n):
@@ -17,6 +24,12 @@ TEAMFIX = {'LA': 'LAR', 'JAC': 'JAX', 'WSH': 'WAS', 'OAK': 'LV', 'SD': 'LAC', 'S
 tf = lambda t: TEAMFIX.get(t, t)
 
 snaps = rd(f'snap_counts_{S}.csv')
+G2P, P2G = {}, {}   # gsis id <-> pfr id
+if os.path.exists(os.path.join(D, 'players.csv')):
+    for r in rd('players.csv'):
+        if r.get('gsis_id') and r.get('pfr_id'): G2P[r['gsis_id']] = r['pfr_id']; P2G[r['pfr_id']] = r['gsis_id']
+else:
+    print('warning: players.csv missing; box scores fall back to name matching')
 sp = rd(f'stats_player_week_{S}.csv')
 weeks = sorted({int(r['week']) for r in sp if r['season_type'] == 'REG'})
 thru = max(weeks) if weeks else 0
@@ -72,7 +85,9 @@ SUM = ['completions', 'attempts', 'passing_yards', 'passing_tds', 'passing_inter
        'punt_return_yards', 'kickoff_return_yards', 'special_teams_tds', 'fantasy_points_ppr', 'sack_fumbles_lost']
 for r in sp:
     if r['season_type'] != 'REG': continue
-    t = tf(r['team']); p = find(r['player_display_name'], t)
+    t = tf(r['team']); pk = G2P.get(r['player_id'])
+    p = P[pk] if pk in P else find(r['player_display_name'], t)
+    if pk and pk not in P and p is not None: P.setdefault(pk, p)   # box score with no snap row: later files find him by id too
     p['gsis'] = r['player_id']; p.setdefault('pos', r['position'])
     p.setdefault('bwk', set()).add(int(r['week']))
     for c in SUM: p['s'][c] += num(r.get(c))
@@ -111,17 +126,21 @@ for r in rd(f'advstats_week_rush_{S}.csv'):
 def rnd(x, d=1):
     return round(x, d) if isinstance(x, float) else x
 out = []
+seen_rec = set()
 for k, p in P.items():
+    if id(p) in seen_rec: continue   # the same record can sit under two keys (id and name fallback)
+    seen_rec.add(id(p))
     s = p['s']; team = p['t']
     # most recent team
     wk = p['wk']
     if wk: team = wk[max(wk)]
     tg = len(team_games[team]) or thru
-    g = int(s['g']) or len(p.get('bwk', ()))
+    g = max(int(s['g']), len(p.get('bwk', ())))   # a week missing from the snap file still counts if he has a box score
     if g == 0: continue
     teamo = sum(tsn[(t, w)]['o'] for w, t in [(w, team) for w in team_games[team]]) or 1
     teamd = sum(tsn[(t, w)]['d'] for w, t in [(w, team) for w in team_games[team]]) or 1
-    o = {'n': p['n'], 'k': norm(p['n']), 't': team, 'pp': p.get('pos', ''), 'g': g, 'gs': int(s['gs']), 'tg': tg}
+    gid = p.get('gsis') or P2G.get(k, '')
+    o = {'n': p['n'], 'k': norm(p['n']), 'gid': gid, 't': team, 'pp': p.get('pos', ''), 'g': g, 'gs': int(s['gs']), 'tg': tg}
     if s['osn']: o['osn'] = int(s['osn']); o['osh'] = rnd(s['osn'] / teamo, 3); o['opg'] = rnd(s['opct_sum'] / max(1, s['og']), 3)
     if s['dsn']: o['dsn'] = int(s['dsn']); o['dsh'] = rnd(s['dsn'] / teamd, 3); o['dpg'] = rnd(s['dpct_sum'] / max(1, s['dg']), 3)
     if s['ssn']: o['ssn'] = int(s['ssn'])
@@ -150,7 +169,10 @@ for k, p in P.items():
         m['scr'] = s['rushing_yards'] + s['receiving_yards']
         m['ppr'] = s['fantasy_points_ppr']
     tk = s['def_tackles_solo'] + s['def_tackle_assists'] + s['def_tackles_with_assist'] - s['def_tackles_with_assist']
-    if (s['dsn'] or tk or s['def:def_targets']) and s['dsn'] >= s['osn']:
+    # defensive line: players who mostly play defense, plus defensive players who also take offensive snaps
+    # (a linebacker used at fullback, 30+ defensive snaps, or a special-teamer, still shows his tackles); an offensive player's tackle after a turnover is left out
+    defpos = p.get('pos', '') in ('DE', 'DT', 'NT', 'DL', 'LB', 'OLB', 'ILB', 'MLB', 'CB', 'DB', 'S', 'FS', 'SS', 'SAF')
+    if (s['dsn'] or tk or s['def:def_targets']) and (s['dsn'] >= s['osn'] or defpos or s['dsn'] >= 30 or (tk and s['ssn'] > s['osn'])):
         tk = s['def_tackles_solo'] + s['def_tackle_assists']
         att_tk = s['def:def_tackles_combined'] + s['def:def_missed_tackles']
         m.update(tk=tk, solo=s['def_tackles_solo'], tfl=s['def_tackles_for_loss'], sck=s['def_sacks'], qbh=s['def_qb_hits'], ff=s['def_fumbles_forced'],
@@ -165,6 +187,7 @@ for k, p in P.items():
     if s['pt_att']:
         n_ = s['pt_att']; m.update(pun=n_, pavg=s['pt_yards'] / n_, pnet=s['pt_net_yards'] / n_, pi20=s['pt_inside_20'], ptb=s['pt_touchback'], pi20p=s['pt_inside_20'] / n_)
     if s['penalties']: m['pen'] = s['penalties']
+    if not o['gid']: del o['gid']
     o['m'] = {k2: rnd(v, 3) if isinstance(v, float) and abs(v) < 10 else rnd(v, 1) for k2, v in m.items() if v}
     out.append(o)
 # team unit context for O-line

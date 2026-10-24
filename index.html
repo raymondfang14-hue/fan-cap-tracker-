@@ -2679,26 +2679,29 @@ const SNAP_SIDE = { QB: 'off', RB: 'off', FB: 'off', WR: 'off', TE: 'off', T: 'o
 
 function attachStats(sd) {
   SD = sd; THRU = sd.thru || 0; TEAMST = sd.teams || {};
-  const byK = {}, byLast = {};
+  const byK = {}, byLast = {}, byG = {};
   sd.players.forEach(s => {
     s.side = SNAP_SIDE[s.pp] || (s.dsn > (s.osn || 0) ? 'def' : 'off');
+    if (s.gid) byG[s.gid] = s;
     (byK[s.k] = byK[s.k] || []).push(s);
     const w = s.k.split(' '); const lk = w[w.length - 1] + '|' + s.t; (byLast[lk] = byLast[lk] || []).push(s);
   });
   const used = new Set();
   const pickFrom = (L, p, side) => {
     if (!L || !L.length) return null;
-    L = L.filter(s => !used.has(s));
+    L = L.filter(s => !used.has(s) && !(p.gid && s.gid && s.gid !== p.gid));   // never hand one player another's line
     const sameSide = L.filter(s => s.side === side);
     return L.find(s => s.t === p.team && s.side === side) || (sameSide.length === 1 ? sameSide[0] : null) || L.find(s => s.t === p.team) || (L.length === 1 && side !== 'st' ? L[0] : null);
   };
   const order = [...PL].sort((a, b) => b.apy - a.apy);
   order.forEach(p => {
     const side = GROUP_SIDE[p.group] || 'st';
+    // match by gsis id first (names differ between sources: Greg / Gregory Rousseau); names are the fallback
+    let s = p.gid && byG[p.gid] && !used.has(byG[p.gid]) ? byG[p.gid] : null;
     let k = nkey(p.name); k = ALIAS[k] || k;
-    let s = pickFrom(byK[k], p, side);
+    if (!s) s = pickFrom(byK[k], p, side);
     if (!s) { const w = k.split(' '); if (NICK[w[0]]) s = pickFrom(byK[[NICK[w[0]]].concat(w.slice(1)).join(' ')], p, side); }
-    if (!s) { const w = k.split(' '); const L = (byLast[w[w.length - 1] + '|' + p.team] || []).filter(x => x.side === side && x.k[0] === w[0][0]); if (L.length === 1) s = L[0]; }
+    if (!s) { const w = k.split(' '); const L = (byLast[w[w.length - 1] + '|' + p.team] || []).filter(x => x.side === side && x.k[0] === w[0][0] && !used.has(x) && !(p.gid && x.gid && x.gid !== p.gid)); if (L.length === 1) s = L[0]; }
     if (s) { used.add(s); p.st = s; }
   });
 }
