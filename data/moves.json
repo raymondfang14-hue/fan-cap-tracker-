@@ -1,6 +1,21 @@
 {
- "asOf": "2026-10-24",
+ "asOf": "2026-10-25",
  "moves": [
+  {
+   "iso": "2026-10-24",
+   "date": "Oct 24",
+   "kind": "Extension",
+   "teams": [
+    "CLE"
+   ],
+   "players": [
+    "Maliek Collins"
+   ],
+   "head": "Browns extend DT Maliek Collins for two years",
+   "plain": "Cleveland agreed to a two-year, $30 million extension with the defensive tackle, with $23 million guaranteed. It keeps him under contract through 2028.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/browns-maliek-collins-agree-to-extension"
+  },
   {
    "iso": "2026-10-23",
    "date": "Oct 23",
