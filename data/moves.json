@@ -1,6 +1,24 @@
 {
- "asOf": "2026-10-25",
+ "asOf": "2026-10-26",
  "moves": [
+  {
+   "iso": "2026-10-25",
+   "date": "Oct 25",
+   "kind": "Game",
+   "teams": [
+    "SEA",
+    "KC",
+    "TB",
+    "CAR",
+    "CIN",
+    "BAL"
+   ],
+   "players": [],
+   "head": "Week 7 Sunday: Seahawks beat Chiefs 20-3, Bengals and Buccaneers win big",
+   "plain": "Seattle held Kansas City to a field goal. Cincinnati beat Baltimore 35-13 and Tampa Bay beat Carolina 43-13. Other finals: Rams 35-21 over Raiders, Broncos 30-16 over Cardinals, Lions 20-17 over Packers.",
+   "source": "nflverse game results",
+   "url": "https://github.com/nflverse/nflverse-data/releases/tag/schedules"
+  },
   {
    "iso": "2026-10-24",
    "date": "Oct 24",
