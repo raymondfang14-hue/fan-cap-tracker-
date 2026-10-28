@@ -4,6 +4,25 @@
   {
    "iso": "2026-10-27",
    "date": "Oct 27",
+   "kind": "Injury",
+   "teams": [
+    "CIN",
+    "BAL",
+    "NYG"
+   ],
+   "players": [
+    "Erick All",
+    "Olaivavega Ioane",
+    "Tyrone Tracy Jr."
+   ],
+   "head": "Bengals TE Erick All feared to have torn his ACL; Giants RB Tyrone Tracy Jr. headed to IR",
+   "plain": "Cincinnati tight end Erick All is believed to have torn his ACL in Sunday's win over the Ravens. Giants running back Tyrone Tracy Jr. will go on injured reserve with a hamstring injury, and Ravens rookie guard Olaivavega Ioane has an MCL sprain and will miss a little time.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-oct-27"
+  },
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
    "kind": "Trade",
    "teams": [
     "IND",
