@@ -7,6 +7,22 @@
    "kind": "Trade",
    "teams": [
     "IND",
+    "SF"
+   ],
+   "players": [
+    "DeForest Buckner"
+   ],
+   "head": "Colts trade DT DeForest Buckner back to the 49ers",
+   "plain": "Indianapolis sends the 32-year-old defensive tackle to San Francisco, where he started his career, for a 2027 fourth-round pick. He had four sacks in seven games for the 2-5 Colts. The 49ers have lost several defensive linemen to injury, and no new contract was reported.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/colts-to-trade-deforest-buckner-to-49ers-for-fourth-round-pick"
+  },
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
+   "kind": "Trade",
+   "teams": [
+    "IND",
     "SEA"
    ],
    "players": [
