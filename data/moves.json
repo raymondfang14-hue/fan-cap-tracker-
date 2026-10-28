@@ -1,6 +1,36 @@
 {
- "asOf": "2026-10-26",
+ "asOf": "2026-10-28",
  "moves": [
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
+   "kind": "Trade",
+   "teams": [
+    "IND",
+    "SEA"
+   ],
+   "players": [
+    "Quenton Nelson"
+   ],
+   "head": "Colts agree to trade G Quenton Nelson to the Seahawks",
+   "plain": "Seattle sends Indianapolis a 2027 third-round pick and a 2028 fifth-round pick for the veteran guard. He is in the last year of his contract, and no new deal was reported.",
+   "source": "NBC Sports / Pro Football Talk",
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/colts-agree-to-trade-quenton-nelson-to-seahawks"
+  },
+  {
+   "iso": "2026-10-26",
+   "date": "Oct 26",
+   "kind": "Game",
+   "teams": [
+    "DAL",
+    "PHI"
+   ],
+   "players": [],
+   "head": "Monday night: Cowboys beat Eagles 38-21",
+   "plain": "Dallas scored 38 and won by 17 on the road in the Week 7 finale.",
+   "source": "nflverse game results",
+   "url": "https://github.com/nflverse/nflverse-data/releases/tag/schedules"
+  },
   {
    "iso": "2026-10-25",
    "date": "Oct 25",
