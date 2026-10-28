@@ -31,28 +31,28 @@ import json, re, sys, pathlib
 HERE = pathlib.Path(__file__).parent
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / 'draft.json'
 ASOF = '2026-10-28'
-STATS_THRU = '2026-10-17'
-BOARD_DATES = {'w': '2026-10-14', 'b': '2026-10-21'}
+STATS_THRU = '2026-10-24'
+BOARD_DATES = {'w': '2026-10-20', 'b': '2026-10-21'}
 
 # key: (name, group, school code, class, height, weight, walter rank, buzz rank, buzz avg, cfbstats team id, cfbstats player id)
 P = [
  ('jsmith', 'Jeremiah Smith', 'WR', 'OSU', 'JR', '6-4', 222, 1, 1, 1.1, 518, 50312218),
  ('lmoore', 'Leonard Moore', 'CB', 'ND', 'JR', '6-2', 197, 2, 18, 4.2, 513, 50309847),
  ('simmons', 'Colin Simmons', 'EDGE', 'TEX', 'JR', '6-3', 246, 3, 2, 4.8, 703, 50312306),
- ('ccoleman', 'Cam Coleman', 'WR', 'TEX', 'JR', '6-3', 204, 4, 6, 7.1, 703, 50310429),
- ('becker', 'Charlie Becker', 'WR', 'IND', 'JR', '6-4', 208, 5, 35, 18.9, 306, 50304327),
- ('carr', 'CJ Carr', 'QB', 'ND', 'JR', '6-2', 215, 6, 24, 27.1, 513, 50310480),
- ('goosby', 'Trevor Goosby', 'OT', 'TEX', 'SR', '6-7', 325, 7, 11, 12.1, 703, None),
+ ('ccoleman', 'Cam Coleman', 'WR', 'TEX', 'JR', '6-3', 204, 7, 6, 7.1, 703, 50310429),
+ ('becker', 'Charlie Becker', 'WR', 'IND', 'JR', '6-4', 208, 4, 35, 18.9, 306, 50304327),
+ ('carr', 'CJ Carr', 'QB', 'ND', 'JR', '6-2', 215, 15, 24, 27.1, 513, 50310480),
+ ('goosby', 'Trevor Goosby', 'OT', 'TEX', 'SR', '6-7', 325, 5, 11, 12.1, 703, None),
  ('baugh', 'Jadan Baugh', 'RB', 'UF', 'JR', '6-1', 225, 8, 36, 22.9, 235, 50309802),
  ('stewart', 'Dylan Stewart', 'EDGE', 'SC', 'JR', '6-5', 250, 9, 5, 4.8, 648, 50310495),
- ('manning', 'Arch Manning', 'QB', 'TEX', 'SR', '6-4', 222, 10, 19, 10.5, 703, 2001506),
- ('erobinson', 'Ellis Robinson IV', 'CB', 'UGA', 'JR', '6-0', 180, 11, 12, 19.9, 257, 50310449),
- ('duff', 'KJ Duff', 'WR', 'RUT', 'JR', '6-6', 225, 12, 38, 36.4, 587, 50312274),
- ('tgreen', "Trey'Dez Green", 'TE', 'LSU', 'JR', '6-7', 242, 13, 22, 21.6, 365, 50312143),
- ('mensah', 'Darian Mensah', 'QB', 'MIA', 'JR', '6-3', 205, 14, 3, 19.8, 415, 2000040),
- ('dmoore', 'Dante Moore', 'QB', 'ORE', 'SR', '6-3', 220, 15, 7, 9.0, 529, 2000295),
+ ('manning', 'Arch Manning', 'QB', 'TEX', 'SR', '6-4', 222, 17, 19, 10.5, 703, 2001506),
+ ('erobinson', 'Ellis Robinson IV', 'CB', 'UGA', 'JR', '6-0', 180, 10, 12, 19.9, 257, 50310449),
+ ('duff', 'KJ Duff', 'WR', 'RUT', 'JR', '6-6', 225, 13, 38, 36.4, 587, 50312274),
+ ('tgreen', "Trey'Dez Green", 'TE', 'LSU', 'JR', '6-7', 242, 12, 22, 21.6, 365, 50312143),
+ ('mensah', 'Darian Mensah', 'QB', 'MIA', 'JR', '6-3', 205, 11, 3, 19.8, 415, 2000040),
+ ('dmoore', 'Dante Moore', 'QB', 'ORE', 'SR', '6-3', 220, 27, 7, 9.0, 529, 2000295),
  ('tjohnson', 'Tae Johnson', 'S', 'ND', 'JR', '6-2', 200, 16, 33, 24.9, 513, 50310479),
- ('gilliam', 'Xavier Gilliam', 'DT', 'TENN', 'JR', '6-2', 305, 17, None, None, 694, 50303952),
+ ('gilliam', 'Xavier Gilliam', 'DT', 'TENN', 'JR', '6-2', 305, 6, None, None, 694, 50303952),
  ('echoles', 'Will Echoles', 'DT', 'MISS', 'JR', '6-3', 315, 18, 13, 13.4, 433, 50311247),
  ('lacy', 'Kewan Lacy', 'RB', 'MISS', 'JR', '5-11', 205, 19, 46, 31.8, 433, 50312188),
  ('pierre', 'Yhonzae Pierre', 'EDGE', 'BAMA', 'SR', '6-4', 251, 20, 15, 19.7, 8, 2000235),
@@ -62,15 +62,15 @@ P = [
  ('hampton', 'Ashton Hampton', 'CB', 'CLEM', 'JR', '6-2', 205, 24, None, None, 147, 50312065),
  ('heldt', 'Will Heldt', 'EDGE', 'CLEM', 'SR', '6-6', 260, 25, 50, 38.1, 147, 2000036),
  ('berry', 'Zeke Berry', 'CB', 'MICH', 'SR', '5-11', 188, 26, None, None, 418, 1180019),
- ('balexander', 'Bear Alexander', 'DT', 'ORE', 'SR', '6-3', 316, 27, None, None, 529, 1174428),
+ ('balexander', 'Bear Alexander', 'DT', 'ORE', 'SR', '6-3', 316, 34, None, None, 529, 1174428),
  ('mcdonald', 'Jelani McDonald', 'S', 'TEX', 'SR', '6-2', 201, 28, 48, 61.7, 703, 2002969),
  ('gjohnson', 'Greg Johnson', 'IOL', 'MINN', 'SR', '6-6', 325, 29, None, None, 428, None),
  ('rharris', 'Reed Harris', 'WR', 'ASU', 'SR', '6-5', 220, 30, None, None, 28, 2000413),
- ('kjackson', 'Kenyatta Jackson Jr.', 'EDGE', 'OSU', 'SR', '6-6', 263, 31, None, None, 518, 1177851),
- ('jamjohnson', 'Jamari Johnson', 'TE', 'ORE', 'SR', '6-5', 255, 32, 44, 23.0, 529, 2002973),
- ('marsh', 'Nick Marsh', 'WR', 'IND', 'JR', '6-3', 210, 33, 37, 35.5, 306, 50312177),
- ('chambliss', 'Trinidad Chambliss', 'QB', 'MISS', 'SR', '6-0', 210, 34, 45, 28.8, 433, 1136057),
- ('sbrown', 'Sammy Brown', 'LB', 'CLEM', 'JR', '6-2', 235, 35, 31, 36.3, 147, 50304691),
+ ('kjackson', 'Kenyatta Jackson Jr.', 'EDGE', 'OSU', 'SR', '6-6', 263, 33, None, None, 518, 1177851),
+ ('jamjohnson', 'Jamari Johnson', 'TE', 'ORE', 'SR', '6-5', 255, 35, 44, 23.0, 529, 2002973),
+ ('marsh', 'Nick Marsh', 'WR', 'IND', 'JR', '6-3', 210, 31, 37, 35.5, 306, 50312177),
+ ('chambliss', 'Trinidad Chambliss', 'QB', 'MISS', 'SR', '6-0', 210, 14, 45, 28.8, 433, 1136057),
+ ('sbrown', 'Sammy Brown', 'LB', 'CLEM', 'JR', '6-2', 235, 46, 31, 36.3, 147, 50304691),
  ('seaton', 'Jordan Seaton', 'OT', 'LSU', 'JR', '6-5', 311, 36, 27, 12.3, 365, None),
  ('traore', 'Boubacar Traore', 'EDGE', 'ND', 'SR', '6-5', 253, 37, None, None, 513, 2001485),
  ('mestemaker', 'Drew Mestemaker', 'QB', 'OKST', 'SO', '6-3', 215, 38, 4, 27.4, 521, 50259623),
@@ -81,7 +81,7 @@ P = [
  ('dwilson', 'Damon Wilson II', 'EDGE', 'MIA', 'SR', '6-4', 250, 43, 34, 52.5, 415, 2002195),
  ('swain', 'Vicari Swain', 'CB', 'SC', 'SR', '6-0', 193, 44, None, None, 648, 2001556),
  ('viliamu', 'Kyngstonn Viliamu-Asa', 'LB', 'ND', 'JR', '6-3', 234, 45, 14, 36.1, 513, 50311235),
- ('moten', 'Ahmad Moten Sr.', 'DT', 'MIA', 'SR', '6-3', 300, 46, None, None, 415, 1179981),
+ ('moten', 'Ahmad Moten Sr.', 'DT', 'MIA', 'SR', '6-3', 300, 32, None, None, 415, 1179981),
  ('washington', "A'Mauri Washington", 'DT', 'ORE', 'SR', '6-3', 325, 47, 23, 25.5, 529, 2000799),
  ('sellers', 'LaNorris Sellers', 'QB', 'SC', 'SR', '6-3', 238, 48, None, None, 648, 2002443),
  ('montgomery', 'Luke Montgomery', 'IOL', 'OSU', 'SR', '6-5', 313, 49, None, None, 518, None),
@@ -106,10 +106,10 @@ P = [
  ('ccole', 'Chris Cole', 'LB', 'UGA', 'JR', '6-3', 235, None, 29, 30.9, 257, 50311181),
  ('hardy', 'Ahmad Hardy', 'RB', 'MIZ', 'JR', '5-10', 210, None, 30, 34.6, 434, None),
  ('perkins', 'Suntarine Perkins', 'LB', 'MISS', 'SR', '6-1', 220, None, 32, 75.6, 433, 2001013),
- ('zbrown', 'Zabien Brown', 'CB', 'BAMA', 'JR', '6-2', 196, None, 39, 38.9, 8, 50310416),
+ ('zbrown', 'Zabien Brown', 'CB', 'BAMA', 'JR', '6-2', 196, 69, 39, 38.9, 8, 50310416),
  ('lubin', 'Clev Lubin', 'EDGE', 'LOU', 'SR', '6-3', 260, None, 40, 51.5, 367, 1178133),
- ('siereveld', 'Austin Siereveld', 'OT', 'OSU', 'SR', '6-5', 327, None, 42, 46.5, 518, None),
- ('pieper', 'Kade Pieper', 'IOL', 'IOWA', 'SR', '6-3', 298, None, 47, 34.6, 312, None),
+ ('siereveld', 'Austin Siereveld', 'OT', 'OSU', 'SR', '6-5', 327, 61, 42, 46.5, 518, None),
+ ('pieper', 'Kade Pieper', 'IOL', 'IOWA', 'SR', '6-3', 298, 62, 47, 34.6, 312, None),
 ]
 
 SCHOOLS = {
