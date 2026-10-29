@@ -2,6 +2,22 @@
  "asOf": "2026-10-29",
  "moves": [
   {
+   "iso": "2026-10-29",
+   "date": "Oct 29",
+   "kind": "Trade",
+   "teams": [
+    "TEN",
+    "CHI"
+   ],
+   "players": [
+    "Jeffery Simmons"
+   ],
+   "head": "Bears get DT Jeffery Simmons from the Titans for two first-round picks",
+   "plain": "Tennessee gets Chicago's 2027 and 2028 first-round picks and a 2027 fourth. Chicago also gets a 2028 fifth. Simmons, 29, is a first-team All-Pro who signed a three-year, $105.8M extension in June. He has 4 sacks and 12 pressures in 7 games for the 1-6 Titans, and the 5-2 Bears had been looking for help rushing the passer.",
+   "source": "ESPN",
+   "url": "https://www.espn.com/nfl/story/_/id/50318351/sources-bears-trade-all-pro-dt-jeffery-simmons"
+  },
+  {
    "iso": "2026-10-27",
    "date": "Oct 27",
    "kind": "Injury",
