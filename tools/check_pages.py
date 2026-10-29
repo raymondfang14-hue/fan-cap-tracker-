@@ -9,9 +9,13 @@ import argparse, asyncio, functools, http.server, json, os, re, sys, threading
 
 VIEWS = ['/', '/news', '/team-ratings', '/team/kc', '/contracts', '/power-rankings', '/awards', '/big-board', '/scores', '/standings',
          '/projections', '/roster-builder', '/#offseason', '/trade-checker', '/compare', '/cap-101', '/stats', '/player/patrick-mahomes-kc']
+
 SHARE_VIEWS = ['/team-ratings', '/contracts', '/power-rankings', '/big-board']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Pages whose "Share" button must open a 1080x1350 image. The prospect is the first one in data/pageslugs.json so the check survives roster changes.
+CARD_VIEWS = ['/player/patrick-mahomes-kc', '/team/kc', '/prospect/' + next(iter(json.load(open(os.path.join(ROOT, 'data', 'pageslugs.json')))['d'])).split('-', 1)[1]]
+VIEWS += [v for v in CARD_VIEWS if v not in VIEWS]
 
 
 def serve():
@@ -66,6 +70,16 @@ async def main(args):
                             await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
                         except Exception:
                             problems.append(f'{size}/{scheme} {v}: no visible "Share this" button on any chart or table')
+                    if v in CARD_VIEWS:
+                        try:  # the button needs the data, then drawing the card needs the photo to load or time out
+                            await page.wait_for_function("[...document.querySelectorAll('[data-card]')].some(b => b.offsetParent)", timeout=6000)
+                            await page.evaluate("[...document.querySelectorAll('[data-card]')].find(b => b.offsetParent).click()")
+                            await page.wait_for_function("document.querySelector('.ps-dlg[open] img') && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=15000)
+                            wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
+                            if wh != [1080, 1350]:
+                                problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
+                        except Exception:
+                            problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
                     if v == '/stats':  # the Season stats table must fill with player rows
                         try:
                             await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)

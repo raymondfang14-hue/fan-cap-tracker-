@@ -415,7 +415,7 @@ h1{font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;margin:.2em 0 .4em}h2
 .card dl{margin:0}.card dl>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--ln)}.card dl>div:last-child{border:0}
 .card dt{color:var(--mu)}.card dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--ln)}td.r,th.r{text-align:right}
-.scroll{overflow-x:auto}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}
+.scroll{overflow-x:auto}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}.cta.alt{background:transparent;color:var(--br);border:1px solid var(--br);margin-left:8px}
 .faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
 ul.list{columns:2 220px;list-style:none;padding:0;margin:0}ul.list li{padding:3px 0;break-inside:avoid}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
@@ -539,7 +539,7 @@ def build_player(p):
     body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
             f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
             f'{faq_html(faq)}'
-            f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a></p>'
+            f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>')
     person = {'@type': 'Person', 'name': p.name, 'jobTitle': f"{POSNAME.get(p.pos, p.pos).capitalize()}, NFL",
               'url': SITE + path, 'memberOf': {'@type': 'SportsTeam', 'name': T['full'], 'sport': 'American football', 'url': f'{SITE}/teams/{T["slug"]}'}}
@@ -627,7 +627,7 @@ def build_team(t):
     title = f"{full}: cap space, contracts and roster | PlainStats"
     desc = clip(summary, 158)
     body = (f'<div class="id">{logo}<h1>{esc(full)} cap space, contracts and roster</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li></ul>'
+            f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li><li><a rel="nofollow" href="/team/{tid.lower()}?share=1">Share the {esc(nick)} as an image</a></li></ul>'
             f'{top_html}{faq_html(faq)}{roster_html}'
             f'<p class="note">Team cap figures are PlainStats\' latest team totals as of {esc(ASOF)}. Player contracts are being re-sourced one by one from named reports, so team totals can change.</p>')
     team_ld = {'@type': 'SportsTeam', 'name': full, 'sport': 'American football', 'url': SITE + path, 'memberOf': {'@type': 'SportsOrganization', 'name': 'National Football League'}}
@@ -749,7 +749,7 @@ def build_prospect(pr):
     img_html = f'<img src="{esc(img)}" alt="{esc(pr["name"])}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     body = (f'<div class="id">{img_html}<h1>{esc(pr["name"])}: 2027 NFL Draft profile</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}{stat_html}{faq_html(faq)}'
             f'<p class="note">Ranks are from WalterFootball (updated {esc(BOARDS.get("w", {}).get("updated", ""))}) and NFL Draft Buzz (updated {esc(BOARDS.get("b", {}).get("updated", ""))}).</p>'
-            f'<p><a class="cta" href="/prospect/{esc(pr["id"])}">See {esc(pr["name"])} in the PlainStats app</a></p><p><a href="/draft">All 2027 draft prospects</a></p>')
+            f'<p><a class="cta" href="/prospect/{esc(pr["id"])}">See {esc(pr["name"])} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="/prospect/{esc(pr["id"])}?share=1">Share</a></p><p><a href="/draft">All 2027 draft prospects</a></p>')
     person = {'@type': 'Person', 'name': pr['name'], 'jobTitle': f'College {role}', 'alumniOf': {'@type': 'CollegeOrUniversity', 'name': school}, 'url': SITE + path}
     if img:
         person['image'] = img

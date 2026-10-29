@@ -709,6 +709,9 @@ dialog#picker::backdrop{background:rgba(6,12,24,.55)}
 #dr-otable td .pn small{white-space:nowrap}
 /* shareable links */
 .cplink{border:0;border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.85);color:#111;font:700 .66rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.cprow{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.cardbtn{border:0;border-radius:999px;padding:5px 10px;background:#fff;color:#111;font:700 .66rem/1 var(--mono);cursor:pointer;white-space:nowrap}
+.cardbtn[aria-busy="true"]{opacity:.6;cursor:progress}
 .cpbox{width:min(220px,60vw);padding:5px 8px;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:500 .7rem/1.2 var(--mono)}
 /* season stats */
 .hsls{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
@@ -1019,7 +1022,7 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
 .bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.awc .aw-k,.watch b,.cmprow .lab,.fc-nums small,.ring,
 .heat th,.pvps .q,.bigplay small,table.t th,.tier b,.vlab,.coachcard b,.sh-top h3,.dpos h3,
 .blist .sl,.blist .unit,.rkpill,.slot .sp,.kind,.outlook,.rookie,.srcb,.role,.ad::before,
-.tt-row>small,.cplink,.fieldd .los span,.drow .dn{
+.tt-row>small,.cplink,.cardbtn,.fieldd .los span,.drow .dn{
   text-transform:none!important;letter-spacing:0!important;font-family:var(--body)!important}
 .bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.fc-nums small,.bigplay small,.tt-row>small{font-size:.74rem!important;font-weight:500!important}
 table.t th{font-size:.76rem!important;font-weight:600!important}
@@ -3666,7 +3669,7 @@ function renderTeam(id) {
     <a href="/team-ratings" class="note" style="text-decoration:none">← All teams</a>
     <div class="sechead">
       <div style="display:flex;gap:14px;align-items:center">${badge(id, true)}<div><span class="eyebrow">${esc(t.div)}${SD ? ` · team rating ${t.rt.ovr}, ${ord(t.rk.ovr)} of 32` : ' · 2026 cap'}</span><h1 class="title" id="h-team">${esc(t.city)} ${esc(t.name)}</h1></div></div>
-      <button type="button" class="btn ${favTeam === id ? '' : 'ghost'}" id="fav-btn" aria-pressed="${favTeam === id}">${favTeam === id ? '★ Your team' : '☆ Make this my team'}</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ghost" data-card="team-${id}" aria-label="Share the ${esc(t.name)} as an image">Share</button><button type="button" class="btn ${favTeam === id ? '' : 'ghost'}" id="fav-btn" aria-pressed="${favTeam === id}">${favTeam === id ? '★ Your team' : '☆ Make this my team'}</button></div>
     </div>
     <div class="kpis">
       <div class="kpi"><span class="k">Cap room</span><span class="v good num">${mon(t.space)}</span><span class="s">${ord(t.r_space)} most in the NFL</span></div>
@@ -5107,7 +5110,7 @@ function sheetLink(h) {
   if (cur !== h) setURL(h, /^[pdg]-/.test(cur));
   loadPageMap().then(() => { if (PATHMODE && curKey() === h && sheet.open && pathOf(h) !== location.pathname) setURL(h, true); });
   const box = $('#sheet-body .sh-top > div:last-child');
-  if (box && !box.querySelector('.cplink')) box.insertAdjacentHTML('beforeend', `<button type="button" class="cplink" data-link="${esc(h)}">Copy link</button>`);
+  if (box && !box.querySelector('.cplink')) box.insertAdjacentHTML('beforeend', `<span class="cprow"><button type="button" class="cplink" data-link="${esc(h)}">Copy link</button>${/^[pd]-/.test(h) ? `<button type="button" class="cardbtn" data-card="${esc(h)}" aria-label="Share as an image">Share</button>` : ''}</span>`);
 }
 function openPending() {
   if (!PEND) return;
@@ -6179,6 +6182,8 @@ const ADS = {
     else { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; l.click(); }
   }
 
+  window.psShowImage = openPreview; window.psToast = toast;   // the share-card module below reuses this preview
+
   document.addEventListener('click', async e => {
     const b = e.target.closest('.ps-share');
     if (!b) return;
@@ -6191,6 +6196,194 @@ const ADS = {
     catch (err) { console.error('share image failed', err); toast('Could not make the image. Check your connection and try again.'); }
     finally { b.removeAttribute('aria-busy'); label.textContent = was; }
   });
+})();
+</script>
+<script>
+/* ===== Share card: a branded 1080x1350 (Instagram portrait) image for a player, team or draft prospect =====
+   Each "Share" button (player and prospect sheets, team page) builds a small spec from numbers the page already computed: who it is,
+   their colors, a headshot or logo, and 3 to 5 percentile bars. cardDraw() paints that onto a canvas, then the preview from "Share this"
+   (Share, Save, Copy, Copy link) shows it. The same data rules as the page apply: no contract figure is used for a player whose
+   deal is still being verified, and a card needs at least three bars or it is not made. */
+(() => {
+  const CW = 1080, CH = 1350, GOOD = '#3DDC97', MID = '#5FA2EE', LOW = '#F2B84B', BAD = '#F0605D';
+  const FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif';
+  const barColor = v => v >= .8 ? GOOD : v >= .5 ? MID : v >= .25 ? LOW : BAD;
+  const raw = u => String(u || '').replace(/&amp;/g, '&');
+  const bar = (label, v, val) => (v == null || isNaN(v) ? null : { label, v: Math.max(0, Math.min(1, v)), val: val == null ? '' : String(val) });
+
+  // ---- what goes on the card ----
+  function playerSpec(p) {
+    const t = TB[p.team], g = GCFG[p.sg];
+    let bars = [], big, cap;
+    if (p.fq && p.pc && g) {
+      bars = [...g.bars].sort((a, b) => b[1] - a[1]).map(([k]) => bar(MET[k][0], p.pc[k], fmtMet(p, k))).filter(Boolean).slice(0, p.hid ? 5 : 4);
+      if (!p.hid && p.pApy != null) bars.push(bar('Yearly pay', p.pApy, mon(p.apy) + ' a year'));
+      big = { num: String(p.play), label: 'Play rating' };
+      cap = `Percentiles among ${p.pn} qualified ${SG_NAME[p.sg].toLowerCase()}s, 2026 through Week ${THRU}.${!p.hid ? ' Pay is against his position.' : ''}`;
+    } else if (!p.hid) {
+      bars = [bar('Yearly pay', p.pApy, mon(p.apy)), bar('Guaranteed share', p.pGtd, pct(p.gtdp)), bar('Cap hit', p.pCap, mon(p.cap)), bar('Years left', p.pYrs, p.yl + (p.yl === 1 ? ' year' : ' years')), bar('Youth', p.pYouth, p.age ? 'age ' + p.age : '')].filter(Boolean);
+      big = { num: mon(p.apy), label: 'a year' };
+      cap = `Percentiles against the ${p.posCount} ${POS_WORD[p.pos] || p.pos}s in the league.`;
+    }
+    return {
+      kind: 'player', name: p.name, eyebrow: POS_WORD[p.pos] ? POS_WORD[p.pos].replace(/^./, c => c.toUpperCase()) : p.pos,
+      sub: `${t.city} ${t.name}${p.age ? ' · age ' + p.age : ''}`, c1: COLORS[p.team] || '#555', c2: COLORS2[p.team] || '#ccc',
+      img: IMAGES.headshots ? raw(headshot(p)) : '', initials: initials(p.name), big, bars, cap, key: 'p-' + slugify(p.name)
+    };
+  }
+  function teamSpec(t) {
+    let bars, big, cap;
+    if (SD && t.rt && TR.ovr) {
+      const u = k => pctRank(TR[k], t.u[k]);
+      bars = [bar('Overall', u('ovr'), `${t.rt.ovr} · ${ord(t.rk.ovr)} of 32`), bar('Offense', u('off'), `${t.rt.off} · ${ord(t.rk.off)} of 32`), bar('Defense', u('def'), `${t.rt.def} · ${ord(t.rk.def)} of 32`),
+        bar('Cap room', t.hp[0], mon(t.space)), bar('Low dead money', t.hp[1], mon(t.dead))];
+      big = { num: String(t.rt.ovr), label: 'Team rating' };
+      cap = `Each bar is a percentile against the other 31 teams, 2026 through Week ${THRU}. Ratings come from starters' play ratings.`;
+    } else {
+      bars = [bar('Cap room', t.hp[0], mon(t.space)), bar('Low dead money', t.hp[1], mon(t.dead)), bar('Money coming off', t.hp[2], 'after 2026'), bar('Pay spread out', t.hp[3], 'beyond top five')];
+      big = { num: String(t.health), label: 'Cap health' };
+      cap = 'Each bar is a percentile against the other 31 teams on the 2026 cap.';
+    }
+    const a = ASSETS.teams[t.id];
+    return { kind: 'team', name: `${t.city} ${t.name}`, eyebrow: t.div, sub: `${t.roster} players under contract`, c1: COLORS[t.id] || '#555', c2: COLORS2[t.id] || '#ccc',
+      img: IMAGES.logos && a ? raw(a.logo) : '', initials: t.id, logo: true, big, bars: bars.filter(Boolean), cap, key: 'team-' + t.id };
+  }
+  function prospectSpec(p) {
+    const cfg = DCFG[p.grp], s = p.st || {}, nq = DP.filter(q => q.grp === p.grp && q.q).length;
+    let bars = [bar('Board rank', p.br, `#${p.crank} of ${DP.length}`), bar('Grade', p.gradePct, `${p.grade} grade`)];
+    if (p.q && cfg.bars.length) bars = bars.concat([...cfg.bars].sort((a, b) => b[1] - a[1]).map(([k]) => { const v = p.pc[k]; return v == null ? null : bar(DMET[k][0], v, DMET[k][3](DMET[k][2](s, p.g || 1))); }).filter(Boolean).slice(0, 3));
+    else bars.push(bar(`${p.grp} rank`, p.gn ? (p.gn - p.grk + 1) / p.gn : null, `${ord(p.grk)} of ${p.gn}`));
+    const [sn, c1, c2, eid] = SCH(p.sch);
+    return { kind: 'prospect', name: p.name, eyebrow: `${DR_NAME[p.grp]} · 2027 draft prospect`, sub: `${sn} · ${p.ht}, ${p.wt} lb`, c1, c2,
+      img: IMAGES.headshots && p.espn ? `https://a.espncdn.com/i/headshots/college-football/players/full/${p.espn}.png` : '', initials: initials(p.name),
+      big: { num: String(p.grade), label: 'Grade' }, bars: bars.filter(Boolean).slice(0, 5),
+      cap: p.q ? `Percentiles among ${nq} ${drWords(p.grp)} on the board with enough 2026 snaps. Board rank and grade are against all ${DP.length} prospects.` : `Percentiles among the ${DP.length} prospects on the board. No 2026 production percentiles yet.`,
+      key: 'd-' + p.id };
+  }
+  function specFor(key) {
+    if (/^p-/.test(key)) { const p = PL.find(q => pSlug(q) === key); return p && playerSpec(p); }
+    if (/^d-/.test(key)) { const p = DP.find(q => dSlug(q) === key); return p && prospectSpec(p); }
+    if (/^team-/.test(key)) { const t = TB[key.slice(5)]; return t && teamSpec(t); }
+    return null;
+  }
+
+  // ---- drawing ----
+  async function loadImg(url) {
+    if (!url) return null;
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 6000);
+    try {
+      const r = await fetch(url, { mode: 'cors', credentials: 'omit', signal: ctl.signal });
+      if (!r.ok) throw new Error('image ' + r.status);
+      return await createImageBitmap(await r.blob());
+    } catch (e) { return null; }   // a missing photo becomes initials; the card still works
+    finally { clearTimeout(timer); }
+  }
+  const font = (w, px) => `${w} ${px}px ${FONT}`;
+  function wrapLines(ctx, text, maxW, max) {
+    const words = text.split(/\s+/), lines = []; let cur = '';
+    for (const w of words) { const t = cur ? cur + ' ' + w : w; if (cur && ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t; }
+    if (cur) lines.push(cur);
+    if (lines.length > max) { lines.length = max; lines[max - 1] = lines[max - 1].replace(/\s*\S*$/, '') + '…'; }
+    return lines;
+  }
+  function fitText(ctx, text, weight, px, minPx, maxW) {
+    for (let s = px; s >= minPx; s -= 2) { ctx.font = font(weight, s); if (ctx.measureText(text).width <= maxW) return s; }
+    return minPx;
+  }
+  function rrect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  async function cardDraw(spec) {
+    const img = await loadImg(spec.img);
+    const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH;
+    const ctx = cv.getContext('2d'), X = 70, HEAD = 560;
+    ctx.textBaseline = 'alphabetic';
+    // page and header
+    ctx.fillStyle = '#0D1117'; ctx.fillRect(0, 0, CW, CH);
+    ctx.fillStyle = spec.c1; ctx.fillRect(0, 0, CW, HEAD);
+    ctx.fillStyle = spec.c2; ctx.beginPath(); ctx.moveTo(CW * .91, 0); ctx.lineTo(CW * .98, 0); ctx.lineTo(CW * .86, HEAD); ctx.lineTo(CW * .79, HEAD); ctx.closePath(); ctx.fill();
+        const ink = inkFor(spec.c1), dim = ink === '#111' ? 'rgba(17,17,17,.78)' : 'rgba(255,255,255,.82)';
+    // headshot or logo in a circle
+    const DIA = 330, cx = X + DIA / 2, cy = 100 + DIA / 2 + 20;
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, DIA / 2 + 10, 0, 7); ctx.fillStyle = spec.c2; ctx.fill(); ctx.beginPath(); ctx.arc(cx, cy, DIA / 2 + 4, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, DIA / 2, 0, 7); ctx.clip();
+    ctx.fillStyle = spec.logo ? '#fff' : spec.c1; ctx.fillRect(cx - DIA / 2, cy - DIA / 2, DIA, DIA);
+    if (img) {
+      const r = spec.logo ? Math.min((DIA * .78) / img.width, (DIA * .78) / img.height) : Math.max(DIA / img.width, DIA / img.height), w = img.width * r, h = img.height * r;
+      ctx.drawImage(img, cx - w / 2, spec.logo ? cy - h / 2 : cy + DIA / 2 - h, w, h);   // headshots sit on the bottom edge so faces stay centered
+    } else {
+      ctx.fillStyle = spec.c1; ctx.fillRect(cx - DIA / 2, cy - DIA / 2, DIA, DIA);
+      ctx.fillStyle = ink; ctx.font = font(800, 130); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(spec.initials, cx, cy + 6);
+    }
+    ctx.restore(); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    // text column
+    const TX = X + DIA + 60, TW = CW - TX - X - 40;
+    ctx.fillStyle = dim; ctx.font = font(600, 30); ctx.fillText(wrapLines(ctx, spec.eyebrow, TW, 1)[0], TX, 150);
+    const words = spec.name.split(' '), two = words.length > 1 && (ctx.font = font(800, 72), ctx.measureText(spec.name).width > TW);
+    const lines = two ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')] : [spec.name];
+    const px = Math.min(...lines.map(l => fitText(ctx, l, 800, 76, 44, TW)));
+    ctx.fillStyle = ink; ctx.font = font(800, px);
+    let y = 150 + px + 12; lines.forEach(l => { ctx.fillText(l, TX, y); y += px * 1.04; });
+    ctx.fillStyle = dim; ctx.font = font(500, 32);
+    wrapLines(ctx, spec.sub, TW, 2).forEach(l => { ctx.fillText(l, TX, y + 6); y += 42; });
+    if (spec.big) {
+      ctx.fillStyle = ink; const bp = fitText(ctx, spec.big.num, 800, 104, 64, TW * .6); ctx.font = font(800, bp);
+      const by = HEAD - 40; ctx.fillText(spec.big.num, TX, by);
+      const nw = ctx.measureText(spec.big.num).width;
+      ctx.fillStyle = dim; ctx.font = font(600, 32); ctx.fillText(spec.big.label, TX + nw + 20, by - 4);
+    }
+    // percentile bars
+    const top = HEAD + 70, bottom = CH - 200, n = spec.bars.length, row = Math.min(150, (bottom - top) / n), NUMW = 130, BX = X, BW = CW - 2 * X - NUMW - 20;
+    ctx.font = font(600, 26); ctx.fillStyle = '#8B95A5'; ctx.fillText('Percentile against the league', X, HEAD + 46);
+    spec.bars.forEach((b, i) => {
+      const ry = top + 20 + i * row;
+      ctx.textAlign = 'left'; ctx.fillStyle = '#F2F5F9'; ctx.font = font(650, 36); ctx.fillText(b.label, BX, ry + 30);
+      if (b.val) { ctx.textAlign = 'right'; ctx.fillStyle = '#8B95A5'; ctx.font = font(500, 30); ctx.fillText(b.val, BX + BW, ry + 30); }
+      const by = ry + 48, bh = 34;
+      ctx.fillStyle = '#1C232E'; rrect(ctx, BX, by, BW, bh, bh / 2); ctx.fill();
+      ctx.fillStyle = barColor(b.v); rrect(ctx, BX, by, Math.max(bh, BW * b.v), bh, bh / 2); ctx.fill();
+      ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(800, 64); ctx.fillText(String(Math.max(1, Math.round(b.v * 100))), CW - X, by + bh / 2 + 23);
+    });
+    // footer: caption, brand mark, site
+    ctx.textAlign = 'left'; ctx.fillStyle = '#2A3140'; ctx.fillRect(X, CH - 190, CW - 2 * X, 2);
+    ctx.fillStyle = '#8B95A5'; ctx.font = font(500, 25);
+    const date = (() => { try { const a = (typeof SEASON !== 'undefined' && SEASON && SEASON.asOf) || (DIA && DIA.asOf); return a ? new Date(a + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : ''; } catch (e) { return ''; } })();
+    wrapLines(ctx, spec.cap + (date ? ' Data as of ' + date + '.' : ''), CW - 2 * X, 3).forEach((l, i) => ctx.fillText(l, X, CH - 150 + i * 32));
+    ctx.fillStyle = MID; ctx.beginPath(); ctx.arc(X + 12, CH - 50, 12, 0, 7); ctx.fill();
+    ctx.fillStyle = '#F2F5F9'; ctx.font = font(800, 40); ctx.fillText('PlainStats', X + 36, CH - 36);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(800, 46); ctx.fillText('plainstatsnfl.com', CW - X, CH - 36);
+    return await new Promise((ok, no) => cv.toBlob(b => (b ? ok(b) : no(new Error('empty image'))), 'image/png'));
+  }
+
+  // ---- buttons ----
+  async function make(key, btn) {
+    if (btn.getAttribute('aria-busy') === 'true') return;
+    const spec = specFor(key);
+    if (!spec) return window.psToast && window.psToast('That page is still loading. Try again in a moment.');
+    if (spec.bars.length < 3) return window.psToast && window.psToast('Not enough numbers for a card yet. ' + (spec.kind === 'player' ? 'His contract is still being verified and he has no qualifying 2026 stats.' : 'Check back soon.'));
+    btn.setAttribute('aria-busy', 'true');
+    const was = btn.textContent; btn.textContent = 'Making…';
+    try {
+      const blob = await cardDraw(spec);
+      if (window.gtag) gtag('event', 'share', { method: 'card_make', content_type: spec.kind, item_id: spec.key });
+      window.psShowImage({ blob, heading: spec.name });
+    } catch (err) { console.error('share card failed', err); window.psToast && window.psToast('Could not make the card. Try again.'); }
+    finally { btn.removeAttribute('aria-busy'); btn.textContent = was; }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-card]'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    make(b.dataset.card, b);
+  }, true);
+
+  // The static pages (/players/..., /draft/..., /teams/...) link here with ?share=1: open the card as soon as the button exists.
+  if (/[?&]share=1(&|$)/.test(location.search)) {
+    let tries = 0;
+    const iv = setInterval(() => {
+      const b = document.querySelector('[data-card]');
+      if (b && typeof PL !== 'undefined' && PL.length && (typeof SD === 'undefined' || SD || tries > 30)) { clearInterval(iv); try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])share=1&?/, '$1').replace(/[?&]$/, '') + location.hash); } catch (err) { /* ignore */ } b.click(); }
+      else if (++tries > 60) clearInterval(iv);
+    }, 250);
+  }
 })();
 </script>
 </body></html>
