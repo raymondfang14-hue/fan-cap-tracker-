@@ -24,6 +24,7 @@ Every section, tab, team, player, prospect and game has its own clean URL. On pl
 | Playoff projections | `/projections` | Free agency | `/free-agency`, `/free-agency/key-dates` |
 | News | `/news`, `/news/<contracts\|injuries\|games\|coaching\|league>` | Cap lab | `/cap-lab` |
 | Team ratings | `/team-ratings` | Big board, mock draft | `/big-board`, `/mock-draft` |
+| Weekly team tiers | `/team-tiers` | | |
 | Cap room | `/cap-room` | Rookie pay, draft guide | `/rookie-pay`, `/draft-guide` |
 | Power rankings, awards | `/power-rankings`, `/awards` | Roster builder, trade checker, compare | `/roster-builder`, `/trade-checker`, `/compare` |
 | Player ratings, season stats | `/player-ratings`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
@@ -57,6 +58,9 @@ Run `python3 -I data/build_contracts.py <folder with nflverse roster_2026.csv, d
 - Team cap space and dead money per team are still the older figures until enough contracts are re-sourced to add them up.
 ## Offensive line team measures (data/olwin.json)
 Built by `python3 -I data/build_olwin.py <play_by_play_2026.csv.gz>` from nflverse play-by-play: pass protection (dropbacks with no sack or QB hit) and run success (designed runs with positive expected points). PlainStats no longer uses ESPN win rates or PFF figures.
+
+## Weekly team tiers (#tiers, data/tiers.json)
+`/team-tiers` plots every team's offense EPA per play against defense EPA allowed per play (team logos, top-right = good at both), groups the 32 teams into five tiers by net EPA per play, and lists the splits (pass, run, hit rate) in a filterable table. `python3 -I data/build_tiers.py <play_by_play_2026.csv.gz>` writes `data/tiers.json` from nflverse play-by-play (CC BY 4.0) through the last week in which every game in `data/schedule.json` is final, plus the rank change from the week before. The weekly refresh (Tuesday) runs it in step 4e, right after `build_olwin.py`.
 
 ## Draft (#draft, data/draft.json)
 The Draft page covers the 2027 class: a big board, a full page for each prospect (grade, role, trait badges, 2026 college stats, NFL players in the same role, rookie contract, team fits), the projected first-round order with a model mock, and the rookie pay scale. `data/draft.json` is built by `python3 -I data/build_draft.py` from the prospect list in that script (WalterFootball and NFL Draft Buzz board ranks, cfbstats ids) the season totals in `data/draft_stats.txt` and the ESPN athlete ids in `data/draft_espn.txt` (prospect headshots; school logos use the ESPN team id at the end of each SCHOOLS row, the same ESPN CDN images the NFL cards use); the script's docstring explains the format. The page computes everything else at load: the consensus order, grades, roles, traits, team needs from the 2026 roster, the draft order from `data/season.json` with traded picks applied, and rookie pay grown with the projected 2027 cap from `data/freeagency.json`.

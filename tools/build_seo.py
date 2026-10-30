@@ -829,7 +829,7 @@ def build_nav():
 APP_URLS = [('/scores', '0.9', 'daily'), ('/standings', '0.9', 'weekly'), ('/projections', '0.8', 'weekly'), ('/news', '0.8', 'daily'),
             ('/player-ratings', '0.8', 'weekly'), ('/stats', '0.8', 'weekly'), ('/contracts', '0.9', 'daily'), ('/power-rankings', '0.8', 'weekly'),
             ('/mock-draft', '0.8', 'weekly'), ('/big-board', '0.7', 'weekly'), ('/free-agency', '0.8', 'weekly'), ('/free-agency/key-dates', '0.5', 'monthly'),
-            ('/team-ratings', '0.7', 'weekly'), ('/cap-room', '0.8', 'daily'), ('/awards', '0.6', 'weekly'), ('/best-worst-contracts', '0.6', 'weekly'),
+            ('/team-ratings', '0.7', 'weekly'), ('/team-tiers', '0.8', 'weekly'), ('/cap-room', '0.8', 'daily'), ('/awards', '0.6', 'weekly'), ('/best-worst-contracts', '0.6', 'weekly'),
             ('/rookie-contracts', '0.6', 'weekly'), ('/rookie-pay', '0.5', 'monthly'), ('/draft-guide', '0.4', 'monthly'), ('/cap-lab', '0.5', 'weekly'),
             ('/roster-builder', '0.6', 'weekly'), ('/trade-checker', '0.5', 'weekly'), ('/compare', '0.5', 'weekly'), ('/cap-101', '0.6', 'monthly'),
             ('/about', '0.3', 'monthly')]

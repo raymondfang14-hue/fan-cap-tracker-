@@ -1206,6 +1206,29 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .ist.dbt{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
 .ist.qst{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
 .irow .hit{font:600 .78rem/1 var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+/* Weekly team tiers */
+.tt-take{font:600 1.05rem/1.35 var(--body);color:var(--fg);margin:0}
+.tchart{width:100%;height:auto;display:block}
+.tchart text{fill:var(--muted);font:500 14px var(--body)}
+.tchart .gl{stroke:var(--line);stroke-width:1}
+.tchart .mid{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;opacity:.7}
+.tchart .q{font:600 15px var(--body);opacity:.9}
+.tchart .qg{fill:var(--good)}
+.tchart .ax{font:600 14px var(--body)}
+.tchart g[data-team]:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.tchart g[data-team]:hover{opacity:.85}
+.tband{display:grid;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+.tband:first-of-type{border-top:0;padding-top:0}
+.tband h3{margin:0;font:700 .95rem/1.2 var(--body);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tband h3 small{font:500 .8rem/1.2 var(--body);color:var(--muted)}
+.tchips{display:flex;flex-wrap:wrap;gap:8px}
+.tchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 7px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:600 .82rem/1 var(--body);cursor:pointer}
+.tchip:hover{background:var(--brand-soft)}
+.tmv{position:relative;font:600 .72rem/1 var(--body);font-variant-numeric:tabular-nums;color:var(--muted)}
+.tmv.up{color:var(--good)}.tmv.dn{color:var(--bad)}
+.tgrid td.r,.tgrid th.r{text-align:right;font-variant-numeric:tabular-nums}
+.ttier{display:inline-block;min-width:1.6rem;text-align:center;padding:3px 6px;border-radius:6px;font:700 .78rem/1 var(--body);background:var(--surface-2);color:var(--fg)}
+@media (max-width:640px){.tt-take{font-size:.98rem}}
 </style>
 
 <header class="gn" id="gn">
@@ -1218,7 +1241,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
       <button class="gn-ic gn-burger" id="gn-mbtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gn-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
     </div>
   </div></div>
-  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="games" hidden><div class="gn-col lead"><h3>2026 season</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
+  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="games" hidden><div class="gn-col lead"><h3>2026 season</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
   <div class="gn-fly gn-search gut" id="gn-search" hidden><div class="wrap">
     <div class="search">
       <label class="sr" for="q-nav">Search players and teams</label>
@@ -1227,7 +1250,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     </div>
     <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="/news">Latest news</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/best-worst-contracts">Best and worst contracts</a></li><li><a href="/mock-draft">Mock draft</a></li></ul></div>
   </div></div>
-  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="/team-ratings">Teams home</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Games</summary><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="/player-ratings">Players home</a></li><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="/contracts">Contracts home</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="/big-board">Draft home</a></li><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="/roster-builder">Tools home</a></li><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="/news">News home</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="/cap-101">Learn home</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
+  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="/team-ratings">Teams home</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Games</summary><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="/player-ratings">Players home</a></li><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="/contracts">Contracts home</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="/big-board">Draft home</a></li><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="/roster-builder">Tools home</a></li><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="/news">News home</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="/cap-101">Learn home</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
 </header>
 <div class="gn-scrim" id="gn-scrim" hidden></div>
 <nav class="tabbar" aria-label="Quick sections">
@@ -1369,6 +1392,13 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     <div class="teams" id="team-grid"></div>
   </div>
   <p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p>
+</section>
+<section class="view" id="v-tiers" hidden aria-labelledby="h-tiers">
+  <div class="sechead">
+    <div><span class="eyebrow" id="tr-eyebrow">Offense and defense, play by play</span><h1 class="title" id="h-tiers">Weekly team tiers</h1></div>
+  </div>
+  <p class="tt-take">Top-right = good at both: scoring a lot and giving up little.</p>
+  <div id="tr-body" style="display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0"><p class="note">Loading team tiers…</p></div>
 </section>
 
 <!-- AWARDS + POWER RANKINGS: scored in the script (awards and power rankings section) from player stats, team ratings and data/season.json -->
@@ -1936,7 +1966,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 
 <aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h3>Games</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
+  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h3>Games</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
   <p id="foot-asof">Contract figures come from news reports, team announcements, the rookie pay scale and the CBA, and can change. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
   <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents" target="_blank" rel="noopener">NFL Football Operations: minimum salaries and tenders</a></li>
@@ -3228,6 +3258,68 @@ function renderTeamsView() {
   if (v === 'ratings') renderPower(); else renderTeamGrid();
 }
 
+/* ===== weekly team tiers (data/tiers.json, built by data/build_tiers.py) ===== */
+let TIERS = null;
+const tr = { sort: 'rank', dir: 1 };
+const sgn3 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+const pcs = v => Math.round(v * 100) + '%';
+function trMove(m) { return m > 0 ? `<span class="tmv up" title="Up ${m} since last week"><span aria-hidden="true">▲</span>${m}<span class="sr"> up</span></span>` : m < 0 ? `<span class="tmv dn" title="Down ${-m} since last week"><span aria-hidden="true">▼</span>${-m}<span class="sr"> down</span></span>` : '<span class="tmv" title="No change since last week">–</span>'; }
+function renderTiers() {
+  const box = $('#tr-body'); if (!box) return;
+  if (TIERS === null) { TIERS = false; getJSON('data/tiers.json').then(d => { TIERS = d; renderTiers(); }).catch(() => { TIERS = 0; renderTiers(); }); }
+  if (!TIERS) { box.innerHTML = TIERS === 0 ? '<p class="empty">Team tiers did not load. Reload the page to try again.</p>' : '<p class="note">Loading team tiers…</p>'; return; }
+  const d = TIERS, T = d.teams, ids = Object.keys(T).filter(id => TB[id]).sort((a, b) => T[a].rank - T[b].rank);
+  $('#tr-eyebrow').textContent = `Through Week ${d.thru} · EPA per play, regular season`;
+  const nm = id => TB[id].city + ' ' + TB[id].name;
+  // chart: offense to the right, defense up (defense is points allowed, so lower is better and sits higher)
+  const W = 640, H = 460, l = 58, r = 18, tp = 22, b = 48, xs = ids.map(i => T[i].off), ys = ids.map(i => T[i].def);
+  const lo = (a, m) => Math.floor((Math.min(...a, m) - .02) / .05) * .05, hi = (a, m) => Math.ceil((Math.max(...a, m) + .02) / .05) * .05;
+  const x0 = lo(xs, 0), x1 = hi(xs, 0), y0 = lo(ys, 0), y1 = hi(ys, 0);
+  const x = v => l + (v - x0) / (x1 - x0) * (W - l - r), y = v => tp + (v - y0) / (y1 - y0) * (H - tp - b);
+  const ticks = (a, c) => { const o = []; for (let v = a; v <= c + 1e-9; v += .05) o.push(Math.round(v * 100) / 100); return o; };
+  let g = ticks(x0, x1).map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${tp}" y2="${H - b}"></line><text x="${x(v)}" y="${H - b + 16}" text-anchor="middle">${sgn3(v)}</text>`).join('')
+    + ticks(y0, y1).map(v => `<line class="gl" x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}"></line><text x="${l - 8}" y="${y(v) + 3}" text-anchor="end">${sgn3(v)}</text>`).join('');
+  g += `<line class="mid" x1="${x(d.avg.off)}" x2="${x(d.avg.off)}" y1="${tp}" y2="${H - b}"></line><line class="mid" x1="${l}" x2="${W - r}" y1="${y(d.avg.def)}" y2="${y(d.avg.def)}"></line>`;
+  g += `<text class="q qg" x="${W - r - 6}" y="${tp + 14}" text-anchor="end">Good at both</text><text class="q" x="${l + 6}" y="${tp + 14}">Defense carries</text><text class="q" x="${W - r - 6}" y="${H - b - 8}" text-anchor="end">Offense carries</text><text class="q" x="${l + 6}" y="${H - b - 8}">Bad at both</text>`;
+  g += `<text class="ax" x="${(l + W - r) / 2}" y="${H - 6}" text-anchor="middle">Offense EPA per play, higher is better →</text><text class="ax" transform="translate(13 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Defense EPA allowed, lower is better (up) →</text>`;
+  g += ids.map(id => `<g data-team="${id}" transform="translate(${(x(T[id].off) - 11).toFixed(1)} ${(y(T[id].def) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(nm(id))}: offense ${sgn3(T[id].off)}, defense ${sgn3(T[id].def)}"><title>${esc(nm(id))}: offense ${sgn3(T[id].off)}, defense ${sgn3(T[id].def)}</title>${crest(id, 22)}</g>`).join('');
+  // tier bands
+  const bands = d.tiers.map(([n, lab, sub]) => { const m = ids.filter(id => T[id].tier === n); if (!m.length) return '';
+    return `<div class="tband"><h3>${esc(lab)}<small>${esc(sub)}</small></h3><div class="tchips">${m.map(id => `<button type="button" class="tchip" data-team="${id}">${crest(id, 18)}${esc(TB[id].name)}${trMove(T[id].move)}</button>`).join('')}</div></div>`; }).join('');
+  // table
+  const cols = [['rank', '#', 'Rank by net EPA per play', t => t.rank], ['name', 'Team'], ['tier', 'Tier', 'Tier 1 is best', t => t.tier], ['net', 'Net', 'Offense EPA minus defense EPA allowed, per play', t => t.net],
+    ['off', 'Off', 'Offense EPA per play', t => t.off], ['def', 'Def', 'Defense EPA allowed per play (lower is better)', t => t.def], ['offPass', 'Pass off', 'Offense EPA per dropback', t => t.offPass], ['offRush', 'Run off', 'Offense EPA per run', t => t.offRush],
+    ['defPass', 'Pass def', 'Defense EPA allowed per dropback (lower is better)', t => t.defPass], ['defRush', 'Run def', 'Defense EPA allowed per run (lower is better)', t => t.defRush],
+    ['offSr', 'Off hit', 'Share of offensive plays that add expected points', t => t.offSr], ['defSr', 'Def hit', 'Share of plays against the defense that add expected points (lower is better)', t => t.defSr], ['move', 'Moved', 'Places gained since last week', t => t.move]];
+  const cv = (id, k) => k === 'name' ? nm(id) : cols.find(c => c[0] === k)[3](T[id]);
+  const rows = [...ids].sort((a, c) => { const p = cv(a, tr.sort), q = cv(c, tr.sort); return (typeof p === 'string' ? p.localeCompare(q) : p - q) * tr.dir || T[a].rank - T[c].rank; });
+  const th = ([k, lab, tip]) => `<th class="${k === 'name' ? '' : 'r'}"${tr.sort === k ? ` aria-sort="${tr.dir > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-tk="${k}"${tip ? ` title="${esc(tip)}"` : ''}>${lab}</button></th>`;
+  const tbl = `<thead><tr>${cols.map(th).join('')}</tr></thead><tbody>` + rows.map(id => { const t = T[id];
+    return `<tr data-team="${id}" data-s="${esc(nm(id) + ' ' + TB[id].div + ' tier ' + t.tier)}"><td class="r">${t.rank}</td><td><span class="pn">${crest(id, 20)}${esc(nm(id))}</span></td><td class="r"><span class="ttier">${t.tier}</span></td><td class="r"><b>${sgn3(t.net)}</b></td><td class="r">${sgn3(t.off)}</td><td class="r">${sgn3(t.def)}</td><td class="r">${sgn3(t.offPass)}</td><td class="r">${sgn3(t.offRush)}</td><td class="r">${sgn3(t.defPass)}</td><td class="r">${sgn3(t.defRush)}</td><td class="r">${pcs(t.offSr)}</td><td class="r">${pcs(t.defSr)}</td><td class="r">${trMove(t.move)}</td></tr>`; }).join('') + '</tbody>';
+  const had = $('#tr-table') ? $('#tr-filter').value : '';
+  box.innerHTML = `
+    <div class="grid2">
+      <div class="panel">
+        <div><span class="eyebrow">Tap a logo to open the team</span><h2 class="sec">Offense vs. defense</h2></div>
+        <svg class="tchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg>
+        <p class="note">Dashed lines mark the league average. The further up and to the right, the better the team is at both.</p>
+      </div>
+      <div class="panel">
+        <div><span class="eyebrow">Net EPA per play, offense minus defense</span><h2 class="sec">The tiers</h2></div>
+        ${bands}
+        <p class="note">Arrows show places gained or lost since last week.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">All 32 teams</h2></div></div>
+      <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" id="tr-filter" data-tf="tr-table" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
+      <div class="tw"><table class="t tgrid" id="tr-table">${tbl}</table></div>
+      <p class="note"><b>EPA</b> (expected points added) is how many points a play adds compared with what teams usually score from that spot on the field. For an offense higher is better. For a defense it is what the other team added, so lower is better. Hit rate is the share of plays that add points. Every pass and run counts, garbage time included. Source: nflverse play-by-play, through Week ${d.thru}.</p>
+    </div>`;
+  const inp = $('#tr-filter'); if (had) inp.value = had;
+  applyTF($('#tr-table'));
+}
+
 /* ===== roster builder ===== */
 const bld = { L: {}, from: null, on: null, sort: 'play', q: '' };
 function saveBld() { store.set('bld', { from: bld.from, L: Object.fromEntries(Object.entries(bld.L).map(([k, p]) => [k, p.name + '|' + p.team])) }); }
@@ -3409,13 +3501,13 @@ let PAGEMAP = null, PAGEMAPP = null;   // data/pageslugs.json: which players and
 const PATHMODE = /(^|\.)plainstatsnfl\.com$|vercel\.app$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'], ['projections', '/projections'],
   ['news', '/news'], ['news-contracts', '/news/contracts'], ['news-injuries', '/news/injuries'], ['news-games', '/news/games'], ['news-coaching', '/news/coaching'], ['news-league', '/news/league'],
-  ['teams', '/team-ratings'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['stats', '/stats'],
+  ['teams', '/team-ratings'], ['tiers', '/team-tiers'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['stats', '/stats'],
   ['contracts', '/contracts'], ['value', '/best-worst-contracts'], ['rookies', '/rookie-contracts'], ['freeagency', '/free-agency'], ['fa-tags', '/free-agency/key-dates'], ['analytics', '/cap-lab'],
   ['bigboard', '/big-board'], ['mock', '/mock-draft'], ['rookie-pay', '/rookie-pay'], ['draft-guide', '/draft-guide'],
   ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup']];
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings', traits: 'ratings', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
-  teams: 'NFL team ratings', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'NFL player ratings', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
+  teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'NFL player ratings', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'Franchise tags and key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
 const KEY2PATH = Object.fromEntries(ROUTES), PATH2KEY = Object.fromEntries(ROUTES.map(([k, p]) => [p, k]));
@@ -3445,8 +3537,8 @@ if (PATHMODE && location.hash.length > 1) {   // an old /#scores or /#p-... link
   const old = location.hash.slice(1);
   if (KEY2PATH[ALIASES[old] || old] || /^(team|p|d|g)-|^team-/.test(old)) setURL(old, true);
 }
-const VIEWS = ['home', 'news', 'teams', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
-const NAVG = { home: 'home', news: 'news', teams: 'teams', team: 'teams', games: 'games', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
+const VIEWS = ['home', 'news', 'teams', 'tiers', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
+const NAVG = { home: 'home', news: 'news', teams: 'teams', tiers: 'teams', team: 'teams', games: 'games', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
 let curTeam = null;
 function route() {
   route.at = location.href;
@@ -3482,6 +3574,7 @@ function route() {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
     if (v === 'awards') renderAwards();
+    if (v === 'tiers') renderTiers();
     if (v === 'freeagency') renderFA();
     if (v === 'draft') renderDraft();
     if (v === 'contracts') renderCTab();
@@ -5718,7 +5811,7 @@ const SPAGES = [['scores', 'Scores and schedule', 'games week results score sche
   ['stats', 'Season stats', 'passing rushing receiving yards touchdowns sacks leaders box score fantasy'], ['contracts', 'Contracts', 'deals salary guaranteed cap hit every contract'],
   ['value', 'Best and worst contracts', 'surplus value overpaid bargain'], ['rookies', 'Rookie contracts', 'draft pick fifth-year option extension'],
   ['freeagency', 'Free agency', 'free agents expiring next deal class 2027'], ['fa-tags', 'Tags and key dates', 'franchise tag calendar league year deadline'],
-  ['teams', 'Team ratings', 'lineup depth chart unit ratings'], ['cap', 'Cap room by team', 'salary cap space dead money spending'], ['rankings', 'Power rankings', 'best teams ranked'],
+  ['teams', 'Team ratings', 'lineup depth chart unit ratings'], ['tiers', 'Weekly team tiers', 'offense defense epa per play tiers best teams logos'], ['cap', 'Cap room by team', 'salary cap space dead money spending'], ['rankings', 'Power rankings', 'best teams ranked'],
   ['awards', 'Awards watch', 'mvp opoy dpoy rookie of the year coach comeback'], ['analytics', 'Cap lab', 'heatmap cap health doppelganger analytics'],
   ['bigboard', 'Draft big board', '2027 prospects college rankings'], ['mock', 'Mock draft', 'draft order first round picks'], ['rookie-pay', 'Rookie pay scale', 'draft slot value'],
   ['draft-guide', 'How the draft board works', 'grades method'], ['builder', 'Roster builder', 'build lineup play gm'], ['trade', 'Trade checker', 'trade cap'], ['compare', 'Compare players', 'side by side'],

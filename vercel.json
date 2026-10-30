@@ -67,6 +67,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/team-tiers",
+      "destination": "/index.html"
+    },
+    {
       "source": "/cap-room",
       "destination": "/index.html"
     },
