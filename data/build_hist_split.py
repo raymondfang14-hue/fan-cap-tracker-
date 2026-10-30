@@ -11,6 +11,9 @@ Files written:
   hist/meta.json   {asOf, current, seasons, thru, oldFirst, oldLast, shards}      tiny, loaded first
   hist/s<YEAR>.json  one per season in history.json: {season, players: [[id, name, pos, line], ...]}
                      season totals only (no game logs). Used by Players > Season stats.
+  hist/wk<YEAR>.json  this season's game log for every player, with snaps and the garbage-time part of each week's line (from
+                     splits.json, built by build_splits.py): {season, thru, cut, players: [[id, name, pos, [[week, team, line, snaps, garbage], ...]], ...]}.
+                     Used by the week range, minimum snaps and garbage-time filters on Players > Season stats.
   hist/p<NN>.json  NN = 00..shards-1. {players: [{id, n, pos, s: {year: line}, w?: [game log]}]}
                      Every season a player has (1999 on, including history_old.json) plus this season's game log.
                      Used by a player card's Stats tab: one shard of about 20 KB.
@@ -38,6 +41,16 @@ for f in glob.glob(os.path.join(OUT, '*.json')): os.remove(f)
 for S in H['seasons']:
     rows = [[r['id'], r['n'], r['pos'], r['s'][str(S)]] for r in H['players'] if str(S) in r['s'] and r['s'][str(S)].get('g', 0) > 0]
     dump(os.path.join(OUT, f's{S}.json'), {'season': S, 'players': rows})
+
+# week file: the current game log with snaps and garbage-time lines (splits.json is optional; without it snaps are 0)
+sp_path = os.path.join(HERE, 'splits.json')
+SP = json.load(open(sp_path)) if os.path.exists(sp_path) else {'players': {}, 'cut': None}
+wrows = []
+for r in H['players']:
+    if not r.get('w'): continue
+    sp = SP['players'].get(r['id'], {})
+    wrows.append([r['id'], r['n'], r['pos'], [[w[0], w[2], w[3], sp.get(str(w[0]), [0, {}])[0], sp.get(str(w[0]), [0, {}])[1]] for w in r['w']]])
+dump(os.path.join(OUT, f"wk{H['current']}.json"), {'season': H['current'], 'thru': H['thru'], 'cut': SP.get('cut'), 'snaps': bool(SP['players']), 'players': wrows})
 
 # player shards: every season plus the current game log
 merged = {}

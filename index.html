@@ -1229,6 +1229,14 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .tgrid td.r,.tgrid th.r{text-align:right;font-variant-numeric:tabular-nums}
 .ttier{display:inline-block;min-width:1.6rem;text-align:center;padding:3px 6px;border-radius:6px;font:700 .78rem/1 var(--body);background:var(--surface-2);color:var(--fg)}
 @media (max-width:640px){.tt-take{font-size:.98rem}}
+/* season stats filters: week range, minimum snaps, garbage time */
+.hs-ctl{align-items:end}
+.hs-ctl select,.hs-ctl input{padding:9px 10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);font:inherit;font-weight:500;min-width:0}
+.hs-ctl input{width:7.5rem}
+.hs-ctl .f{display:grid;gap:4px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.hs-ctl .seg button[disabled],.hs-ctl select[disabled],.hs-ctl input[disabled]{opacity:.5;cursor:not-allowed}
+.hs-ctln{margin:0}
+@media (max-width:760px){.hs-ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hs-ctl input{width:100%}.hs-ctl .f:nth-child(4){grid-column:1/-1}}
 </style>
 
 <header class="gn" id="gn">
@@ -1693,10 +1701,18 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     <div class="hsls" id="hs-leaders"></div>
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow" id="hs-eb"></span><h2 class="sec" id="hs-title">Season stats</h2></div></div>
+      <div class="controls hs-ctl" id="hs-ctl" role="group" aria-label="Stat filters">
+        <label class="f" for="hs-wf">From week<select id="hs-wf"></select></label>
+        <label class="f" for="hs-wt">To week<select id="hs-wt"></select></label>
+        <label class="f" for="hs-ms">Minimum snaps<input id="hs-ms" type="number" min="0" step="10" inputmode="numeric" placeholder="0"></label>
+        <div class="f"><span id="hs-gtl">Garbage time</span><div class="seg" id="hs-gt" role="group" aria-labelledby="hs-gtl"><button type="button" data-hsgt="incl" aria-pressed="true">Included</button><button type="button" data-hsgt="excl" aria-pressed="false">Left out</button></div></div>
+        <button type="button" class="btn ghost" id="hs-reset" hidden>Reset</button>
+      </div>
+      <p class="note hs-ctln" id="hs-ctln" aria-live="polite"></p>
       <div id="hs-tbox"></div>
       <div class="tw"><table class="t" id="hs-table"></table></div>
       <button class="btn ghost more" id="hs-more" type="button">Show more</button>
-      <p class="note">Regular season only, from nflverse weekly player stats. Fantasy points use PPR scoring. Offensive linemen are left out because box scores do not track blocking.</p>
+      <p class="note">Regular season only, from nflverse weekly player stats. Fantasy points use PPR scoring. Offensive linemen are left out because box scores do not track blocking. Garbage time is any pass, run or sack when the offense's win probability was under 5% or over 95% (nflverse play-by-play); it only applies to passing, rushing and receiving stats. Snaps are offense plus defense snaps in the weeks picked (special teams for kickers and punters).</p>
     </div>
   </div>
   <div id="of-ratings" style="display:grid;gap:22px;min-width:0">
@@ -5346,7 +5362,25 @@ function statsHTML(p) {
 }
 /* players page: season stats tab */
 of.tab = 'ratings';
-const hsx = { season: null, g: 'QB', sort: null, dir: -1, limit: 60 };
+const hsx = { season: null, g: 'QB', sort: null, dir: -1, limit: 60, wf: 1, wt: 99, gt: 'incl', ms: 0 };
+/* week range, minimum snaps and garbage time: this season's game log with snaps and garbage-time lines (data/hist/wk<year>.json, about 375 KB, loaded only when one of these is used) */
+let WKP = null, WK = null, WKD = null;
+const loadWk = () => WKP || (WKP = getJSONR('data/hist/wk' + HIST.current + '.json').then(d => { WKD = d; WK = new Map(d.players.map(r => [r[0], r[3]])); return d; }).catch(e => { WKP = null; throw e; }));
+const hsThru = () => (WKD && WKD.thru) || HIST.thru;
+const hsOffense = g => g === 'QB' || g === 'RB' || g === 'WR' || g === 'TE';
+const hsOn = () => hsx.season === HIST.current && (hsx.wf > 1 || hsx.wt < HIST.thru || hsx.gt === 'excl' || hsx.ms > 0);
+function wkLine(id, g) {   // the player's line over the picked weeks; null when he has no games there
+  const w = WK.get(id); if (!w) return null;
+  const cut = hsx.gt === 'excl' && hsOffense(g), l = { g: 0, sn: 0 };
+  w.forEach(([wk, t, line, sn, gl]) => {
+    if (wk < hsx.wf || wk > hsx.wt) return;
+    l.g++; l.sn += sn; l.t = t;
+    for (const k in line) l[k] = (l[k] || 0) + line[k];
+    if (cut) for (const k in gl) l[k] = (l[k] || 0) - gl[k];
+  });
+  if (cut) for (const k in l) if (l[k] < 0) l[k] = 0;
+  return l.g ? l : null;
+}
 function renderOFTab() {
   $$('#of-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ot2 === of.tab)));
   $('#of-ratings').hidden = of.tab !== 'ratings'; $('#of-stats').hidden = of.tab !== 'stats';
@@ -5356,7 +5390,7 @@ function renderOFTab() {
 function loadHS() {   // one season file at a time (about 130 KB), loaded when that season is shown
   const fail = () => { $('#hs-leaders').innerHTML = '<div class="empty"><p>Season stats did not load.</p><button type="button" class="btn ghost more" id="hs-retry">Try again</button></div>'; $('#hs-retry').onclick = loadHS; };
   if (!HIST || !SEAROWS[hsx.season ?? (HIST && HIST.current)]) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>';
-  loadMeta().then(() => { if (hsx.season == null) hsx.season = HIST.current; const y = hsx.season; return loadSeason(y).then(() => { if (hsx.season === y) renderHS(); }); }).catch(fail);
+  loadMeta().then(() => { if (hsx.season == null) hsx.season = HIST.current; const y = hsx.season; return loadSeason(y).then(() => (hsOn() ? loadWk() : 0)).then(() => { if (hsx.season === y) renderHS(); }); }).catch(fail);
 }
 function renderHS() {
   const cur = HIST.current; if (hsx.season == null) hsx.season = cur;
@@ -5364,21 +5398,42 @@ function renderHS() {
   if (!hsx.sort || !HCOLS[g].includes(hsx.sort)) { hsx.sort = HKEY[g]; hsx.dir = -1; }
   $('#hs-seasons').innerHTML = [...HIST.seasons].reverse().map(y => `<button type="button" class="chip" data-hss="${y}" aria-pressed="${y === hsx.season}">${y}${y === cur ? ` · thru Week ${HIST.thru}` : ''}</button>`).join('');
   $('#hs-groups').innerHTML = ['QB', 'RB', 'WR', 'TE', 'DL', 'LB', 'DB', 'K', 'P'].map(x => `<button type="button" data-hsg="${x}" aria-pressed="${x === g}">${x}</button>`).join('');
-  const rows = (SEAROWS[S] || []).filter(r => r.hg === g && r.s[S].g > 0).map(r => ({ r, l: r.s[S], p: plOf(r.id) }));
+  hsCtl();
+  const on = hsOn() && WK;
+  const rows = (SEAROWS[S] || []).filter(r => r.hg === g && r.s[S].g > 0).map(r => ({ r, l: on ? wkLine(r.id, g) : r.s[S], p: plOf(r.id) })).filter(x => x.l && (!on || x.l.sn >= hsx.ms));
   const c = HC[hsx.sort];
   rows.sort((a, b) => ((c[2](a.l) ?? -1e9) - (c[2](b.l) ?? -1e9)) * hsx.dir || hv(b.l, 'g') - hv(a.l, 'g'));
   // leaders
   const minVol = { cmpp: l => hv(l, 'att') >= 10 * hv(l, 'g') && hv(l, 'g') >= 2, fgp: l => hv(l, 'fga') >= 8, pavg: l => hv(l, 'pun') >= 15 };
   $('#hs-leaders').innerHTML = (HLEAD[g] || []).map(k => { const C = HC[k], ok = minVol[k] || (() => true); const top = rows.filter(x => ok(x.l) && C[2](x.l) != null).sort((a, b) => C[2](b.l) - C[2](a.l)).slice(0, 3);
     return `<div class="hsl"><span class="eyebrow">${esc(C[4])}</span>${top.map((x, n) => `<button type="button" class="hsr" ${x.p ? `data-hp="${x.p.i}"` : 'disabled'}><span class="rk">${n + 1}</span>${crest(x.l.t, 20)}<span class="nm">${esc(x.r.n)}</span><b class="num">${C[3](C[2](x.l))}</b></button>`).join('') || '<span class="note">No one yet.</span>'}</div>`; }).join('');
-  $('#hs-eb').textContent = `${hsx.season} regular season${hsx.season === cur ? ` · through Week ${HIST.thru}` : ''} · ${rows.length} ${HG_NAME[g].toLowerCase()}`;
+  $('#hs-eb').textContent = `${hsx.season} regular season${hsx.season === cur ? ` · ${on ? (hsx.wf === hsx.wt ? `Week ${hsx.wf}` : `Weeks ${hsx.wf} to ${hsx.wt}`) : `through Week ${HIST.thru}`}` : ''} · ${rows.length} ${HG_NAME[g].toLowerCase()}`;
   $('#hs-title').textContent = `${HG_NAME[g]}, ${hsx.season}`;
   const th = C => `<th class="r"${hsx.sort === C[0] ? ` aria-sort="${hsx.dir < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button" data-hsk="${C[0]}" title="${esc(C[4])}">${esc(C[1])}</button></th>`;
   $('#hs-table').innerHTML = `<thead><tr><th class="r"><span>#</span></th><th><span>Player</span></th><th><span>Team</span></th>${cols.map(th).join('')}</tr></thead><tbody>${rows.slice(0, hsx.limit).map((x, n) => `<tr ${x.p ? `data-hp="${x.p.i}"` : 'style="cursor:default"'} data-s="${esc((x.r.n + ' ' + x.l.t + ' ' + (TB[x.l.t] ? TB[x.l.t].city + ' ' + TB[x.l.t].name : '') + ' ' + x.r.pos).toLowerCase())}"><td class="r">${n + 1}</td><td><span class="pn">${esc(x.r.n)}<span class="pos" style="min-width:0">${esc(x.r.pos)}</span></span></td><td><span class="pn" style="font-weight:500">${crest(x.l.t, 18)}${esc(x.l.t)}${x.l.tt ? ` <small class="note">+${x.l.tt.length - 1}</small>` : ''}</span></td>${cols.map(C => `<td class="r">${C[3](C[2](x.l))}</td>`).join('')}</tr>`).join('')}</tbody>`;
   applyTF($('#hs-table'));
   $('#hs-more').hidden = rows.length <= hsx.limit;
 }
+function hsCtl() {   // sync the filter row with hsx; the week lists are built once
+  const cur = hsx.season === HIST.current, th = hsThru(), wf = $('#hs-wf'), wt = $('#hs-wt');
+  if (wf.options.length !== th) { const o = Array.from({ length: th }, (_, i) => `<option value="${i + 1}">Week ${i + 1}</option>`).join(''); wf.innerHTML = o; wt.innerHTML = o; }
+  hsx.wt = Math.min(hsx.wt, th); hsx.wf = Math.min(hsx.wf, hsx.wt);
+  wf.value = hsx.wf; wt.value = hsx.wt; $('#hs-ms').value = hsx.ms || '';
+  const off = hsOffense(hsx.g);
+  $$('#hs-gt button').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.hsgt === hsx.gt)); b.disabled = !cur || !off; });
+  [wf, wt, $('#hs-ms')].forEach(e => (e.disabled = !cur));
+  $('#hs-reset').hidden = !hsOn();
+  $('#hs-ctln').textContent = !cur ? 'Week range, minimum snaps and garbage time use this season\'s game log, so they apply to ' + HIST.current + ' only.'
+    : hsx.gt === 'excl' && !off ? 'Garbage time is only split out of passing, rushing and receiving stats, so it changes nothing for this position.'
+    : WKD && !WKD.snaps ? 'Snap counts are not loaded yet, so the minimum snaps filter is off.' : '';
+}
+function hsChange() { if (hsOn() && !WK) { $('#hs-ctln').textContent = 'Loading game logs…'; loadWk().then(renderHS).catch(() => { $('#hs-ctln').textContent = 'Game logs did not load. Check your connection.'; }); } else renderHS(); }
 function wireHS() {
+  $('#hs-wf').onchange = () => { hsx.wf = +$('#hs-wf').value; if (hsx.wt < hsx.wf) hsx.wt = hsx.wf; hsx.limit = 60; hsChange(); };
+  $('#hs-wt').onchange = () => { hsx.wt = +$('#hs-wt').value; if (hsx.wf > hsx.wt) hsx.wf = hsx.wt; hsx.limit = 60; hsChange(); };
+  $('#hs-ms').oninput = () => { hsx.ms = Math.max(0, parseInt($('#hs-ms').value, 10) || 0); hsx.limit = 60; hsChange(); };
+  $('#hs-gt').onclick = e => { const b = e.target.closest('[data-hsgt]'); if (b && !b.disabled) { hsx.gt = b.dataset.hsgt; hsx.limit = 60; hsChange(); } };
+  $('#hs-reset').onclick = () => { Object.assign(hsx, { wf: 1, wt: 99, gt: 'incl', ms: 0, limit: 60 }); renderHS(); };
   $('#of-tab').onclick = e => { const b = e.target.closest('[data-ot2]'); if (b) go(b.dataset.ot2 === 'stats' ? 'stats' : 'onfield'); };
   $('#hs-seasons').onclick = e => { const b = e.target.closest('[data-hss]'); if (b) { hsx.season = +b.dataset.hss; hsx.limit = 60; loadHS(); } };
   $('#hs-groups').onclick = e => { const b = e.target.closest('[data-hsg]'); if (b) { hsx.g = b.dataset.hsg; hsx.limit = 60; hsx.sort = null; renderHS(); } };
