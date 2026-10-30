@@ -1,6 +1,54 @@
 {
- "asOf": "2026-10-29",
+ "asOf": "2026-10-30",
  "moves": [
+  {
+   "iso": "2026-10-29",
+   "date": "Oct 29",
+   "kind": "League",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Landon Dickerson",
+    "Dallas Goedert",
+    "Riq Woolen"
+   ],
+   "head": "Eagles expected to listen to offers for Dickerson, Goedert and Woolen",
+   "plain": "At 2-5, Philadelphia is reported to be open to trades for the guard, tight end and cornerback before the Nov. 10 deadline. Nothing has been agreed.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/eagles-expected-to-field-offers-on-landon-dickerson-dallas-goedert-riq-woolen"
+  },
+  {
+   "iso": "2026-10-29",
+   "date": "Oct 29",
+   "kind": "Coaching",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "Aaron Glenn",
+    "Darren Mougey"
+   ],
+   "head": "Jets coach Aaron Glenn reported on the hot seat",
+   "plain": "ESPN's Jeremy Fowler reports Glenn's job is in question with the Jets at 2-5. General manager Darren Mougey is considered more likely to be kept. Nothing has been decided.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/jets-aaron-glenn-on-hot-seat-gm-darren-mougey-likelier-to-be-retained"
+  },
+  {
+   "iso": "2026-10-29",
+   "date": "Oct 29",
+   "kind": "Injury",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Derwin James"
+   ],
+   "head": "Chargers safety Derwin James may go on injured reserve",
+   "plain": "James has missed games since Week 3 with a hamstring injury, and coach Jim Harbaugh said he had a setback. If he goes on IR he misses at least four more games. He has not been placed there yet.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir"
+  },
   {
    "iso": "2026-10-29",
    "date": "Oct 29",
@@ -16,6 +64,83 @@
    "plain": "Tennessee gets Chicago's 2027 and 2028 first-round picks and a 2027 fourth. Chicago also gets a 2028 fifth. Simmons, 29, is a first-team All-Pro who signed a three-year, $105.8M extension in June. He has 4 sacks and 12 pressures in 7 games for the 1-6 Titans, and the 5-2 Bears had been looking for help rushing the passer.",
    "source": "ESPN",
    "url": "https://www.espn.com/nfl/story/_/id/50318351/sources-bears-trade-all-pro-dt-jeffery-simmons"
+  },
+  {
+   "iso": "2026-10-28",
+   "date": "Oct 28",
+   "kind": "League",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "James Conner"
+   ],
+   "head": "Cardinals likely to trade RB James Conner if he is healthy by the deadline",
+   "plain": "Jason La Canfora reports Arizona would move Conner if he returns from injured reserve before Nov. 10. He has not practiced this season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/cardinals-rb-james-conner-a-trade-candidate"
+  },
+  {
+   "iso": "2026-10-28",
+   "date": "Oct 28",
+   "kind": "Signing",
+   "teams": [
+    "TEN",
+    "LV"
+   ],
+   "players": [
+    "Jonah Laulu"
+   ],
+   "head": "Titans claim DT Jonah Laulu off waivers",
+   "plain": "The Raiders cut Laulu on Oct 27 and Tennessee won the waiver claim, then waived DT Timmy Horne. Several other teams also put in claims. No contract figures were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/titans-claim-dt-jonah-laulu-off-waivers"
+  },
+  {
+   "iso": "2026-10-28",
+   "date": "Oct 28",
+   "kind": "Injury",
+   "teams": [
+    "HOU"
+   ],
+   "players": [
+    "Jaylin Noel"
+   ],
+   "head": "Texans place WR Jaylin Noel on injured reserve",
+   "plain": "Noel is out after toe surgery, according to the CBS Sports transactions log. He must miss at least four games.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/transactions/"
+  },
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
+   "kind": "Injury",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Sean Rhyan"
+   ],
+   "head": "Packers C Sean Rhyan out at least four weeks with a high ankle sprain",
+   "plain": "CBS Sports' Matt Zenitz reports the center could land on injured reserve. LB Zaire Franklin also has a leg fracture but is not on IR.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/packers-c-sean-rhyan-lb-zaire-franklin-to-miss-time"
+  },
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
+   "kind": "Release",
+   "teams": [
+    "SEA",
+    "MIA"
+   ],
+   "players": [
+    "Christian Haynes"
+   ],
+   "head": "Seahawks cut G Christian Haynes; Dolphins claim him",
+   "plain": "Seattle released the guard on Oct 27 and Miami picked him up off waivers the next day, cutting DJ Campbell. No contract figures were reported.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/transactions/"
   },
   {
    "iso": "2026-10-27",
