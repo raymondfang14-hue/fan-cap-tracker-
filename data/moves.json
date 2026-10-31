@@ -1,6 +1,51 @@
 {
- "asOf": "2026-10-30",
+ "asOf": "2026-10-31",
  "moves": [
+  {
+   "iso": "2026-10-30",
+   "date": "Oct 30",
+   "kind": "Injury",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Daron Payne"
+   ],
+   "head": "Commanders DT Daron Payne likely headed to injured reserve",
+   "plain": "Payne hurt his foot in practice and will miss significant time. Washington is expected to put him on injured reserve, which means at least four games out.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/commanders-dt-daron-payne-to-miss-extensive-time"
+  },
+  {
+   "iso": "2026-10-30",
+   "date": "Oct 30",
+   "kind": "Coaching",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "Ejiro Evero",
+    "Todd Wash"
+   ],
+   "head": "Panthers fire defensive coordinator Ejiro Evero",
+   "plain": "Carolina dropped to 3-4 after a loss at Green Bay and moved on from its defensive coordinator. Todd Wash is the interim replacement.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/panthers-fire-dc-ejiro-evero"
+  },
+  {
+   "iso": "2026-10-29",
+   "date": "Oct 29",
+   "kind": "Game",
+   "teams": [
+    "GB",
+    "CAR"
+   ],
+   "players": [],
+   "head": "Packers beat Panthers 27-19 on Thursday night",
+   "plain": "Green Bay won at home and Carolina fell to 3-4. Packers WR Christian Watson left with a rib injury but came back.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-friday-oct-30"
+  },
   {
    "iso": "2026-10-29",
    "date": "Oct 29",
