@@ -1,6 +1,143 @@
 {
- "asOf": "2026-10-31",
+ "asOf": "2026-11-01",
  "moves": [
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "League",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Saquon Barkley"
+   ],
+   "head": "Eagles will not trade RB Saquon Barkley before the deadline",
+   "plain": "ESPN reports Philadelphia is keeping Barkley, who is under contract through 2028. The trade deadline is Nov 10.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-will-not-trade-rb-saquon-barkley-prior-to-deadline"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "League",
+   "teams": [
+    "JAX",
+    "PIT",
+    "KC"
+   ],
+   "players": [
+    "Brian Thomas Jr."
+   ],
+   "head": "Steelers and Chiefs linked to Jaguars WR Brian Thomas Jr.",
+   "plain": "Jacksonville is reportedly open to moving Thomas but may wait until closer to the Nov 10 deadline.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/steelers-chiefs-to-pursue-jaguars-wr-brian-thomas-jr"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "League",
+   "teams": [
+    "LV"
+   ],
+   "players": [
+    "Kirk Cousins"
+   ],
+   "head": "Raiders want Kirk Cousins to keep starting as long as possible",
+   "plain": "Per ESPN, Las Vegas is not ruling out a QB change but does not blame Cousins for the slump. Rookie Fernando Mendoza would be next.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/raiders-not-ruling-out-qb-change"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "League",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Jonathan Taylor"
+   ],
+   "head": "Colts open to trading RB Jonathan Taylor",
+   "plain": "Indianapolis is not actively shopping him but would listen. The Giants and Vikings are seen as the front-runners.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/colts-willing-to-trade-rb-jonathan-taylor"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "League",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Josh Jacobs"
+   ],
+   "head": "NFL reviewing new abuse allegations against Packers RB Josh Jacobs",
+   "plain": "The league says it will review the new allegations as part of its open investigation.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/nfl-reviewing-new-josh-jacobs-abuse-allegations"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "Injury",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Derwin James"
+   ],
+   "head": "Chargers place S Derwin James on injured reserve",
+   "plain": "James has a hamstring injury and can return no earlier than Week 12.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "Injury",
+   "teams": [
+    "DEN"
+   ],
+   "players": [
+    "RJ Harvey"
+   ],
+   "head": "Broncos place RB RJ Harvey on injured reserve",
+   "plain": "Harvey has a knee injury. Denver added S Taylor Rapp from the practice squad.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/broncos-to-place-rb-rj-harvey-on-ir"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "Injury",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "T'Vondre Sweat"
+   ],
+   "head": "Jets place DT T'Vondre Sweat on injured reserve",
+   "plain": "Sweat has a knee injury and will miss at least four games. New York signed DT Payton Page from the practice squad.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/jets-placing-dt-tvondre-sweat-on-ir"
+  },
+  {
+   "iso": "2026-10-31",
+   "date": "Oct 31",
+   "kind": "Injury",
+   "teams": [
+    "KC"
+   ],
+   "players": [
+    "L'Jarius Sneed"
+   ],
+   "head": "Chiefs CB L'Jarius Sneed headed back to injured reserve",
+   "plain": "Sneed has a knee issue. CB Melvin Smith takes his roster spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/chiefs-cb-ljarius-sneed-headed-back-to-ir"
+  },
   {
    "iso": "2026-10-30",
    "date": "Oct 30",
