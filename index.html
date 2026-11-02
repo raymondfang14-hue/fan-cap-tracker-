@@ -1692,7 +1692,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 <section class="view" id="v-onfield" hidden aria-labelledby="h-onfield">
   <div class="sechead">
     <div><span class="eyebrow" id="of-eyebrow">2026 season stats</span><h1 class="title" id="h-onfield">Players on the field</h1></div>
-    <div class="seg" id="of-tab" role="group" aria-label="Players view"><button type="button" data-ot2="ratings" aria-pressed="true">Ratings</button><button type="button" data-ot2="stats" aria-pressed="false">Season stats</button></div>
+    <div class="seg" id="of-tab" role="group" aria-label="Players pages"><button type="button" data-ot2="top" aria-pressed="true">Top players</button><button type="button" data-ot2="roles" aria-pressed="false">Roles</button><button type="button" data-ot2="pay" aria-pressed="false">Pay vs. play</button><button type="button" data-ot2="rank" aria-pressed="false">Rankings</button><button type="button" data-ot2="traits" aria-pressed="false">Traits</button><button type="button" data-ot2="stats" aria-pressed="false">Season stats</button></div>
   </div>
   <div id="of-stats" hidden style="display:grid;gap:16px;min-width:0">
     <p class="lede">Box-score stats for every player, this season and the three before it. Pick a season and a position; tap a column to sort. Tap a player under contract for his full page, including his season-by-season line and this year's game log.</p>
@@ -1716,25 +1716,23 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     </div>
   </div>
   <div id="of-ratings" style="display:grid;gap:22px;min-width:0">
-  <p class="lede">How each player is actually playing, set next to what he is paid. Every player gets a role, a play rating from 40 to 99, a rank at his position and trait badges, all built from this season's stats.</p>
+  <p class="lede" id="of-lede">The best players at each position right now, by play rating.</p>
   <div class="seg posseg" id="of-pos" role="group" aria-label="Position"></div>
-  <div class="panel">
+  <div class="panel" data-oft="top">
     <div class="sechead"><div><span class="eyebrow">Ranked by play rating</span><h2 class="sec" id="of-top-title">Top players right now</h2></div></div>
     <div class="fcs row" id="of-top"></div>
   </div>
-  <div class="grid2">
-    <div class="panel">
-      <div><span class="eyebrow">How teams use them · tap to filter</span><h2 class="sec" id="of-roles-title">Roles</h2></div>
+  <div class="panel" data-oft="roles">
+      <div><span class="eyebrow">How teams use them · tap a role to see those players ranked</span><h2 class="sec" id="of-roles-title">Roles</h2></div>
       <div class="rls" id="of-roles"></div>
       <p class="note">Each player gets one role from how much he plays and what he is asked to do. The number is how many players have that role; "avg" is their average play rating.</p>
-    </div>
-    <div class="panel">
+  </div>
+  <div class="panel" data-oft="pay">
       <div><span class="eyebrow">Qualified players · tap a dot</span><h2 class="sec">Pay vs. play</h2></div>
       <div id="of-scatter"></div>
       <p class="note">Dashed lines mark the middle pay and the middle rating. Green dots play well above their pay rank; red dots are paid well above how they are playing so far.</p>
-    </div>
   </div>
-  <div class="panel">
+  <div class="panel" data-oft="rank">
     <div class="sechead"><div><span class="eyebrow" id="of-count"></span><h2 class="sec">Positional rankings</h2></div></div>
     <div class="controls">
       <label class="f" for="of-q" style="flex:1 1 220px">Filter<input id="of-q" type="search" placeholder="Player, team or role" autocomplete="off"></label>
@@ -1746,7 +1744,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     <div class="tw"><table class="t" id="of-table"></table></div>
     <button class="btn ghost more" id="of-more" type="button">Show more</button>
   </div>
-  <div class="panel">
+  <div class="panel" data-oft="traits">
     <div class="sechead"><div><span class="eyebrow">Trait badges · gold, silver, bronze</span><h2 class="sec" id="of-tname">Traits</h2></div></div>
     <div class="chips" id="of-tchips" role="group" aria-label="Trait"></div>
     <p class="note" id="of-tdesc"></p>
@@ -2974,7 +2972,7 @@ function renderOFTable(all) {
 }
 function wireOnField() {
   $('#of-pos').onclick = e => { const b = e.target.closest('[data-g]'); if (b) { of.g = b.dataset.g; of.role = 'all'; of.trait = 'all'; of.sort = 'play'; of.dir = -1; of.limit = 40; store.set('ofg', of.g); renderOnField(); } };
-  $('#of-roles').onclick = e => { const b = e.target.closest('[data-role]'); if (b) { of.role = of.role === b.dataset.role ? 'all' : b.dataset.role; renderOnField(); $('#of-table').scrollIntoView({ block: 'nearest' }); } };
+  $('#of-roles').onclick = e => { const b = e.target.closest('[data-role]'); if (b) { of.role = b.dataset.role; of.limit = 40; renderOnField(); go('ratings-rank'); } };
   $('#of-q').oninput = e => { of.q = e.target.value; of.limit = 40; renderOnField(); };
   $('#of-role').onchange = e => { of.role = e.target.value; renderOnField(); };
   $('#of-trait').onchange = e => { of.trait = e.target.value; renderOnField(); };
@@ -3517,15 +3515,16 @@ let PAGEMAP = null, PAGEMAPP = null;   // data/pageslugs.json: which players and
 const PATHMODE = /(^|\.)plainstatsnfl\.com$|vercel\.app$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'], ['projections', '/projections'],
   ['news', '/news'], ['news-contracts', '/news/contracts'], ['news-injuries', '/news/injuries'], ['news-games', '/news/games'], ['news-coaching', '/news/coaching'], ['news-league', '/news/league'],
-  ['teams', '/team-ratings'], ['tiers', '/team-tiers'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['stats', '/stats'],
+  ['teams', '/team-ratings'], ['tiers', '/team-tiers'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['ratings-roles', '/player-ratings/roles'], ['ratings-pay', '/player-ratings/pay-vs-play'], ['ratings-rank', '/player-ratings/rankings'], ['ratings-traits', '/player-ratings/traits'], ['stats', '/stats'],
   ['contracts', '/contracts'], ['value', '/best-worst-contracts'], ['rookies', '/rookie-contracts'], ['freeagency', '/free-agency'], ['fa-tags', '/free-agency/key-dates'], ['analytics', '/cap-lab'],
   ['bigboard', '/big-board'], ['mock', '/mock-draft'], ['rookie-pay', '/rookie-pay'], ['draft-guide', '/draft-guide'],
   ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup']];
-const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings', traits: 'ratings', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
+const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
-  teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'NFL player ratings', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
+  teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'Franchise tags and key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
+const OFTAB = { ratings: 'top', onfield: 'top', 'ratings-roles': 'roles', 'ratings-pay': 'pay', 'ratings-rank': 'rank', 'ratings-traits': 'traits', stats: 'stats' }, OFKEY = Object.fromEntries(Object.entries(OFTAB).filter(([k]) => k !== 'onfield').map(([k, t]) => [t, k]));
 const KEY2PATH = Object.fromEntries(ROUTES), PATH2KEY = Object.fromEntries(ROUTES.map(([k, p]) => [p, k]));
 function pathOf(k) {
   k = ALIASES[k] || k;
@@ -3575,7 +3574,7 @@ function route() {
   if (h === 'players' || h === 'overview') v = h === 'players' ? 'contracts' : 'home';
   if (h === 'nba') v = 'learn';
   if (h === 'awards' || h === 'rankings') { v = 'awards'; st.aw.tab = h === 'rankings' ? 'power' : 'awards'; }
-  if (['stats', 'ratings', 'roles', 'traits', 'onfield'].includes(h)) { v = 'onfield'; of.tab = h === 'stats' ? 'stats' : 'ratings'; }
+  if (h === 'stats' || h === 'onfield' || h.startsWith('ratings')) { v = 'onfield'; of.tab = OFTAB[h] || 'top'; }
   if (['games', 'scores', 'schedule', 'standings', 'projections', 'playoffs', 'playoff-odds'].includes(h)) { v = 'games'; gm.tab = h === 'standings' ? 'standings' : ['projections', 'playoffs', 'playoff-odds'].includes(h) ? 'proj' : 'scores'; }
   if (['mock', 'bigboard', 'prospects', 'rookie-pay', 'draft-guide'].includes(h)) { v = 'draft'; dr.tab = h === 'mock' ? 'order' : h === 'rookie-pay' ? 'pay' : h === 'draft-guide' ? 'how' : 'board'; }
   if (h === 'setup') { v = 'home'; setTimeout(() => { const d = $('#setup'); if (d) { d.open = true; d.scrollIntoView(); } }, 30); }
@@ -5361,7 +5360,7 @@ function statsHTML(p) {
   </div>`;
 }
 /* players page: season stats tab */
-of.tab = 'ratings';
+of.tab = 'top';
 const hsx = { season: null, g: 'QB', sort: null, dir: -1, limit: 60, wf: 1, wt: 99, gt: 'incl', ms: 0 };
 /* week range, minimum snaps and garbage time: this season's game log with snaps and garbage-time lines (data/hist/wk<year>.json, about 375 KB, loaded only when one of these is used) */
 let WKP = null, WK = null, WKD = null;
@@ -5383,8 +5382,11 @@ function wkLine(id, g) {   // the player's line over the picked weeks; null when
 }
 function renderOFTab() {
   $$('#of-tab button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ot2 === of.tab)));
-  $('#of-ratings').hidden = of.tab !== 'ratings'; $('#of-stats').hidden = of.tab !== 'stats';
-  $('#h-onfield').textContent = of.tab === 'stats' ? 'Season stats' : 'Players on the field';
+  $('#of-ratings').hidden = of.tab === 'stats'; $('#of-stats').hidden = of.tab !== 'stats';
+  $$('#of-ratings [data-oft]').forEach(el => (el.hidden = el.dataset.oft !== of.tab));
+  $('#h-onfield').textContent = { top: 'Top players', roles: 'Player roles', pay: 'Pay vs. play', rank: 'Positional rankings', traits: 'Trait badges', stats: 'Season stats' }[of.tab] || 'Players on the field';
+  $('#of-lede').textContent = { top: 'The best players at each position right now, by play rating (40 to 99, from this season\'s stats).', roles: 'How teams use each player. Tap a role to see those players ranked.', pay: 'What each player is paid set next to how he is playing.', rank: 'Every player at the position, ranked by play rating. Filter by role, trait or team.', traits: 'Skills a player ranks near the top of his position in.' }[of.tab] || '';
+  const tb = $('#of-tab [aria-pressed="true"]'); if (tb && tb.scrollIntoView) { const bar = $('#of-tab'); bar.scrollLeft = Math.max(0, tb.offsetLeft - (bar.clientWidth - tb.offsetWidth) / 2); }
   if (of.tab === 'stats') loadHS();
 }
 function loadHS() {   // one season file at a time (about 130 KB), loaded when that season is shown
@@ -5434,7 +5436,7 @@ function wireHS() {
   $('#hs-ms').oninput = () => { hsx.ms = Math.max(0, parseInt($('#hs-ms').value, 10) || 0); hsx.limit = 60; hsChange(); };
   $('#hs-gt').onclick = e => { const b = e.target.closest('[data-hsgt]'); if (b && !b.disabled) { hsx.gt = b.dataset.hsgt; hsx.limit = 60; hsChange(); } };
   $('#hs-reset').onclick = () => { Object.assign(hsx, { wf: 1, wt: 99, gt: 'incl', ms: 0, limit: 60 }); renderHS(); };
-  $('#of-tab').onclick = e => { const b = e.target.closest('[data-ot2]'); if (b) go(b.dataset.ot2 === 'stats' ? 'stats' : 'onfield'); };
+  $('#of-tab').onclick = e => { const b = e.target.closest('[data-ot2]'); if (b) go(OFKEY[b.dataset.ot2] || 'ratings'); };
   $('#hs-seasons').onclick = e => { const b = e.target.closest('[data-hss]'); if (b) { hsx.season = +b.dataset.hss; hsx.limit = 60; loadHS(); } };
   $('#hs-groups').onclick = e => { const b = e.target.closest('[data-hsg]'); if (b) { hsx.g = b.dataset.hsg; hsx.limit = 60; hsx.sort = null; renderHS(); } };
   $('#hs-more').onclick = () => { hsx.limit += 60; renderHS(); };

@@ -87,6 +87,22 @@
       "destination": "/"
     },
     {
+      "source": "/player-ratings/roles",
+      "destination": "/"
+    },
+    {
+      "source": "/player-ratings/pay-vs-play",
+      "destination": "/"
+    },
+    {
+      "source": "/player-ratings/rankings",
+      "destination": "/"
+    },
+    {
+      "source": "/player-ratings/traits",
+      "destination": "/"
+    },
+    {
       "source": "/stats",
       "destination": "/"
     },

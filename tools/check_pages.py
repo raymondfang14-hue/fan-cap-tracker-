@@ -8,7 +8,7 @@ Without --url it serves this repo locally, so it tests what you are about to pus
 import argparse, asyncio, functools, http.server, json, os, re, sys, threading
 
 VIEWS = ['/', '/news', '/team-ratings', '/team-tiers', '/team/kc', '/contracts', '/power-rankings', '/awards', '/big-board', '/scores', '/standings',
-         '/projections', '/roster-builder', '/#offseason', '/trade-checker', '/compare', '/cap-101', '/stats', '/player/patrick-mahomes-kc']
+         '/projections', '/roster-builder', '/#offseason', '/trade-checker', '/compare', '/cap-101', '/player-ratings', '/player-ratings/roles', '/player-ratings/pay-vs-play', '/player-ratings/rankings', '/player-ratings/traits', '/stats', '/player/patrick-mahomes-kc']
 
 SHARE_VIEWS = ['/team-ratings', '/team-tiers', '/contracts', '/power-rankings', '/big-board']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]

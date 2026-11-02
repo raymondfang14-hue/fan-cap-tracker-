@@ -81,6 +81,7 @@
   <url><loc>https://www.plainstatsnfl.com/teams/vikings</loc><lastmod>2026-10-22</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.plainstatsnfl.com/teams/vikings/cap</loc><lastmod>2026-10-22</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.plainstatsnfl.com/big-board</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/player-ratings/rankings</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/aaron-brewer</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/aaron-jones</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/aaron-rodgers</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -572,6 +573,8 @@
   <url><loc>https://www.plainstatsnfl.com/awards</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/best-worst-contracts</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/cap-101</loc><lastmod>2026-10-22</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/player-ratings/pay-vs-play</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/player-ratings/traits</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/rookie-contracts</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/roster-builder</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/cap-lab</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
@@ -650,6 +653,7 @@
   <url><loc>https://www.plainstatsnfl.com/draft/zabien-brown</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/draft/zeke-berry</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/free-agency/key-dates</loc><lastmod>2026-10-22</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/player-ratings/roles</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/aaron-hall</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/aaron-stinnie</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/abdul-carter</loc><lastmod>2026-10-22</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>

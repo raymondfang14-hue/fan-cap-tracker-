@@ -27,7 +27,7 @@ Every section, tab, team, player, prospect and game has its own clean URL. On pl
 | Weekly team tiers | `/team-tiers` | | |
 | Cap room | `/cap-room` | Rookie pay, draft guide | `/rookie-pay`, `/draft-guide` |
 | Power rankings, awards | `/power-rankings`, `/awards` | Roster builder, trade checker, compare | `/roster-builder`, `/trade-checker`, `/compare` |
-| Player ratings, season stats | `/player-ratings`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
+| Players: top players, roles, pay vs. play, rankings, traits, season stats | `/player-ratings`, `/player-ratings/roles`, `/player-ratings/pay-vs-play`, `/player-ratings/rankings`, `/player-ratings/traits`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
 | A team | `/team/<code>` (e.g. `/team/kc`) | A game | `/game/<id>` (e.g. `/game/2026-07-ne-chi`) |
 
 A player card opens at `/players/<name>` when the player has a static search page, else `/player/<first-last>-<team>`; a prospect at `/draft/<name>`, else `/prospect/<id>`. Typing those static URLs directly gives the static page, which links into the app. `/players`, `/teams` and `/draft` stay the static hubs, so no app path may use them. When adding a page: add it to `ROUTES` (and `PTITLE`, `SPAGES` for search) in src.html, to `rewrites` in vercel.json and to `APP_URLS` in tools/build_seo.py (sitemap). index.html has `<base href="/">` (build.sh) so relative data/ URLs work on deep paths.
