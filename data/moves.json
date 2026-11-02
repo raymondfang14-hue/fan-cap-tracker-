@@ -1,6 +1,51 @@
 {
- "asOf": "2026-11-01",
+ "asOf": "2026-11-02",
  "moves": [
+  {
+   "iso": "2026-11-02",
+   "date": "Nov 2",
+   "kind": "Coaching",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "DeAngelo Hall"
+   ],
+   "head": "Panthers hire DeAngelo Hall as cornerbacks coach",
+   "plain": "The former Pro Bowl cornerback returns to Carolina's staff after the team fired defensive coordinator Ejiro Evero. Todd Wash is the interim coordinator.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "Injury",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Jack Campbell"
+   ],
+   "head": "Lions LB Jack Campbell hospitalized with a neck injury",
+   "plain": "Campbell was carted off in the fourth quarter against the Vikings and stayed in a local hospital overnight for monitoring. The Lions will give more updates.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/lions-lb-jack-campbell-hospitalized-with-neck-injury"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "Injury",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "Lamar Jackson"
+   ],
+   "head": "Ravens QB Lamar Jackson to have thumb surgery, goes on injured reserve",
+   "plain": "Jackson hurt his thumb on the first snap of the Week 8 loss in Buffalo. He will miss at least four games and it is unclear if he returns this season. Baltimore is down to rookie Joe Fagnano as its only healthy QB.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-lamar-jackson-to-undergo-thumb-surgery-land-on-ir"
+  },
   {
    "iso": "2026-11-01",
    "date": "Nov 1",
