@@ -44,135 +44,135 @@
   "rewrites": [
     {
       "source": "/scores",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/standings",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/projections",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/news",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/news/:topic(contracts|injuries|games|coaching|league)",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/team-ratings",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/team-tiers",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/cap-room",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/power-rankings",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/awards",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/player-ratings",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/stats",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/contracts",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/best-worst-contracts",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/rookie-contracts",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/free-agency",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/free-agency/key-dates",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/cap-lab",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/big-board",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/mock-draft",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/rookie-pay",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/draft-guide",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/roster-builder",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/trade-checker",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/compare",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/cap-101",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/about",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/search",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/setup",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/team/:id",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/player/:slug",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/prospect/:id",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/game/:id",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }

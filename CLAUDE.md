@@ -9,7 +9,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - Every table needs a filter search. The Roster Builder shows no contract costs.
 - Must work on phones: the owner edits from Koder / Working Copy on iPhone.
 
-- Every page has a clean URL (README "Views"). A new section needs an entry in `ROUTES` in src.html, `rewrites` in vercel.json and `APP_URLS` in `tools/build_seo.py`. Never give an app page a path under `/players`, `/teams` or `/draft` (static pages). Link with `href="/path"` or `pathOf(key)`, never `#key`.
+- Every page has a clean URL (README "Views"). A new section needs an entry in `ROUTES` in src.html, `rewrites` in vercel.json (destination `"/"`, never `"/index.html"`: with `cleanUrls` that 404s on reload) and `APP_URLS` in `tools/build_seo.py`. Never give an app page a path under `/players`, `/teams` or `/draft` (static pages). Link with `href="/path"` or `pathOf(key)`, never `#key`.
 
 ## Data rules
 - Never copy Over The Cap, Spotrac or other restricted sources. Contract figures come from `data/ledger.csv` (named report + URL), CBA calculations (`data/cba.json`, `data/rookie_scale.py`) or stay unverified.
