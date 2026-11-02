@@ -1,7 +1,7 @@
 import sys, os, json
 from playwright.sync_api import sync_playwright
 F='/home/user/fan-cap-tracker-/assets/fonts/'; HERE=os.path.dirname(os.path.abspath(__file__)); OUT=sys.argv[1]
-PH=f'{HERE}/img/jonathan-taylor.jpg'; N=10
+PH=f'{HERE}/img/jonathan-taylor.jpg'; N=7
 DATA=json.load(open(f'{HERE}/taylor_data.json'))
 TH={'IND':('#1d4fd6','#0a1d5c','#8fb4ff'),'MIN':('#7a43c8','#2b1457','#ffc62f'),'SEA':('#2f6fbf','#00152e','#69be28'),'NYG':('#2a4fb8','#071642','#ff5a73')}
 CSS=f"""
@@ -76,9 +76,27 @@ def scen(i,key,rank):
     cp=f'<div class="abs tile" style="left:72px;right:72px;top:965px;z-index:8"><div class=lab style="color:var(--a);font-weight:800;font-size:24px">Cap check</div><div class=lab style="color:#fff;font-size:28px;margin-top:8px">{sc["cap"]}</div></div>'
     body=f'<div class=eyebrow style="top:150px">Trade scenario · #{rank} {d["name"]}</div><h1 style="top:190px;font-size:84px">{sc["h"]}</h1>{left}{right}{arrow}{pr}{cp}<div class="abs lab" style="left:72px;right:72px;top:1180px;z-index:8;font-size:23px">PlainStats scenario built from 2026 trade prices. Not a report.</div>'
     return shell(i,key,body,ph)
-S.append(team(2,'MIN',1,'','',880)); S.append(scen(3,'MIN',1))
-S.append(team(4,'SEA',2,'','',960)); S.append(scen(5,'SEA',2))
-S.append(team(6,'NYG',3,'','',1040)); S.append(scen(7,'NYG',3))
+CM={'MIN':dict(price='Houston paid the same, a 2027 2nd and 2027 6th, for WR Marvin Harrison Jr. (Oct 11).',note='Aaron Jones ($10M a year through 2026, AP) could go back as salary. Taylor averages $22M a year (NFL.com).'),
+ 'SEA':dict(price='Dallas paid a 2028 2nd and a late pick for CB Joey Porter Jr. (Sep 30). Seattle sent a 2027 3rd and 2028 5th to Indianapolis for G Quenton Nelson (Oct 27).',note='Most cap space of the three. RB Emanuel Wilson is on a $1.6M deal (Pro Football Rumors).'),
+ 'NYG':dict(price='Seattle paid that for G Quenton Nelson on an expiring deal (Oct 27). Taylor is signed through 2028, so Indianapolis could ask for more.',note='The Giants already sent their 2027 5th to Minnesota for QB J.J. McCarthy (Sep 28).')}
+def combined(i,key,rank):
+    d=D[key]; c,deep,a=TH[key]; lg=f'{HERE}/img/logos/{key.lower()}.png'; sc=SC[key]; cm=CM[key]
+    ph=f'<div class=abs style="inset:0;background:radial-gradient(900px 900px at 80% 22%,{c}cc,transparent 70%),linear-gradient(115deg,{deep},#070f20 85%)"></div>'
+    ph+=f'<div class=abs style="left:360px;top:60px;width:900px;height:900px;background:url(file://{lg}) center/contain no-repeat;opacity:.10"></div>'
+    if key=='NYG': ph+='<div class=abs style="left:690px;top:150px;width:310px;height:310px;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:0 18px 50px rgba(0,0,0,.5);z-index:1"></div>'
+    ph+=f'<div class=abs style="left:{725 if key=="NYG" else 650}px;top:{185 if key=="NYG" else 150}px;width:{240 if key=="NYG" else 330}px;height:{240 if key=="NYG" else 330}px;background:url(file://{lg}) center/contain no-repeat;filter:drop-shadow(0 14px 30px rgba(0,0,0,.5));z-index:2"></div>'
+    def st(x,n,l,col=False): return f'<div class="abs tile" style="left:{x}px;top:500px;width:300px;height:150px;z-index:8;padding:18px 22px"><div class=big style="font-size:50px;color:{"var(--a)" if col else "#fff"}">{n}</div><div class=lab style="margin-top:6px;font-size:21px">{l}</div></div>'
+    body=f'<div class=abs style="left:72px;top:150px;z-index:9"><span class=chip>#{rank} · fit {d["fit"]}</span></div><h1 style="top:205px;font-size:100px">{d["name"]}</h1>'
+    body+=f'<div class="abs lab" style="left:72px;top:325px;width:520px;z-index:9;font-size:25px">{d["rec"]} · {d["last"]}</div><div class="abs lab" style="left:72px;top:395px;width:520px;z-index:9;font-size:24px;color:#fff"><b style="font-weight:800">Lead RB:</b> {d["lead"].replace(" · ","<br>",1)}</div>'
+    body+=st(72,d['po'],'Playoff odds',True)+st(390,d['rk'],f'Run-game need<br>RB EPA {d["epa"]}/carry')+st(708,d['space'],'Cap space<br>(PlainStats team total)')
+    items=''.join(f'<div class=big style="font-size:32px;letter-spacing:-.03em;line-height:1.1;margin-top:10px">{x}</div>' for x in sc['col'])
+    body+=f'<div class="abs lab" style="left:72px;top:690px;z-index:9;font-size:24px;color:var(--a);font-weight:800">Trade scenario · {d["tag"]}</div>'
+    body+=f'<div class="abs tile" style="left:72px;top:735px;width:444px;height:190px;z-index:8;padding:16px 24px"><div class=lab style="color:var(--a);font-weight:800;font-size:24px">Colts get</div>{items}</div>'
+    body+=f'<div class="abs tile" style="left:564px;top:735px;width:444px;height:190px;z-index:8;padding:16px 24px"><div class=lab style="color:var(--a);font-weight:800;font-size:24px">{d["name"]} get</div><div class=big style="font-size:32px;letter-spacing:-.03em;line-height:1.1;margin-top:10px">RB Jonathan Taylor</div><div class=lab style="margin-top:10px;font-size:22px">{t["yds"]} rush yds, {t["td"]} TD in 8 games</div></div><div class="abs" style="left:516px;top:800px;width:48px;text-align:center;font-size:40px;font-weight:800;z-index:9">⇄</div>'
+    body+=f'<div class="abs lab" style="left:72px;right:72px;top:950px;z-index:8;font-size:25px;color:#fff"><b style="font-weight:800;color:var(--a)">Price check:</b> {cm["price"]}</div><div class="abs lab" style="left:72px;right:72px;top:1090px;z-index:8;font-size:25px;color:#fff"><b style="font-weight:800;color:var(--a)">Cap check:</b> {cm["note"]}</div>'
+    body+='<div class="abs lab" style="left:72px;right:72px;top:1205px;z-index:8;font-size:21px">PlainStats scenario built from 2026 trade prices. Not a report.</div>'
+    return shell(i,key,body,ph)
+S.append(combined(2,'MIN',1)); S.append(combined(3,'SEA',2)); S.append(combined(4,'NYG',3))
 # 6 summary
 ph=photo(0,0,1080,1350)+'<div class=abs style="inset:0;background:linear-gradient(180deg,rgba(7,16,31,.9),rgba(7,16,31,.8) 40%,rgba(7,16,31,.94))"></div>'
 rows=''
@@ -87,11 +105,11 @@ for k,key in enumerate(['MIN','SEA','NYG']):
     rows+=f'<div class=tile style="display:grid;grid-template-columns:96px 1fr 120px;align-items:center;gap:12px;margin-bottom:18px"><div style="width:84px;height:84px;background:url(file://{HERE}/img/logos/{key.lower()}.png) center/contain no-repeat"></div><div><div style="font-size:42px;font-weight:800;letter-spacing:-.03em">{d["name"]}</div><div class=lab style="font-size:24px">{d["rec"]} · {d["po"]} playoff · run game {d["rk"]} · {d["space"]} space</div></div><div style="text-align:right"><div class=big style="font-size:60px">{d["fit"]}</div><div class=lab style="font-size:22px">fit score</div></div></div>'
 body=f'<div class=eyebrow style="top:150px">How the three stack up</div><h1 style="top:190px;font-size:88px">Minnesota is the <em>best fit</em> on paper</h1><div class=abs style="left:72px;right:72px;top:470px;z-index:9">{rows}</div>'
 body+=f'<div class="abs lab" style="left:72px;right:72px;top:1050px;z-index:9;font-size:26px">Fit score = run-game need and playoff odds, averaged (0-100). The {D["next"]} score above the Giants on our numbers but have not been linked to him. Taylor averages $22M a year (NFL.com). All three teams have less cap space than that, and his 2026 cap hit is not in our data, so salary may have to go back to Indianapolis.</div>'
-S.append(shell(8,'MIN',body,ph))
+S.append(shell(5,'MIN',body,ph))
 # 7 closer
 ph=photo(0,250,1080,1100)+'<div class=abs style="left:0;right:0;top:0;height:640px;background:linear-gradient(180deg,#07101f 0,#07101f 48%,rgba(7,16,31,0))"></div><div class=abs style="left:0;right:0;top:760px;height:590px;background:linear-gradient(180deg,rgba(5,10,22,0),rgba(5,10,22,.95) 60%)"></div>'
 body='<div class=eyebrow style="top:150px">Where should Taylor land?</div><h1 style="top:190px;font-size:104px">Vikings, Seahawks or <em>Giants?</em></h1><div class="abs lab" style="left:72px;right:72px;top:1130px;z-index:9;font-size:28px;color:#fff">Reported interest: Giants and Vikings (Pro Football Rumors, Oct 31). Seattle is our data pick.</div>'
-S.append(shell(9,'IND',body,ph,'Photos: All-Pro Reels (CC BY-SA 2.0), CC BY 3.0'))
+S.append(shell(6,'IND',body,ph,'Photos: All-Pro Reels (CC BY-SA 2.0), CC BY 3.0'))
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/opt/pw-browsers/chromium',args=['--no-sandbox']); pg=b.new_page(viewport={'width':1080,'height':1350})
     for i,h in enumerate(S,1):
