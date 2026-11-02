@@ -1,0 +1,55 @@
+{
+ "taylor": {
+  "yds": "610",
+  "yds_rk": "8th",
+  "td": "8",
+  "td_rk": "tied 3rd",
+  "car": "148",
+  "car_rk": "4th",
+  "recyds": "202",
+  "rec": "21",
+  "w8": "8 carries for 23 yards"
+ },
+ "IND": {
+  "rec": "2-6",
+  "w8": "42-7 loss at Jacksonville",
+  "po": "1.5%"
+ },
+ "MIN": {
+  "name": "Vikings",
+  "last": "lost 15-19 at DET in Week 8",
+  "tag": "Reported front-runner (Pro Football Rumors, Oct 31)",
+  "rec": "6-1",
+  "po": "94%",
+  "rk": "5th worst",
+  "epa": "-0.213",
+  "space": "$6.1M",
+  "lead": "Aaron Jones \u00b7 110 carries \u00b7 458 yds \u00b7 2 TD",
+  "fit": 91
+ },
+ "SEA": {
+  "name": "Seahawks",
+  "last": "Monday night vs CHI still to play",
+  "tag": "Not named in reports. Our data pick.",
+  "rec": "4-3",
+  "po": "81%",
+  "rk": "2nd worst",
+  "epa": "-0.241",
+  "space": "$12.6M",
+  "lead": "Emanuel Wilson \u00b7 111 carries \u00b7 403 yds \u00b7 3 TD",
+  "fit": 89
+ },
+ "NYG": {
+  "name": "Giants",
+  "last": "bye in Week 8",
+  "tag": "Reported front-runner (Pro Football Rumors, Oct 31)",
+  "rec": "4-2-1",
+  "po": "68%",
+  "rk": "8th worst",
+  "epa": "-0.161",
+  "space": "$8.1M",
+  "lead": "Cam Skattebo \u00b7 98 carries \u00b7 418 yds \u00b7 2 TD",
+  "fit": 73
+ },
+ "next": "Bengals (fit 79)"
+}
