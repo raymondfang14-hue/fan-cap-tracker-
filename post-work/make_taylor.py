@@ -35,12 +35,12 @@ ph=photo(0,0,1080,1350)+'<div class=abs style="inset:0;background:linear-gradien
 body='<div class=eyebrow style="top:870px">Colts are open to trading him</div><h1 style="top:915px;font-size:94px">Jonathan Taylor: <em>top 3</em> trade destinations</h1>'
 S.append(shell(0,'IND',body,ph))
 # 2 situation
-t=D['taylor']; P2=f'{HERE}/img/jonathan-taylor-2.jpg'
-def tile(x,y,n,l,w=420): return f'<div class="abs tile" style="left:{x}px;top:{y}px;width:{w}px;z-index:8"><div class=big style="font-size:66px">{n}</div><div class=lab style="margin-top:6px;font-size:24px">{l}</div></div>'
-ph=f'<div class=abs style="left:520px;top:400px;width:488px;height:690px;border-radius:36px;background:url(file://{P2}) center top/cover;border:2px solid rgba(255,255,255,.25);box-shadow:0 30px 60px rgba(0,0,0,.5);z-index:3"></div><div class=abs style="inset:0;background:radial-gradient(800px 800px at 80% 50%,rgba(29,79,214,.45),transparent 70%)"></div>'
+t=D['taylor']; P3=f'{HERE}/img/jonathan-taylor-3.jpg'
+def tile(x,y,n,l,w=454): return f'<div class="abs tile" style="left:{x}px;top:{y}px;width:{w}px;z-index:8"><div class=big style="font-size:70px">{n}</div><div class=lab style="margin-top:6px">{l}</div></div>'
+ph=f'<div class=abs style="left:0;top:300px;width:1080px;height:1050px;background:url(file://{P3}) center top/cover"></div><div class=abs style="left:0;right:0;top:0;height:620px;background:linear-gradient(180deg,#07101f 0,#07101f 42%,rgba(7,16,31,0))"></div><div class=abs style="left:0;right:0;top:700px;height:650px;background:linear-gradient(180deg,rgba(5,10,22,0),rgba(5,10,22,.95) 55%)"></div>'
 body=f'<div class=eyebrow style="top:150px">Jonathan Taylor, through Week 8</div><h1 style="top:190px;font-size:88px">Colts are {D["IND"]["rec"]} and <em>listening</em></h1>'
-body+=tile(72,420,t['yds'],f'Rush yards, {t["yds_rk"]} in the NFL')+tile(72,585,t['td'],f'Rush TD, {t["td_rk"]}')+tile(72,750,t['car'],f'Carries, {t["car_rk"]}')+tile(72,915,t['recyds'],f'Receiving yards on {t["rec"]} catches')
-body+=f'<div class="abs lab" style="left:72px;right:72px;top:1130px;z-index:8;font-size:26px">Week 8: {t["w8"]} in a {D["IND"]["w8"]}. Playoff odds: {D["IND"]["po"]}.</div>'
+body+=tile(72,830,t['yds'],f'Rush yards, {t["yds_rk"]} in the NFL')+tile(554,830,t['td'],f'Rush TD, {t["td_rk"]}')+tile(72,985,t['car'],f'Carries, {t["car_rk"]}')+tile(554,985,t['recyds'],f'Receiving yards on {t["rec"]} catches')
+body+=f'<div class="abs lab" style="left:72px;right:72px;top:1140px;z-index:8;font-size:26px">Week 8: {t["w8"]} in a {D["IND"]["w8"]}. Playoff odds: {D["IND"]["po"]}.</div>'
 S.append(shell(1,'IND',body,ph,'Photo: Creative Commons BY 3.0 Unported'))
 # 3-5 teams
 def team(i,key,rank,pos,zoom,shift):
