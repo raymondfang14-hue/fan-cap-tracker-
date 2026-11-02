@@ -1,7 +1,7 @@
 import sys, os, json
 from playwright.sync_api import sync_playwright
 F='/home/user/fan-cap-tracker-/assets/fonts/'; HERE=os.path.dirname(os.path.abspath(__file__)); OUT=sys.argv[1]
-PH=f'{HERE}/img/jonathan-taylor.jpg'; N=7
+PH=f'{HERE}/img/jonathan-taylor.jpg'; N=7; TT=len(sys.argv)>2 and sys.argv[2]=='tiktok'
 DATA=json.load(open(f'{HERE}/taylor_data.json'))
 TH={'IND':('#1d4fd6','#0a1d5c','#8fb4ff'),'MIN':('#7a43c8','#2b1457','#ffc62f'),'SEA':('#2f6fbf','#00152e','#69be28'),'NYG':('#2a4fb8','#071642','#ff5a73')}
 CSS=f"""
@@ -26,7 +26,17 @@ h1 em{{font-style:normal;color:var(--a)}}
 def shell(i,theme,body,photo,foot='PlainStats · nflverse through Week 8'):
     c,d,a=TH[theme]
     dots=''.join(f'<i class="{"on" if k==i else ""}"></i>' for k in range(N))
-    return f'<html><head><meta charset=utf-8><style>:root{{--a:{a}}}{CSS}</style></head><body><div class=abs style="inset:0;background:linear-gradient(115deg,{d},#070f20 70%)"></div>{photo}<div class=logo>PlainStats</div><div class=dots>{dots}</div>{body}<div class=foot><span>{foot}</span><b>plainstatsnfl.com</b></div></body></html>'
+    bgd=f'<div class=abs style="inset:0;background:linear-gradient(115deg,{d},#070f20 70%)"></div>'
+    foot_html=f'<div class=foot><span>{foot}</span><b>plainstatsnfl.com</b></div>'
+    if not TT:
+        return f'<html><head><meta charset=utf-8><style>:root{{--a:{a}}}{CSS}</style></head><body>{bgd}{photo}<div class=logo>PlainStats</div><div class=dots>{dots}</div>{body}{foot_html}</body></html>'
+    import re
+    m=re.search(r"url\(file://([^)]*jonathan-taylor[^)]*)\)",photo)
+    fill=f'<div class=abs style="inset:0;background:linear-gradient(115deg,{d},#070f20 70%)"></div>'
+    if m: fill+=f'<div class=abs style="inset:-80px;background:url(file://{m.group(1)}) center/cover;filter:blur(40px) brightness(.5) saturate(1.1)"></div>'
+    mask='mask-image:linear-gradient(180deg,transparent 0,#000 150px,#000 1200px,transparent 1350px);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 150px,#000 1200px,transparent 1350px)'
+    return f'<html><head><meta charset=utf-8><style>:root{{--a:{a}}}{CSS}body{{height:1920px}}.stage{{position:absolute;left:21px;top:150px;width:1080px;height:1350px;transform:scale(.96);transform-origin:0 0}}</style></head><body>{fill}<div class=stage><div class=abs style="inset:0;{mask}">{bgd}{photo}</div><div class=logo>PlainStats</div><div class=dots>{dots}</div>{body}{foot_html}</div></body></html>'
+
 def photo(left,top,w,h,pos='center top',zoom=None):
     return f'<div class=abs style="left:{left}px;top:{top}px;width:{w}px;height:{h}px;background:url(file://{PH}) {pos}/{zoom or "cover"}"></div>'
 D=DATA; S=[]
@@ -117,7 +127,7 @@ ph=photo(0,250,1080,1100)+'<div class=abs style="left:0;right:0;top:0;height:640
 body='<div class=eyebrow style="top:150px">Where should Taylor land?</div><h1 style="top:190px;font-size:104px">Vikings, Seahawks or <em>Giants?</em></h1><div class="abs lab" style="left:72px;right:72px;top:1130px;z-index:9;font-size:28px;color:#fff">Reported interest: Giants and Vikings (Pro Football Rumors, Oct 31). Seattle is our data pick.</div>'
 S.append(shell(6,'IND',body,ph,'Photos: All-Pro Reels (CC BY-SA 2.0), CC BY 3.0'))
 with sync_playwright() as p:
-    b=p.chromium.launch(executable_path='/opt/pw-browsers/chromium',args=['--no-sandbox']); pg=b.new_page(viewport={'width':1080,'height':1350})
+    b=p.chromium.launch(executable_path='/opt/pw-browsers/chromium',args=['--no-sandbox']); pg=b.new_page(viewport={'width':1080,'height':1920 if TT else 1350})
     for i,h in enumerate(S,1):
         f=f'{OUT}/slide{i}.html'; open(f,'w').write(h); pg.goto(f'file://{f}'); pg.wait_for_timeout(300); pg.screenshot(path=f'{OUT}/slide{i}.png')
     b.close()
