@@ -74,6 +74,7 @@ Write both and save as text files in `$WORK/out`.
 Send the PNGs (cover first), `contact.png`, and the caption files with `SendUserFile` (absolute scratchpad paths, `display: attach`). Write the closing message in plain words: what each slide shows, anything the user should check (pregame photos, weak photos, small Tier 3 text), the folder path. Offer: a different hook, replacement photos, a short MP4 slideshow. Never post anything; never commit the images.
 
 ## Known pitfalls
+- Two different "schedule" numbers exist on the site: the tiers' `sosRank` (EPA-based, what this skill quotes) and the Sched column on `/power-rankings` (points-based, from `data/season.json` `sos`). They can differ by several places (DEN is #2 by EPA, #6 by points). Quote only the tiers' one in a tiers post, and say "by EPA" if the post also mentions power rankings.
 - Schedule adjustment: ranks and the net on every row are adjusted; the splits are not. A `tiers.json` built before the model change has no `adjusted` flag (render prints a WARNING and the slides show raw net). Strength of schedule from the adjusted model is not the same as a raw-opponent average (JAX was 29th-toughest by raw opponent net EPA, 25th by the adjusted model): quote only the sheet's `sosRank`.
 - Ties: records like 4-2-1 must show the tie (the renderer does; hand-typed records dropped it once).
 - Python `playwright` may not match the installed Chromium; the script passes `executable_path`.

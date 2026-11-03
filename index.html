@@ -1444,6 +1444,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 
   <div id="aw-power" hidden style="display:grid;gap:16px;min-width:0">
     <p data-sp="rank" class="lede">All 32 teams ranked by a blend of results, scoring margin, roster strength and efficiency. Wins count, but so does how a team wins and how good its starters are, so a team can rank above or below its record.</p>
+    <div id="pw-mode" class="trbar" data-sp="rank chart movers"></div>
     <div data-sp="rank" class="kpis" id="pw-kpis"></div>
     <div class="spwrap">
       <div data-sp="chart" class="panel">
@@ -2120,7 +2121,7 @@ const LEARN_NFL = [
   ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
   ['Awards watch', 'PlainStats scores every qualified player and coach for MVP, Offensive and Defensive Player of the Year, the two Rookie awards, Comeback Player and Coach of the Year. A score blends his play rating, his production per game, how his team is doing and a few award-specific pieces. The scores turn into odds, which are the model\'s share of the race, not betting lines.'],
-  ['Power rankings', 'All 32 teams ranked by a 0 to 100 power score: results 28%, scoring margin 28%, roster rating 24% and efficiency 20%. A team ranked above its record is playing better than it is winning; one ranked below it has been winning more than its roster or play suggests. Projected wins assume the current score holds.'],
+  ['Power rankings', 'All 32 teams ranked by a 0 to 100 power score: results 28%, scoring margin 28%, roster rating 24% and efficiency 20%. The scoring margin and the EPA part of efficiency are adjusted for the opponents a team has played (switch to Raw for the unadjusted ranking). A team ranked above its record is playing better than it is winning; one ranked below it has been winning more than its roster or play suggests. Projected wins assume the current score holds.'],
   ['Lineups and depth charts', 'PlainStats builds each lineup from 2026 snap counts: the most-used quarterback, back, three receivers, tight end, five linemen, two edge rushers, two defensive tackles, two linebackers, three corners and two safeties. Only players under contract are listed, so a player with no snaps may be hurt or inactive.'],
   ['Roster builder', 'Pick a starter at every spot from any team. The builder rates your lineup with the same team formula, shows where it would rank, and names the real team it most resembles.'],
   ['Trade deadline', 'The last day teams can trade players this season. In 2026 it is November 10. In-season trades move only the salary still to be paid; the old team keeps the bonus as dead money.']
@@ -4352,9 +4353,14 @@ const AW_DEFS = [
     blurb: 'The coach doing the most with his team. Wins and scoring margin matter, and so does beating what the roster rating says is likely and improving on last season.' }
 ];
 
-/* team model: results + roster + efficiency */
+/* team model: results + roster + efficiency.
+   Two versions. The schedule-adjusted one (t.pw, used site-wide) swaps in the opponent-adjusted scoring margin (srs in data/season.json,
+   built by data/build_standings.py) and the schedule-adjusted net EPA from data/tiers.json (aNet, built by data/build_tiers.py) for the EPA part of
+   efficiency; the raw one (t.pwr) is the original and sits behind the Raw switch on the power rankings page. When either file lacks the adjustment
+   (an older file), AW_ADJ is false and both are the raw model. */
+let AW_ADJ = false;
 function awTeamModel() {
-  TEAMS.forEach(t => { t.pw = null; t.sr = null; });
+  TEAMS.forEach(t => { t.pw = null; t.pwr = null; t.sr = null; });
   const ok = SEASON && SEASON.teams && TEAMS.every(t => SEASON.teams[t.id]);
   if (!ok) return false;
   TEAMS.forEach(t => {
@@ -4364,27 +4370,35 @@ function awTeamModel() {
     s.wp25 = g25 ? (s.w25 + .5 * (s.t25 || 0)) / g25 : null;
     t.sr = s;
   });
+  AW_ADJ = TEAMS.every(t => t.sr.srs != null && t.sr.sos != null) && !!(TIERS && TIERS.adjusted && TIERS.teams && TEAMS.every(t => TIERS.teams[t.id] && TIERS.teams[t.id].aNet != null));
+  if (AW_ADJ) [...TEAMS].sort((a, b) => b.sr.sos - a.sr.sos).forEach((t, n) => (t.sr.sosRank = n + 1));   // 1 = toughest schedule so far
   const WP = TEAMS.map(t => t.sr.wp), PD = TEAMS.map(t => t.sr.pd), TAL = TEAMS.map(t => t.u.ovr);
-  TEAMS.forEach(t => {
-    const s = t.sr, res = pctRank(WP, s.wp), mar = pctRank(PD, s.pd), tal = pctRank(TAL, t.u.ovr);
-    const eff = SD && t.tp ? .4 * t.tp.epa + .2 * t.tp.pra + .2 * t.tp.sckg + .2 * t.tp.tovg : tal;
-    const raw = .28 * res + .28 * mar + .24 * tal + .20 * eff;
-    t.pw = { res, mar, tal, eff, raw, score: Math.round(raw * 100), ts: (res + mar) / 2, ros: .55 * tal + .45 * eff };
-  });
-  const rk = (key, dir) => { const a = [...TEAMS].sort((x, y) => (y.pw[key] - x.pw[key]) * dir || x.id.localeCompare(y.id)); a.forEach((t, n) => (t.pw['rk_' + key] = n + 1)); };
-  rk('raw', 1); rk('ts', 1); rk('ros', 1);
-  TEAMS.forEach(t => {
-    const s = t.sr, p = t.pw, rem = Math.max(0, (SEASON.seasonGames || AW_GAMES) - s.g);
-    p.rank = p.rk_raw; p.gap = p.rk_ts - p.rk_ros;
-    const pm = Math.max(.1, Math.min(.88, 1 / (1 + Math.exp(-(p.raw * 100 - 50) / 20))));
-    p.proj = s.w + .5 * s.t + rem * pm;
-    p.tier = p.rank <= 4 ? 'Contender' : p.rank <= 10 ? 'Strong' : p.rank <= 18 ? 'In the mix' : p.rank <= 26 ? 'Shaky' : 'Rebuilding';
-    p.outlook = p.gap >= 6 ? 'Better than record' : p.gap <= -6 ? 'Record flatters' : 'On track';
-    const best = [...UNITS].sort((a, b) => t.rk[a[0]] - t.rk[b[0]])[0];
-    p.best = best ? `${best[1]} (${ord(t.rk[best[0]])})` : '';
-    const prev = SEASON.prevRanks && SEASON.prevRanks[t.id];
-    p.move = prev ? prev - p.rank : null;
-  });
+  const SRS = AW_ADJ ? TEAMS.map(t => t.sr.srs) : null, ANET = AW_ADJ ? TEAMS.map(t => TIERS.teams[t.id].aNet) : null;
+  const build = (key, adj) => {
+    TEAMS.forEach(t => {
+      const s = t.sr, res = pctRank(WP, s.wp), mar = adj ? pctRank(SRS, s.srs) : pctRank(PD, s.pd), tal = pctRank(TAL, t.u.ovr);
+      const epa = adj ? pctRank(ANET, TIERS.teams[t.id].aNet) : t.tp && t.tp.epa;
+      const eff = SD && t.tp ? .4 * epa + .2 * t.tp.pra + .2 * t.tp.sckg + .2 * t.tp.tovg : tal;
+      const raw = .28 * res + .28 * mar + .24 * tal + .20 * eff;
+      t[key] = { res, mar, tal, eff, raw, score: Math.round(raw * 100), ts: (res + mar) / 2, ros: .55 * tal + .45 * eff };
+    });
+    const rk = (k, dir) => { const a = [...TEAMS].sort((x, y) => (y[key][k] - x[key][k]) * dir || x.id.localeCompare(y.id)); a.forEach((t, n) => (t[key]['rk_' + k] = n + 1)); };
+    rk('raw', 1); rk('ts', 1); rk('ros', 1);
+    TEAMS.forEach(t => {
+      const s = t.sr, p = t[key], rem = Math.max(0, (SEASON.seasonGames || AW_GAMES) - s.g);
+      p.rank = p.rk_raw; p.gap = p.rk_ts - p.rk_ros;
+      const pm = Math.max(.1, Math.min(.88, 1 / (1 + Math.exp(-(p.raw * 100 - 50) / 20))));
+      p.proj = s.w + .5 * s.t + rem * pm;
+      p.tier = p.rank <= 4 ? 'Contender' : p.rank <= 10 ? 'Strong' : p.rank <= 18 ? 'In the mix' : p.rank <= 26 ? 'Shaky' : 'Rebuilding';
+      p.outlook = p.gap >= 6 ? 'Better than record' : p.gap <= -6 ? 'Record flatters' : 'On track';
+      const best = [...UNITS].sort((a, b) => t.rk[a[0]] - t.rk[b[0]])[0];
+      p.best = best ? `${best[1]} (${ord(t.rk[best[0]])})` : '';
+      const prev = SEASON.prevRanks && SEASON.prevRanks[t.id];
+      p.move = prev ? prev - p.rank : null;
+    });
+  };
+  build('pwr', false);
+  if (AW_ADJ) build('pw', true); else TEAMS.forEach(t => (t.pw = t.pwr));
   return true;
 }
 
@@ -4567,21 +4581,28 @@ function renderAwHow() {
 }
 
 /* power rankings view */
-const AW_PCOLS = [['rank', '#', 'r', 1], ['name', 'Team', '', 1], ['rec', 'Record', 'r', -1], ['pd', 'Margin', 'r', -1], ['score', 'Power', 'r', -1], ['off', 'OFF', 'r', -1], ['def', 'DEF', 'r', -1], ['proj', 'Proj. wins', 'r', -1], ['tier', 'Tier', '', 1], ['out', 'Outlook', '', 1]];
+const awPk = () => (AW_ADJ && !st.aw.raw ? 'pw' : 'pwr');   // which model the power rankings page shows
+const pwOf = t => t[awPk()];
+const awCols = () => [['rank', '#', 'r', 1, ''], ['name', 'Team', '', 1, ''], ['rec', 'Record', 'r', -1, ''], ['pd', 'Margin', 'r', -1, 'Points scored minus allowed per game'],
+  ...(AW_ADJ ? [['adj', 'Adj. margin', 'r', -1, 'Scoring margin per game adjusted for the opponents played and for home field'], ['sched', 'Sched', 'r', 1, 'Strength of schedule so far: 1 is the toughest, 32 the easiest']] : []),
+  ['score', 'Power', 'r', -1, ''], ['off', 'OFF', 'r', -1, ''], ['def', 'DEF', 'r', -1, ''], ['proj', 'Proj. wins', 'r', -1, ''],
+  ...(AW_ADJ ? [['other', st.aw.raw ? 'Adj. #' : 'Raw #', 'r', 1, st.aw.raw ? 'Rank in the schedule-adjusted power rankings' : 'Rank in the raw power rankings, before the schedule adjustment']] : []),
+  ['tier', 'Tier', '', 1, ''], ['out', 'Outlook', '', 1, '']];
 function awPVal(t, k) {
-  const p = t.pw, s = t.sr;
-  return { rank: p.rank, name: t.city + t.name, rec: s.wp, pd: s.pd, score: p.raw, off: t.rt.off, def: t.rt.def, proj: p.proj, tier: p.rank, out: p.gap }[k];
+  const p = pwOf(t), s = t.sr;
+  return { rank: p.rank, name: t.city + t.name, rec: s.wp, pd: s.pd, adj: s.srs, sched: s.sosRank, score: p.raw, off: t.rt.off, def: t.rt.def, proj: p.proj, other: t[awPk() === 'pw' ? 'pwr' : 'pw'].rank, tier: p.rank, out: p.gap }[k];
 }
 function renderPowerRank() {
-  const all = TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank);
+  const all = TEAMS.filter(t => pwOf(t)).sort((a, b) => pwOf(a).rank - pwOf(b).rank);
   if (!all.length) { ['#pw-kpis', '#pw-scatter', '#pw-gaps', '#pw-table'].forEach(s => ($(s).innerHTML = '')); $('#pw-table').innerHTML = '<p class="empty">Standings or season stats did not load, so power rankings are not available. Reload the page to try again.</p>'; return; }
   const top = all[0], bo = [...TEAMS].sort((a, b) => b.rt.off - a.rt.off)[0], bd = [...TEAMS].sort((a, b) => b.rt.def - a.rt.def)[0];
-  const up = [...all].sort((a, b) => b.pw.gap - a.pw.gap)[0];
+  const up = [...all].sort((a, b) => pwOf(b).gap - pwOf(a).gap)[0];
   $('#pw-kpis').innerHTML = `
-    <a class="kpi" href="${pathOf('team-' + top.id)}"><span class="k">No. 1 team</span><span class="v num">${top.pw.score}</span><span class="s">${esc(top.city)} ${esc(top.name)}, ${awRec(top.sr)}</span></a>
+    <a class="kpi" href="${pathOf('team-' + top.id)}"><span class="k">No. 1 team</span><span class="v num">${pwOf(top).score}</span><span class="s">${esc(top.city)} ${esc(top.name)}, ${awRec(top.sr)}</span></a>
     <a class="kpi" href="${pathOf('team-' + bo.id)}"><span class="k">Best offense</span><span class="v num">${bo.rt.off}</span><span class="s">${esc(bo.city)} ${esc(bo.name)}</span></a>
     <a class="kpi" href="${pathOf('team-' + bd.id)}"><span class="k">Best defense</span><span class="v num">${bd.rt.def}</span><span class="s">${esc(bd.city)} ${esc(bd.name)}</span></a>
-    <a class="kpi" href="${pathOf('team-' + up.id)}"><span class="k">Most underrated by record</span><span class="v good num">${ord(up.pw.rank)}</span><span class="s">${esc(up.city)} ${esc(up.name)}, ${awRec(up.sr)}</span></a>`;
+    <a class="kpi" href="${pathOf('team-' + up.id)}"><span class="k">Most underrated by record</span><span class="v good num">${ord(pwOf(up).rank)}</span><span class="s">${esc(up.city)} ${esc(up.name)}, ${awRec(up.sr)}</span></a>`;
+  const bar = $('#pw-mode'); if (bar) bar.innerHTML = AW_ADJ ? `<div class="seg" role="group" aria-label="Which power rankings to show"><button type="button" data-pm="adj" aria-pressed="${!st.aw.raw}">Schedule-adjusted</button><button type="button" data-pm="raw" aria-pressed="${st.aw.raw}">Raw</button></div><span class="note">Scoring margin and EPA are adjusted for the opponents each team has played. The Raw ranking is the original.</span>` : '';
   $('#pw-asof').textContent = `Through Week ${THRU} · updated ${new Date((SEASON.asOf || D.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   // scatter: results (y) against roster and efficiency (x)
   const [W2, H] = chartSize($('#pw-scatter')), l = 44, r = 18, tp = 18, b = 40, x = v => l + v * (W2 - l - r), y = v => tp + (1 - v) * (H - tp - b);
@@ -4590,25 +4611,25 @@ function renderPowerRank() {
   g += `<line class="mid" x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}"></line>`;
   g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Winning with talent</text><text class="q" x="${l + 6}" y="${tp + 14}">Beating the odds</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Under-delivering</text><text class="q" x="${l + 6}" y="${H - b - 8}">Struggling</text>`;
   g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Roster and efficiency →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Results →</text>`;
-  g += all.map(t => `<g data-team="${t.id}" transform="translate(${(x(t.pw.ros) - 11).toFixed(1)} ${(y(t.pw.ts) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: ranked ${t.pw.rank}">${crest(t.id, 22)}</g>`).join('');
+  g += all.map(t => `<g data-team="${t.id}" transform="translate(${(x(pwOf(t).ros) - 11).toFixed(1)} ${(y(pwOf(t).ts) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: ranked ${pwOf(t).rank}">${crest(t.id, 22)}</g>`).join('');
   $('#pw-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Results against roster strength for each team">${g}</svg>`;
   // gaps
-  const gapRow = t => `<button type="button" class="haw" data-team="${t.id}" style="grid-template-columns:minmax(0,1fr) auto"><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="o">Record ${ord(t.pw.rk_ts)} · roster ${ord(t.pw.rk_ros)}</span></button>`;
-  const rise = [...all].sort((a, b) => b.pw.gap - a.pw.gap).slice(0, 4), fall = [...all].sort((a, b) => a.pw.gap - b.pw.gap).slice(0, 4);
+  const gapRow = t => `<button type="button" class="haw" data-team="${t.id}" style="grid-template-columns:minmax(0,1fr) auto"><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="o">Record ${ord(pwOf(t).rk_ts)} · roster ${ord(pwOf(t).rk_ros)}</span></button>`;
+  const rise = [...all].sort((a, b) => pwOf(b).gap - pwOf(a).gap).slice(0, 4), fall = [...all].sort((a, b) => pwOf(a).gap - pwOf(b).gap).slice(0, 4);
   $('#pw-gaps').innerHTML = `<div><span class="eyebrow" style="color:var(--good)">Roster is better than the record</span><div class="hawlist">${rise.map(gapRow).join('')}</div></div><div><span class="eyebrow" style="color:var(--bad)">Record is ahead of the roster</span><div class="hawlist">${fall.map(gapRow).join('')}</div></div>`;
   // table
   divChips($('#pw-div'), st.aw.div, d => { st.aw.div = d; renderPowerRank(); });
   const list = all.filter(t => st.aw.div === 'All' || t.div === st.aw.div), ps = st.aw.ps, pd = st.aw.pd;
-  const rows = [...list].sort((a, b) => { const va = awPVal(a, ps), vb = awPVal(b, ps); return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * pd || a.pw.rank - b.pw.rank; });
-  const th = ([k, lab, cls]) => `<th class="${cls}" data-awk="${k}"${ps === k ? ` aria-sort="${pd < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button">${lab}</button></th>`;
-  const mv = t => t.pw.move == null ? '' : t.pw.move > 0 ? `<span class="mvup">▲${t.pw.move}</span>` : t.pw.move < 0 ? `<span class="mvdn">▼${-t.pw.move}</span>` : '<span class="mvfl">–</span>';
-  $('#pw-table').innerHTML = tfBox('pw-t', 'Filter teams by name, city or division') + `<div class="tw"><table class="t" id="pw-t"><thead><tr>${AW_PCOLS.map(th).join('')}</tr></thead><tbody>` +
-    rows.map(t => { const p = t.pw, s = t.sr, ol = p.gap >= 6 ? 'up' : p.gap <= -6 ? 'dn' : '';
-      return `<tr data-team="${t.id}" data-s="${esc(teamHay(t) + ' ' + p.tier.toLowerCase())}"><td class="r">${p.rank} ${mv(t)}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r">${awRec(s)}</td><td class="r">${awPD(s.pd)}</td><td class="r"><span class="pscore" style="--pc:${pColor(p.raw)}">${p.score}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.off)}">${t.rt.off}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.def)}">${t.rt.def}</span></td><td class="r">${p.proj.toFixed(1)}</td><td>${esc(p.tier)}</td><td><span class="outlook ${ol}">${esc(p.outlook)}</span></td></tr>`; }).join('') + '</tbody></table></div>';
+  const rows = [...list].sort((a, b) => { const va = awPVal(a, ps), vb = awPVal(b, ps); return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * pd || pwOf(a).rank - pwOf(b).rank; });
+  const cols = awCols(), th = ([k, lab, cls, , tip]) => `<th class="${cls}" data-awk="${k}"${ps === k ? ` aria-sort="${pd < 0 ? 'descending' : 'ascending'}"` : ''}><button type="button"${tip ? ` title="${esc(tip)}"` : ''}>${lab}</button></th>`;
+  const mv = t => pwOf(t).move == null ? '' : pwOf(t).move > 0 ? `<span class="mvup">▲${pwOf(t).move}</span>` : pwOf(t).move < 0 ? `<span class="mvdn">▼${-pwOf(t).move}</span>` : '<span class="mvfl">–</span>';
+  $('#pw-table').innerHTML = tfBox('pw-t', 'Filter teams by name, city or division') + `<div class="tw"><table class="t" id="pw-t"><thead><tr>${cols.map(th).join('')}</tr></thead><tbody>` +
+    rows.map(t => { const p = pwOf(t), s = t.sr, ol = p.gap >= 6 ? 'up' : p.gap <= -6 ? 'dn' : '';
+      return `<tr data-team="${t.id}" data-s="${esc(teamHay(t) + ' ' + p.tier.toLowerCase())}"><td class="r">${p.rank} ${mv(t)}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r">${awRec(s)}</td><td class="r">${awPD(s.pd)}</td>${AW_ADJ ? `<td class="r">${awPD(s.srs)}</td><td class="r">${s.sosRank}</td>` : ''}<td class="r"><span class="pscore" style="--pc:${pColor(p.raw)}">${p.score}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.off)}">${t.rt.off}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.def)}">${t.rt.def}</span></td><td class="r">${p.proj.toFixed(1)}</td>${AW_ADJ ? `<td class="r">${t[awPk() === 'pw' ? 'pwr' : 'pw'].rank}</td>` : ''}<td>${esc(p.tier)}</td><td><span class="outlook ${ol}">${esc(p.outlook)}</span></td></tr>`; }).join('') + '</tbody></table></div>';
   applyTF($('#pw-t'));
-  $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule itself.${all.some(t => t.pw.move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
+  $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule still to come.${all.some(t => pwOf(t).move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
   $('#pw-how-body').innerHTML = `<p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
-    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, passer rating allowed, sacks and takeaways.</li></ul>
+    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> ${AW_ADJ && !st.aw.raw ? 'points scored minus allowed per game, adjusted for the opponents played and for home field (a team that piled up points against weak defenses gets less credit). The raw margin is in the Margin column.' : 'points scored minus points allowed per game.'}</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> ${AW_ADJ && !st.aw.raw ? 'net EPA per play adjusted for the opponents faced (the same number the weekly team tiers use), ' : 'offensive EPA, '}passer rating allowed, sacks and takeaways.</li></ul>
     <p class="note">Outlook compares where a team's results rank with where its roster and efficiency rank. A gap of six spots or more means the record is hiding something (Better than record) or flattering the team (Record flatters). Tiers are fixed by rank: 1 to 4 Contender, 5 to 10 Strong, 11 to 18 In the mix, 19 to 26 Shaky, 27 to 32 Rebuilding.</p>`;
 }
 
@@ -4638,12 +4659,13 @@ function analyzeSeason(se) {
     power: TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank).map(t => ({ id: t.id, rank: t.pw.rank, score: t.pw.score, rec: awRec(t.sr), proj: +t.pw.proj.toFixed(1) })),
     awards: Object.fromEntries(AW_DEFS.map(d => [d.id, (AW.rows[d.id] || []).slice(0, 5).map(r => ({ n: awName(r), team: r.t.id, score: +r.score.toFixed(1), odds: +(r.odds * 100).toFixed(1) }))])) });
 }
-st.aw = { tab: 'awards', id: 'mvp', limit: 10, div: 'All', ps: 'rank', pd: 1 };
+st.aw = { tab: 'awards', id: 'mvp', limit: 10, div: 'All', ps: 'rank', pd: 1, raw: false };
 const awScroll = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
 $('#aw-tab').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.at === 'power' ? 'rankings' : 'awards'); };
+$('#pw-mode').onclick = e => { const b = e.target.closest('[data-pm]'); if (!b) return; st.aw.raw = b.dataset.pm === 'raw'; renderPowerRank(); const again = $(`#pw-mode [data-pm="${b.dataset.pm}"]`); if (again) again.focus(); };
 $('#aw-board').onclick = e => { const b = e.target.closest('[data-aw]'); if (!b) return; st.aw.id = b.dataset.aw; st.aw.limit = 10; TFQ['aw-t'] = ''; renderAwards(); awScroll('aw-detail'); };
 $('#aw-detail').addEventListener('click', e => { if (e.target.closest('#aw-more')) { st.aw.limit += 15; renderAwDetail(); } });
-$('#pw-table').addEventListener('click', e => { const b = e.target.closest('[data-awk]'); if (!b) return; const k = b.dataset.awk; if (st.aw.ps === k) st.aw.pd *= -1; else { st.aw.ps = k; st.aw.pd = (AW_PCOLS.find(c => c[0] === k) || [])[3] || 1; } renderPowerRank(); });
+$('#pw-table').addEventListener('click', e => { const b = e.target.closest('[data-awk]'); if (!b) return; const k = b.dataset.awk; if (st.aw.ps === k) st.aw.pd *= -1; else { st.aw.ps = k; st.aw.pd = (awCols().find(c => c[0] === k) || [])[3] || 1; } renderPowerRank(); });
 document.addEventListener('click', e => { const g = e.target.closest('[data-awgo]'); if (g) { st.aw.id = g.dataset.awgo; st.aw.limit = 10; TFQ['aw-t'] = ''; go('awards'); } });
 
 /* ===== static wiring ===== */
@@ -6094,8 +6116,8 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
 const API = /vercel\.app$|localhost$|(^|\.)plainstatsnfl\.com$/.test(location.hostname) ? '/api/contracts' : null;
 const getJSON = u => fetch(u, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status))));
 route();
-Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), Promise.resolve(null), getJSON('data/freeagency.json').catch(() => null), Promise.resolve(null), Promise.resolve(null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), Promise.resolve(null), getJSON('data/market.json').catch(() => null)])
-  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po, mk]) => { if (as && as.teams) ASSETS = as; if (mk && mk.ladder) MKT = mk;
+Promise.all([getJSON('data/nfl.json'), getJSON('data/moves.json').catch(() => ({ moves: [] })), (API ? getJSON('/api/espn-csv?format=json') : Promise.reject()).catch(() => getJSON('data/espn_assets.json')).catch(() => null), getJSON('data/stats.json').catch(() => null), getJSON('data/season.json').catch(() => null), Promise.resolve(null), getJSON('data/freeagency.json').catch(() => null), Promise.resolve(null), Promise.resolve(null), getJSON('data/ol_pos.json').catch(() => null), getJSON('data/olwin.json').catch(() => null), Promise.resolve(null), getJSON('data/market.json').catch(() => null), getJSON('data/tiers.json').catch(() => null)])
+  .then(([d, mv, as, sd, se, ty, fx, yx, px, ol, ow, po, mk, ti]) => { if (as && as.teams) ASSETS = as; if (mk && mk.ladder) MKT = mk; if (ti && ti.teams) TIERS = ti;
     if (sd && ow && ow.teams) { OLWK = ow.thru || 0; sd.teams = sd.teams || {}; Object.entries(ow.teams).forEach(([t, v]) => { sd.teams[t] = Object.assign(sd.teams[t] || {}, v); }); }
     if (ol && ol.pos) d.players.forEach(p => { if (['LT','LG','C','RG','RT'].includes(p[2])) { const k = p[1] + '|' + p[0].normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'’\-]/g, '').replace(/\b(jr|sr|ii|iii|iv)\b/g, '').replace(/\s+/g, ' ').trim(); if (ol.pos[k]) p[2] = ol.pos[k]; } }); boot(d, mv, sd, se, ty, fx, yx, px); })
   .catch(() => { $('#stamp').textContent = 'Data did not load'; ($('#kpis') || $('#hm-try')).innerHTML = '<p class="empty" style="background:var(--surface)">The contract data did not load. Reload the page to try again.</p>'; });
