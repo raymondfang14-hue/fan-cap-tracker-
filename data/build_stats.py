@@ -14,7 +14,9 @@ Estimated coverage (optional, when play_by_play_<S>.csv.gz is in the folder): no
 a receiver, so each pass is credited from play-by-play: an interception to the intercepting player, a broken-up
 incompletion to the player(s) credited with the pass defensed, a completion to the first defensive tackler (split
 between two assisted tacklers). Unmarked incompletions (throwaways, overthrows) and untackled catches (most
-touchdowns, catches out of bounds) are not credited: about 75% of passes are. Checked against Pro Football Reference's
+touchdowns, catches out of bounds) are not credited by name: about 75% of passes are. Each team's uncredited
+incompletions are then shared among its corners and safeties in proportion to their credited targets, so catch rate
+and passer rating allowed come out at realistic levels (without this, catch rate allowed read about 19 points high). Checked against Pro Football Reference's
 charting through 2026 Week 8 for corners with 10+ targets: targets r=0.81, yards per target r=0.62, catch rate r=0.66,
 passer-rating-allowed rank r=0.57 (safeties weaker: 0.68, 0.52, 0.44, 0.38). Fields: ct targets, cc catches, cy yards,
 ctd touchdowns, ci interceptions, ce EPA, all estimated.
@@ -111,6 +113,7 @@ for r in sp:
     # team totals
 # estimated coverage from play-by-play (see the docstring)
 COV = defaultdict(lambda: defaultdict(float))
+UNC = defaultdict(float)   # uncredited incompletions per defense
 _pbp = os.path.join(D, f'play_by_play_{S}.csv.gz')
 if os.path.exists(_pbp):
     import gzip
@@ -126,11 +129,26 @@ if os.path.exists(_pbp):
             else: who = [r[f'{k}_player_id'] for k in ('tackle_with_assist_1', 'tackle_with_assist_2', 'assist_tackle_1', 'assist_tackle_2')
                          if ok(r.get(f'{k}_player_id')) and r.get(f'{k}_team') == d][:2]
         else: kind, who = 'inc', [r[k] for k in ('pass_defense_1_player_id', 'pass_defense_2_player_id') if ok(r.get(k))][:2]
+        if not who and kind == 'inc': UNC[tf(d)] += 1; continue
         for g in who:
             w = 1 / len(who); c = COV[g]; c['ct'] += w; c['ce'] += num(r['epa']) * w
             if kind == 'cmp': c['cc'] += w; c['cy'] += num(r['yards_gained']) * w; c['ctd'] += w * (r['pass_touchdown'] == '1')
             if kind == 'int': c['ci'] += 1
-    print('estimated coverage: defenders credited', len(COV))
+    # share each defense's uncredited incompletions among its defensive backs, by their credited targets
+    DBPOS = {'CB', 'S', 'FS', 'SS', 'SAF', 'DB'}
+    team_db = defaultdict(list)
+    for k, p in P.items():
+        g = p.get('gsis') or P2G.get(k, '')
+        if g and p.get('pos') in DBPOS and COV.get(g, {}).get('ct'):
+            t = p['wk'][max(p['wk'])] if p['wk'] else p['t']
+            if g not in team_db[t]: team_db[t].append(g)
+    spread = 0
+    for t, n in UNC.items():
+        tot = sum(COV[g]['ct'] for g in team_db.get(t, []))
+        if not tot: continue
+        for g in team_db[t]:
+            f = n * COV[g]['ct'] / tot; COV[g]['ct'] += f; spread += f
+    print('estimated coverage: defenders credited', len(COV), '| uncredited incompletions', int(sum(UNC.values())), 'shared among defensive backs', int(round(spread)))
 else:
     print('estimated coverage skipped: no', os.path.basename(_pbp))
 
