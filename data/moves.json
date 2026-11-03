@@ -1,6 +1,81 @@
 {
- "asOf": "2026-11-02",
+ "asOf": "2026-11-03",
  "moves": [
+  {
+   "iso": "2026-11-02",
+   "date": "Nov 2",
+   "kind": "League",
+   "teams": [
+    "ATL"
+   ],
+   "players": [
+    "James Pearce Jr."
+   ],
+   "head": "Falcons DE James Pearce Jr. finishes eight-game suspension",
+   "plain": "Pearce is eligible to be activated after serving his suspension under the personal conduct policy. The Falcons also waived EDGE Jared Ivey and Drake Jackson.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-2-26"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "Game",
+   "teams": [
+    "BUF",
+    "BAL",
+    "CIN",
+    "TEN",
+    "ARI",
+    "DAL",
+    "DET",
+    "MIN"
+   ],
+   "players": [],
+   "head": "Week 8 early games: Bills rout Ravens 36-10, Bengals top Titans 43-36 in OT",
+   "plain": "Cardinals beat Cowboys 33-30 in overtime and Lions edged Vikings 19-15. Jahmyr Gibbs ran for 153 yards and Joe Burrow threw five touchdowns.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "Game",
+   "teams": [
+    "JAX",
+    "IND",
+    "LV",
+    "NYJ",
+    "PIT",
+    "CLE",
+    "TB",
+    "ATL"
+   ],
+   "players": [],
+   "head": "Week 8: Jaguars 42-7 over Colts, Raiders 38-33 over Jets, Steelers 27-6 over Browns",
+   "plain": "Buccaneers shut out the Falcons 16-0 in the rain, with Bucky Irving running for 170 yards. The Jets fell to 2-6.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
+  },
+  {
+   "iso": "2026-11-01",
+   "date": "Nov 1",
+   "kind": "Game",
+   "teams": [
+    "LAR",
+    "LAC",
+    "DEN",
+    "KC",
+    "NE",
+    "MIA",
+    "WAS",
+    "PHI"
+   ],
+   "players": [],
+   "head": "Week 8 late games: Broncos top Chiefs 28-24, Commanders beat Eagles 27-10",
+   "plain": "Rams beat Chargers 24-9 (Chargers 0-7), Patriots beat Dolphins 24-19. Philadelphia has lost six straight.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
+  },
   {
    "iso": "2026-11-02",
    "date": "Nov 2",
