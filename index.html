@@ -1249,6 +1249,25 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .hs-ctl .seg button[disabled],.hs-ctl select[disabled],.hs-ctl input[disabled]{opacity:.5;cursor:not-allowed}
 .hs-ctln{margin:0}
 @media (max-width:760px){.hs-ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hs-ctl input{width:100%}.hs-ctl .f:nth-child(4){grid-column:1/-1}}
+/* listed depth chart (data/depth.json) and injury history (data/injuries.json) */
+.lst{margin-top:18px;display:grid;gap:10px}
+.lst h3.sec2{margin:0;font:600 1.05rem/1.2 var(--display)}
+.lstg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px}
+.lstp{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden;min-width:0}
+.lstp h4{margin:0;padding:8px 12px;background:var(--surface-2);font:600 .86rem/1 var(--display)}
+.lstp ol{margin:0;padding:0;list-style:none}
+.lstp li{display:flex;gap:8px;align-items:baseline;padding:6px 12px;border-top:1px solid var(--line);font-size:.86rem;min-width:0}
+.lstp li>span:first-child{flex:none;width:1.6rem;color:var(--muted);font:500 .72rem/1 var(--mono)}
+.lstp li button{all:unset;cursor:pointer;color:var(--brand);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lstp li button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.lstp li b{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.injh{margin-top:18px;display:grid;gap:8px}
+.injh h3{margin:0;font:600 1.05rem/1.2 var(--display)}
+.injh .tw{overflow-x:auto}
+.injh table{width:100%;border-collapse:collapse;font-size:.86rem}
+.injh th,.injh td{padding:7px 8px;border-top:1px solid var(--line);text-align:left;white-space:nowrap}
+.injh th{color:var(--muted);font-weight:500;font-size:.78rem;border-top:0}
+.injh .o{color:var(--bad);font-weight:600}.injh .d{color:var(--bad)}.injh .q{color:var(--muted);font-weight:600}
 </style>
 
 <header class="gn" id="gn">
@@ -3238,6 +3257,7 @@ function teamFieldHTML(t) {
     <div class="sechead"><div><span class="eyebrow">Ordered by 2026 snaps · tap for the player card</span><h2 class="sec">Depth chart</h2></div>
       <div class="seg" id="tp-side" role="group" aria-label="Side of the ball"><button type="button" data-s="off" aria-pressed="${tpSide === 'off'}">Offense</button><button type="button" data-s="def" aria-pressed="${tpSide === 'def'}">Defense</button><button type="button" data-s="st" aria-pressed="${tpSide === 'st'}">Specialists</button></div></div>
     <div id="tp-depth-body"></div>
+    <div class="lst" id="tp-listed"></div>
     <p class="note">Only players under contract appear. The right column shows the play rating and the 2026 cap hit. A player with no snaps yet may be hurt, inactive or new to the team.</p>
   </div>`;
 }
@@ -3256,9 +3276,9 @@ function renderTeamLine(t) {
 function renderTeamDepth(t) { const box = $('#tp-depth-body'); if (box) box.innerHTML = depthHTML(t, tpSide, t.L); }
 function wireTeamField(t) {
   if (!SD) return;
-  renderTeamLine(t); renderTeamDepth(t);
+  renderTeamLine(t); renderTeamDepth(t); fillListed(t);
   $('#tp-mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; tpMode = b.dataset.m; $$('#tp-mode button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderTeamLine(t); };
-  $('#tp-side').onclick = e => { const b = e.target.closest('button'); if (!b) return; tpSide = b.dataset.s; store.set('tpSide', tpSide); $$('#tp-side button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderTeamDepth(t); };
+  $('#tp-side').onclick = e => { const b = e.target.closest('button'); if (!b) return; tpSide = b.dataset.s; store.set('tpSide', tpSide); $$('#tp-side button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderTeamDepth(t); fillListed(t); };
 }
 
 /* teams list: ratings view */
@@ -4054,7 +4074,7 @@ function openPlayer(i) {
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
-    <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}</div>
+    <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}<div id="sh-inj"></div></div>
     <div id="sh-contract" class="sh" style="padding:0" ${st.shTab === 'contract' ? '' : 'hidden'}>
     ${p.hid ? `<div class="story"><p><b>${VERIFYING}.</b> ${esc(story(p)[0])}</p></div>${provHTML(p)}` : `
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ringSVG(p.mkt, 'Market', 'var(--brand)')}${ringSVG(p.sec, 'Security', 'var(--good)')}${p.traits.length ? `<span class="traits" style="justify-content:flex-start;flex:1">${p.traits.map(k => `<span class="trait" title="${esc(TRAITS[k][1])}">${TRAITS[k][0]}</span>`).join('')}</span>` : ''}</div>
@@ -5330,9 +5350,50 @@ openPlayer = function (i) {
   // build the Stats pane while the browser is idle so the tab opens instantly
   if (p.gid) loadShard(p.gid).then(() => idle(() => { if (sbox && sbox.isConnected && $('#sh-stats') === sbox) fillStats(p); })).catch(() => {});   // this player's stats file is about 20 KB
   idle(() => { if ($('#sh-tabs') === tabs) fillSims(p); });
+  fillInjury(p);
   if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; const k = b.dataset.tab; requestAnimationFrame(() => { fillSims(p, k); if (k === 'stats') fillStats(p); }); });   // let the tab paint first, then fill it
   if (st.shTab === 'stats') fillStats(p);
 };
+
+/* ----- listed depth chart (data/depth.json) and injury history (data/injuries.json), both daily from nflverse ----- */
+let DPL = null, INJ = null;
+const loadDepthL = () => DPL || (DPL = getJSONR('data/depth.json').catch(() => null));
+const loadInjL = () => INJ || (INJ = getJSONR('data/injuries.json').catch(() => null));
+const LST_ORD = {
+  O: ['QB', 'RB', 'FB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT'],
+  D: ['LDE', 'LDT', 'NT', 'RDT', 'RDE', 'WLB', 'LILB', 'MLB', 'RILB', 'SLB', 'LCB', 'NB', 'RCB', 'SS', 'FS'],
+  S: ['PK', 'P', 'H', 'LS', 'KR', 'PR'] };
+const LST_NAME = { QB: 'Quarterback', RB: 'Running back', FB: 'Fullback', WR: 'Wide receiver', TE: 'Tight end', LT: 'Left tackle', LG: 'Left guard', C: 'Center', RG: 'Right guard', RT: 'Right tackle',
+  LDE: 'Left defensive end', LDT: 'Left defensive tackle', NT: 'Nose tackle', RDT: 'Right defensive tackle', RDE: 'Right defensive end', WLB: 'Weakside linebacker', LILB: 'Left inside linebacker', MLB: 'Middle linebacker',
+  RILB: 'Right inside linebacker', SLB: 'Strongside linebacker', LCB: 'Left cornerback', NB: 'Nickel back', RCB: 'Right cornerback', SS: 'Strong safety', FS: 'Free safety', PK: 'Kicker', P: 'Punter', H: 'Holder', LS: 'Long snapper', KR: 'Kick returner', PR: 'Punt returner' };
+function listedHTML(d, side) {
+  const k0 = side === 'def' ? 'D' : side === 'off' ? 'O' : 'S', sd = d[k0], o = LST_ORD[k0];
+  const keys = o.filter(k => sd[k]).concat(Object.keys(sd).filter(k => !o.includes(k)));
+  return `<div class="lstg">${keys.map(k => `<div class="lstp"><h4>${esc(LST_NAME[k] || k)}</h4><ol>${sd[k].slice(0, 5).map(([g, n], i) => { const q = g && plOf(g);
+    return `<li><span>${i + 1}</span>${q ? `<button type="button" data-p="${q.i}">${esc(n)}</button>` : `<b>${esc(n)}</b>`}</li>`; }).join('')}</ol></div>`).join('')}</div>`;
+}
+function fillListed(t) {
+  const box = $('#tp-listed'); if (!box) return;
+  loadDepthL().then(D => {
+    if ($('#tp-listed') !== box) return;
+    const d = D && D.teams && D.teams[t.id];
+    if (!d) { box.innerHTML = ''; return; }
+    box.innerHTML = `<div><span class="eyebrow">As the team lists it · updated ${esc(D.asOf)}</span><h3 class="sec2">Listed depth chart</h3></div>${listedHTML(d, tpSide)}<p class="note">The team's own order, first string first. The chart above is ordered by snaps played. Source: nflverse depth charts.</p>`;
+  });
+}
+const INJ_ST = { O: ['Out', 'o'], D: ['Doubtful', 'd'], Q: ['Questionable', 'q'] }, INJ_PR = { D: 'Did not practice', L: 'Limited', F: 'Full' };
+function fillInjury(p) {
+  const box = $('#sh-inj'); if (!box || !p.gid) return;
+  loadInjL().then(D => {
+    if ($('#sh-inj') !== box || !D) return;
+    const rows = (D.players && D.players[p.gid]) || [];
+    if (!rows.length) { box.innerHTML = `<div class="injh"><h3>Injury report</h3><p class="note">Not on the NFL's official injury report in any week through Week ${D.thru}.</p></div>`; return; }
+    const body = [...rows].reverse().map(([w, tm, s, inj, pr]) => { const x = INJ_ST[s];
+      return `<tr><td>Week ${w}</td><td>${esc(tm)}</td><td>${x ? `<span class="${x[1]}">${x[0]}</span>` : '<span class="note">Not on game report</span>'}</td><td>${esc(inj || '—')}</td><td>${esc(INJ_PR[pr] || '—')}</td></tr>`; }).join('');
+    const out = rows.filter(r => r[2] === 'O').length;
+    box.innerHTML = `<div class="injh"><h3>Injury report</h3><p class="note">Listed in ${rows.length} of ${D.thru} weeks${out ? `, ruled out ${out === 1 ? 'once' : out + ' times'}` : ''}. From the NFL's official reports, through Week ${D.thru}.</p><div class="tw"><table><thead><tr><th>Week</th><th>Team</th><th>Game status</th><th>Injury</th><th>Practice</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
+  });
+}
 const _openProspectBase = openProspect;
 openProspect = function (i) { _openProspectBase(i); const p = DP[i]; if (p) sheetLink(dSlug(p)); };
 sheet.addEventListener('close', () => { if (/^[pdg]-/.test(curKey())) setURL(LASTV || 'home', true); });
