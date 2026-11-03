@@ -1233,6 +1233,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .tband h3{margin:0;font:700 .95rem/1.2 var(--body);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .tband h3 small{font:500 .8rem/1.2 var(--body);color:var(--muted)}
 .tchips{display:flex;flex-wrap:wrap;gap:8px}
+.trbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .tchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 7px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:600 .82rem/1 var(--body);cursor:pointer}
 .tchip:hover{background:var(--brand-soft)}
 .tmv{position:relative;font:600 .72rem/1 var(--body);font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -3296,7 +3297,8 @@ function renderTeamsView() {
 
 /* ===== weekly team tiers (data/tiers.json, built by data/build_tiers.py) ===== */
 let TIERS = null;
-const tr = { sort: 'rank', dir: 1 };
+const tr = { sort: 'rank', dir: 1, adj: true };
+const TR_HIGH = new Set(['net', 'off', 'offPass', 'offRush', 'offSr', 'move']);   // columns where a bigger number is better: the first click sorts high to low
 const sgn3 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
 const pcs = v => Math.round(v * 100) + '%';
 function trMove(m) { return m > 0 ? `<span class="tmv up" title="Up ${m} since last week"><span aria-hidden="true">▲</span>${m}<span class="sr"> up</span></span>` : m < 0 ? `<span class="tmv dn" title="Down ${-m} since last week"><span aria-hidden="true">▼</span>${-m}<span class="sr"> down</span></span>` : '<span class="tmv" title="No change since last week">–</span>'; }
@@ -3305,10 +3307,12 @@ function renderTiers() {
   if (TIERS === null) { TIERS = false; getJSON('data/tiers.json').then(d => { TIERS = d; renderTiers(); }).catch(() => { TIERS = 0; renderTiers(); }); }
   if (!TIERS) { box.innerHTML = TIERS === 0 ? '<p class="empty">Team tiers did not load. Reload the page to try again.</p>' : '<p class="note">Loading team tiers…</p>'; return; }
   const d = TIERS, T = d.teams, ids = Object.keys(T).filter(id => TB[id]).sort((a, b) => T[a].rank - T[b].rank);
-  $('#tr-eyebrow').textContent = `Through Week ${d.thru} · EPA per play, regular season`;
+  // schedule adjustment: data/build_tiers.py writes aOff / aDef / aNet (opponent-adjusted), sos and rawRank; older files have only the raw numbers
+  const ADJ = !!d.adjusted, adj = ADJ && tr.adj, F = adj ? { off: 'aOff', def: 'aDef', net: 'aNet' } : { off: 'off', def: 'def', net: 'net' }, AV = adj ? { off: d.avg.aOff, def: d.avg.aDef } : d.avg;
+  $('#tr-eyebrow').textContent = `Through Week ${d.thru} · EPA per play, ${adj ? 'adjusted for the opponents faced' : 'regular season'}`;
   const nm = id => TB[id].city + ' ' + TB[id].name;
   // chart: offense to the right, defense up (defense is points allowed, so lower is better and sits higher)
-  const [W, H] = chartSize($('#tr-scatter') || $('#tr-body')), l = 58, r = 18, tp = 22, b = 48, xs = ids.map(i => T[i].off), ys = ids.map(i => T[i].def);
+  const [W, H] = chartSize($('#tr-scatter') || $('#tr-body')), l = 58, r = 18, tp = 22, b = 48, xs = ids.map(i => T[i][F.off]), ys = ids.map(i => T[i][F.def]);
   const lo = (a, m) => Math.floor((Math.min(...a, m) - .02) / .05) * .05, hi = (a, m) => Math.ceil((Math.max(...a, m) + .02) / .05) * .05;
   const x0 = lo(xs, 0), x1 = hi(xs, 0), y0 = lo(ys, 0), y1 = hi(ys, 0);
   const x = v => l + (v - x0) / (x1 - x0) * (W - l - r), y = v => tp + (v - y0) / (y1 - y0) * (H - tp - b);
@@ -3318,29 +3322,40 @@ function renderTiers() {
   g += `<line class="mid" x1="${x(d.avg.off)}" x2="${x(d.avg.off)}" y1="${tp}" y2="${H - b}"></line><line class="mid" x1="${l}" x2="${W - r}" y1="${y(d.avg.def)}" y2="${y(d.avg.def)}"></line>`;
   g += `<text class="q qg" x="${W - r - 6}" y="${tp + 14}" text-anchor="end">Good at both</text><text class="q" x="${l + 6}" y="${tp + 14}">Defense carries</text><text class="q" x="${W - r - 6}" y="${H - b - 8}" text-anchor="end">Offense carries</text><text class="q" x="${l + 6}" y="${H - b - 8}">Bad at both</text>`;
   g += `<text class="ax" x="${(l + W - r) / 2}" y="${H - 6}" text-anchor="middle">Offense EPA per play, higher is better →</text><text class="ax" transform="translate(13 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Defense EPA allowed, lower is better (up) →</text>`;
-  g += ids.map(id => `<g data-team="${id}" transform="translate(${(x(T[id].off) - 11).toFixed(1)} ${(y(T[id].def) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(nm(id))}: offense ${sgn3(T[id].off)}, defense ${sgn3(T[id].def)}"><title>${esc(nm(id))}: offense ${sgn3(T[id].off)}, defense ${sgn3(T[id].def)}</title>${crest(id, 22)}</g>`).join('');
+  g += ids.map(id => `<g data-team="${id}" transform="translate(${(x(T[id][F.off]) - 11).toFixed(1)} ${(y(T[id][F.def]) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(nm(id))}: offense ${sgn3(T[id][F.off])}, defense ${sgn3(T[id][F.def])}"><title>${esc(nm(id))}: offense ${sgn3(T[id][F.off])}, defense ${sgn3(T[id][F.def])}</title>${crest(id, 22)}</g>`).join('');
   // tier bands
   const bands = d.tiers.map(([n, lab, sub]) => { const m = ids.filter(id => T[id].tier === n); if (!m.length) return '';
     return `<div class="tband"><h3>${esc(lab)}<small>${esc(sub)}</small></h3><div class="tchips">${m.map(id => `<button type="button" class="tchip" data-team="${id}">${crest(id, 18)}${esc(TB[id].name)}${trMove(T[id].move)}</button>`).join('')}</div></div>`; }).join('');
-  // table
-  const cols = [['rank', '#', 'Rank by net EPA per play', t => t.rank], ['name', 'Team'], ['tier', 'Tier', 'Tier 1 is best', t => t.tier], ['net', 'Net', 'Offense EPA minus defense EPA allowed, per play', t => t.net],
-    ['off', 'Off', 'Offense EPA per play', t => t.off], ['def', 'Def', 'Defense EPA allowed per play (lower is better)', t => t.def], ['offPass', 'Pass off', 'Offense EPA per dropback', t => t.offPass], ['offRush', 'Run off', 'Offense EPA per run', t => t.offRush],
-    ['defPass', 'Pass def', 'Defense EPA allowed per dropback (lower is better)', t => t.defPass], ['defRush', 'Run def', 'Defense EPA allowed per run (lower is better)', t => t.defRush],
-    ['offSr', 'Off hit', 'Share of offensive plays that add expected points', t => t.offSr], ['defSr', 'Def hit', 'Share of plays against the defense that add expected points (lower is better)', t => t.defSr], ['move', 'Moved', 'Places gained since last week', t => t.move]];
-  const cv = (id, k) => k === 'name' ? nm(id) : cols.find(c => c[0] === k)[3](T[id]);
-  const rows = [...ids].sort((a, c) => { const p = cv(a, tr.sort), q = cv(c, tr.sort); return (typeof p === 'string' ? p.localeCompare(q) : p - q) * tr.dir || T[a].rank - T[c].rank; });
-  const th = ([k, lab, tip]) => `<th class="${k === 'name' ? '' : 'r'}"${tr.sort === k ? ` aria-sort="${tr.dir > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-tk="${k}"${tip ? ` title="${esc(tip)}"` : ''}>${lab}</button></th>`;
+  // table: [key, header, tooltip, sort value, cell html]; Sched and Raw # appear only when tiers.json carries the schedule adjustment
+  const cols = [['rank', '#', adj ? 'Rank by net EPA per play, adjusted for schedule' : 'Rank by net EPA per play', t => t.rank, t => t.rank],
+    ['name', 'Team', '', null, (t, id) => `<span class="pn">${crest(id, 20)}${esc(nm(id))}</span>`],
+    ['tier', 'Tier', 'Tier 1 is best', t => t.tier, t => `<span class="ttier">${t.tier}</span>`],
+    ['net', 'Net', 'Offense EPA minus defense EPA allowed, per play' + (adj ? ', adjusted for opponents' : ''), t => t[F.net], t => `<b>${sgn3(t[F.net])}</b>`],
+    ['off', 'Off', 'Offense EPA per play' + (adj ? ', adjusted for opponents' : ''), t => t[F.off], t => sgn3(t[F.off])],
+    ['def', 'Def', 'Defense EPA allowed per play (lower is better)' + (adj ? ', adjusted for opponents' : ''), t => t[F.def], t => sgn3(t[F.def])],
+    ...(ADJ ? [['sosRank', 'Sched', 'Strength of schedule so far: 1 is the toughest, 32 the easiest', t => t.sosRank, t => t.sosRank],
+      ['rawRank', 'Raw #', 'Rank by raw net EPA per play, before the schedule adjustment', t => t.rawRank, t => t.rawRank]] : []),
+    ['offPass', 'Pass off', 'Offense EPA per dropback (not adjusted)', t => t.offPass, t => sgn3(t.offPass)], ['offRush', 'Run off', 'Offense EPA per run (not adjusted)', t => t.offRush, t => sgn3(t.offRush)],
+    ['defPass', 'Pass def', 'Defense EPA allowed per dropback, lower is better (not adjusted)', t => t.defPass, t => sgn3(t.defPass)], ['defRush', 'Run def', 'Defense EPA allowed per run, lower is better (not adjusted)', t => t.defRush, t => sgn3(t.defRush)],
+    ['offSr', 'Off hit', 'Share of offensive plays that add expected points', t => t.offSr, t => pcs(t.offSr)], ['defSr', 'Def hit', 'Share of plays against the defense that add expected points (lower is better)', t => t.defSr, t => pcs(t.defSr)],
+    ['move', 'Moved', 'Places gained since last week', t => t.move, t => trMove(t.move)]];
+  const sortCol = cols.find(c => c[0] === tr.sort && c[3]) || cols[0];
+  const cv = id => sortCol[0] === 'name' ? nm(id) : sortCol[3](T[id]);
+  const rows = [...ids].sort((a, c) => { const p = cv(a), q = cv(c); return (typeof p === 'string' ? p.localeCompare(q) : p - q) * tr.dir || T[a].rank - T[c].rank; });
+  const th = ([k, lab, tip]) => `<th class="${k === 'name' ? '' : 'r'}"${sortCol[0] === k ? ` aria-sort="${tr.dir > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-tk="${k}"${tip ? ` title="${esc(tip)}"` : ''}>${lab}</button></th>`;
   const tbl = `<thead><tr>${cols.map(th).join('')}</tr></thead><tbody>` + rows.map(id => { const t = T[id];
-    return `<tr data-team="${id}" data-s="${esc(nm(id) + ' ' + TB[id].div + ' tier ' + t.tier)}"><td class="r">${t.rank}</td><td><span class="pn">${crest(id, 20)}${esc(nm(id))}</span></td><td class="r"><span class="ttier">${t.tier}</span></td><td class="r"><b>${sgn3(t.net)}</b></td><td class="r">${sgn3(t.off)}</td><td class="r">${sgn3(t.def)}</td><td class="r">${sgn3(t.offPass)}</td><td class="r">${sgn3(t.offRush)}</td><td class="r">${sgn3(t.defPass)}</td><td class="r">${sgn3(t.defRush)}</td><td class="r">${pcs(t.offSr)}</td><td class="r">${pcs(t.defSr)}</td><td class="r">${trMove(t.move)}</td></tr>`; }).join('') + '</tbody>';
+    return `<tr data-team="${id}" data-s="${esc(nm(id) + ' ' + TB[id].div + ' tier ' + t.tier)}">${cols.map(c => `<td${c[0] === 'name' ? '' : ' class="r"'}>${c[4](t, id)}</td>`).join('')}</tr>`; }).join('') + '</tbody>';
+  const bar = ADJ ? `<div class="trbar"><div class="seg" id="tr-mode" role="group" aria-label="Numbers shown in the chart and table"><button type="button" data-tm="adj" aria-pressed="${adj}">Schedule-adjusted</button><button type="button" data-tm="raw" aria-pressed="${!adj}">Raw</button></div><span class="note">Ranks and tiers always use the schedule-adjusted numbers.</span></div>` : '';
+  const adjNote = ADJ ? ` <b>Schedule-adjusted</b> means each offense and defense is compared with what an average one would have done against the same opponents, then pulled partway toward average because a few games are a small sample. <b>Sched</b> is strength of schedule so far, the average adjusted net EPA of the opponents faced (1 is the toughest). <b>Raw #</b> is the rank before the adjustment. Pass, run and hit-rate splits are not adjusted.` : '';
   const had = $('#tr-table') ? $('#tr-filter').value : '';
-  box.innerHTML = `
+  box.innerHTML = `${bar}
       <div class="panel" data-sp="chart">
         <div><span class="eyebrow">Tap a logo to open the team</span><h2 class="sec">Offense vs. defense</h2></div>
-        <div id="tr-scatter" data-w="${W}"><svg class="tchart${W < 600 ? ' sm' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg></div>
-        <p class="note">Dashed lines mark the league average. The further up and to the right, the better the team is at both.</p>
+        <div id="tr-scatter" data-w="${W}"><svg class="tchart${W < 600 ? ' sm' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team${adj ? ", adjusted for schedule" : ""}">${g}</svg></div>
+        <p class="note">Dashed lines mark the league average. The further up and to the right, the better the team is at both.${adj ? " Each team is compared with what an average offense or defense would have done against the same opponents." : ""}</p>
       </div>
       <div class="panel" data-sp="tiers">
-        <div><span class="eyebrow">Net EPA per play, offense minus defense</span><h2 class="sec">The tiers</h2></div>
+        <div><span class="eyebrow">Net EPA per play, offense minus defense${ADJ ? ", adjusted for schedule" : ""}</span><h2 class="sec">The tiers</h2></div>
         ${bands}
         <p class="note">Arrows show places gained or lost since last week.</p>
       </div>
@@ -3348,11 +3363,18 @@ function renderTiers() {
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">All 32 teams</h2></div></div>
       <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" id="tr-filter" data-tf="tr-table" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
       <div class="tw"><table class="t tgrid" id="tr-table">${tbl}</table></div>
-      <p class="note"><b>EPA</b> (expected points added) is how many points a play adds compared with what teams usually score from that spot on the field. For an offense higher is better. For a defense it is what the other team added, so lower is better. Hit rate is the share of plays that add points. Every pass and run counts, garbage time included. Source: nflverse play-by-play, through Week ${d.thru}.</p>
+      <p class="note"><b>EPA</b> (expected points added) is how many points a play adds compared with what teams usually score from that spot on the field. For an offense higher is better. For a defense it is what the other team added, so lower is better. Hit rate is the share of plays that add points. Every pass and run counts, garbage time included.${adjNote} Source: nflverse play-by-play, through Week ${d.thru}.</p>
     </div>`;
   const inp = $('#tr-filter'); if (had) inp.value = had;
   applyTF($('#tr-table'));
   applySub('v-tiers');
+  box.onclick = e => {   // adjusted / raw switch, and click a column header to sort (high-to-low first for stats where more is better)
+    const m = e.target.closest('[data-tm]'), k = e.target.closest('[data-tk]'); if (!m && !k) return;
+    if (m) tr.adj = m.dataset.tm === 'adj';
+    else if (tr.sort === k.dataset.tk) tr.dir = -tr.dir; else { tr.sort = k.dataset.tk; tr.dir = TR_HIGH.has(tr.sort) ? -1 : 1; }
+    renderTiers();
+    const again = m ? $(`#tr-mode [data-tm="${m.dataset.tm}"]`) : $(`#tr-table [data-tk="${k.dataset.tk}"]`); if (again) again.focus();
+  };
   const c = $('#tr-scatter'); if (!c.closest('[hidden]') && +c.dataset.w !== chartSize(c)[0]) renderTiers();   // first draw measured the outer box
 }
 

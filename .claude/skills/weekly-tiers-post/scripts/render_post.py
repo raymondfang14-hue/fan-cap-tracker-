@@ -1,9 +1,12 @@
 """Render the weekly team-tiers carousel (Instagram 1080x1350 and/or TikTok 1080x1920) from a content file.
 
-  python3 -I render_post.py --content WORK/content.json --photos WORK/photos --out WORK/out [--format ig|tt|both]
+  python3 -I render_post.py --content WORK/content.json --photos WORK/photos --out WORK/out [--format ig|tt|both] [--tiers path/to/tiers.json]
 
 Reads data/tiers.json, data/projections.json and data/espn_assets.json from the repo root (record, rank, rank change, net EPA
-and logos come from the data; only the words in content.json are hand-written). Needs the python `playwright` package and
+and logos come from the data; only the words in content.json are hand-written). Ranks, tiers and the net number on each row
+are SCHEDULE-ADJUSTED (tiers.json fields aNet / sosRank, built by data/build_tiers.py); the first four rows of each 5-team
+tier slide also show the team's strength-of-schedule rank ("sched #25", 1 = toughest). A tiers.json without the adjustment
+still renders with raw numbers, but prints a WARNING: do not publish schedule-adjusted wording from that. Needs the python `playwright` package and
 Chromium. Writes OUT/<format>/NN_<slug>.png plus OUT/<format>/contact.png. Prints WARNINGS (missing "why", too long, missing
 photo credit); fix every warning before sharing the images.
 
@@ -68,9 +71,9 @@ h1{font-weight:800;letter-spacing:-2px;line-height:1.0}
 """
 
 
-def load():
+def load(tiers_path=None):
     d = lambda f: json.load(open(ROOT / 'data' / f))
-    tiers, proj, assets = d('tiers.json'), d('projections.json'), d('espn_assets.json')
+    tiers, proj, assets = (json.load(open(tiers_path)) if tiers_path else d('tiers.json')), d('projections.json'), d('espn_assets.json')
     return tiers, proj['teams'], {k: v['name'] for k, v in assets['teams'].items()}
 
 
@@ -78,11 +81,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--content', required=True); ap.add_argument('--photos', required=True); ap.add_argument('--out', required=True)
     ap.add_argument('--format', default='both', choices=['ig', 'tt', 'both'])
+    ap.add_argument('--tiers', help='tiers.json to use instead of data/tiers.json (e.g. a preview built with data/build_tiers.py ... <out>)')
     ap.add_argument('--logos', help='folder of <TEAM>.png logos (default: <out>/../logos, fetched when missing)')
     a = ap.parse_args()
     C = json.load(open(a.content)); photos_dir = Path(a.photos).resolve(); out = Path(a.out).resolve()
     meta = json.load(open(photos_dir / 'photos.json'))
-    tiers, P, N = load(); T = tiers['teams']; thru = tiers['thru']
+    tiers, P, N = load(a.tiers); T = tiers['teams']; thru = tiers['thru']
+    ADJ = bool(tiers.get('adjusted')); NETK = 'aNet' if ADJ else 'net'
     logos = Path(a.logos).resolve() if a.logos else out.parent / 'logos'
     if len(list(logos.glob('*.png'))) < 32:
         os.makedirs(logos, exist_ok=True)
@@ -91,6 +96,8 @@ def main():
     tier_names = {t[0]: t[2] for t in tiers['tiers']}
     order = sorted(T, key=lambda k: T[k]['rank'])
     warn = []
+    if not ADJ:
+        warn.append('data/tiers.json has no schedule adjustment (no "adjusted" flag): slides show RAW net EPA. Rebuild it with data/build_tiers.py before publishing.')
 
     def credit(slot):
         m = meta.get(slot)
@@ -108,11 +115,12 @@ def main():
 
     def row(k, size, why):
         rh, av, nm, wy, rk, nt, lab = size; t, p = T[k], P[k]
+        sub = ('<i>sched #%d</i>' % t['sosRank'] if ADJ else '<i>net EPA/play</i>') if lab else ''   # strength-of-schedule rank, 1 = toughest
         return (f'<div class="row" style="--rh:{rh}px;--av:{av}px"><div class="rk" style="font-size:{rk}px">{t["rank"]}</div>'
                 f'<div class="av"><img class="lgo" src="file://{logos / (k + ".png")}"></div><div class="mid">'
                 f'<div class="nm" style="font-size:{nm}px">{E(N[k])} <span class="rec">{p["w"]}-{p["l"]}{("-" + str(p["t"])) if p["t"] else ""}</span> {badge(t["move"])}</div>'
                 f'<div class="why" style="font-size:{wy}px">{E(why)}</div></div>'
-                f'<div class="net"><b style="font-size:{nt}px">{sgn(t["net"])}</b>{"<i>net EPA/play</i>" if lab else ""}</div></div>')
+                f'<div class="net"><b style="font-size:{nt}px">{sgn(t[NETK])}</b>{sub}</div></div>')
 
     def check_why(k, why, kind, where):
         if not why:
@@ -120,7 +128,7 @@ def main():
         elif len(why) > LIMITS[kind]:
             warn.append(f'{where}: why for {k} is {len(why)} chars (limit {LIMITS[kind]} for {kind} rows)')
 
-    foot = f'<div class="foot"><span><b>PlainStats</b> · plainstatsnfl.com/team-tiers</span><span>Net EPA/play, thru Week {thru}</span></div>'
+    foot = f'<div class="foot"><span><b>PlainStats</b> · plainstatsnfl.com/team-tiers</span><span>{"Schedule-adjusted net EPA/play" if ADJ else "Net EPA/play"} · thru Week {thru}</span></div>'
     G = 'linear-gradient(to bottom,rgba(11,13,18,.05) 0%,rgba(11,13,18,.20) 25%,rgba(11,13,18,.62) 45%,rgba(11,13,18,.9) 70%,#0b0d12 100%)'
 
     def head(label, color, title, hook, tsz=76, hsz=29):
@@ -161,7 +169,7 @@ def main():
                         '<div style="font-size:36px;margin-top:22px;color:#e3e6ee;line-height:1.3">Every team\'s offense, defense, pass and run splits in one filterable table, plus contracts and cap for all 32 teams.</div>'
                         '<div style="margin-top:34px;background:#0071e3;border-radius:30px;padding:30px 40px;font-size:44px;font-weight:800;align-self:flex-start">plainstatsnfl.com/team-tiers</div>'
                         '<div style="margin:34px 0 30px;font-size:21px;color:#9aa0ae;line-height:1.4">Source: nflverse play-by-play (CC BY 4.0), regular season through Week %s, garbage time included. '
-                        'EPA = expected points added per pass or run play; lower is better on defense.</div>' % thru)
+                        'EPA = expected points added per pass or run play; lower is better on defense. %s</div>' % (thru, 'Ranks use net EPA adjusted for the opponents each team has played; sched = strength of schedule so far (1 = toughest).' if ADJ else ''))
                 res.append(('cta', s['photo'], False,
                             'linear-gradient(to bottom,rgba(11,13,18,.05) 0%,rgba(11,13,18,.3) 40%,rgba(11,13,18,.85) 62%,#0b0d12 100%)', body))
         return res

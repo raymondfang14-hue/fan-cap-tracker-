@@ -36,6 +36,8 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 - Games tab (`/scores`, `/standings`, `/projections`, game pages `/game/<id>`): `data/schedule.json` (daily, `data/build_schedule.py`) and `data/projections.json` (weekly, `data/build_projections.py`, PlainStats Elo model). Never use the betting columns in nflverse games.csv. This week's game pages use `data/gameday.json` (daily, `data/build_gameday.py`: official injury report via nflverse plus injury-adjusted picks) and live weather from api.weather.gov (public domain, fetched in the browser; the sandbox can't reach it).
 
+- Weekly team tiers (`/team-tiers`, `data/tiers.json`, `data/build_tiers.py`, weekly): ranks and tiers use schedule-adjusted net EPA per play (`aNet`, ridge over opponents, `LAMBDA = 300`, chosen with `tools/backtest_tiers.py`); the raw `off` / `def` / `net` stay in the file and behind the page's Raw switch. Keep `rank`, `tier` and `move` on the adjusted numbers, and keep the page working with an older file that has no `adjusted` flag. Social posts: the `weekly-tiers-post` skill.
+
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
 - `python3 -I tools/check_stats.py <nflverse folder>` checks every player card's season stats (On the field tab) against the raw nflverse box scores, by gsis id, and flags players listed twice. Run it after rebuilding `data/stats.json`.

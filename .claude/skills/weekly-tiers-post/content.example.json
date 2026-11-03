@@ -1,4 +1,5 @@
 {
+ "_note": "Week 8 example, written for the raw (pre-schedule-adjustment) tiers. Copy the structure only: rewrite every reason from a fresh facts.py. Keys starting with _ are ignored.",
  "cover": {
   "photo": "cover",
   "label": "Week 8 NFL Team Tiers · ranked by net EPA/play, not record",
