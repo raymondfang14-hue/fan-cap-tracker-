@@ -179,6 +179,142 @@
       "destination": "/"
     },
     {
+      "source": "/team/:id/:page",
+      "destination": "/"
+    },
+    {
+      "source": "/team-ratings/best",
+      "destination": "/"
+    },
+    {
+      "source": "/team-ratings/traits",
+      "destination": "/"
+    },
+    {
+      "source": "/team-ratings/roster-ratings",
+      "destination": "/"
+    },
+    {
+      "source": "/team-tiers/offense-vs-defense",
+      "destination": "/"
+    },
+    {
+      "source": "/team-tiers/all-teams",
+      "destination": "/"
+    },
+    {
+      "source": "/awards/how-it-works",
+      "destination": "/"
+    },
+    {
+      "source": "/power-rankings/results-vs-roster",
+      "destination": "/"
+    },
+    {
+      "source": "/power-rankings/risers-and-fallers",
+      "destination": "/"
+    },
+    {
+      "source": "/power-rankings/how-it-works",
+      "destination": "/"
+    },
+    {
+      "source": "/standings/playoff-seeds",
+      "destination": "/"
+    },
+    {
+      "source": "/projections/playoff-odds",
+      "destination": "/"
+    },
+    {
+      "source": "/projections/all-teams",
+      "destination": "/"
+    },
+    {
+      "source": "/projections/how-it-works",
+      "destination": "/"
+    },
+    {
+      "source": "/contracts/position-market",
+      "destination": "/"
+    },
+    {
+      "source": "/contracts/all-players",
+      "destination": "/"
+    },
+    {
+      "source": "/best-worst-contracts/teams",
+      "destination": "/"
+    },
+    {
+      "source": "/best-worst-contracts/all",
+      "destination": "/"
+    },
+    {
+      "source": "/rookie-contracts/extension-watch",
+      "destination": "/"
+    },
+    {
+      "source": "/rookie-contracts/all",
+      "destination": "/"
+    },
+    {
+      "source": "/cap-lab/spending-heatmap",
+      "destination": "/"
+    },
+    {
+      "source": "/cap-lab/cap-health",
+      "destination": "/"
+    },
+    {
+      "source": "/cap-lab/doppelganger",
+      "destination": "/"
+    },
+    {
+      "source": "/free-agency/by-position",
+      "destination": "/"
+    },
+    {
+      "source": "/free-agency/by-team",
+      "destination": "/"
+    },
+    {
+      "source": "/free-agency/all",
+      "destination": "/"
+    },
+    {
+      "source": "/free-agency/franchise-tags",
+      "destination": "/"
+    },
+    {
+      "source": "/free-agency/news",
+      "destination": "/"
+    },
+    {
+      "source": "/big-board/class-depth",
+      "destination": "/"
+    },
+    {
+      "source": "/big-board/expert-splits",
+      "destination": "/"
+    },
+    {
+      "source": "/big-board/full",
+      "destination": "/"
+    },
+    {
+      "source": "/mock-draft/pick-owners",
+      "destination": "/"
+    },
+    {
+      "source": "/rookie-pay/savings",
+      "destination": "/"
+    },
+    {
+      "source": "/rookie-pay/rules",
+      "destination": "/"
+    },
+    {
       "source": "/player/:slug",
       "destination": "/"
     },

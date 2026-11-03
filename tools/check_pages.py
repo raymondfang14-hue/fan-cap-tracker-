@@ -8,9 +8,13 @@ Without --url it serves this repo locally, so it tests what you are about to pus
 import argparse, asyncio, functools, http.server, json, os, re, sys, threading
 
 VIEWS = ['/', '/news', '/team-ratings', '/team-tiers', '/team/kc', '/contracts', '/power-rankings', '/awards', '/big-board', '/scores', '/standings',
-         '/projections', '/roster-builder', '/#offseason', '/trade-checker', '/compare', '/cap-101', '/player-ratings', '/player-ratings/roles', '/player-ratings/pay-vs-play', '/player-ratings/rankings', '/player-ratings/traits', '/stats', '/player/patrick-mahomes-kc']
+         '/projections', '/roster-builder', '/#offseason', '/trade-checker', '/compare', '/cap-101', '/player-ratings', '/player-ratings/roles', '/player-ratings/pay-vs-play', '/player-ratings/rankings', '/player-ratings/traits', '/stats', '/player/patrick-mahomes-kc',
+         # one sub-page from each section tab, and team sub-pages
+         '/team-ratings/roster-ratings', '/team-tiers/offense-vs-defense', '/power-rankings/results-vs-roster', '/standings/playoff-seeds', '/projections/playoff-odds',
+         '/contracts/all-players', '/best-worst-contracts/all', '/rookie-contracts/all', '/cap-lab/spending-heatmap', '/free-agency/all', '/free-agency/franchise-tags',
+         '/big-board/full', '/mock-draft/pick-owners', '/rookie-pay/savings', '/awards/how-it-works', '/team/kc/depth-chart', '/team/kc/roster']
 
-SHARE_VIEWS = ['/team-ratings', '/team-tiers', '/contracts', '/power-rankings', '/big-board']   # views whose charts and tables must each get a "Share this" button
+SHARE_VIEWS = ['/team-ratings', '/team-tiers/offense-vs-defense', '/contracts/all-players', '/power-rankings', '/big-board/full']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Pages whose "Share" button must open a 1080x1350 image. The prospect is the first one in data/pageslugs.json so the check survives roster changes.

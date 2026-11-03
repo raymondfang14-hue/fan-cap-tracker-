@@ -876,6 +876,15 @@ a.kpi:hover,button.kpi:hover{background:var(--surface);box-shadow:var(--shadow);
 .seg::-webkit-scrollbar{display:none}
 .pvps.big text{font-size:12px}.pvps.big .lb{font-size:13px}.pvps.big .ax{font-size:12.5px}.pvps.big .q{font-size:12px}
 #of-scatter{min-width:0}
+.subbar{position:relative;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);min-width:0;max-width:100%;-webkit-overflow-scrolling:touch}
+.subbar::-webkit-scrollbar{display:none}
+.subbar a{flex:none;padding:10px 12px 11px;margin-bottom:-1px;border-bottom:2px solid transparent;color:var(--muted);font:500 .9rem/1.1 var(--body);text-decoration:none;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.subbar a:hover{color:var(--fg)}
+.subbar a[aria-current="page"]{color:var(--fg);border-bottom-color:var(--brand);font-weight:600}
+.subbar a:focus-visible{outline:2px solid var(--brand);outline-offset:-2px;border-radius:6px}
+.spwrap{display:contents}
+.tchart.sm text{font-size:11px}.tchart.sm .q{font-size:11.5px}.tchart.sm .ax{font-size:11px}
+#tr-scatter{min-width:0}
 #of-scatter .lb{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 .seg button{border-radius:999px;font:500 .84rem/1 var(--body);text-transform:none;letter-spacing:0;padding:8px 14px;white-space:nowrap;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.14)}
@@ -1361,20 +1370,20 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
   <div class="chips" id="t-div" role="group" aria-label="Division"></div>
   <div id="t-ratings" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Roster ratings: each team is rated from the play ratings of its starters, the players with the most snaps at every spot, then ranked against the league on the same 40 to 99 scale players use. Tap a team for its lineup, depth chart, stats and traits.</p>
-    <div class="grid2">
-      <div class="panel">
+    <p data-sp="chart" class="lede">Roster ratings: each team is rated from the play ratings of its starters, the players with the most snaps at every spot, then ranked against the league on the same 40 to 99 scale players use. Tap a team for its lineup, depth chart, stats and traits.</p>
+    <div class="spwrap">
+      <div data-sp="chart" class="panel">
         <div><span class="eyebrow">Tap a crest to open the team</span><h2 class="sec">Offense vs. defense</h2></div>
         <div id="t-scatter"></div>
         <p class="note">Dashed lines mark the middle of the league. Teams up and to the right are strong on both sides of the ball.</p>
       </div>
-      <div class="panel">
+      <div data-sp="best" class="panel">
         <div><span class="eyebrow">Highest-rated team in each area</span><h2 class="sec">Best in the league</h2></div>
         <div class="best" id="t-best"></div>
       </div>
     </div>
-    <div class="panel tt-box" id="t-traits"></div>
-    <div class="panel">
+    <div data-sp="traits" class="panel tt-box" id="t-traits"></div>
+    <div data-sp="table" class="panel">
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">Roster ratings</h2></div><a class="btn ghost" href="/roster-builder">Build your own roster</a></div>
       <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="t-power" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
       <div class="tw"><table class="t" id="t-power"></table></div>
@@ -1407,7 +1416,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   <div class="sechead">
     <div><span class="eyebrow" id="tr-eyebrow">Offense and defense, play by play</span><h1 class="title" id="h-tiers">Weekly team tiers</h1></div>
   </div>
-  <p class="tt-take">Top-right = good at both: scoring a lot and giving up little.</p>
+  <p data-sp="chart" class="tt-take">Top-right = good at both: scoring a lot and giving up little.</p>
   <div id="tr-body" style="display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0"><p class="note">Loading team tiers…</p></div>
 </section>
 
@@ -1422,36 +1431,36 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="aw-awards" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">PlainStats ranks every player and coach for the big awards using the same play ratings, stats and team ratings you see across the site, then turns the scores into odds. Tap an award to see the full race. Everything recalculates when a new week of stats lands.</p>
-    <div class="awboard" id="aw-board"></div>
-    <div class="panel" id="aw-detail"></div>
-    <details class="panel" id="aw-how">
+    <p data-sp="board" class="lede">PlainStats ranks every player and coach for the big awards using the same play ratings, stats and team ratings you see across the site, then turns the scores into odds. Tap an award to see the full race. Everything recalculates when a new week of stats lands.</p>
+    <div data-sp="board" class="awboard" id="aw-board"></div>
+    <div data-sp="board" class="panel" id="aw-detail"></div>
+    <details data-sp="how" open class="panel" id="aw-how">
       <summary style="cursor:pointer;font:800 1.1rem/1.2 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase">How the scores work</summary>
       <div id="aw-how-body" style="display:grid;gap:10px;margin-top:12px"></div>
     </details>
   </div>
 
   <div id="aw-power" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">All 32 teams ranked by a blend of results, scoring margin, roster strength and efficiency. Wins count, but so does how a team wins and how good its starters are, so a team can rank above or below its record.</p>
-    <div class="kpis" id="pw-kpis"></div>
-    <div class="aw-two">
-      <div class="panel">
+    <p data-sp="rank" class="lede">All 32 teams ranked by a blend of results, scoring margin, roster strength and efficiency. Wins count, but so does how a team wins and how good its starters are, so a team can rank above or below its record.</p>
+    <div data-sp="rank" class="kpis" id="pw-kpis"></div>
+    <div class="spwrap">
+      <div data-sp="chart" class="panel">
         <div><span class="eyebrow">Tap a crest to open the team</span><h2 class="sec">Results vs. roster</h2></div>
         <div id="pw-scatter"></div>
         <p class="note">Up is better results (record and scoring margin). Right is a stronger roster and more efficient play. Teams below the diagonal are winning less than their talent suggests.</p>
       </div>
-      <div class="panel">
+      <div data-sp="movers" class="panel">
         <div><span class="eyebrow">Biggest gaps between record and roster</span><h2 class="sec">Risers and fallers</h2></div>
         <div id="pw-gaps" style="display:grid;gap:12px"></div>
       </div>
     </div>
-    <div class="panel">
+    <div data-sp="rank" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="pw-asof">Power rankings</span><h2 class="sec">Team power rankings</h2></div></div>
       <div class="chips" id="pw-div" role="group" aria-label="Division"></div>
       <div id="pw-table" style="display:grid;gap:10px;min-width:0"></div>
       <p class="note" id="pw-note"></p>
     </div>
-    <details class="panel">
+    <details data-sp="how" open class="panel">
       <summary style="cursor:pointer;font:800 1.1rem/1.2 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase">How the power score works</summary>
       <div id="pw-how-body" style="display:grid;gap:10px;margin-top:12px"></div>
     </details>
@@ -1479,38 +1488,38 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 
   <div id="gm-standings" hidden style="display:grid;gap:16px;min-width:0">
     <div class="seg" id="gm-conf" role="group" aria-label="Conference" style="justify-self:start"><button type="button" data-gc="AFC" aria-pressed="true">AFC</button><button type="button" data-gc="NFC" aria-pressed="false">NFC</button></div>
-    <div class="panel">
+    <div data-sp="div" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="gm-st-eb">Standings</span><h2 class="sec" id="gm-st-title">Division standings</h2></div></div>
       <div id="gm-st-box"></div>
       <div class="tw"><table class="t" id="gm-st"></table></div>
       <p class="note">Div and Conf are records against division and conference opponents. Proj. is the model's average final record; Playoffs is how often the team made the field in the model's simulated seasons. Tap a team for its page.</p>
     </div>
-    <div class="grid2">
+    <div data-sp="seeds" class="grid2">
       <div class="panel"><div><span class="eyebrow">Seeds 1 to 4 are division leaders</span><h2 class="sec">If the season ended today</h2></div><div class="gseeds" id="gm-seed-now"></div><p class="note">Ties use the main NFL tiebreakers in simplified form: head-to-head, division record, conference record, then strength of victory.</p></div>
       <div class="panel"><div><span class="eyebrow">From the simulated seasons</span><h2 class="sec">Most likely playoff field</h2></div><div class="gseeds" id="gm-seed-proj"></div><p class="note">The seven teams that reached the playoffs most often, with their chance of the No. 1 seed and its first-round bye.</p></div>
     </div>
   </div>
 
   <div id="gm-proj" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">The PlainStats game model rates every team from its results, picks every game and plays out the rest of the season thousands of times, playoffs included. It updates every week after Monday night.</p>
-    <div class="kpis" id="gm-pkpis"></div>
-    <section class="panel pp" aria-labelledby="h-pp">
+    <p data-sp="picture" class="lede">The PlainStats game model rates every team from its results, picks every game and plays out the rest of the season thousands of times, playoffs included. It updates every week after Monday night.</p>
+    <div data-sp="picture" class="kpis" id="gm-pkpis"></div>
+    <section data-sp="picture" class="panel pp" aria-labelledby="h-pp">
       <div class="sechead"><div><span class="eyebrow" id="gm-pp-eb">Playoff picture</span><h2 class="sec" id="h-pp">If the season ended today</h2></div>
         <div class="seg" id="gm-pp-mode" role="group" aria-label="Playoff picture"><button type="button" data-pp="now" aria-pressed="true">Today</button><button type="button" data-pp="proj" aria-pressed="false">Projected</button></div></div>
       <div class="pp-confs" id="gm-pp"></div>
       <p class="note" id="gm-pp-note"></p>
     </section>
-    <div class="grid2">
+    <div data-sp="odds" class="grid2">
       <div class="panel"><div><span class="eyebrow">Chance to make the playoffs</span><h2 class="sec">AFC playoff odds</h2></div><div class="obars" id="gm-odds-AFC"></div></div>
       <div class="panel"><div><span class="eyebrow">Chance to make the playoffs</span><h2 class="sec">NFC playoff odds</h2></div><div class="obars" id="gm-odds-NFC"></div></div>
     </div>
-    <div class="panel">
+    <div data-sp="table" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="gm-pt-eb">Tap a column to sort</span><h2 class="sec">Every team, projected</h2></div></div>
       <div id="gm-pt-box"></div>
       <div class="tw"><table class="t" id="gm-pt"></table></div>
       <p class="note" id="gm-pt-note"></p>
     </div>
-    <details class="panel" id="gm-how">
+    <details data-sp="how" open class="panel" id="gm-how">
       <summary style="cursor:pointer;font:800 1.1rem/1.2 var(--display);font-stretch:82%;letter-spacing:.03em;text-transform:uppercase">How the model works</summary>
       <div id="gm-how-body" style="display:grid;gap:10px;margin-top:12px"></div>
     </details>
@@ -1536,13 +1545,13 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
   <div id="c-all" style="display:grid;gap:22px;min-width:0">
 
-  <div>
+  <div data-sp="deals">
     <div class="sechead" style="margin-bottom:12px"><div><span class="eyebrow">Read for you</span><h2 class="sec">Recent deals, broken down</h2></div></div>
     <div class="deals" id="deals"></div>
     <p class="note" id="deals-src" style="margin-top:10px"></p>
   </div>
 
-  <div class="panel">
+  <div data-sp="market" class="panel">
     <div class="sechead">
       <div><span class="eyebrow">Position market</span><h2 class="sec" id="mkt-title">Top quarterback contracts</h2></div>
       <label class="f" for="mkt-pos">Position
@@ -1555,7 +1564,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     </div>
   </div>
 
-  <div class="panel">
+  <div data-sp="all" class="panel">
     <div class="sechead"><div><span class="eyebrow">Search the database</span><h2 class="sec">All players under contract</h2></div></div>
     <div class="controls">
       <label class="f" for="c-q" style="flex:1 1 220px">Filter<input id="c-q" type="search" placeholder="Player, team or position" autocomplete="off"></label>
@@ -1582,20 +1591,20 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="c-value" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Which contracts are paying off. Every player with enough snaps gets a market value: what teams pay today for a player who ranks where he ranks on the field at his position. Surplus is that value minus his yearly pay. Green means a team is getting more than it pays for.</p>
-    <div class="kpis" id="cv-kpis"></div>
+    <p data-sp="best" class="lede">Which contracts are paying off. Every player with enough snaps gets a market value: what teams pay today for a player who ranks where he ranks on the field at his position. Surplus is that value minus his yearly pay. Green means a team is getting more than it pays for.</p>
+    <div data-sp="best" class="kpis" id="cv-kpis"></div>
     <div class="seg" id="cv-deal" role="group" aria-label="Which contracts"><button type="button" data-cvd="all" aria-pressed="true">All deals</button><button type="button" data-cvd="vet" aria-pressed="false">Veteran deals</button><button type="button" data-cvd="rookie" aria-pressed="false">Rookie deals</button></div>
-    <div class="grid2">
+    <div data-sp="best" class="grid2">
       <div class="panel"><div><span class="eyebrow">Biggest surplus</span><h2 class="sec">Best value contracts</h2></div><div class="cvl" id="cv-best"></div></div>
       <div class="panel"><div><span class="eyebrow">Paid well above how they play so far</span><h2 class="sec">Most overpaid</h2></div><div class="cvl" id="cv-worst"></div></div>
     </div>
-    <div class="panel">
+    <div data-sp="teams" class="panel">
       <div><span class="eyebrow">Surplus added up across every rated player</span><h2 class="sec">Best-run cap sheets</h2></div>
       <div id="cv-tbox"></div>
       <div class="tw"><table class="t" id="cv-teams"></table></div>
       <p class="note">Bargains and overpaid count players $5M or more above or below their market value.</p>
     </div>
-    <div class="panel">
+    <div data-sp="all" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="cv-count"></span><h2 class="sec">Every rated contract</h2></div></div>
       <div class="chips posseg" id="cv-pos" role="group" aria-label="Position"></div>
       <div id="cv-fbox"></div>
@@ -1606,21 +1615,21 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="c-rookies" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Every player still on the contract he signed as a draft pick, from the 2022 to 2026 classes. First-round picks have a fifth-year team option, and any pick can sign an extension once he has played three seasons. Tap a player for his full page.</p>
-    <div class="kpis" id="rk-kpis"></div>
-    <div class="panel">
+    <p data-sp="options" class="lede">Every player still on the contract he signed as a draft pick, from the 2022 to 2026 classes. First-round picks have a fifth-year team option, and any pick can sign an extension once he has played three seasons. Tap a player for his full page.</p>
+    <div data-sp="options" class="kpis" id="rk-kpis"></div>
+    <div data-sp="options" class="panel">
       <div><span class="eyebrow">2024 first-round picks · teams decide by early May 2027</span><h2 class="sec">Fifth-year option decisions</h2></div>
       <div id="rk-obox"></div>
       <div class="tw"><table class="t" id="rk-opt"></table></div>
       <p class="note">The option adds a fully guaranteed 2028 season. Its price follows the CBA, roughly: the top-10 average salary at the position for picks 1 to 10, and the average of the 3rd to 25th highest for picks 11 to 32, before Pro Bowl bumps. PlainStats's read compares that price with what his play is worth on today's market.</p>
     </div>
-    <div class="panel">
+    <div data-sp="ext" class="panel">
       <div><span class="eyebrow">Best play rating first</span><h2 class="sec">Extension watch</h2></div>
       <div id="rk-ebox"></div>
       <div class="tw"><table class="t" id="rk-ext"></table></div>
       <p class="note" id="rk-ext-note"></p>
     </div>
-    <div class="panel">
+    <div data-sp="all" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="rk-count"></span><h2 class="sec">All rookie contracts</h2></div></div>
       <div class="chips" id="rk-cls" role="group" aria-label="Draft class"></div>
       <div id="rk-tbox"></div>
@@ -1762,9 +1771,9 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   <div class="sechead">
     <div><span class="eyebrow">Advanced contract analytics</span><h1 class="title" id="h-analytics">The cap lab</h1></div>
   </div>
-  <p class="lede">Every number here is a percentile against the league, so 90 means better than 90% of players at the same position, or 90% of teams. Tap any card, crest or cell to dig in.</p>
+  <p data-sp="traits" class="lede">Every number here is a percentile against the league, so 90 means better than 90% of players at the same position, or 90% of teams. Tap any card, crest or cell to dig in.</p>
 
-  <div class="panel">
+  <div data-sp="traits" class="panel">
     <div class="sechead"><div><span class="eyebrow">Contract traits</span><h2 class="sec" id="tr-title">Find a type of contract</h2></div><span class="note" id="tr-count"></span></div>
     <div class="chips" id="trait-chips" role="group" aria-label="Trait"></div>
     <p class="note" id="trait-desc"></p>
@@ -1772,7 +1781,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     <button class="btn ghost more" id="trait-more" type="button">Show more</button>
   </div>
 
-  <div class="panel">
+  <div data-sp="heat" class="panel">
     <div class="sechead">
       <div><span class="eyebrow">32 teams × 15 positions · 2026 cap hits</span><h2 class="sec">Spending heatmap, $M</h2></div>
       <span class="scale-key">Least <i></i> Most</span>
@@ -1782,13 +1791,13 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     <div class="tw" style="border:0;background:none"><table class="heat" id="heat"></table></div>
   </div>
 
-  <div class="grid2">
-    <div class="panel">
+  <div class="spwrap">
+    <div data-sp="health" class="panel">
       <div><span class="eyebrow">0 to 100, higher is healthier</span><h2 class="sec">Cap health rankings</h2></div>
       <p class="note">Blends four percentiles: cap room, low dead money, money coming off the books after this season, and how evenly pay is spread beyond the top five contracts. The four small bars show each piece.</p>
       <div class="health" id="health"></div>
     </div>
-    <div class="panel">
+    <div data-sp="dopp" class="panel">
       <div><span class="eyebrow">Doppelgänger finder</span><h2 class="sec">Contracts most like his</h2></div>
       <p class="note">Pick a player and find the deals closest to his in yearly pay, guarantees, length, age and cap share, across the league.</p>
       <div class="pick"><label class="f" for="dg-q">Player<input id="dg-q" type="search" placeholder="Search a player" autocomplete="off"></label><div class="results" id="dg-r" hidden></div></div>
@@ -1810,26 +1819,26 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="fa-class" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Every player whose contract ends after a given season, with how well he is playing and a PlainStats estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
+    <p data-sp="top" class="lede">Every player whose contract ends after a given season, with how well he is playing and a PlainStats estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
     <div class="chips" id="fa-years" role="group" aria-label="Free agent class"></div>
-    <div class="kpis" id="fa-kpis"></div>
-    <div class="panel">
+    <div data-sp="top" class="kpis" id="fa-kpis"></div>
+    <div data-sp="top" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="fa-board-eb">Best players with expiring deals</span><h2 class="sec" id="fa-board-t">Top of the class</h2></div></div>
       <div class="fcs row" id="fa-board"></div>
     </div>
-    <div class="grid2">
-      <div class="panel">
-        <div><span class="eyebrow">Tap a position to filter the table</span><h2 class="sec">Where the money is</h2></div>
+    <div class="spwrap">
+      <div data-sp="pos" class="panel">
+        <div><span class="eyebrow">Tap a position to see its free agents</span><h2 class="sec">Where the money is</h2></div>
         <div class="fa-pos" id="fa-posbars"></div>
         <p class="note">Bars show the estimated yearly pay the players at each position could command on their next deals, for players earning at least the pay floor you pick below.</p>
       </div>
-      <div class="panel">
+      <div data-sp="teams" class="panel">
         <div><span class="eyebrow">Which teams lose the most</span><h2 class="sec">Class by team</h2></div>
         <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-teams" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
-        <div class="tw" style="max-height:420px;overflow:auto"><table class="t" id="fa-teams"></table></div>
+        <div class="tw"><table class="t" id="fa-teams"></table></div>
       </div>
     </div>
-    <div class="panel">
+    <div data-sp="all" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="fa-tcount"></span><h2 class="sec" id="fa-tt">All pending free agents</h2></div></div>
       <div class="controls">
         <label class="f" for="fa-min">Pay floor<select id="fa-min"><option value="0">Any pay</option><option value="1000000">$1M+ a year</option><option value="5000000" selected>$5M+ a year</option><option value="10000000">$10M+ a year</option><option value="20000000">$20M+ a year</option></select></label>
@@ -1844,20 +1853,20 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="fa-tags" hidden style="display:grid;gap:16px;min-width:0">
-    <div class="grid2">
-      <div style="display:grid;gap:10px;align-content:start;min-width:0">
+    <div class="spwrap">
+      <div data-sp="dates" style="display:grid;gap:10px;align-content:start;min-width:0">
         <div><span class="eyebrow" id="fa-cal-eb">The road to free agency</span><h2 class="sec">Key dates</h2></div>
         <div class="cal" id="fa-cal"></div>
         <p class="note" id="fa-cal-note"></p>
       </div>
-      <div class="panel">
+      <div data-sp="tags" class="panel">
         <div><span class="eyebrow">Estimated from the top five pay at each position</span><h2 class="sec">Franchise tag prices</h2></div>
         <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" data-tf="fa-tag" placeholder="Filter positions or players" aria-label="Filter positions or players" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
         <div class="tw"><table class="t" id="fa-tag"></table></div>
         <p class="note">The tag price is the average of the five biggest deals at a position. This estimate uses yearly pay; the league sets the official numbers in the spring. "Tag candidates" are pending 2027 free agents rated 85 or higher.</p>
       </div>
     </div>
-    <div class="panel">
+    <div data-sp="news" class="panel">
       <div class="sechead"><div><span class="eyebrow">Signings, releases and trades</span><h2 class="sec">Free agency news</h2></div><a class="btn ghost" href="/news">All news</a></div>
       <div class="feed" id="fa-news"></div>
     </div>
@@ -1880,8 +1889,8 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   <div class="kpis" id="dr-kpis"><p class="empty" style="background:var(--surface)">Loading the draft class…</p></div>
 
   <div id="dr-board" style="display:grid;gap:16px;min-width:0">
-    <p class="lede">The top college players for the April 2027 draft, ranked by combining public big boards. Each prospect gets the same treatment as an NFL player on PlainStats: a grade, a role, trait badges and his 2026 college numbers, plus what his rookie contract would cost.</p>
-    <div class="panel">
+    <p data-sp="top" class="lede">The top college players for the April 2027 draft, ranked by combining public big boards. Each prospect gets the same treatment as an NFL player on PlainStats: a grade, a role, trait badges and his 2026 college numbers, plus what his rookie contract would cost.</p>
+    <div data-sp="top" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="dr-cards-eb">Tap a prospect for his full page</span><h2 class="sec">Top of the board</h2></div>
         <div class="seg" id="dr-sort" role="group" aria-label="Sort prospects"><button type="button" data-ds="rank" aria-pressed="true">Board rank</button><button type="button" data-ds="grade" aria-pressed="false">Grade</button><button type="button" data-ds="prod" aria-pressed="false">2026 production</button></div>
       </div>
@@ -1889,19 +1898,19 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
       <div class="fcs" id="dr-cards"></div>
       <button class="btn ghost more" id="dr-more" type="button">Show more</button>
     </div>
-    <div class="grid2">
-      <div class="panel">
-        <div><span class="eyebrow">Prospects by projected round · tap a bar to filter</span><h2 class="sec">Where the class is deep</h2></div>
+    <div class="spwrap">
+      <div data-sp="depth" class="panel">
+        <div><span class="eyebrow">Prospects by projected round · tap a bar to see them</span><h2 class="sec">Where the class is deep</h2></div>
         <div class="gbars" id="dr-depth"></div>
         <ul class="legend"><li><i class="swatch" style="background:var(--brand)"></i><span>Top 32 on the board</span></li><li><i class="swatch" style="background:var(--c-space)"></i><span>Ranked 33 and lower</span></li></ul>
       </div>
-      <div class="panel">
+      <div data-sp="split" class="panel">
         <div><span class="eyebrow">Same player, two boards</span><h2 class="sec">Where the experts split</h2></div>
         <p class="note">The biggest gaps between WalterFootball and NFL Draft Buzz. A wide gap means scouts disagree, so his draft spot is harder to call.</p>
         <div class="dumbs" id="dr-split"></div>
       </div>
     </div>
-    <div class="panel">
+    <div data-sp="full" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="dr-tcount"></span><h2 class="sec">Full big board</h2></div></div>
       <div id="dr-tbox"></div>
       <div class="tw"><table class="t" id="dr-table"></table></div>
@@ -1909,8 +1918,8 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="dr-order" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is PlainStats's best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
-    <div class="grid2">
+    <p data-sp="mock" class="lede" id="dr-order-lede">If the season ended today, this is the first round. Picks follow the current standings, with traded picks moved to their new owners. The model pick is PlainStats's best guess at who fits: the best player left on the board, nudged toward each team's biggest needs.</p>
+    <div data-sp="picks" class="grid2">
       <div class="panel">
         <div><span class="eyebrow">Picks in the projected first round</span><h2 class="sec">Who holds the picks</h2></div>
         <div class="gbars" id="dr-owners"></div>
@@ -1920,7 +1929,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
         <div class="rows" id="dr-trades"></div>
       </div>
     </div>
-    <div class="panel">
+    <div data-sp="mock" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="dr-ord-eb">Projected 2027 first round</span><h2 class="sec">Draft order and model mock</h2></div></div>
       <div id="dr-obox"></div>
       <div class="tw"><table class="t" id="dr-otable"></table></div>
@@ -1929,20 +1938,20 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   </div>
 
   <div id="dr-pay" hidden style="display:grid;gap:16px;min-width:0">
-    <p class="lede">Draft picks are the cheapest good players in football. The rookie pay scale sets every contract by draft slot, so a team knows almost exactly what each pick will cost before it is made.</p>
-    <div class="panel">
+    <p data-sp="scale" class="lede">Draft picks are the cheapest good players in football. The rookie pay scale sets every contract by draft slot, so a team knows almost exactly what each pick will cost before it is made.</p>
+    <div data-sp="scale" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="dr-scale-eb">Four-year value by first-round pick</span><h2 class="sec">The rookie pay scale</h2></div></div>
       <div class="tw" style="border:0;background:none"><div id="dr-scale"></div></div>
       <p class="note" id="dr-scale-note"></p>
     </div>
-    <div class="grid2">
-      <div class="panel">
+    <div class="spwrap">
+      <div data-sp="save" class="panel">
         <div><span class="eyebrow">Yearly pay, rookie vs. a top-10 veteran</span><h2 class="sec">What a pick saves</h2></div>
         <div class="seg" id="dr-vpick" role="group" aria-label="Pick slot"><button type="button" data-vp="1" aria-pressed="false">Pick 1</button><button type="button" data-vp="10" aria-pressed="true">Pick 10</button><button type="button" data-vp="32" aria-pressed="false">Pick 32</button></div>
         <div class="gbars" id="dr-save"></div>
         <p class="note">The grey bar is the average yearly pay of the 10 highest-paid veterans at the position. The blue bar is that pick's rookie deal per year. A rookie quarterback who plays like a top-10 starter saves his team the most.</p>
       </div>
-      <div class="panel">
+      <div data-sp="rules" class="panel">
         <div><span class="eyebrow">Plain English</span><h2 class="sec">How rookie deals work</h2></div>
         <div class="rows" id="dr-rules"></div>
       </div>
@@ -3191,9 +3200,9 @@ function tstatsHTML(t, side) {
 // team page sections
 let tpMode = 'snaps', tpSide = store.get('tpSide', 'off');
 function teamFieldHTML(t) {
-  if (!SD) return '<div class="panel"><p class="empty">Season stats did not load, so team ratings, lineups and the depth chart are not available. Reload the page to try again.</p></div>';
-  return `<div class="jump" role="group" aria-label="Jump to section">${[['tp-rat', 'Ratings'], ['tp-line', 'Lineup'], ['tp-stats', 'Team stats'], ['tp-depth', 'Depth chart'], ['tp-cap', 'Salary cap'], ['tp-roster', 'Roster']].map(([id, l]) => `<button type="button" class="chip" data-jump="${id}">${l}</button>`).join('')}</div>
-  <div class="grid2" id="tp-rat">
+  if (!SD) return '<div class="panel" data-sp="overview lineup stats depth-chart"><p class="empty">Season stats did not load, so team ratings, lineups and the depth chart are not available. Reload the page to try again.</p></div>';
+  return `
+  <div class="grid2" id="tp-rat" data-sp="overview">
     <div class="panel">
       <div class="sechead"><div><span class="eyebrow">Through Week ${THRU} · from starters' play ratings</span><h2 class="sec">Team ratings</h2></div></div>
       ${rtilesHTML(t.rt, t.rk)}
@@ -3211,12 +3220,12 @@ function teamFieldHTML(t) {
       <p class="note">Traits come from team stats, unit ratings and the cap sheet. Hover or long-press a trait for what it means.</p>
     </div>
   </div>
-  <div class="panel" id="tp-line">
+  <div class="panel" id="tp-line" data-sp="lineup">
     <div class="sechead"><div><span class="eyebrow">Tap a player for his card</span><h2 class="sec">Starting lineup</h2></div>
       <div class="seg" id="tp-mode" role="group" aria-label="Which lineup"><button type="button" data-m="snaps" aria-pressed="${tpMode === 'snaps'}">Who plays most</button><button type="button" data-m="best" aria-pressed="${tpMode === 'best'}">Best on paper</button></div></div>
     <div id="tp-line-body" style="display:grid;gap:12px"></div>
   </div>
-  <div class="panel" id="tp-stats">
+  <div class="panel" id="tp-stats" data-sp="stats">
     <div><span class="eyebrow">2026 regular season through Week ${THRU} · rank of 32</span><h2 class="sec">Team stats</h2></div>
     <div class="grid3" style="gap:22px">
       <div><span class="eyebrow">Offense</span>${tstatsHTML(t, 'off')}</div>
@@ -3224,7 +3233,7 @@ function teamFieldHTML(t) {
       <div><span class="eyebrow">Discipline and kicking</span>${tstatsHTML(t, 'other')}<p class="note" style="margin-top:10px">Built from nflverse box scores and advanced stats. A player traded midseason counts for his current team.</p></div>
     </div>
   </div>
-  <div class="panel" id="tp-depth">
+  <div class="panel" id="tp-depth" data-sp="depth-chart">
     <div class="sechead"><div><span class="eyebrow">Ordered by 2026 snaps · tap for the player card</span><h2 class="sec">Depth chart</h2></div>
       <div class="seg" id="tp-side" role="group" aria-label="Side of the ball"><button type="button" data-s="off" aria-pressed="${tpSide === 'off'}">Offense</button><button type="button" data-s="def" aria-pressed="${tpSide === 'def'}">Defense</button><button type="button" data-s="st" aria-pressed="${tpSide === 'st'}">Specialists</button></div></div>
     <div id="tp-depth-body"></div>
@@ -3249,7 +3258,6 @@ function wireTeamField(t) {
   renderTeamLine(t); renderTeamDepth(t);
   $('#tp-mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; tpMode = b.dataset.m; $$('#tp-mode button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderTeamLine(t); };
   $('#tp-side').onclick = e => { const b = e.target.closest('button'); if (!b) return; tpSide = b.dataset.s; store.set('tpSide', tpSide); $$('#tp-side button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderTeamDepth(t); };
-  $$('#team-body [data-jump]').forEach(b => b.onclick = () => { const el = document.getElementById(b.dataset.jump); if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); });
 }
 
 /* teams list: ratings view */
@@ -3264,14 +3272,15 @@ function renderPower() {
     rows.map(t => `<tr data-team="${t.id}" data-tip="tm|${t.id}" data-s="${esc(teamHay(t))}"><td class="r">${t.rk.ovr}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r"><span class="pscore" style="--pc:${rcol(t.rt.ovr)}">${t.rt.ovr}</span></td>${['off', 'def'].concat(UNITS.map(u => u[0])).map(k => `<td class="r"><span class="uc" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></td>`).join('')}<td><span class="ttraits" style="flex-wrap:nowrap">${[...t.tt].sort((a, b) => st.tTraits.includes(b[0]) - st.tTraits.includes(a[0])).slice(0, 2).map(ttChip).join('')}</span></td><td class="r">${mon(t.space)}</td></tr>`).join('') + '</tbody>';
   applyTF($('#t-power'));
   // offense vs defense scatter
-  const W2 = 560, H = 400, l = 44, r = 18, tp = 18, b = 40, x = v => l + (v - 40) / 60 * (W2 - l - r), y = v => tp + (100 - v) / 60 * (H - tp - b);
+  const [W2, H] = chartSize($('#t-scatter')), l = 44, r = 18, tp = 18, b = 40, x = v => l + (v - 40) / 60 * (W2 - l - r), y = v => tp + (100 - v) / 60 * (H - tp - b);
+  $('#t-scatter').dataset.w = W2;
   const ticks = [40, 55, 70, 85, 100];
   let g = ticks.map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${tp}" y2="${H - b}"></line><line class="gl" x1="${l}" x2="${W2 - r}" y1="${y(v)}" y2="${y(v)}"></line><text x="${x(v)}" y="${H - b + 16}" text-anchor="middle">${v}</text><text x="${l - 8}" y="${y(v) + 3}" text-anchor="end">${v}</text>`).join('');
   g += `<line class="mid" x1="${x(69.5)}" x2="${x(69.5)}" y1="${tp}" y2="${H - b}"></line><line class="mid" x1="${l}" x2="${W2 - r}" y1="${y(69.5)}" y2="${y(69.5)}"></line>`;
   g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Strong both ways</text><text class="q" x="${l + 6}" y="${tp + 14}">Defense first</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Offense first</text><text class="q" x="${l + 6}" y="${H - b - 8}">Behind on both</text>`;
   g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Offense rating →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Defense rating →</text>`;
   g += list.map(t => `<g data-team="${t.id}" data-tip="tm|${t.id}" transform="translate(${(x(t.rt.off) - 11).toFixed(1)} ${(y(t.rt.def) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: offense ${t.rt.off}, defense ${t.rt.def}">${crest(t.id, 22)}</g>`).join('');
-  $('#t-scatter').innerHTML = `<svg class="pvps" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Offense rating against defense rating for each team">${g}</svg>`;
+  $('#t-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Offense rating against defense rating for each team">${g}</svg>`;
   // best unit at each spot
   $('#t-best').innerHTML = ['ovr', 'off', 'def'].concat(UNITS.map(u => u[0])).map(k => { const t = [...TEAMS].sort((a, b) => b.u[k] - a.u[k])[0];
     return `<button type="button" data-team="${t.id}"><span>${esc(RNAME[k])}</span>${crest(t.id, 20)}<b>${esc(t.city)} ${esc(t.name)}</b><span class="pscore" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></button>`; }).join('');
@@ -3299,7 +3308,7 @@ function renderTiers() {
   $('#tr-eyebrow').textContent = `Through Week ${d.thru} · EPA per play, regular season`;
   const nm = id => TB[id].city + ' ' + TB[id].name;
   // chart: offense to the right, defense up (defense is points allowed, so lower is better and sits higher)
-  const W = 640, H = 460, l = 58, r = 18, tp = 22, b = 48, xs = ids.map(i => T[i].off), ys = ids.map(i => T[i].def);
+  const [W, H] = chartSize($('#tr-scatter') || $('#tr-body')), l = 58, r = 18, tp = 22, b = 48, xs = ids.map(i => T[i].off), ys = ids.map(i => T[i].def);
   const lo = (a, m) => Math.floor((Math.min(...a, m) - .02) / .05) * .05, hi = (a, m) => Math.ceil((Math.max(...a, m) + .02) / .05) * .05;
   const x0 = lo(xs, 0), x1 = hi(xs, 0), y0 = lo(ys, 0), y1 = hi(ys, 0);
   const x = v => l + (v - x0) / (x1 - x0) * (W - l - r), y = v => tp + (v - y0) / (y1 - y0) * (H - tp - b);
@@ -3325,19 +3334,17 @@ function renderTiers() {
     return `<tr data-team="${id}" data-s="${esc(nm(id) + ' ' + TB[id].div + ' tier ' + t.tier)}"><td class="r">${t.rank}</td><td><span class="pn">${crest(id, 20)}${esc(nm(id))}</span></td><td class="r"><span class="ttier">${t.tier}</span></td><td class="r"><b>${sgn3(t.net)}</b></td><td class="r">${sgn3(t.off)}</td><td class="r">${sgn3(t.def)}</td><td class="r">${sgn3(t.offPass)}</td><td class="r">${sgn3(t.offRush)}</td><td class="r">${sgn3(t.defPass)}</td><td class="r">${sgn3(t.defRush)}</td><td class="r">${pcs(t.offSr)}</td><td class="r">${pcs(t.defSr)}</td><td class="r">${trMove(t.move)}</td></tr>`; }).join('') + '</tbody>';
   const had = $('#tr-table') ? $('#tr-filter').value : '';
   box.innerHTML = `
-    <div class="grid2">
-      <div class="panel">
+      <div class="panel" data-sp="chart">
         <div><span class="eyebrow">Tap a logo to open the team</span><h2 class="sec">Offense vs. defense</h2></div>
-        <svg class="tchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg>
+        <div id="tr-scatter" data-w="${W}"><svg class="tchart${W < 600 ? ' sm' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg></div>
         <p class="note">Dashed lines mark the league average. The further up and to the right, the better the team is at both.</p>
       </div>
-      <div class="panel">
+      <div class="panel" data-sp="tiers">
         <div><span class="eyebrow">Net EPA per play, offense minus defense</span><h2 class="sec">The tiers</h2></div>
         ${bands}
         <p class="note">Arrows show places gained or lost since last week.</p>
       </div>
-    </div>
-    <div class="panel">
+    <div class="panel" data-sp="table">
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">All 32 teams</h2></div></div>
       <div class="tfilter"><label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input type="search" id="tr-filter" data-tf="tr-table" placeholder="Filter teams by name, city or division" aria-label="Filter teams by name, city or division" autocomplete="off"></label><span class="tf-n note" aria-live="polite"></span></div>
       <div class="tw"><table class="t tgrid" id="tr-table">${tbl}</table></div>
@@ -3345,6 +3352,8 @@ function renderTiers() {
     </div>`;
   const inp = $('#tr-filter'); if (had) inp.value = had;
   applyTF($('#tr-table'));
+  applySub('v-tiers');
+  const c = $('#tr-scatter'); if (!c.closest('[hidden]') && +c.dataset.w !== chartSize(c)[0]) renderTiers();   // first draw measured the outer box
 }
 
 /* ===== roster builder ===== */
@@ -3535,8 +3544,36 @@ const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
   teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
-  freeagency: 'NFL free agency', 'fa-tags': 'Franchise tags and key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
+  freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
+/* Sub-pages: inside a section tab, each panel is its own page with its own address, so nothing sits below a long scroll.
+   A panel carries data-sp="<page>"; anything in the box without data-sp shows on every page. Tight pairs (AFC and NFC odds,
+   best and worst value) share one page. [box id, where the page bar goes ('top': first in the box, 'head': after its .sechead),
+   pages: [page, label, route key, path]]. The first page keeps the tab's existing key and path. */
+const SUBS = [
+  ['t-ratings', 'top', [['chart', 'Offense vs. defense', 'teams', '/team-ratings'], ['best', 'Best in the league', 'teams-best', '/team-ratings/best'], ['traits', 'Team traits', 'teams-traits', '/team-ratings/traits'], ['table', 'Roster ratings', 'teams-table', '/team-ratings/roster-ratings']]],
+  ['v-tiers', 'head', [['tiers', 'The tiers', 'tiers', '/team-tiers'], ['chart', 'Offense vs. defense', 'tiers-chart', '/team-tiers/offense-vs-defense'], ['table', 'All 32 teams', 'tiers-table', '/team-tiers/all-teams']]],
+  ['aw-awards', 'top', [['board', 'Award races', 'awards', '/awards'], ['how', 'How the scores work', 'awards-how', '/awards/how-it-works']]],
+  ['aw-power', 'top', [['rank', 'Rankings', 'rankings', '/power-rankings'], ['chart', 'Results vs. roster', 'rankings-chart', '/power-rankings/results-vs-roster'], ['movers', 'Risers and fallers', 'rankings-movers', '/power-rankings/risers-and-fallers'], ['how', 'How it works', 'rankings-how', '/power-rankings/how-it-works']]],
+  ['gm-standings', 'top', [['div', 'Division standings', 'standings', '/standings'], ['seeds', 'Playoff seeds', 'standings-seeds', '/standings/playoff-seeds']]],
+  ['gm-proj', 'top', [['picture', 'Playoff picture', 'projections', '/projections'], ['odds', 'Playoff odds', 'proj-odds', '/projections/playoff-odds'], ['table', 'Every team', 'proj-table', '/projections/all-teams'], ['how', 'How the model works', 'proj-how', '/projections/how-it-works']]],
+  ['c-all', 'top', [['deals', 'Recent deals', 'contracts', '/contracts'], ['market', 'Position market', 'contracts-market', '/contracts/position-market'], ['all', 'All players', 'contracts-all', '/contracts/all-players']]],
+  ['c-value', 'top', [['best', 'Best and worst', 'value', '/best-worst-contracts'], ['teams', 'Best-run cap sheets', 'value-teams', '/best-worst-contracts/teams'], ['all', 'Every rated contract', 'value-all', '/best-worst-contracts/all']]],
+  ['c-rookies', 'top', [['options', 'Fifth-year options', 'rookies', '/rookie-contracts'], ['ext', 'Extension watch', 'rookies-ext', '/rookie-contracts/extension-watch'], ['all', 'All rookie deals', 'rookies-all', '/rookie-contracts/all']]],
+  ['v-analytics', 'head', [['traits', 'Contract traits', 'analytics', '/cap-lab'], ['heat', 'Spending heatmap', 'analytics-heat', '/cap-lab/spending-heatmap'], ['health', 'Cap health', 'analytics-health', '/cap-lab/cap-health'], ['dopp', 'Doppelgänger finder', 'analytics-dopp', '/cap-lab/doppelganger']]],
+  ['fa-class', 'top', [['top', 'Top of the class', 'freeagency', '/free-agency'], ['pos', 'By position', 'fa-pos', '/free-agency/by-position'], ['teams', 'By team', 'fa-teams', '/free-agency/by-team'], ['all', 'All free agents', 'fa-all', '/free-agency/all']]],
+  ['fa-tags', 'top', [['dates', 'Key dates', 'fa-tags', '/free-agency/key-dates'], ['tags', 'Franchise tags', 'fa-tagprices', '/free-agency/franchise-tags'], ['news', 'Free agency news', 'fa-news', '/free-agency/news']]],
+  ['dr-board', 'top', [['top', 'Top of the board', 'bigboard', '/big-board'], ['depth', 'Class depth', 'bigboard-depth', '/big-board/class-depth'], ['split', 'Expert splits', 'bigboard-split', '/big-board/expert-splits'], ['full', 'Full board', 'bigboard-full', '/big-board/full']]],
+  ['dr-order', 'top', [['mock', 'Mock draft', 'mock', '/mock-draft'], ['picks', 'Pick owners and trades', 'mock-picks', '/mock-draft/pick-owners']]],
+  ['dr-pay', 'top', [['scale', 'Pay scale', 'rookie-pay', '/rookie-pay'], ['save', 'What a pick saves', 'rookie-pay-save', '/rookie-pay/savings'], ['rules', 'How rookie deals work', 'rookie-pay-rules', '/rookie-pay/rules']]]];
+const SUBOF = {};
+SUBS.forEach(([box, , pages], g) => pages.forEach(([page, label, k, path], n) => {
+  SUBOF[k] = { g, box, page, parent: pages[0][2] };
+  if (n) { ROUTES.push([k, path]); PTITLE[k] = label + ' · ' + (PTITLE[pages[0][2]] || 'PlainStats'); }
+}));
+// Team pages: /team/kc is the overview, /team/kc/<page> the rest (key 'team-KC/<page>').
+const TEAMSUBS = [['', 'Overview'], ['lineup', 'Lineup'], ['stats', 'Team stats'], ['depth-chart', 'Depth chart'], ['cap', 'Salary cap'], ['spending', 'Spending'], ['playing-well', 'Playing well'], ['news', 'News'], ['roster', 'Roster']];
+let teamSub = '';
 const OFTAB = { ratings: 'top', onfield: 'top', 'ratings-roles': 'roles', 'ratings-pay': 'pay', 'ratings-rank': 'rank', 'ratings-traits': 'traits', stats: 'stats' }, OFKEY = Object.fromEntries(Object.entries(OFTAB).filter(([k]) => k !== 'onfield').map(([k, t]) => [t, k]));
 const KEY2PATH = Object.fromEntries(ROUTES), PATH2KEY = Object.fromEntries(ROUTES.map(([k, p]) => [p, k]));
 function pathOf(k) {
@@ -3552,7 +3589,7 @@ function keyOfPath(p) {
   p = (p || '/').replace(/\/+$/, '') || '/';
   if (PATH2KEY[p]) return PATH2KEY[p];
   let m;
-  if ((m = p.match(/^\/team\/([a-z]{2,3})$/i))) return 'team-' + m[1].toUpperCase();
+  if ((m = p.match(/^\/team\/([a-z]{2,3})(?:\/([a-z-]+))?$/i))) return 'team-' + m[1].toUpperCase() + (m[2] && TEAMSUBS.some(x => x[0] === m[2].toLowerCase()) ? '/' + m[2].toLowerCase() : '');
   if ((m = p.match(/^\/player\/([a-z0-9-]+)$/i))) return 'p-' + m[1];
   if ((m = p.match(/^\/prospect\/([a-z0-9-]+)$/i))) return 'd-' + m[1];
   if ((m = p.match(/^\/game\/([a-z0-9_-]+)$/i))) return 'g-' + m[1];
@@ -3574,13 +3611,14 @@ function route() {
   if (h === 'privacy' || h === 'terms') { location.replace('/' + h); return; }
   if (/^g-/.test(h)) { gm.pendGame = h.slice(2); h = 'scores'; LASTV = h; }
   else if (/^[pd]-/.test(h)) { PEND = h; h = LASTV; } else { LASTV = h; if (sheet.open) sheet.close(); }
+  const h0 = h; if (SUBOF[h]) h = SUBOF[h].parent;   // a sub-page runs its tab's route, then setSubs(h0) shows the one panel
   let v = h;
   if (h === 'news' || h.startsWith('news-')) { const nk = { contracts: 'Contracts', injuries: 'Injuries', games: 'Games', coaching: 'Coaching', league: 'League' }[h.slice(5)] || 'All'; st.newsTopic = nk; st.newsLimit = 20; if (D) renderNews(); v = 'news'; }
   if (h === 'cap' || h === 'teams') { st.tView = h === 'cap' ? 'cap' : 'ratings'; v = 'teams'; if (D) renderTeamsView(); }
   if (h === 'freeagency' || h === 'fa-tags') { v = 'freeagency'; st.fa.tab = h === 'fa-tags' ? 'tags' : 'class'; }
   if (h === 'about') v = 'about';
   if (h === 'search') { v = 'home'; setTimeout(() => window.openSearch && openSearch(), 30); }
-  if (h.startsWith('team-')) { const id = h.slice(5).toUpperCase(); if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
+  if (h.startsWith('team-')) { const [tid, ts] = h.slice(5).split('/'), id = tid.toUpperCase(); teamSub = ts || ''; if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
   if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
   if (['trade', 'compare', 'builder', 'build', 'cut', 'decode', 'decoder', 'offseason'].includes(h)) { st.tool = h === 'builder' ? 'build' : ['cut', 'decode', 'decoder', 'offseason'].includes(h) ? 'build' : h; v = 'tools'; }
   if (['ratings-teams', 'power', 'lineups', 'depth'].includes(h)) v = 'teams';
@@ -3596,8 +3634,8 @@ function route() {
   const navv = v === 'team' ? 'teams' : v;
   const ng = NAVG[v] || v;
   $$('[data-nav]').forEach(a => a.dataset.nav === ng ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + pathOf(h); }
-  document.title = v === 'home' ? 'PlainStats: NFL contracts, salary cap and player stats' : v !== 'team' && PTITLE[h] ? PTITLE[h] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
+  if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + pathOf(h0); }
+  document.title = v === 'home' ? 'PlainStats: NFL contracts, salary cap and player stats' : v !== 'team' && PTITLE[h0] ? PTITLE[h0] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
   if (D) {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
@@ -3609,9 +3647,35 @@ function route() {
     if (v === 'onfield') renderOFTab();
     if (v === 'games') renderGames();
   }
+  setSubs(h0);
   hideTip();
   if (PEND) setTimeout(openPending, 0);
 }
+const SUBCUR = {};
+function setSubs(k) {
+  const s = SUBOF[k];
+  SUBS.forEach(([box, , pages], g) => { SUBCUR[box] = s && s.g === g ? s.page : pages[0][0]; applySub(box); });
+  checkBig();
+}
+const centerOn = (bar, el) => { if (bar && el) bar.scrollLeft = Math.max(0, el.offsetLeft - (bar.clientWidth - el.offsetWidth) / 2); };
+function subBar(items, cur) {   // items: [page, label, href]
+  return items.map(([p, l, href]) => `<a href="${href}"${p === cur ? ' aria-current="page"' : ''}>${esc(l)}</a>`).join('');
+}
+function applySub(box) {   // show the current page's panels in one box (also run after a box's panels are re-rendered)
+  const grp = SUBS.find(x => x[0] === box), el = document.getElementById(box); if (!grp || !el) return;
+  const cur = SUBCUR[box] || grp[2][0][0];
+  el.querySelectorAll('[data-sp]').forEach(x => (x.hidden = !x.dataset.sp.split(' ').includes(cur)));
+  let bar = el.querySelector(':scope > .subbar');
+  if (!bar) { bar = document.createElement('nav'); bar.className = 'subbar'; bar.setAttribute('aria-label', 'Pages in this section'); const head = grp[1] === 'head' && el.querySelector(':scope > .sechead'); if (head) head.after(bar); else el.prepend(bar); }
+  bar.innerHTML = subBar(grp[2].map(([p, l, k]) => [p, l, pathOf(k)]), cur);
+  if (!el.closest('[hidden]')) centerOn(bar, bar.querySelector('[aria-current]'));
+}
+/* Big charts are drawn at their box's real size; when a box changes width (a page opens, the window turns) they are drawn again. */
+const BIGCH = [];
+function checkBig() {
+  BIGCH.forEach(([sel, draw]) => { const el = $(sel); if (el && el.dataset.w && !el.closest('[hidden]') && +el.dataset.w !== chartSize(el)[0]) draw(); });
+}
+addEventListener('resize', () => { clearTimeout(checkBig.t); checkBig.t = setTimeout(checkBig, 150); });
 window.addEventListener('hashchange', () => { if (PATHMODE) { const k = location.hash.slice(1); if (!k) return; setURL(k, true); } if (route.at === location.href) return; route(); scrollTo(0, 0); });
 window.addEventListener('popstate', () => { if (route.at !== location.href) route(); });   // back and forward (hashchange also fires for real #links; route.at stops a second run)
 const go = h => {
@@ -3793,21 +3857,22 @@ function renderTeam(id) {
       <div style="display:flex;gap:14px;align-items:center">${badge(id, true)}<div><span class="eyebrow">${esc(t.div)}${SD ? ` · team rating ${t.rt.ovr}, ${ord(t.rk.ovr)} of 32` : ' · 2026 cap'}</span><h1 class="title" id="h-team">${esc(t.city)} ${esc(t.name)}</h1></div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ghost" data-card="team-${id}" aria-label="Share the ${esc(t.name)} as an image">Share</button><button type="button" class="btn ${favTeam === id ? '' : 'ghost'}" id="fav-btn" aria-pressed="${favTeam === id}">${favTeam === id ? '★ Your team' : '☆ Make this my team'}</button></div>
     </div>
-    <div class="kpis">
+    <nav class="subbar" id="tp-bar" aria-label="Pages for this team"></nav>
+    <div class="kpis" data-sp="overview">
       <div class="kpi"><span class="k">Cap room</span><span class="v good num">${mon(t.space)}</span><span class="s">${ord(t.r_space)} most in the NFL</span></div>
       <div class="kpi"><span class="k">Dead money</span><span class="v ${t.r_dead <= 8 ? 'bad' : ''} num">${mon(t.dead)}</span><span class="s">${ord(t.r_dead)} most · ${pct(t.dead / CAP)} of the cap</span></div>
       <div class="kpi"><span class="k">Spent on roster</span><span class="v num">${mon(t.active)}</span><span class="s">${t.roster} players under contract</span></div>
       ${top ? `<button class="kpi" type="button" data-p="${top.i}" style="border:0;text-align:left;cursor:pointer;font:inherit"><span class="k">Biggest cap hit</span><span class="v num">${mon(top.cap)}</span><span class="s">${esc(top.name)}, ${esc(posTag(top.pos))}</span></button>` : ''}
     </div>
     ${teamFieldHTML(t)}
-    <div class="panel" id="tp-cap">
+    <div class="panel" id="tp-cap" data-sp="cap">
       <div class="sechead"><div><span class="eyebrow">Top six 2026 cap hits</span><h2 class="sec">Core contracts</h2></div>
         <div style="display:flex;gap:12px;align-items:center" data-tip="hh|${id}"><span class="eyebrow">Cap health</span><span class="score ${t.health >= 65 ? 'good' : t.health < 35 ? 'bad' : ''}" style="font-size:2rem">${t.health}</span><span class="note">${ord(t.r_health)} of 32</span></div></div>
       <div class="fcs row">${[...roster].sort((a, b) => (b.cap || 0) - (a.cap || 0)).slice(0, 6).map(faceCard).join('')}</div>
     </div>
     ${SD ? (() => { const rated = roster.filter(p => p.play != null).sort((a, b) => b.play - a.play); const avg = rated.length ? Math.round(rated.reduce((s, p) => s + p.play, 0) / rated.length) : null; const bargains = rated.filter(p => p.vlab === 'Bargain').length, over = rated.filter(p => p.vlab === 'Overpaid so far').length;
-      return `<div class="panel"><div class="sechead"><div><span class="eyebrow">2026 stats through Week ${THRU} · best play ratings</span><h2 class="sec">Who is playing well</h2></div><span class="note">${rated.length} rated players · average ${avg ?? '—'} · <span class="vl good">${bargains} bargains</span> · <span class="vl bad">${over} overpaid so far</span></span></div><div class="fcs row">${rated.slice(0, 8).map(fieldCard).join('')}</div></div>`; })() : ''}
-    <div class="panel">
+      return `<div class="panel" data-sp="playing-well"><div class="sechead"><div><span class="eyebrow">2026 stats through Week ${THRU} · best play ratings</span><h2 class="sec">Who is playing well</h2></div><span class="note">${rated.length} rated players · average ${avg ?? '—'} · <span class="vl good">${bargains} bargains</span> · <span class="vl bad">${over} overpaid so far</span></span></div><div class="fcs row">${rated.slice(0, 8).map(fieldCard).join('')}</div></div>`; })() : ''}
+    <div class="panel" data-sp="cap">
       <div class="sechead"><div><span class="eyebrow">Total budget ${mon(t.eff)} with carryover</span><h2 class="sec">How the cap is split</h2></div></div>
       ${capStack(t)}
       <ul class="legend">
@@ -3818,7 +3883,7 @@ function renderTeam(id) {
         <li><i class="swatch hatch"></i><span>Cap room<b>${mon(t.space)}</b></span></li>
       </ul>
     </div>
-    <div class="grid2">
+    <div class="grid2" data-sp="spending">
       <div class="panel">
         <div><span class="eyebrow">2026 cap hits by position</span><h2 class="sec">Spending vs the league</h2></div>
         <div class="gbars">${gHTML}</div>
@@ -3831,8 +3896,8 @@ function renderTeam(id) {
         ${t.topDead && t.topDead.length ? `<div><span class="eyebrow">Biggest dead money</span><div class="rows">${t.topDead.map(([n, v]) => `<div><span>${esc(n)}</span><b>${mon(v)}</b></div>`).join('')}</div></div>` : ''}
       </div>
     </div>
-    ${team_moves.length ? `<div class="panel"><div class="sechead"><h2 class="sec">${esc(t.name)} news</h2>${team_moves.length > 5 ? `<button type="button" class="btn ghost" data-newsteam="${id}">All ${team_moves.length} stories</button>` : ''}</div><div class="feed">${team_moves.slice(0, 5).map(moveHTML).join('')}</div></div>` : ''}
-    <div class="panel" id="tp-roster">
+    ${team_moves.length ? `<div class="panel" data-sp="news"><div class="sechead"><h2 class="sec">${esc(t.name)} news</h2>${team_moves.length > 5 ? `<button type="button" class="btn ghost" data-newsteam="${id}">All ${team_moves.length} stories</button>` : ''}</div><div class="feed">${team_moves.slice(0, 5).map(moveHTML).join('')}</div></div>` : ''}
+    <div class="panel" id="tp-roster" data-sp="roster">
       <div class="sechead"><div><span class="eyebrow">${roster.length} players · tap one for the full breakdown</span><h2 class="sec">Roster contracts</h2></div></div>
       ${tfBox('roster-t', 'Filter players by name, position or role')}
       <div class="tw"><table class="t" id="roster-t"><thead><tr>${th('name', 'Player')}${th('pos', 'Pos')}${th('role', 'Role')}${th('play', 'Play')}${th('age', 'Age')}${th('cap', '2026 cap hit')}${th('apy', 'Per year')}${th('gtdp', 'Guaranteed')}${th('dpost', 'Dead if cut')}${th('end', 'Free agent')}</tr></thead>
@@ -3845,7 +3910,11 @@ function renderTeam(id) {
   $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
   $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos', 'role'].includes(k) ? 1 : -1; } renderTeam(id); });
   wireTeamField(t);
-  document.title = `${t.name} · PlainStats`;
+  const tabs = TEAMSUBS.filter(([k]) => (k !== 'news' || team_moves.length) && (k !== 'playing-well' || SD));
+  const cur = tabs.some(x => x[0] === teamSub) ? teamSub : '';
+  $$('#team-body [data-sp]').forEach(x => (x.hidden = !x.dataset.sp.split(' ').includes(cur || 'overview')));
+  const bar = $('#tp-bar'); bar.innerHTML = subBar(tabs.map(([k, l]) => [k, l, pathOf('team-' + id + (k ? '/' + k : ''))]), cur); centerOn(bar, bar.querySelector('[aria-current]'));
+  document.title = `${t.name}${cur ? ' ' + TEAMSUBS.find(x => x[0] === cur)[1].toLowerCase() : ''} · PlainStats`;
 }
 function gtdBar(p) {
   if (!p.total) return '';
@@ -4207,7 +4276,7 @@ document.addEventListener('click', e => {
   const tb = e.target.closest('[data-team]'); if (tb && !tb.closest('#sheet')) { e.preventDefault(); go('team-' + tb.dataset.team); return; }
   const pb = e.target.closest('[data-p]'); if (pb && !pb.closest('#sheet-body .controls')) { openPlayer(+pb.dataset.p); return; }
   const gb = e.target.closest('[data-group]');
-  if (gb) { st.c.group = gb.dataset.group; st.c.team = gb.dataset.teamFilter || 'all'; st.c.q = ''; $('#c-q').value = ''; $('#c-team').value = st.c.team; $('#c-group').value = st.c.group; st.c.sort = 'apy'; st.c.dir = -1; renderTable(); go('contracts'); setTimeout(() => $('#c-table').scrollIntoView({ block: 'start' }), 30); return; }
+  if (gb) { st.c.group = gb.dataset.group; st.c.team = gb.dataset.teamFilter || 'all'; st.c.q = ''; $('#c-q').value = ''; $('#c-team').value = st.c.team; $('#c-group').value = st.c.group; st.c.sort = 'apy'; st.c.dir = -1; renderTable(); go('contracts-all'); return; }
   const tl = e.target.closest('[data-tool]'); if (tl) { st.tool = tl.dataset.tool; }
 });
 function tipFor(el) {
@@ -4492,13 +4561,14 @@ function renderPowerRank() {
     <a class="kpi" href="${pathOf('team-' + up.id)}"><span class="k">Most underrated by record</span><span class="v good num">${ord(up.pw.rank)}</span><span class="s">${esc(up.city)} ${esc(up.name)}, ${awRec(up.sr)}</span></a>`;
   $('#pw-asof').textContent = `Through Week ${THRU} · updated ${new Date((SEASON.asOf || D.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   // scatter: results (y) against roster and efficiency (x)
-  const W2 = 560, H = 400, l = 44, r = 18, tp = 18, b = 40, x = v => l + v * (W2 - l - r), y = v => tp + (1 - v) * (H - tp - b);
+  const [W2, H] = chartSize($('#pw-scatter')), l = 44, r = 18, tp = 18, b = 40, x = v => l + v * (W2 - l - r), y = v => tp + (1 - v) * (H - tp - b);
+  $('#pw-scatter').dataset.w = W2;
   let g = [0, .25, .5, .75, 1].map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${tp}" y2="${H - b}"></line><line class="gl" x1="${l}" x2="${W2 - r}" y1="${y(v)}" y2="${y(v)}"></line><text x="${x(v)}" y="${H - b + 16}" text-anchor="middle">${Math.round(v * 100)}</text><text x="${l - 8}" y="${y(v) + 3}" text-anchor="end">${Math.round(v * 100)}</text>`).join('');
   g += `<line class="mid" x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}"></line>`;
   g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Winning with talent</text><text class="q" x="${l + 6}" y="${tp + 14}">Beating the odds</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Under-delivering</text><text class="q" x="${l + 6}" y="${H - b - 8}">Struggling</text>`;
   g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Roster and efficiency →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Results →</text>`;
   g += all.map(t => `<g data-team="${t.id}" transform="translate(${(x(t.pw.ros) - 11).toFixed(1)} ${(y(t.pw.ts) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: ranked ${t.pw.rank}">${crest(t.id, 22)}</g>`).join('');
-  $('#pw-scatter').innerHTML = `<svg class="pvps" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Results against roster strength for each team">${g}</svg>`;
+  $('#pw-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Results against roster strength for each team">${g}</svg>`;
   // gaps
   const gapRow = t => `<button type="button" class="haw" data-team="${t.id}" style="grid-template-columns:minmax(0,1fr) auto"><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="o">Record ${ord(t.pw.rk_ts)} · roster ${ord(t.pw.rk_ros)}</span></button>`;
   const rise = [...all].sort((a, b) => b.pw.gap - a.pw.gap).slice(0, 4), fall = [...all].sort((a, b) => a.pw.gap - b.pw.gap).slice(0, 4);
@@ -4702,7 +4772,7 @@ function wireFA() {
   $('#fa-tab').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.ft === 'tags' ? 'fa-tags' : 'freeagency'); };
   $('#fa-years').onclick = e => { const b = e.target.closest('[data-fay]'); if (b) { f.year = +b.dataset.fay; f.limit = 60; renderFAClass(); } };
   $('#fa-pos').onclick = e => { const b = e.target.closest('[data-fp]'); if (b) { f.pos = b.dataset.fp; f.limit = 60; renderFAClass(); } };
-  $('#fa-posbars').onclick = e => { const b = e.target.closest('[data-fapos]'); if (b) { f.pos = f.pos === b.dataset.fapos ? 'all' : b.dataset.fapos; f.limit = 60; renderFAClass(); $('#fa-table').scrollIntoView({ block: 'nearest' }); } };
+  $('#fa-posbars').onclick = e => { const b = e.target.closest('[data-fapos]'); if (b) { f.pos = b.dataset.fapos; f.limit = 60; renderFAClass(); go('fa-all'); } };
   $('#fa-min').onchange = e => { f.min = +e.target.value; f.limit = 60; renderFAClass(); };
   $('#fa-team').onchange = e => { f.team = e.target.value; f.limit = 60; renderFATable(); };
   $('#fa-tbox').outerHTML = tfBox('fa-table', 'Filter by player, team or position');
@@ -5196,7 +5266,7 @@ function wireDraft() {
   $('#dr-tbox').outerHTML = tfBox('dr-table', 'Filter by name, school, position or role');
   $('#dr-obox').outerHTML = tfBox('dr-otable', 'Filter by team, prospect or position');
   $('#v-draft').addEventListener('click', e => {
-    const pos = e.target.closest('[data-dpos]'); if (pos) { dr.pos = dr.pos === pos.dataset.dpos && pos.dataset.dpos !== 'all' ? 'all' : pos.dataset.dpos; dr.limit = 12; renderDraftBoard(); if (pos.classList.contains('gb')) $('#dr-cards').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+    const pos = e.target.closest('[data-dpos]'); if (pos) { dr.pos = !pos.classList.contains('gb') && dr.pos === pos.dataset.dpos && pos.dataset.dpos !== 'all' ? 'all' : pos.dataset.dpos; dr.limit = 12; renderDraftBoard(); if (pos.classList.contains('gb')) go('bigboard'); return; }
     const t = e.target.closest('tr[data-team]'); if (t && !e.target.closest('[data-dp]')) { go('team-' + t.dataset.team); }
   });
   document.addEventListener('click', e => { const b = e.target.closest('[data-dp]'); if (b && DX) { e.stopPropagation(); openProspect(+b.dataset.dp); } }, true);
@@ -5401,9 +5471,8 @@ function renderOFTab() {
   $('#of-lede').textContent = { top: 'The best players at each position right now, by play rating (40 to 99, from this season\'s stats).', roles: 'How teams use each player. Tap a role to see those players ranked.', pay: 'What each player is paid set next to how he is playing.', rank: 'Every player at the position, ranked by play rating. Filter by role, trait or team.', traits: 'Skills a player ranks near the top of his position in.' }[of.tab] || '';
   const tb = $('#of-tab [aria-pressed="true"]'); if (tb && tb.scrollIntoView) { const bar = $('#of-tab'); bar.scrollLeft = Math.max(0, tb.offsetLeft - (bar.clientWidth - tb.offsetWidth) / 2); }
   if (of.tab === 'stats') loadHS();
-  if (of.tab === 'pay' && ofQs && +$('#of-scatter').dataset.w !== chartSize($('#of-scatter'))[0]) renderOFScatter(ofQs);
 }
-addEventListener('resize', () => { clearTimeout(renderOFTab.rt); renderOFTab.rt = setTimeout(() => { const el = $('#of-scatter'); if (ofQs && el && !el.closest('[hidden]') && +el.dataset.w !== chartSize(el)[0]) renderOFScatter(ofQs); }, 150); });
+BIGCH.push(['#of-scatter', () => ofQs && renderOFScatter(ofQs)], ['#t-scatter', () => renderPower()], ['#pw-scatter', () => renderPowerRank()], ['#tr-scatter', () => renderTiers()]);
 function loadHS() {   // one season file at a time (about 130 KB), loaded when that season is shown
   const fail = () => { $('#hs-leaders').innerHTML = '<div class="empty"><p>Season stats did not load.</p><button type="button" class="btn ghost more" id="hs-retry">Try again</button></div>'; $('#hs-retry').onclick = loadHS; };
   if (!HIST || !SEAROWS[hsx.season ?? (HIST && HIST.current)]) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>';

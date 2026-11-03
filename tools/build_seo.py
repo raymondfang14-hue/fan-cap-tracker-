@@ -834,6 +834,41 @@ APP_URLS = [('/scores', '0.9', 'daily'), ('/standings', '0.9', 'weekly'), ('/pro
             ('/rookie-contracts', '0.6', 'weekly'), ('/rookie-pay', '0.5', 'monthly'), ('/draft-guide', '0.4', 'monthly'), ('/cap-lab', '0.5', 'weekly'),
             ('/roster-builder', '0.6', 'weekly'), ('/trade-checker', '0.5', 'weekly'), ('/compare', '0.5', 'weekly'), ('/cap-101', '0.6', 'monthly'),
             ('/about', '0.3', 'monthly')]
+# One page per panel inside a section tab (SUBS in src.html)
+APP_URLS += [(u, '0.5', 'weekly') for u in [
+    '/team-ratings/best',
+    '/team-ratings/traits',
+    '/team-ratings/roster-ratings',
+    '/team-tiers/offense-vs-defense',
+    '/team-tiers/all-teams',
+    '/awards/how-it-works',
+    '/power-rankings/results-vs-roster',
+    '/power-rankings/risers-and-fallers',
+    '/power-rankings/how-it-works',
+    '/standings/playoff-seeds',
+    '/projections/playoff-odds',
+    '/projections/all-teams',
+    '/projections/how-it-works',
+    '/contracts/position-market',
+    '/contracts/all-players',
+    '/best-worst-contracts/teams',
+    '/best-worst-contracts/all',
+    '/rookie-contracts/extension-watch',
+    '/rookie-contracts/all',
+    '/cap-lab/spending-heatmap',
+    '/cap-lab/cap-health',
+    '/cap-lab/doppelganger',
+    '/free-agency/by-position',
+    '/free-agency/by-team',
+    '/free-agency/all',
+    '/free-agency/franchise-tags',
+    '/free-agency/news',
+    '/big-board/class-depth',
+    '/big-board/expert-splits',
+    '/big-board/full',
+    '/mock-draft/pick-owners',
+    '/rookie-pay/savings',
+    '/rookie-pay/rules']]
 
 
 def build_sitemap():
