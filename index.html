@@ -875,6 +875,9 @@ a.kpi:hover,button.kpi:hover{background:var(--surface);box-shadow:var(--shadow);
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .seg{border:0;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px;overflow-x:auto;scrollbar-width:none}
 .seg::-webkit-scrollbar{display:none}
+.pvps.big text{font-size:12px}.pvps.big .lb{font-size:13px}.pvps.big .ax{font-size:12.5px}.pvps.big .q{font-size:12px}
+#of-scatter{min-width:0}
+#of-scatter .lb{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 .seg button{border-radius:999px;font:500 .84rem/1 var(--body);text-transform:none;letter-spacing:0;padding:8px 14px;white-space:nowrap;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .btn{border-radius:999px;font:500 .95rem/1 var(--body);text-transform:none;letter-spacing:0;padding:11px 20px}
@@ -1725,7 +1728,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
   <div class="panel" data-oft="roles">
       <div><span class="eyebrow">How teams use them · tap a role to see those players ranked</span><h2 class="sec" id="of-roles-title">Roles</h2></div>
       <div class="rls" id="of-roles"></div>
-      <p class="note">Each player gets one role from how much he plays and what he is asked to do. The number is how many players have that role; "avg" is their average play rating.</p>
+      <p class="note">Each player gets one or two roles from how much he plays and what he is asked to do, the headline role first. The number is how many players have that role; "avg" is their average play rating.</p>
   </div>
   <div class="panel" data-oft="pay">
       <div><span class="eyebrow">Qualified players · tap a dot</span><h2 class="sec">Pay vs. play</h2></div>
@@ -2589,11 +2592,13 @@ const ratePc = (p, k) => {
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
 // Roles: every rule that fits a player is kept. A rule in a group ('u' etc.) only counts if no earlier rule in the same group matched;
 // the fallback applies only when nothing else matched. Order = priority, so roles[0] is the headline role.
+// A player keeps at most MAX_ROLES roles: the first ones in priority order.
+const MAX_ROLES = 2;
 const mkRoles = (rules, fb) => p => {
   const out = [], used = {};
   rules.forEach(([name, grp, fn]) => { if (grp && used[grp]) return; if (fn(p)) { out.push(name); if (grp) used[grp] = 1; } });
   if (!out.length && fb) out.push(typeof fb === 'function' ? fb(p) : fb);
-  return out;
+  return out.slice(0, MAX_ROLES);
 };
 const Qd = f => p => !!p.fq && f(p);
 const ROLES = {
@@ -2614,7 +2619,7 @@ const ROLES = {
     ['Power runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'yco') >= .8)],
     ['Elusive back', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'btt') >= .8)],
     ['Efficient runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'repa') >= .8)],
-    ['Goal-line finisher', null, Qd(p => (sm(p).rsh || 0) >= .2 && (sm(p).rtd || 0) / gp(p) >= .5)],
+    ['Goal-line finisher', null, Qd(p => (sm(p).rsh || 0) >= .2 && (sm(p).rtd || 0) / gp(p) >= .6)],
     ['Third-down back', null, Qd(p => (sm(p).tgt || 0) / gp(p) >= 2 && (sm(p).rsh || 0) < .3)],
     ['Lead back', 'u', p => (sm(p).rsh || 0) >= .45], ['Committee back', 'u', p => (sm(p).rsh || 0) >= .2],
     ['Change of pace', 'u', p => (p.st.opg || 0) >= .1], ['Depth back', 'u', () => true]]),
@@ -2625,9 +2630,9 @@ const ROLES = {
     ['Touchdown maker', null, Qd(p => pcv(p, 'rtdg') >= .88 && (sm(p).rectd || 0) >= 2)],
     ['Sure hands', null, Qd(p => pcv(p, 'cat') >= .8 && pcv(p, 'drpp') >= .7)],
     ['Open-field runner', null, Qd(p => pcv(p, 'btt') >= .85 && (sm(p).yac || 0) >= 5)],
-    ['Efficiency target', null, Qd(p => pcv(p, 'xepa') >= .85)],
+    ['Efficiency target', null, Qd(p => pcv(p, 'xepa') >= .9)],
     ['YAC weapon', null, Qd(p => (sm(p).radot || 0) <= 7 && (sm(p).yac || 0) >= 5)],
-    ['Chain mover', null, Qd(p => (sm(p).radot || 0) <= 9.5)],
+    ['Chain mover', null, Qd(p => (sm(p).radot || 0) <= 8.5)],
     ['Special teams ace', null, p => stAce(p)],
     ['Every-down starter', 'u', Qd(p => (p.st.opg || 0) >= .6)],
     ['Rotational receiver', 'u', p => p.fq || (p.st.opg || 0) >= .4],
@@ -2635,7 +2640,7 @@ const ROLES = {
   TE: mkRoles([
     ['Receiving weapon', null, Qd(p => (sm(p).tsh || 0) >= .17)],
     ['Seam stretcher', null, Qd(p => (sm(p).radot || 0) >= 9.5 && (sm(p).tgt || 0) / gp(p) >= 2.5)],
-    ['Red-zone weapon', null, Qd(p => (sm(p).rectd || 0) >= 2)],
+    ['Red-zone weapon', null, Qd(p => (sm(p).rectd || 0) / gp(p) >= .35)],
     ['After-the-catch tight end', null, Qd(p => (sm(p).yac || 0) >= 6 && (sm(p).rec || 0) >= 6)],
     ['Safety valve', null, Qd(p => (sm(p).tgt || 0) / gp(p) >= 2.5 && (sm(p).cat || 0) >= .75 && (sm(p).radot || 0) <= 6.5)],
     ['Special teams ace', null, p => stAce(p)],
@@ -2656,7 +2661,7 @@ const ROLES = {
     ['Three-down edge', 'e', Qd(p => pcv(p, 'prsr') >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6)],
     ['Every-down rusher', 'e', Qd(p => (p.st.dpg || 0) >= .7 && pcv(p, 'prsr') >= .5)],
     ['Pass-rush specialist', 'e', Qd(p => pcv(p, 'prsr') >= .6)],
-    ['Sack artist', null, Qd(p => pcv(p, 'sckg') >= .85)],
+    ['Sack artist', null, Qd(p => pcv(p, 'sckg') >= .9)],
     ['Backfield disruptor', null, Qd(p => pcv(p, 'tflg') >= .85)],
     ['Turnover creator', null, Qd(p => pcv(p, 'tov') >= .85)],
     ['Edge setter', null, Qd(p => (p.st.dpg || 0) >= .6 && pcv(p, 'prsr') < .4)],
@@ -2664,8 +2669,8 @@ const ROLES = {
     ['Rotational rusher', 'u', p => p.fq || (p.st.dpg || 0) >= .3], ['Depth rusher', 'u', () => true]]),
   DT: mkRoles([
     ['Interior disruptor', null, Qd(p => pcv(p, 'prsr') >= .65)],
-    ['Sack-hunting tackle', null, Qd(p => pcv(p, 'sckg') >= .85)],
-    ['Backfield penetrator', null, Qd(p => pcv(p, 'tflg') >= .8)],
+    ['Sack-hunting tackle', null, Qd(p => pcv(p, 'sckg') >= .9)],
+    ['Backfield penetrator', null, Qd(p => pcv(p, 'tflg') >= .85)],
     ['Gap plugger', null, Qd(p => pcv(p, 'tkg') >= .75 && pcv(p, 'prsr') < .4)],
     ['Space eater', null, Qd(p => (p.st.dpg || 0) >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'prsr') < .4)],
     ['Special teams ace', null, p => stAce(p)],
@@ -2705,7 +2710,7 @@ const ROLES = {
   K: mkRoles([
     ['Big-leg kicker', null, p => (sm(p).lng || 0) >= 60 || (sm(p).fg50 || 0) >= 4],
     ['Long-range specialist', null, p => (sm(p).fg40a || 0) >= 4 && pcv(p, 'fg40') >= .8],
-    ['Mr. Automatic', null, p => (sm(p).fga || 0) >= 5 && (sm(p).fgp || 0) >= .9],
+    ['Mr. Automatic', null, p => (sm(p).fga || 0) >= 10 && (sm(p).fgp || 0) >= .9],
     ['Busy leg', null, p => (sm(p).fga || 0) / gp(p) >= 2]], 'Kicker'),
   P: mkRoles([
     ['Coffin-corner punter', null, Qd(p => pcv(p, 'pi20') >= .7)],
@@ -2928,11 +2933,20 @@ function renderOFTraits(tKeys, all) {
   const holders = all.filter(p => p.ot.some(o => o[0] === k)).sort((a, b) => { const ta = a.ot.find(o => o[0] === k)[1], tb = b.ot.find(o => o[0] === k)[1]; return TIER_ORDER[ta] - TIER_ORDER[tb] || (b.play || 0) - (a.play || 0); });
   $('#of-tcards').innerHTML = holders.slice(0, 12).map(p => { const t = p.ot.find(o => o[0] === k)[1]; return `<button type="button" class="tholder" data-p="${p.i}">${otChip([k, t])}${avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${esc(TB[p.team].name)} · ${OTRAITS[k][3] ? esc(MET[OTRAITS[k][3]][5]) + ' ' + fmtMet(p, OTRAITS[k][3]) : esc(p.role)}</small></span></button>`; }).join('');
 }
+// Big charts are drawn at the size of their box (1 SVG unit = 1 CSS pixel), so text stays readable at any width:
+// wide and as tall as the window allows on desktop, close to square on phones. chartSize() falls back to 720 wide while hidden.
+function chartSize(el) {
+  const w = Math.max(300, Math.round(el.clientWidth || 720));
+  return [w, Math.round(w < 600 ? Math.min(w * 1.05, innerHeight * .7) : Math.max(360, Math.min(w * .6, innerHeight - 240)))];
+}
+let ofQs = null;
 function renderOFScatter(qs) {
+  ofQs = qs;
   const pts = qs.filter(p => p.apy > 0);
   const el = $('#of-scatter');
   if (pts.length < 4) { el.innerHTML = '<p class="empty">Not enough qualified players yet.</p>'; return; }
-  const Wd = 480, H = 320, L = 46, R = 14, T = 14, B = 40;
+  const [Wd, H] = chartSize(el), big = Wd >= 600, L = big ? 52 : 44, R = 14, T = 14, B = big ? 46 : 40;
+  el.dataset.w = Wd;
   const xmax = Math.max(...pts.map(p => p.apy)) * 1.05;
   const X = v => L + (v / xmax) * (Wd - L - R), Y = v => T + (99 - v) / 59 * (H - T - B);
   const medPay = [...pts].map(p => p.apy).sort((a, b) => a - b)[Math.floor(pts.length / 2)];
@@ -2941,14 +2955,14 @@ function renderOFScatter(qs) {
   [40, 55, 70, 85, 99].forEach(v => { ticks += `<line x1="${L}" x2="${Wd - R}" y1="${Y(v)}" y2="${Y(v)}" class="gl"></line><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`; });
   const lab = new Set([...pts].sort((a, b) => b.val - a.val).slice(0, 3).concat([...pts].sort((a, b) => a.val - b.val).slice(0, 2), [...pts].sort((a, b) => b.play - a.play).slice(0, 1)));
   const last = n => n.replace(/,? (Jr|Sr|II|III|IV)\.?$/, '').split(' ').slice(-1)[0];
-  const dots = pts.map(p => `<circle cx="${X(p.apy).toFixed(1)}" cy="${Y(p.play).toFixed(1)}" r="5" class="dot ${vClass(p.vlab)}" data-p="${p.i}" data-tip="fp|${p.i}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${mon(p.apy)} a year, play rating ${p.play}"></circle>`).join('');
+  const dots = pts.map(p => `<circle cx="${X(p.apy).toFixed(1)}" cy="${Y(p.play).toFixed(1)}" r="${big ? 7 : 6}" class="dot ${vClass(p.vlab)}" data-p="${p.i}" data-tip="fp|${p.i}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${mon(p.apy)} a year, play rating ${p.play}"></circle>`).join('');
   const labels = [...lab].map(p => { const lft = X(p.apy) > Wd - 90; return `<text x="${(X(p.apy) + (lft ? -8 : 8)).toFixed(1)}" y="${(Y(p.play) + 4).toFixed(1)}" text-anchor="${lft ? 'end' : 'start'}" class="lb">${esc(last(p.name))}</text>`; }).join('');
-  el.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" class="pvps" role="img" aria-label="Pay versus play rating for qualified ${SG_NAME[of.g].toLowerCase()}s">
+  el.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" class="pvps${big ? ' big' : ''}" role="img" aria-label="Pay versus play rating for qualified ${SG_NAME[of.g].toLowerCase()}s">
     ${ticks}
     <line x1="${X(medPay)}" x2="${X(medPay)}" y1="${T}" y2="${H - B}" class="mid"></line><line x1="${L}" x2="${Wd - R}" y1="${Y(69.5)}" y2="${Y(69.5)}" class="mid"></line>
     <text x="${(L + X(medPay)) / 2}" y="${T + 12}" text-anchor="middle" class="q">Bargains</text><text x="${(X(medPay) + Wd - R) / 2}" y="${T + 12}" text-anchor="middle" class="q">Earning it</text>
     <text x="${(L + X(medPay)) / 2}" y="${H - B - 8}" text-anchor="middle" class="q">Cheap depth</text><text x="${(X(medPay) + Wd - R) / 2}" y="${H - B - 8}" text-anchor="middle" class="q">Overpaid so far</text>
-    ${labels}${dots}
+    ${dots}${labels}
     <text x="${(L + Wd - R) / 2}" y="${H - 4}" text-anchor="middle" class="ax">Pay per year</text>
     <text x="12" y="${(T + H - B) / 2}" text-anchor="middle" class="ax" transform="rotate(-90 12 ${(T + H - B) / 2})">Play rating</text>
   </svg>`;
@@ -5388,7 +5402,9 @@ function renderOFTab() {
   $('#of-lede').textContent = { top: 'The best players at each position right now, by play rating (40 to 99, from this season\'s stats).', roles: 'How teams use each player. Tap a role to see those players ranked.', pay: 'What each player is paid set next to how he is playing.', rank: 'Every player at the position, ranked by play rating. Filter by role, trait or team.', traits: 'Skills a player ranks near the top of his position in.' }[of.tab] || '';
   const tb = $('#of-tab [aria-pressed="true"]'); if (tb && tb.scrollIntoView) { const bar = $('#of-tab'); bar.scrollLeft = Math.max(0, tb.offsetLeft - (bar.clientWidth - tb.offsetWidth) / 2); }
   if (of.tab === 'stats') loadHS();
+  if (of.tab === 'pay' && ofQs && +$('#of-scatter').dataset.w !== chartSize($('#of-scatter'))[0]) renderOFScatter(ofQs);
 }
+addEventListener('resize', () => { clearTimeout(renderOFTab.rt); renderOFTab.rt = setTimeout(() => { const el = $('#of-scatter'); if (ofQs && el && !el.closest('[hidden]') && +el.dataset.w !== chartSize(el)[0]) renderOFScatter(ofQs); }, 150); });
 function loadHS() {   // one season file at a time (about 130 KB), loaded when that season is shown
   const fail = () => { $('#hs-leaders').innerHTML = '<div class="empty"><p>Season stats did not load.</p><button type="button" class="btn ghost more" id="hs-retry">Try again</button></div>'; $('#hs-retry').onclick = loadHS; };
   if (!HIST || !SEAROWS[hsx.season ?? (HIST && HIST.current)]) $('#hs-leaders').innerHTML = '<p class="empty">Loading season stats…</p>';
