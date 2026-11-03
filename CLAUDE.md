@@ -14,6 +14,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 ## Data rules
 - Never copy Over The Cap, Spotrac or other restricted sources. Contract figures come from `data/ledger.csv` (named report + URL), CBA calculations (`data/cba.json`, `data/rookie_scale.py`) or stay unverified.
 - A contract figure without a named report shows "Contract being verified". Do not guess numbers.
+- No Pro Football Reference or Next Gen Stats data, with one written exception: nflverse `snap_counts` (PFR's copy of the official gamebook snap counts; no free in-season alternative). Never use nflverse `pfr_advstats`; pass rush comes from box-score sacks and QB hits.
 - Free data only, current season (2026). Pipeline: `data/build_contracts.py` → `data/fix_ol.py` → `data/build_market.py`. Run Python with `python3 -I`.
 - The nflverse rebuilds run in GitHub Actions (`.github/workflows/nflverse-refresh.yml` → `tools/refresh.sh daily|gameday|weekly`). A new nflverse build step goes in `tools/refresh.sh`, not only in a scheduled-task prompt.
 - A hook checks that any edited `data/*.json` still parses.

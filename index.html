@@ -2131,11 +2131,11 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
-  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, pressure rate and sacks for pass rushers, passer rating allowed for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average; a corner who plays at least half his team\'s defensive snaps but is thrown at too rarely to have coverage stats is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
-  ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, No-fly zone and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, QB-hit rate and sacks for pass rushers, plays on the ball for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average. Every stat comes from free NFL box scores and play-by-play, so there are no charted stats such as pressures, drops, missed tackles or passer rating allowed. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, Ballhawk and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
-  ['Where the stats come from', 'Box scores, snap counts and advanced stats like pressures, drops and passer rating allowed come from nflverse, an open project built on NFL and Pro Football Reference data. They refresh with the daily update.'],
+  ['Where the stats come from', 'Box scores, play-by-play and EPA come from nflverse, an open project built on official NFL data. Snap counts also come through nflverse, which takes them from Pro Football Reference\'s copy of the NFL\'s official gamebooks. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
   ['Awards watch', 'PlainStats scores every qualified player and coach for MVP, Offensive and Defensive Player of the Year, the two Rookie awards, Comeback Player and Coach of the Year. A score blends his play rating, his production per game, how his team is doing and a few award-specific pieces. The scores turn into odds, which are the model\'s share of the race, not betting lines.'],
   ['Power rankings', 'All 32 teams ranked by a 0 to 100 power score: results 28%, scoring margin 28%, roster rating 24% and efficiency 20%. A team ranked above its record is playing better than it is winning; one ranked below it has been winning more than its roster or play suggests. Projected wins assume the current score holds.'],
@@ -2373,7 +2373,6 @@ const W = () => Math.max(1, THRU);
 const f1 = v => v.toFixed(1), f2 = v => v.toFixed(2), pc1 = v => (v * 100).toFixed(1) + '%', pc0 = v => Math.round(v * 100) + '%';
 const i0 = v => Math.round(v).toLocaleString(), h1 = v => (Math.round(v * 2) / 2).toString();
 const nz = v => (Number.isFinite(v) ? v : null);
-const covOK = p => (sm(p).dtg || 0) >= 1.2 * W();
 const TOV_FF = 1.2;   // a forced fumble is worth slightly more than an interception in the takeaways stat
 const tch = p => (sm(p).car || 0) + (sm(p).rec || 0);
 // key: [label, sub, value(p), format, lowerIsBetter, short]
@@ -2395,9 +2394,7 @@ const MET = {
   rush: ['Rush yards', '', p => sm(p).ryd || 0, i0, 0, 'Rush yds'],
   scrg: ['Scrimmage yards a game', 'rushing plus receiving', p => (sm(p).scr || 0) / gp(p), i0, 0, 'Scrim/G'],
   ypc: ['Yards per carry', '', p => sm(p).car ? sm(p).ypc : null, f1, 0, 'YPC'],
-  yco: ['Yards after contact', 'per carry, after the first hit', p => sm(p).car ? (sm(p).yco || 0) : null, f1, 0, 'YCO'],
   repa: ['Rush EPA', 'expected points added per carry', p => sm(p).car ? (sm(p).repa || 0) : null, f2, 0, 'EPA/car'],
-  btt: ['Broken tackles', 'per 10 touches', p => tch(p) ? ((sm(p).rbt || 0) + (sm(p).rbt2 || 0)) / tch(p) * 10 : null, f1, 0, 'BT/10'],
   r20r: ['Long runs', '20+ yard runs per 100 carries', p => sm(p).car ? (sm(p).r20 || 0) / sm(p).car * 100 : null, f1, 0, '20+%'],
   recg: ['Receiving yards a game', '', p => (sm(p).ryds || 0) / gp(p), f1, 0, 'Rec/G'],
   tdg: ['Touchdowns a game', 'rushing plus receiving', p => ((sm(p).rtd || 0) + (sm(p).rectd || 0)) / gp(p), f2, 0, 'TD/G'],
@@ -2415,7 +2412,6 @@ const MET = {
   yac: ['Yards after catch', 'per catch', p => sm(p).rec ? (sm(p).yac || 0) : null, f1, 0, 'YAC'],
   rtdg: ['Receiving TDs a game', '', p => (sm(p).rectd || 0) / gp(p), f2, 0, 'TD/G'],
   rtdt: ['Receiving TDs', '', p => sm(p).rectd || 0, i0, 0, 'TD'],
-  drpp: ['Drop rate', 'per target, lower is better', p => sm(p).tgt ? (sm(p).drpp || 0) : null, pc1, 1, 'Drop%'],
   radot: ['Target depth', 'air yards per target', p => sm(p).tgt ? (sm(p).radot || 0) : null, f1, 0, 'aDOT'],
   fdpt: ['First downs', 'share of targets that move the chains', p => sm(p).tgt ? (sm(p).rfd1 || 0) / sm(p).tgt : null, pc0, 0, '1D/Tgt'],
   big: ['Big plays', '20+ yard catches a game', p => (sm(p).x20 || 0) / gp(p), f2, 0, '20+/G'],
@@ -2423,25 +2419,17 @@ const MET = {
   osh: ['Snap share', 'of team offensive snaps', p => p.st ? (p.st.osh || 0) : null, pc0, 0, 'Snap%'],
   penr: ['Clean play', 'penalties per 100 snaps, lower is better', p => p.st && p.st.osn ? (sm(p).pen || 0) / p.st.osn * 100 : null, f2, 1, 'Pen/100'],
   tskp: ['Team pass protection', 'team sack rate, lower is better', p => TEAMST[p.team] ? TEAMST[p.team].skp : null, pc1, 1, 'Team sack%'],
-  tybc: ['Team run lanes', 'team yards before contact per carry', p => TEAMST[p.team] ? TEAMST[p.team].ybc : null, f2, 0, 'Team YBC'],
   tpbwr: ['Line pass protection', 'Share of his team\'s dropbacks with no sack or QB hit (nflverse play-by-play)', p => TEAMST[p.team] && TEAMST[p.team].pbwr != null ? TEAMST[p.team].pbwr : null, pc0, 0, 'Team pass pro'],
   trbwr: ['Line run success', 'Share of his team\'s designed runs that gain positive expected points (nflverse play-by-play)', p => TEAMST[p.team] && TEAMST[p.team].rbwr != null ? TEAMST[p.team].rbwr : null, pc0, 0, 'Team run success'],
-  prsr: ['Pressure rate', 'pressures per 100 snaps', p => p.st && p.st.dsn ? (sm(p).prs || 0) / p.st.dsn * 100 : null, f1, 0, 'Prs/100'],
+  qbhr: ['QB hit rate', 'QB hits (sacks included) per 100 snaps', p => p.st && p.st.dsn ? (sm(p).qbh || 0) / p.st.dsn * 100 : null, f1, 0, 'Hit/100'],
+  qbht: ['QB hits', 'sacks included', p => sm(p).qbh || 0, i0, 0, 'Hits'],
   sckg: ['Sacks a game', '', p => (sm(p).sck || 0) / gp(p), f2, 0, 'Sck/G'],
   sck: ['Sacks', '', p => sm(p).sck || 0, h1, 0, 'Sacks'],
-  prsg: ['Pressures a game', '', p => (sm(p).prs || 0) / gp(p), f1, 0, 'Prs/G'],
-  prst: ['Pressures', '', p => sm(p).prs || 0, i0, 0, 'Prs'],
   tflg: ['Tackles for loss a game', '', p => (sm(p).tfl || 0) / gp(p), f2, 0, 'TFL/G'],
   tflt: ['Tackles for loss', '', p => sm(p).tfl || 0, i0, 0, 'TFL'],
   dsh: ['Snap share', 'of team defensive snaps', p => p.st ? (p.st.dsh || 0) : null, pc0, 0, 'Snap%'],
   tkg: ['Tackles a game', '', p => (sm(p).tk || 0) / gp(p), f1, 0, 'Tkl/G'],
   tkt: ['Tackles', '', p => sm(p).tk || 0, i0, 0, 'Tkl'],
-  mtp: ['Missed tackles', 'share of attempts, lower is better', p => (sm(p).tk || 0) + (sm(p).mtk || 0) >= 8 ? (sm(p).mtp || 0) : null, pc0, 1, 'Miss%'],
-  pra: ['Passer rating allowed', 'when targeted, lower is better', p => covOK(p) ? (sm(p).pra || 0) : null, f1, 1, 'Rtg alw'],
-  ypta: ['Yards per target allowed', 'lower is better', p => covOK(p) ? (sm(p).dya || 0) / sm(p).dtg : null, f1, 1, 'Y/Tgt alw'],
-  cmpa: ['Catch rate allowed', 'lower is better', p => covOK(p) ? (sm(p).dca || 0) / sm(p).dtg : null, pc0, 1, 'Cmp alw'],
-  dtgt: ['Times targeted', '', p => sm(p).dtg || 0, i0, 0, 'Tgts'],
-  tgr: ['Targets faced', 'per 100 snaps', p => p.st && p.st.dsn ? (sm(p).dtg || 0) / p.st.dsn * 100 : null, f1, 0, 'Tgt/100'],
   plyg: ['Plays on the ball', 'passes defended plus 2× INTs, a game', p => ((sm(p).pd || 0) + 2 * (sm(p).dint || 0)) / gp(p), f2, 0, 'Ball/G'],
   pdt: ['Passes defended', '', p => sm(p).pd || 0, i0, 0, 'PD'],
   tov: ['Takeaways', 'INTs plus forced fumbles a game (a forced fumble counts 1.2)', p => ((sm(p).dint || 0) + TOV_FF * (sm(p).ff || 0)) / gp(p), f2, 0, 'TO/G'],
@@ -2458,12 +2446,9 @@ const MET = {
   ypa: ['Yards per attempt', '', p => sm(p).att ? (sm(p).ypa || 0) : null, f1, 0, 'Y/A'],
   pprg: ['Fantasy points a game', 'PPR scoring', p => (sm(p).car || sm(p).tgt || sm(p).att) ? (sm(p).ppr || 0) / gp(p) : null, f1, 0, 'PPR/G'],
   rfdg: ['Rushing first downs', 'a game', p => sm(p).car ? (sm(p).rfd || 0) / gp(p) : null, f1, 0, '1D/G'],
-  ybcm: ['Open lanes', 'yards before contact per carry', p => sm(p).car ? (sm(p).ybc || 0) : null, f1, 0, 'YBC'],
   ash: ['Air-yards share', 'of team air yards', p => sm(p).tgt ? (sm(p).ash || 0) : null, pc0, 0, 'Air%'],
   qbhg: ['QB hits', 'a game', p => (sm(p).qbh || 0) / gp(p), f2, 0, 'Hit/G'],
-  hurg: ['Hurries', 'a game', p => (sm(p).hur || 0) / gp(p), f1, 0, 'Hur/G'],
   solog: ['Solo tackles', 'a game', p => (sm(p).solo || 0) / gp(p), f1, 0, 'Solo/G'],
-  tdal: ['Touchdowns allowed', 'when targeted, lower is better', p => covOK(p) ? (sm(p).dtd || 0) : null, i0, 1, 'TD alw'],
   tbp: ['Touchbacks', 'share of punts, lower is better', p => sm(p).pun ? (sm(p).ptb || 0) / sm(p).pun : null, pc0, 1, 'TB%'],
   pcov: ['Punt coverage', 'gross minus net yards, lower is better', p => sm(p).pun ? (sm(p).pavg || 0) - (sm(p).pnet || 0) : null, f1, 1, 'Ret yds'],
   kpts: ['Kicking points', 'a game', p => sm(p).fga || sm(p).pata ? (3 * (sm(p).fgm || 0) + (sm(p).patm || 0)) / gp(p) : null, f1, 0, 'Pts/G']
@@ -2473,19 +2458,20 @@ const SG_ORDER = ['QB', 'RB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT', 'EDGE', '
 const SG_NAME = Object.assign({}, GROUP_NAME, { WR: 'Wide receiver', K: 'Kicker', P: 'Punter' });
 const sgOf = p => p.pos === 'K' ? 'K' : p.pos === 'P' ? 'P' : p.group === 'ST' ? null : p.group;
 // q: qualifier per week played, bars: weighted percentile mix behind the play rating, cols: table and stat tiles
-const recBars = [['ryg', .22], ['tsh', .14], ['ypt', .14], ['xepa', .16], ['cat', .06], ['yac', .07], ['rtdg', .12], ['drpp', .05], ['fdpt', .04]];
-const rushDef = [['prsr', .26], ['sckg', .18], ['tflg', .16], ['dsh', .1], ['mtp', .06], ['tov', .1]];   // pressures a game left out: pressure rate already counts it
+// Built from nflverse box scores and play-by-play only (no Pro Football Reference charting: no drops, pressures, missed tackles or coverage stats).
+const recBars = [['ryg', .22], ['tsh', .14], ['ypt', .14], ['xepa', .16], ['cat', .06], ['yac', .07], ['rtdg', .12], ['fdpt', .09]];
+const rushDef = [['qbhr', .26], ['sckg', .18], ['tflg', .22], ['dsh', .1], ['tov', .1]];   // QB hits a game left out: the hit rate already counts them
 const GCFG = {
   QB: { q: p => (sm(p).att || 0) >= 12 * W(), need: () => `${12 * W()} passes`, bars: [['epa', .3], ['cpoe', .15], ['ny', .15], ['tdp', .1], ['intp', .1], ['skp', .05], ['pydg', .1], ['rydg', .05]], cols: ['pyd', 'ptdt', 'qint', 'epa', 'cpoe', 'ny', 'rush'] },
-  RB: { q: p => tch(p) >= 6 * W(), need: () => `${6 * W()} touches`, bars: [['scrg', .25], ['ypc', .13], ['yco', .14], ['repa', .12], ['btt', .1], ['recg', .1], ['tdg', .11], ['fumt', .05]], cols: ['rush', 'ypc', 'yco', 'recy', 'tdt', 'btt'] },
-  WR: { q: p => (sm(p).tgt || 0) >= 2.5 * W(), need: () => `${2.5 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
-  TE: { q: p => (sm(p).tgt || 0) >= 2 * W(), need: () => `${2 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'drpp'] },
-  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .25], ['penr', .25], ['tpbwr', .15], ['trbwr', .15], ['tskp', .1], ['tybc', .1]], cols: ['snaps', 'osh', 'penr', 'tpbwr', 'trbwr'] },
-  EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
-  DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['prst', 'sck', 'prsr', 'tflt', 'tkt', 'dsh'] },
-  LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .2], ['tflg', .14], ['mtp', .14], ['pra', .14], ['prsg', .1], ['plyg', .1], ['dsh', .12], ['tov', .06]], cols: ['tkt', 'tflt', 'sck', 'prst', 'pdt', 'pra'] },
-  CB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['pra', .24], ['ypta', .18], ['cmpa', .1], ['plyg', .2], ['mtp', .08], ['dsh', .12], ['tov', .08]], cols: ['dtgt', 'pra', 'ypta', 'intt', 'pdt', 'tkt'] },
-  S: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['pra', .15], ['ypta', .1], ['plyg', .18], ['tkg', .15], ['mtp', .14], ['tflg', .06], ['dsh', .12], ['tov', .1]], cols: ['tkt', 'intt', 'pdt', 'pra', 'tflt', 'dsh'] },
+  RB: { q: p => tch(p) >= 6 * W(), need: () => `${6 * W()} touches`, bars: [['scrg', .25], ['ypc', .13], ['repa', .12], ['r20r', .12], ['rfdg', .12], ['recg', .1], ['tdg', .11], ['fumt', .05]], cols: ['rush', 'ypc', 'repa', 'recy', 'tdt', 'r20r'] },
+  WR: { q: p => (sm(p).tgt || 0) >= 2.5 * W(), need: () => `${2.5 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'fdpt'] },
+  TE: { q: p => (sm(p).tgt || 0) >= 2 * W(), need: () => `${2 * W()} targets`, bars: recBars, cols: ['recy', 'rec', 'rtdt', 'tsh', 'ypt', 'xepa', 'fdpt'] },
+  OL: { q: p => p.st && (p.st.osn || 0) >= 25 * W(), need: () => `${25 * W()} snaps`, bars: [['osh', .25], ['penr', .25], ['tpbwr', .15], ['trbwr', .25], ['tskp', .1]], cols: ['snaps', 'osh', 'penr', 'tpbwr', 'trbwr'] },
+  EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['qbht', 'sck', 'qbhr', 'tflt', 'tkt', 'dsh'] },
+  DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['qbht', 'sck', 'qbhr', 'tflt', 'tkt', 'dsh'] },
+  LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .26], ['tflg', .18], ['qbhg', .1], ['plyg', .18], ['dsh', .16], ['tov', .12]], cols: ['tkt', 'tflt', 'sck', 'qbht', 'pdt', 'intt'] },
+  CB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['plyg', .5], ['dsh', .3], ['tov', .2]], cols: ['pdt', 'intt', 'plyg', 'tov', 'tkt', 'dsh'] },
+  S: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['plyg', .3], ['tkg', .25], ['tflg', .1], ['dsh', .18], ['tov', .17]], cols: ['tkt', 'intt', 'pdt', 'plyg', 'tflt', 'dsh'] },
   K: { q: p => (sm(p).fga || 0) >= 0.8 * W(), need: () => `${Math.ceil(0.8 * W())} field goal tries`, bars: [['fgp', .4], ['fg40', .3], ['fg50', .15], ['patp', .15]], cols: ['fgm', 'fgp', 'fg40', 'fg50', 'lngk'] },
   P: { q: p => (sm(p).pun || 0) >= 2 * W(), need: () => `${2 * W()} punts`, bars: [['pnet', .5], ['pavg', .2], ['pi20', .3]], cols: ['punts', 'pavg', 'pnet', 'pi20'] }
 };
@@ -2522,24 +2508,22 @@ const ROLE_DESC = {
   'Fill-in starter': 'Has started part of the season, often for an injured player.',
   'Jumbo package': 'Comes in for a handful of snaps in heavy formations.',
   'Reserve': 'A backup lineman.',
-  'Every-down rusher': 'Plays most snaps and still generates pressure at an above-average rate.',
-  'Pass-rush specialist': 'Plays less, but gets home: a top-40% pressure rate.',
+  'Every-down rusher': 'Plays most snaps and still hits the quarterback at an above-average rate.',
+  'Pass-rush specialist': 'Plays less, but gets home: a top-40% QB-hit rate.',
   'Edge setter': 'Holds the edge against the run more than he rushes the passer.',
   'Rotational rusher': 'Part of the edge rotation.',
   'Depth rusher': 'Rarely on the field on defense.',
-  'Interior disruptor': 'An interior lineman who pressures the quarterback like an edge rusher.',
+  'Interior disruptor': 'An interior lineman who hits the quarterback like an edge rusher.',
   'Run anchor': 'Takes on blocks and plays a big share of snaps in the middle.',
   'Rotational lineman': 'Part of the defensive line rotation.',
   'Depth lineman': 'Rarely on the field on defense.',
   'Blitzer': 'A linebacker sent after the quarterback often.',
   'Green-dot tackler': 'The every-down linebacker who wears the helmet radio and makes the tackles.',
-  'Coverage linebacker': 'Draws four or more targets a game in coverage.',
+  'Coverage linebacker': 'Makes plays on the ball: one of the top rates of passes defended and interceptions.',
   'Two-down thumper': 'Comes off the field on passing downs.',
   'Box linebacker': 'A starting linebacker who plays near the line.',
   'Sub-package linebacker': 'Plays in certain packages.',
   'Special teams/depth': 'Mostly a special teams player.',
-  'No-fly zone': 'A starting corner quarterbacks avoid: one of the lowest target rates at the position.',
-  'Targeted starter': 'A starting corner offenses throw at more than most.',
   'Boundary starter': 'A full-time starting corner.',
   'Nickel/rotational corner': 'Plays a part-time role, often in the slot.',
   'Sub-package corner': 'Plays in certain packages.',
@@ -2557,18 +2541,15 @@ const ROLE_DESC = {
   'Punter': 'The team\'s punter.',
   'Gambler': 'Throws it downfield and pays for it: more interceptions than most passers.',
   'Precision passer': 'Completes far more passes than the difficulty of his throws predicts.',
-  'Escape artist': 'Sees a lot of pressure but rarely goes down for a sack.',
   'Game manager': 'Protects the ball and keeps throws short and safe.',
   'Volume passer': 'Piles up passing yards: one of the top passing-yard totals a game at the position.',
   'Home-run threat': 'Breaks long runs: one of the highest rates of 20+ yard carries.',
-  'Power runner': 'Keeps going after the first hit: one of the best at yards after contact.',
-  'Elusive back': 'Makes the first defender miss more than almost any other back.',
   'Efficient runner': 'Adds expected points on carries, whatever the yardage.',
   'Goal-line finisher': 'Scores touchdowns at a rate of more than one every two games.',
   'Third-down back': 'A pass-game back who gets looks on passing downs without a big carry share.',
   'Explosive playmaker': 'Hits big plays: one of the highest rates of 20+ yard catches.',
   'Touchdown maker': 'Finds the end zone more often than almost any receiver.',
-  'Sure hands': 'Catches nearly everything thrown his way and rarely drops one.',
+  'Sure hands': 'Catches nearly everything thrown his way: a top-15% catch rate.',
   'Open-field runner': 'Gets the ball and breaks tackles: a high broken-tackle rate and big yards after the catch.',
   'Efficiency target': 'Adds expected points on his targets at one of the best rates at the position.',
   'Seam stretcher': 'A tight end who works the middle of the field downfield, 9.5+ air yards a target.',
@@ -2581,7 +2562,7 @@ const ROLE_DESC = {
   'Rotational starter': 'Starts but does not play every snap.',
   'Edge protector': 'A starting tackle who guards the quarterback\'s edge.',
   'Interior mauler': 'A starting guard who works in the middle of the line.',
-  'Three-down edge': 'Pressures the passer and stops the run: above average at both.',
+  'Three-down edge': 'Hits the passer and stops the run: above average at both.',
   'Sack artist': 'Finishes: one of the highest sack rates a game at the position.',
   'Backfield disruptor': 'Lives in the opponent\'s backfield: one of the top tackle-for-loss rates.',
   'Turnover creator': 'Forces fumbles and takes the ball away more than most.',
@@ -2592,14 +2573,11 @@ const ROLE_DESC = {
   'Ball-hawking linebacker': 'Makes plays on the ball: passes defended and interceptions.',
   'Backfield hunter': 'Gets to the ball carrier behind the line more than most linebackers.',
   'Tackle machine': 'One of the highest tackle totals a game among linebackers.',
-  'Sure tackler': 'Rarely misses: one of the lowest missed-tackle rates.',
-  'Shutdown corner': 'Allows one of the lowest passer ratings at the position when targeted.',
   'Ball hawk': 'Makes plays on the ball: one of the top rates of passes defended and interceptions.',
   'Physical corner': 'Tackles like a safety: one of the highest tackle totals a game for a corner.',
   'Nickel playmaker': 'A part-time or slot corner who makes plays on the ball.',
-  'Blitz safety': 'A safety sent after the quarterback, with one of the top pressure totals.',
+  'Blitz safety': 'A safety sent after the quarterback, with one of the top QB-hit totals.',
   'Turnover machine': 'Takes the ball away: one of the highest takeaway rates at the position.',
-  'Lockdown safety': 'Allows one of the lowest passer ratings at the position when targeted.',
   'Long-range specialist': 'Makes kicks from 40 and out at one of the best rates at the position.',
   'Mr. Automatic': 'Has made at least 90% of his field goals on at least five tries.',
   'Busy leg': 'His team asks him to kick a lot: two or more field goal tries a game.',
@@ -2608,14 +2586,9 @@ const ROLE_DESC = {
   'Special teams ace': 'A depth player who earns his spot on special teams, 20+ snaps a game.'
 };
 const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
-// The play rating skips a stat a player has no value for (its weight is spread over the rest), with one exception:
-// a qualified corner targeted too rarely to have coverage stats is scored on how rarely he is thrown at instead
-// (his targets-per-snap percentile, flipped: the less he is targeted, the higher), because being avoided is the point.
-// Only for corners on the field for at least half of their team's defensive snaps; a part-timer's coverage stats are just left out.
-const COVK = ['pra', 'ypta', 'cmpa'];
+// The play rating skips a stat a player has no value for (its weight is spread over the rest).
 const ratePc = (p, k) => {
   if (p.pc && p.pc[k] != null) return p.pc[k];
-  if (p.sg === 'CB' && COVK.includes(k) && p.pc && p.pc.tgr != null && p.st && (p.st.dsh || 0) >= 0.5) return 1 - p.pc.tgr;   // starters only (half his team's defensive snaps or more)
   return null;
 };
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
@@ -2637,7 +2610,6 @@ const ROLES = {
     ['Gunslinger', null, Qd(p => (sm(p).adot || 0) >= 9)],
     ['Gambler', null, Qd(p => (sm(p).adot || 0) >= 7.5 && pcv(p, 'intp') <= .3)],
     ['Precision passer', null, Qd(p => pcv(p, 'cpoe') >= .75)],
-    ['Escape artist', null, Qd(p => pcv(p, 'skp') >= .8 && (sm(p).qprs || 0) >= .28)],
     ['Quick-game distributor', null, Qd(p => (sm(p).adot || 0) <= 7 && (sm(p).cmpp || 0) >= .66)],
     ['Game manager', null, Qd(p => pcv(p, 'intp') >= .7 && (sm(p).adot || 0) <= 8.5)],
     ['Volume passer', null, Qd(p => pcv(p, 'pydg') >= .8)]], 'Pocket passer'),
@@ -2645,8 +2617,6 @@ const ROLES = {
     ['Bell cow', 'u', p => tch(p) / gp(p) >= 17 && (p.st.opg || 0) >= .55],
     ['Receiving back', null, p => (sm(p).tgt || 0) / gp(p) >= 3.5 && (p.st.opg || 0) >= .3 && (sm(p).rsh || 0) < .45],
     ['Home-run threat', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'r20r') >= .8)],
-    ['Power runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'yco') >= .8)],
-    ['Elusive back', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'btt') >= .8)],
     ['Efficient runner', null, Qd(p => (sm(p).rsh || 0) >= .2 && pcv(p, 'repa') >= .8)],
     ['Goal-line finisher', null, Qd(p => (sm(p).rsh || 0) >= .2 && (sm(p).rtd || 0) / gp(p) >= .6)],
     ['Third-down back', null, Qd(p => (sm(p).tgt || 0) / gp(p) >= 2 && (sm(p).rsh || 0) < .3)],
@@ -2657,8 +2627,8 @@ const ROLES = {
     ['Field stretcher', null, Qd(p => (sm(p).radot || 0) >= 13)],
     ['Explosive playmaker', null, Qd(p => pcv(p, 'big') >= .85)],
     ['Touchdown maker', null, Qd(p => pcv(p, 'rtdg') >= .88 && (sm(p).rectd || 0) >= 2)],
-    ['Sure hands', null, Qd(p => pcv(p, 'cat') >= .8 && pcv(p, 'drpp') >= .7)],
-    ['Open-field runner', null, Qd(p => pcv(p, 'btt') >= .85 && (sm(p).yac || 0) >= 5)],
+    ['Sure hands', null, Qd(p => pcv(p, 'cat') >= .85)],
+    ['Open-field runner', null, Qd(p => pcv(p, 'yac') >= .85 && (sm(p).yac || 0) >= 5)],
     ['Efficiency target', null, Qd(p => pcv(p, 'xepa') >= .9)],
     ['YAC weapon', null, Qd(p => (sm(p).radot || 0) <= 7 && (sm(p).yac || 0) >= 5)],
     ['Chain mover', null, Qd(p => (sm(p).radot || 0) <= 8.5)],
@@ -2687,50 +2657,45 @@ const ROLES = {
     ['Rotational starter', 'u', p => (p.st.opg || 0) >= .6 && (p.st.opg || 0) < .85],
     ['Jumbo package', 'u', p => (p.st.opg || 0) > 0 && (p.st.opg || 0) < .2 && p.st.g >= 2], ['Reserve', 'u', p => (p.st.opg || 0) < .6]], 'Starter'),
   EDGE: mkRoles([
-    ['Three-down edge', 'e', Qd(p => pcv(p, 'prsr') >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6)],
-    ['Every-down rusher', 'e', Qd(p => (p.st.dpg || 0) >= .7 && pcv(p, 'prsr') >= .5)],
-    ['Pass-rush specialist', 'e', Qd(p => pcv(p, 'prsr') >= .6)],
+    ['Three-down edge', 'e', Qd(p => pcv(p, 'qbhr') >= .6 && pcv(p, 'tflg') >= .6 && pcv(p, 'tkg') >= .6)],
+    ['Every-down rusher', 'e', Qd(p => (p.st.dpg || 0) >= .7 && pcv(p, 'qbhr') >= .5)],
+    ['Pass-rush specialist', 'e', Qd(p => pcv(p, 'qbhr') >= .6)],
     ['Sack artist', null, Qd(p => pcv(p, 'sckg') >= .9)],
     ['Backfield disruptor', null, Qd(p => pcv(p, 'tflg') >= .85)],
     ['Turnover creator', null, Qd(p => pcv(p, 'tov') >= .85)],
-    ['Edge setter', null, Qd(p => (p.st.dpg || 0) >= .6 && pcv(p, 'prsr') < .4)],
+    ['Edge setter', null, Qd(p => (p.st.dpg || 0) >= .6 && pcv(p, 'qbhr') < .4)],
     ['Special teams ace', null, p => stAce(p)],
     ['Rotational rusher', 'u', p => p.fq || (p.st.dpg || 0) >= .3], ['Depth rusher', 'u', () => true]]),
   DT: mkRoles([
-    ['Interior disruptor', null, Qd(p => pcv(p, 'prsr') >= .65)],
+    ['Interior disruptor', null, Qd(p => pcv(p, 'qbhr') >= .65)],
     ['Sack-hunting tackle', null, Qd(p => pcv(p, 'sckg') >= .9)],
     ['Backfield penetrator', null, Qd(p => pcv(p, 'tflg') >= .85)],
-    ['Gap plugger', null, Qd(p => pcv(p, 'tkg') >= .75 && pcv(p, 'prsr') < .4)],
-    ['Space eater', null, Qd(p => (p.st.dpg || 0) >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'prsr') < .4)],
+    ['Gap plugger', null, Qd(p => pcv(p, 'tkg') >= .75 && pcv(p, 'qbhr') < .4)],
+    ['Space eater', null, Qd(p => (p.st.dpg || 0) >= .5 && pcv(p, 'tkg') < .4 && pcv(p, 'qbhr') < .4)],
     ['Special teams ace', null, p => stAce(p)],
     ['Run anchor', 'u', Qd(p => (p.st.dpg || 0) >= .6)],
     ['Rotational lineman', 'u', p => p.fq || (p.st.dpg || 0) >= .3], ['Depth lineman', 'u', () => true]]),
   LB: mkRoles([
-    ['Blitzer', null, Qd(p => (sm(p).prs || 0) / gp(p) >= 1.3 || (sm(p).blz || 0) / gp(p) >= 5)],
+    ['Blitzer', null, Qd(p => pcv(p, 'qbhg') >= .85)],
     ['Green-dot tackler', null, Qd(p => (p.st.dpg || 0) >= .9 && (sm(p).tk || 0) / gp(p) >= 6.5)],
-    ['Coverage linebacker', null, Qd(p => (sm(p).dtg || 0) / gp(p) >= 4)],
+    ['Coverage linebacker', null, Qd(p => pcv(p, 'plyg') >= .8)],
     ['Ball-hawking linebacker', null, Qd(p => pcv(p, 'plyg') >= .85)],
     ['Backfield hunter', null, Qd(p => pcv(p, 'tflg') >= .85)],
     ['Tackle machine', null, Qd(p => pcv(p, 'tkg') >= .85)],
-    ['Sure tackler', null, Qd(p => pcv(p, 'mtp') >= .85)],
     ['Two-down thumper', null, Qd(p => (p.st.dpg || 0) < .7)],
     ['Special teams ace', null, p => stAce(p)],
     ['Sub-package linebacker', 'u', p => !p.fq && (p.st.dpg || 0) >= .25],
     ['Special teams/depth', 'u', p => !p.fq]], 'Box linebacker'),
   CB: mkRoles([
-    ['No-fly zone', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tgr') <= .2)],
-    ['Shutdown corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'pra') >= .85)],
     ['Ball hawk', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'plyg') >= .85)],
     ['Physical corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tkg') >= .85)],
-    ['Targeted starter', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tgr') >= .8)],
     ['Nickel playmaker', null, Qd(p => (p.st.dpg || 0) < .75 && pcv(p, 'plyg') >= .8)],
     ['Special teams ace', null, p => stAce(p)],
     ['Nickel/rotational corner', 'u', Qd(p => (p.st.dpg || 0) < .75)],
     ['Sub-package corner', 'u', p => !p.fq && (p.st.dpg || 0) >= .3], ['Depth corner', 'u', p => !p.fq]], 'Boundary starter'),
   S: mkRoles([
-    ['Blitz safety', null, Qd(p => pcv(p, 'prsg') >= .85)],
+    ['Blitz safety', null, Qd(p => pcv(p, 'qbhg') >= .85)],
     ['Turnover machine', null, Qd(p => pcv(p, 'tov') >= .85)],
-    ['Lockdown safety', null, Qd(p => pcv(p, 'pra') >= .85)],
     ['Box safety', null, Qd(p => (sm(p).tk || 0) / gp(p) >= 6 || pcv(p, 'tflg') >= .8)],
     ['Center fielder', null, Qd(p => (sm(p).tk || 0) / gp(p) <= 4.5 && pcv(p, 'plyg') >= .5)],
     ['Special teams ace', null, p => stAce(p)],
@@ -2761,7 +2726,6 @@ const OTRAITS = {
   ground: ['Ground gainer', 'Piles up rushing yards every game.', ['RB'], 'rydg'],
   scrim: ['Scrimmage threat', 'Gains yards running and catching, game after game.', ['RB'], 'scrg'],
   movechains: ['Chain-moving runner', 'Runs for first downs again and again.', ['RB'], 'rfdg'],
-  lanes: ['Runs through holes', 'Gets lots of yards before anyone touches him, usually a sign of a good line in front.', ['RB'], 'ybcm'],
   secure: ['Ball security', 'Rarely fumbles for the touches he gets.', ['RB', 'WR', 'TE'], 'fumt', p => tch(p) >= 15],
   yardage: ['Yardage leader', 'Piles up receiving yards every game.', ['WR', 'TE'], 'ryg'],
   volume: ['Catch volume', 'Makes more catches than almost anyone at his spot.', ['WR', 'TE'], 'rec'],
@@ -2770,12 +2734,9 @@ const OTRAITS = {
   passwall: ['Pass-block unit', 'His line keeps the quarterback clean (team play-by-play).', OL_G, 'tpbwr'],
   runwall: ['Run-block unit', 'His line opens successful runs (team play-by-play).', OL_G, 'trbwr'],
   sackproof: ['Sack-proof line', 'His quarterback rarely goes down behind this line.', OL_G, 'tskp'],
-  openlanes: ['Open lanes', 'Backs get lots of yards before contact behind this line.', OL_G, 'tybc'],
   qbhitter: ['QB hitter', 'Lands hits on the quarterback even when it is not a sack.', ['EDGE', 'DT', 'LB'], 'qbhg'],
-  hurrier: ['Constant hurrier', 'Hurries the quarterback every game.', ['EDGE', 'DT', 'LB'], 'hurg'],
+  hurrier: ['Constant pressure', 'Hits the quarterback every game.', ['EDGE', 'DT', 'LB'], 'qbhg'],
   solo: ['Solo tackler', 'Brings down ball carriers on his own.', ['EDGE', 'DT', 'LB', 'CB', 'S'], 'solog'],
-  finisher: ['Reliable finisher', 'Misses very few tackles he attempts.', ['EDGE', 'DT', 'CB', 'S'], 'mtp', p => (sm(p).tk || 0) + (sm(p).mtk || 0) >= 4 * W()],
-  tdproof: ['Touchdown-proof', 'Has not allowed a touchdown on a real coverage workload.', ['LB', 'CB', 'S'], null, p => (sm(p).dtg || 0) >= 3 * W() && !sm(p).dtd, p => (sm(p).dtg || 0) >= 5 * W() ? 'gold' : 'silver'],
   defscore: ['Defensive scorer', 'Has scored a touchdown on defense this season.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => (sm(p).dtd2 || 0) >= 1, p => (sm(p).dtd2 || 0) >= 2 ? 'gold' : 'silver'],
   points: ['Point producer', 'Scores a lot of points a game, field goals and extra points together.', ['K'], 'kpts'],
   xp: ['Extra-point machine', 'Rarely misses an extra point.', ['K'], null, p => (sm(p).pata || 0) >= 10 && (sm(p).patm || 0) === sm(p).pata, 'bronze'],
@@ -3106,20 +3067,15 @@ const TSDEF = {
   ypc: ['Yards per carry', '', x => x.car ? x.ryd / x.car : 0, f2, 0, 'off'],
   skp: ['Sack rate allowed', 'sacks per dropback, lower is better', x => x.skp, pc1, 1, 'off'],
   intr: ['Interception rate', 'per pass, lower is better', x => x.att ? x.int / x.att : 0, pc1, 1, 'off'],
-  ybc: ['Run lanes', 'yards before contact per carry', x => x.ybc, f2, 0, 'off'],
   sckg: ['Sacks a game', '', x => x.sck / x.g, f2, 0, 'def'],
-  prsg: ['Pressures a game', '', x => x.prs / x.g, f1, 0, 'def'],
+  qbhg: ['QB hits a game', 'sacks included', x => x.qbh / x.g, f1, 0, 'def'],
   tovg: ['Takeaways a game', 'interceptions plus forced fumbles', x => x.tov / x.g, f2, 0, 'def'],
-  pra: ['Passer rating allowed', 'in coverage, lower is better', x => x.dtg ? x.praw / x.dtg : 0, f1, 1, 'def'],
-  ypta: ['Yards per target allowed', 'lower is better', x => x.dtg ? x.dya / x.dtg : 0, f1, 1, 'def'],
+  dpe: ['Pass defense', 'EPA allowed per dropback, lower is better', x => x.dpe, sgn2, 1, 'def'],
   tflg: ['Tackles for loss a game', '', x => x.tfl / x.g, f2, 0, 'def'],
-  mtp: ['Missed tackle rate', 'share of attempts, lower is better', x => x.tk + x.mtk ? x.mtk / (x.tk + x.mtk) : 0, pc1, 1, 'def'],
   passrate: ['Pass rate', 'share of offensive plays that are dropbacks', x => x.db + x.car ? x.db / (x.db + x.car) : 0, pc1, 0, 'off'],
   adot: ['Throw depth', 'air yards per pass', x => x.att ? x.ay / x.att : 0, f1, 0, 'off'],
   explo: ['Explosive plays a game', '20+ yard passes and runs', x => (x.p20 + x.r20) / x.g, f1, 0, 'off'],
   qbrun: ['Quarterback rushing', 'yards a game', x => x.qry / x.g, f1, 0, 'off'],
-  blzg: ['Blitzes a game', 'defenders sent after the passer', x => x.blz / x.g, f1, 0, 'def'],
-  rushr: ['Pressure without the blitz', 'pressures per blitz', x => x.prs / Math.max(1, x.blz), f2, 0, 'def'],
   peng: ['Penalties a game', 'lower is better', x => x.pen / x.g, f1, 1, 'other'],
   fgp: ['Field goal rate', '', x => x.fga ? x.fgm / x.fga : 0, pc0, 0, 'other']
 };
@@ -3137,14 +3093,10 @@ const TTRAITS = {
   points: ['Touchdown machine', 'Scores more offensive touchdowns a game than most.', t => t.tp.tdg, 'off'],
   pocket: ['Clean pocket', 'Its quarterbacks rarely get sacked.', t => t.tp.skp, 'off'],
   careful: ['Ball security', 'Throws very few interceptions.', t => t.tp.intr, 'off'],
-  lanes: ['Open run lanes', 'Backs get lots of yards before the first defender touches them.', t => t.tp.ybc, 'off'],
-  blitz: ['Blitz-happy', 'Sends extra rushers more often than almost anyone.', t => t.tp.blzg, 'def'],
-  fourman: ['Four-man pressure', 'Gets to the quarterback without needing to blitz.', t => t.tp.rushr, 'def'],
-  rush: ['Pass-rush factory', 'Gets after the quarterback more than almost anyone.', t => t.tp.prsg, 'def'],
+  rush: ['Pass-rush factory', 'Hits the quarterback more than almost anyone.', t => t.tp.qbhg, 'def'],
   ball: ['Takeaway machine', 'Forces interceptions and fumbles at a high rate.', t => t.tp.tovg, 'def'],
-  nofly: ['No-fly secondary', 'Quarterbacks struggle when they throw into its coverage.', t => t.tp.pra, 'def'],
+  nofly: ['No-fly secondary', 'Quarterbacks add the fewest expected points when they drop back against it.', t => t.tp.dpe, 'def'],
   stuff: ['Run stuffers', 'Makes tackles behind the line often.', t => t.tp.tflg, 'def'],
-  sure: ['Sure tacklers', 'Rarely misses a tackle.', t => t.tp.mtp, 'def'],
   qb: ['Franchise QB', 'Its starting quarterback rates near the top of the league.', t => pctRank(TR.qb, t.u.qb), 'talent'],
   weapons: ['Loaded skill group', 'Backs, receivers and tight ends rate among the best.', t => pctRank(TR.skill, t.u.skill), 'talent'],
   wall: ['Trench bullies', 'The starting offensive line rates among the best.', t => pctRank(TR.ol, t.u.ol), 'talent'],
@@ -3163,12 +3115,12 @@ function analyzeTeams() {
   TEAMS.forEach(t => { t.rt = rateAll(t.u); t.rk = rankAll(t.u); });
   // team stats
   const X = {};
-  TEAMS.forEach(t => (X[t.id] = { pyd: 0, ptd: 0, int: 0, att: 0, ryd: 0, rtd: 0, car: 0, db: 0, pe: 0, re: 0, sck: 0, prs: 0, ay: 0, qry: 0, p20: 0, r20: 0, blz: 0, tov: 0, tfl: 0, dtg: 0, praw: 0, dya: 0, mtk: 0, tk: 0, pen: 0, fgm: 0, fga: 0,
-    g: (TEAMST[t.id] && TEAMST[t.id].g) || Math.max(1, THRU), skp: TEAMST[t.id] ? TEAMST[t.id].skp : 0, ybc: TEAMST[t.id] ? TEAMST[t.id].ybc : 0 }));
+  TEAMS.forEach(t => (X[t.id] = { pyd: 0, ptd: 0, int: 0, att: 0, ryd: 0, rtd: 0, car: 0, db: 0, pe: 0, re: 0, sck: 0, qbh: 0, ay: 0, qry: 0, p20: 0, r20: 0, tov: 0, tfl: 0, tk: 0, pen: 0, fgm: 0, fga: 0,
+    g: (TEAMST[t.id] && TEAMST[t.id].g) || Math.max(1, THRU), skp: TEAMST[t.id] ? TEAMST[t.id].skp : 0, dpe: TEAMST[t.id] ? TEAMST[t.id].dpe || 0 : 0 }));
   if (SD) SD.players.forEach(s => { const x = X[s.t], m = s.m || {}; if (!x) return;
     if (m.att) { const db = m.att + (m.sk || 0); x.pyd += m.pyd || 0; x.ptd += m.ptd || 0; x.int += m.int || 0; x.att += m.att; x.db += db; x.pe += (m.pepa || 0) * db; x.ay += (m.adot || 0) * m.att; x.qry += m.ryd || 0; x.p20 += m.p20 || 0; }
     if (m.car) { x.ryd += m.ryd || 0; x.rtd += m.rtd || 0; x.car += m.car; x.re += (m.repa || 0) * m.car; x.r20 += m.r20 || 0; }
-    x.sck += m.sck || 0; x.prs += m.prs || 0; x.blz += m.blz || 0; x.tov += (m.dint || 0) + (m.ff || 0); x.tfl += m.tfl || 0; x.dtg += m.dtg || 0; x.praw += (m.pra || 0) * (m.dtg || 0); x.dya += m.dya || 0; x.mtk += m.mtk || 0; x.tk += m.tk || 0;
+    x.sck += m.sck || 0; x.qbh += m.qbh || 0; x.tov += (m.dint || 0) + (m.ff || 0); x.tfl += m.tfl || 0; x.tk += m.tk || 0;
     x.pen += m.pen || 0; if (m.fga) { x.fgm += m.fgm || 0; x.fga += m.fga; } });
   TEAMS.forEach(t => { t.ts = {}; TS_KEYS.forEach(k => (t.ts[k] = TSDEF[k][2](X[t.id]))); });
   TS_KEYS.forEach(k => { const low = TSDEF[k][4], vals = TEAMS.map(t => t.ts[k]);
@@ -4380,7 +4332,7 @@ const AW_DEFS = [
   { id: 'opoy', short: 'OPOY', name: 'Offensive Player of the Year', kind: 'p', groups: ['QB', 'RB', 'WR', 'TE'], W: { eff: .35, prod: .35, team: .15, pos: .15 }, posVal: { QB: .75, RB: 1, WR: 1, TE: .7 },
     blurb: 'The most dominant offensive player. Quarterbacks, backs, receivers and tight ends all compete.' },
   { id: 'dpoy', short: 'DPOY', name: 'Defensive Player of the Year', kind: 'p', groups: ['EDGE', 'DT', 'LB', 'CB', 'S'], def: true, W: { eff: .35, prod: .35, team: .15, pos: .15 }, posVal: { EDGE: 1, DT: .85, LB: .85, S: .7, CB: .7 },
-    blurb: 'The most disruptive defender. Sacks, pressures, tackles for loss and takeaways drive it, and a strong team defense helps.' },
+    blurb: 'The most disruptive defender. Sacks, QB hits, tackles for loss and takeaways drive it, and a strong team defense helps.' },
   { id: 'oroy', short: 'OROY', name: 'Offensive Rookie of the Year', kind: 'p', rookie: true, groups: ['QB', 'RB', 'WR', 'TE'], W: { eff: .38, prod: .38, role: .12, team: .12 },
     blurb: 'The best first-year offensive player. Only rookies are eligible, and playing time counts.' },
   { id: 'droy', short: 'DROY', name: 'Defensive Rookie of the Year', kind: 'p', rookie: true, def: true, groups: ['EDGE', 'DT', 'LB', 'CB', 'S'], W: { eff: .38, prod: .38, role: .12, team: .12 },
@@ -4406,7 +4358,7 @@ function awTeamModel() {
   const WP = TEAMS.map(t => t.sr.wp), PD = TEAMS.map(t => t.sr.pd), TAL = TEAMS.map(t => t.u.ovr);
   TEAMS.forEach(t => {
     const s = t.sr, res = pctRank(WP, s.wp), mar = pctRank(PD, s.pd), tal = pctRank(TAL, t.u.ovr);
-    const eff = SD && t.tp ? .4 * t.tp.epa + .2 * t.tp.pra + .2 * t.tp.sckg + .2 * t.tp.tovg : tal;
+    const eff = SD && t.tp ? .4 * t.tp.epa + .2 * t.tp.dpe + .2 * t.tp.sckg + .2 * t.tp.tovg : tal;
     const raw = .28 * res + .28 * mar + .24 * tal + .20 * eff;
     t.pw = { res, mar, tal, eff, raw, score: Math.round(raw * 100), ts: (res + mar) / 2, ros: .55 * tal + .45 * eff };
   });
@@ -4432,7 +4384,7 @@ const awComp = p => { const cfg = GCFG[p.sg]; let s = 0, w = 0; cfg.bars.forEach
 function awProd(p) {
   const m = sm(p), g = gp(p);
   const s = GROUP_SIDE[p.group] === 'def'
-    ? (m.sck || 0) * 3.5 + (m.prs || 0) * .25 + (m.tfl || 0) * 1.5 + (m.dint || 0) * 4 + (m.pd || 0) + (m.ff || 0) * 3 + (m.tk || 0) * .3 + (m.dtd2 || 0) * 6
+    ? (m.sck || 0) * 3.5 + (m.qbh || 0) * .25 + (m.tfl || 0) * 1.5 + (m.dint || 0) * 4 + (m.pd || 0) + (m.ff || 0) * 3 + (m.tk || 0) * .3 + (m.dtd2 || 0) * 6
     : (m.pyd || 0) * .04 + (m.ptd || 0) * 4 - (m.int || 0) * 2 + (m.ryd || 0) * .1 + (m.rtd || 0) * 6 + (m.ryds || 0) * .1 + (m.rec || 0) * .5 + (m.rectd || 0) * 6 - (m.fum || 0) * 2;
   return s / g;
 }
@@ -4647,7 +4599,7 @@ function renderPowerRank() {
   applyTF($('#pw-t'));
   $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule itself.${all.some(t => t.pw.move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
   $('#pw-how-body').innerHTML = `<p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
-    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, passer rating allowed, sacks and takeaways.</li></ul>
+    <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, pass defense (EPA allowed per dropback), sacks and takeaways.</li></ul>
     <p class="note">Outlook compares where a team's results rank with where its roster and efficiency rank. A gap of six spots or more means the record is hiding something (Better than record) or flattering the team (Record flatters). Tiers are fixed by rank: 1 to 4 Contender, 5 to 10 Strong, 11 to 18 In the mix, 19 to 26 Shaky, 27 to 32 Rebuilding.</p>`;
 }
 
@@ -5877,7 +5829,7 @@ function gdStatsHTML(a, h) {
   let rows = row('Record', gRec(R[a].w, R[a].l, R[a].t), gRec(R[h].w, R[h].l, R[h].t), '') +
     row('Points a game', pf(a).toFixed(1), pf(h).toFixed(1), cmp(pf(a), pf(h))) + row('Points allowed a game', pa(a).toFixed(1), pa(h).toFixed(1), cmp(pa(a), pa(h), true));
   if (PA && PH) rows += row('Elo rating', `${PA.elo} <small>${ord(PA.eloRk)}</small>`, `${PH.elo} <small>${ord(PH.eloRk)}</small>`, cmp(PA.elo, PH.elo));
-  if (A.ts && H.ts) ['ypg', 'epa', 'pypg', 'rypg', 'skp', 'sckg', 'tovg', 'pra', 'peng'].forEach(k => { const d = TSDEF[k]; rows += row(d[0], `${d[3](A.ts[k])} <small>${ord(A.tr[k])}</small>`, `${d[3](H.ts[k])} <small>${ord(H.tr[k])}</small>`, cmp(A.tr[k], H.tr[k], true)); });
+  if (A.ts && H.ts) ['ypg', 'epa', 'pypg', 'rypg', 'skp', 'sckg', 'tovg', 'dpe', 'peng'].forEach(k => { const d = TSDEF[k]; rows += row(d[0], `${d[3](A.ts[k])} <small>${ord(A.tr[k])}</small>`, `${d[3](H.ts[k])} <small>${ord(H.tr[k])}</small>`, cmp(A.tr[k], H.tr[k], true)); });
   if (A.rt && H.rt) rows += row('PlainStats roster rating', `${A.rt.ovr} <small>${ord(A.rk.ovr)}</small>`, `${H.rt.ovr} <small>${ord(H.rk.ovr)}</small>`, cmp(A.rt.ovr, H.rt.ovr));
   const lead = id => { const ps = PL.filter(p => p.team === id && p.st); const top = (f, lab, fmt) => { const p = [...ps].sort((x, y) => f(y) - f(x))[0]; return p && f(p) > 0 ? `<button type="button" class="irow" data-p="${p.i}"><span class="ist">${lab}</span><span><b>${esc(p.name)}</b><small>${esc(posTag(p.pos))}</small></span><span class="hit">${fmt(f(p))}</span></button>` : ''; };
     return top(p => sm(p).pyd || 0, 'Passing', v => i0(v) + ' yds') + top(p => sm(p).ryd || 0, 'Rushing', v => i0(v) + ' yds') + top(p => sm(p).ryds || 0, 'Receiving', v => i0(v) + ' yds') + top(p => sm(p).sck || 0, 'Sacks', h1) + top(p => sm(p).tk || 0, 'Tackles', i0); };
