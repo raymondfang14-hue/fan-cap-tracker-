@@ -1,0 +1,122 @@
+# nflverse refresh: downloads the nflverse-data release files, runs the build scripts and the checks, and pushes to main
+# (Vercel redeploys on the push). The work itself is tools/refresh.sh; read it for what each mode does.
+#
+# The Claude scheduled tasks keep everything that needs judgment: news (data/moves.json), the contract ledger, the draft
+# boards, data/cba.json and the free agency calendar. This workflow only does the mechanical nflverse rebuilds.
+#
+# Times are UTC (GitHub cron has no time zones). In winter Pacific time is UTC-8, in summer UTC-7.
+name: nflverse refresh
+
+on:
+  schedule:
+    - cron: '10 16 * * *'               # daily, 8:10 AM PT (after the Claude daily task has added the day's ledger rows)
+    - cron: '20 21,23 * * 0'            # Sunday 1:20 and 3:20 PM PT: early and late games
+    - cron: '20 2,5,7 * * 1'            # Sunday 6:20 and 9:20 PM PT, and 11:20 PM PT after Sunday Night Football
+    - cron: '20 5,7 * * 2'              # Monday 9:20 and 11:20 PM PT, after Monday Night Football
+    - cron: '20 5,7 * * 5'              # Thursday 9:20 and 11:20 PM PT, after Thursday Night Football
+    - cron: '10 15 * * 2'               # weekly, Tuesday 7:10 AM PT (before the Claude weekly task's draft and checks)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'daily, gameday or weekly'
+        required: true
+        default: daily
+        type: choice
+        options: [daily, gameday, weekly]
+
+permissions:
+  contents: write
+
+# One refresh at a time; a run that starts while another is going waits for it.
+concurrency:
+  group: nflverse-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Pick the mode
+        id: mode
+        run: |
+          case "${{ github.event.schedule }}" in
+            '10 16 * * *') m=daily ;;
+            '10 15 * * 2') m=weekly ;;
+            '') m='${{ inputs.mode }}' ;;
+            *) m=gameday ;;
+          esac
+          echo "mode=$m" >> "$GITHUB_OUTPUT"
+          echo "Mode: $m"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install the page checker's browser
+        run: |
+          pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Refresh
+        id: refresh
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set +e
+          tools/refresh.sh "${{ steps.mode.outputs.mode }}" "$RUNNER_TEMP/nflverse" 2>&1 | tee "$RUNNER_TEMP/refresh.log"
+          code=${PIPESTATUS[0]}
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          { echo '### nflverse refresh (${{ steps.mode.outputs.mode }})'; echo '```'; sed -n '/^== summary/,$p' "$RUNNER_TEMP/refresh.log"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+
+      # Exit 3 means the page itself is broken: push nothing. Exit 1 means a data step failed and was restored: push the rest.
+      - name: Commit and push
+        if: steps.refresh.outputs.code == '0' || steps.refresh.outputs.code == '1'
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+        run: |
+          git config user.name 'PlainStats refresh'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A data players teams draft og-data sitemap.xml tools/seo-nav.html index.html
+          git reset -q data/__pycache__ 2>/dev/null || true
+          if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
+          summary=$(sed -n '/^== summary/,$p' "$RUNNER_TEMP/refresh.log" | sed '1d')
+          git commit -q -m "nflverse refresh ($MODE), $(date -u +%Y-%m-%d)" -m "$summary" -m "Built by .github/workflows/nflverse-refresh.yml from nflverse-data releases (CC BY 4.0)."
+          # The Claude tasks push to main too. If main moved, rebuild on top of it rather than merge generated files.
+          for i in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            echo "main moved; rebuilding on the new main (try $i)"
+            git fetch -q origin main && git reset -q --hard origin/main
+            tools/refresh.sh "$MODE" "$RUNNER_TEMP/nflverse" > "$RUNNER_TEMP/retry.log" 2>&1; c=$?
+            [ $c -le 1 ] || { echo "rebuild failed the checks (exit $c); not pushing"; exit 1; }
+            git add -A data players teams draft og-data sitemap.xml tools/seo-nav.html index.html
+            git reset -q data/__pycache__ 2>/dev/null || true
+            git diff --cached --quiet && exit 0
+            git commit -q -m "nflverse refresh ($MODE), $(date -u +%Y-%m-%d)" -m "$summary"
+          done
+          exit 1
+
+      - name: Ask Vercel to deploy (optional)
+        if: steps.refresh.outputs.code == '0' || steps.refresh.outputs.code == '1'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          # Only needed if Vercel ever skips deployments for commits made by this workflow. Add the hook URL
+          # (Vercel project settings > Git > Deploy Hooks, branch main) as the repository secret VERCEL_DEPLOY_HOOK.
+          [ -n "$HOOK" ] && curl -sSf -X POST "$HOOK" > /dev/null && echo "deploy hook called" || echo "no deploy hook set"
+
+      - name: Fail the run if a step failed
+        if: steps.refresh.outputs.code != '0'
+        run: |
+          echo "tools/refresh.sh exited ${{ steps.refresh.outputs.code }}: see the Refresh step log."
+          exit 1

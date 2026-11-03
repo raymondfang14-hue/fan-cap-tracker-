@@ -15,6 +15,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - Never copy Over The Cap, Spotrac or other restricted sources. Contract figures come from `data/ledger.csv` (named report + URL), CBA calculations (`data/cba.json`, `data/rookie_scale.py`) or stay unverified.
 - A contract figure without a named report shows "Contract being verified". Do not guess numbers.
 - Free data only, current season (2026). Pipeline: `data/build_contracts.py` → `data/fix_ol.py` → `data/build_market.py`. Run Python with `python3 -I`.
+- The nflverse rebuilds run in GitHub Actions (`.github/workflows/nflverse-refresh.yml` → `tools/refresh.sh daily|gameday|weekly`). A new nflverse build step goes in `tools/refresh.sh`, not only in a scheduled-task prompt.
 - A hook checks that any edited `data/*.json` still parses.
 - Featured deal breakdowns live in Airtable (Cap Tracker base). `/api/contracts` only serves a deal with `Verified` ticked and at least one `Sources` line (`Outlet | https://link`). Tick Verified only after every figure on the card is checked against those reports; record what was checked or calculated in `CheckNotes`. The built-in `DEALS` in src.html is the fallback and must match the verified Airtable records.
 
