@@ -2130,7 +2130,7 @@ const LEARN_NFL = [
   ['Fifth-year option', 'First-round picks sign four-year deals. The team can add a fifth year at a price based on what top players at the position are paid.'],
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
-  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, QB-hit rate and sacks for pass rushers, plays on the ball for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average. Every stat comes from free NFL box scores and play-by-play, so there are no charted stats such as pressures, drops, missed tackles or passer rating allowed. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, QB-hit rate and sacks for pass rushers, estimated coverage and plays on the ball for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average. Every stat comes from free NFL box scores and play-by-play, so there are no charted stats such as pressures, drops or missed tackles. Coverage numbers (targets, catch rate, yards and passer rating allowed) are estimates: each pass is credited to the defender who intercepted it, broke it up or made the tackle after the catch. A starting corner thrown at too rarely to have coverage numbers is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, Ballhawk and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
@@ -2375,6 +2375,11 @@ const nz = v => (Number.isFinite(v) ? v : null);
 const TOV_FF = 1.2;   // a forced fumble is worth slightly more than an interception in the takeaways stat
 const tch = p => (sm(p).car || 0) + (sm(p).rec || 0);
 // key: [label, sub, value(p), format, lowerIsBetter, short]
+// Estimated coverage (data/build_stats.py): no free data says which defender covered a receiver, so each pass is credited
+// from play-by-play (interceptions, pass breakups, the tackler on a catch). Close to charted numbers for corners, rougher for safeties.
+const cvOK = p => (sm(p).ct || 0) >= 1.2 * W();
+const cvRating = m => { const t = m.ct || 1, c = v => Math.max(0, Math.min(2.375, v));
+  return (c(((m.cc || 0) / t - .3) * 5) + c(((m.cy || 0) / t - 3) * .25) + c((m.ctd || 0) / t * 20) + c(2.375 - (m.ci || 0) / t * 25)) / 6 * 100; };
 const MET = {
   epa: ['EPA per play', 'expected points added per dropback or run', p => nz(sm(p).epa), f2, 0, 'EPA/play'],
   cpoe: ['Accuracy', 'completion % over expected', p => sm(p).att ? (sm(p).cpoe || 0) : null, v => (v > 0 ? '+' : '') + v.toFixed(1), 0, 'CPOE'],
@@ -2420,6 +2425,11 @@ const MET = {
   tskp: ['Team pass protection', 'team sack rate, lower is better', p => TEAMST[p.team] ? TEAMST[p.team].skp : null, pc1, 1, 'Team sack%'],
   tpbwr: ['Line pass protection', 'Share of his team\'s dropbacks with no sack or QB hit (nflverse play-by-play)', p => TEAMST[p.team] && TEAMST[p.team].pbwr != null ? TEAMST[p.team].pbwr : null, pc0, 0, 'Team pass pro'],
   trbwr: ['Line run success', 'Share of his team\'s designed runs that gain positive expected points (nflverse play-by-play)', p => TEAMST[p.team] && TEAMST[p.team].rbwr != null ? TEAMST[p.team].rbwr : null, pc0, 0, 'Team run success'],
+  cvr: ['Passer rating allowed', 'estimated from play-by-play, lower is better', p => cvOK(p) ? cvRating(sm(p)) : null, f1, 1, 'Rtg alw'],
+  cvy: ['Yards per target allowed', 'estimated from play-by-play, lower is better', p => cvOK(p) ? (sm(p).cy || 0) / sm(p).ct : null, f1, 1, 'Y/Tgt alw'],
+  cvc: ['Catch rate allowed', 'estimated from play-by-play, lower is better', p => cvOK(p) ? (sm(p).cc || 0) / sm(p).ct : null, pc0, 1, 'Cmp alw'],
+  cvt: ['Times targeted', 'estimated from play-by-play', p => Math.round(sm(p).ct || 0), i0, 0, 'Tgts'],
+  cvtr: ['Targets faced', 'per 100 snaps, estimated', p => p.st && p.st.dsn ? (sm(p).ct || 0) / p.st.dsn * 100 : null, f1, 0, 'Tgt/100'],
   qbhr: ['QB hit rate', 'QB hits (sacks included) per 100 snaps', p => p.st && p.st.dsn ? (sm(p).qbh || 0) / p.st.dsn * 100 : null, f1, 0, 'Hit/100'],
   qbht: ['QB hits', 'sacks included', p => sm(p).qbh || 0, i0, 0, 'Hits'],
   sckg: ['Sacks a game', '', p => (sm(p).sck || 0) / gp(p), f2, 0, 'Sck/G'],
@@ -2469,14 +2479,17 @@ const GCFG = {
   EDGE: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['qbht', 'sck', 'qbhr', 'tflt', 'tkt', 'dsh'] },
   DT: { q: p => p.st && (p.st.dsn || 0) >= 18 * W(), need: () => `${18 * W()} snaps`, bars: rushDef, cols: ['qbht', 'sck', 'qbhr', 'tflt', 'tkt', 'dsh'] },
   LB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['tkg', .26], ['tflg', .18], ['qbhg', .1], ['plyg', .18], ['dsh', .16], ['tov', .12]], cols: ['tkt', 'tflt', 'sck', 'qbht', 'pdt', 'intt'] },
-  CB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['plyg', .5], ['dsh', .3], ['tov', .2]], cols: ['pdt', 'intt', 'plyg', 'tov', 'tkt', 'dsh'] },
-  S: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['plyg', .3], ['tkg', .25], ['tflg', .1], ['dsh', .18], ['tov', .17]], cols: ['tkt', 'intt', 'pdt', 'plyg', 'tflt', 'dsh'] },
+  CB: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['cvr', .24], ['cvy', .18], ['cvc', .1], ['plyg', .2], ['dsh', .14], ['tov', .14]], cols: ['cvt', 'cvr', 'cvy', 'intt', 'pdt', 'tkt'] },
+  S: { q: p => p.st && (p.st.dsn || 0) >= 20 * W(), need: () => `${20 * W()} snaps`, bars: [['cvr', .15], ['cvy', .1], ['plyg', .18], ['tkg', .15], ['tflg', .08], ['dsh', .16], ['tov', .18]], cols: ['tkt', 'intt', 'pdt', 'cvr', 'tflt', 'dsh'] },
   K: { q: p => (sm(p).fga || 0) >= 0.8 * W(), need: () => `${Math.ceil(0.8 * W())} field goal tries`, bars: [['fgp', .4], ['fg40', .3], ['fg50', .15], ['patp', .15]], cols: ['fgm', 'fgp', 'fg40', 'fg50', 'lngk'] },
   P: { q: p => (sm(p).pun || 0) >= 2 * W(), need: () => `${2 * W()} punts`, bars: [['pnet', .5], ['pavg', .2], ['pi20', .3]], cols: ['punts', 'pavg', 'pnet', 'pi20'] }
 };
 OL_G.forEach(g => { GCFG[g] = GCFG.OL; }); delete GCFG.OL;
 // Roles: one per player, NFL-specific usage labels
 const ROLE_DESC = {
+  'No-fly zone': 'A starting corner quarterbacks avoid: one of the lowest target rates at the position (estimated from play-by-play).',
+  'Shutdown corner': 'Allows one of the lowest passer ratings at the position when targeted (estimated from play-by-play).',
+  'Lockdown safety': 'Allows one of the lowest passer ratings at the position when targeted (estimated from play-by-play).',
   'Dual threat': 'Runs for real yardage on top of passing: six or more carries or 30+ rushing yards a game.',
   'Gunslinger': 'Pushes the ball downfield, with an average throw of nine air yards or more.',
   'Quick-game distributor': 'Short, on-time throws: throw depth of seven yards or less and a completion rate of 66% or better.',
@@ -2586,8 +2599,11 @@ const ROLE_DESC = {
 };
 const pcv = (p, k) => (p.pc && p.pc[k] != null ? p.pc[k] : 0.5);
 // The play rating skips a stat a player has no value for (its weight is spread over the rest).
+const COVK = ['cvr', 'cvy', 'cvc'];
 const ratePc = (p, k) => {
   if (p.pc && p.pc[k] != null) return p.pc[k];
+  // a starting corner (half his team's defensive snaps or more) thrown at too rarely to have coverage numbers is scored on how rarely he is targeted
+  if (p.sg === 'CB' && COVK.includes(k) && p.pc && p.pc.cvtr != null && p.st && (p.st.dsh || 0) >= 0.5) return 1 - p.pc.cvtr;
   return null;
 };
 const stAce = p => !!p.st && (p.st.ssn || 0) / gp(p) >= 20;
@@ -2686,6 +2702,8 @@ const ROLES = {
     ['Sub-package linebacker', 'u', p => !p.fq && (p.st.dpg || 0) >= .25],
     ['Special teams/depth', 'u', p => !p.fq]], 'Box linebacker'),
   CB: mkRoles([
+    ['No-fly zone', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'cvtr') <= .2)],
+    ['Shutdown corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'cvr') >= .85)],
     ['Ball hawk', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'plyg') >= .85)],
     ['Physical corner', null, Qd(p => (p.st.dpg || 0) >= .75 && pcv(p, 'tkg') >= .85)],
     ['Nickel playmaker', null, Qd(p => (p.st.dpg || 0) < .75 && pcv(p, 'plyg') >= .8)],
@@ -2695,6 +2713,7 @@ const ROLES = {
   S: mkRoles([
     ['Blitz safety', null, Qd(p => pcv(p, 'qbhg') >= .85)],
     ['Turnover machine', null, Qd(p => pcv(p, 'tov') >= .85)],
+    ['Lockdown safety', null, Qd(p => pcv(p, 'cvr') >= .9)],
     ['Box safety', null, Qd(p => (sm(p).tk || 0) / gp(p) >= 6 || pcv(p, 'tflg') >= .8)],
     ['Center fielder', null, Qd(p => (sm(p).tk || 0) / gp(p) <= 4.5 && pcv(p, 'plyg') >= .5)],
     ['Special teams ace', null, p => stAce(p)],

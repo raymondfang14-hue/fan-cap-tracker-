@@ -73,8 +73,9 @@ stats() {
   local wk="$1" s
   get stats_player/stats_player_week_$SEASON.csv snap_counts/snap_counts_$SEASON.csv players/players.csv draft_picks/draft_picks.csv || return 1
   for s in $((SEASON-3)) $((SEASON-2)) $((SEASON-1)); do get stats_player/stats_player_week_$s.csv snap_counts/snap_counts_$s.csv || return 1; done
+  get pbp/play_by_play_$SEASON.csv.gz || return 1   # estimated coverage in build_stats.py, splits below
   py data/build_stats.py "$DL" "$SEASON" data/stats.json "$wk" && py tools/check_stats.py "$DL" "$SEASON" || return 1
-  if [ "$MODE" = weekly ]; then get pbp/play_by_play_$SEASON.csv.gz && py data/build_splits.py "$DL" "$SEASON" || return 1; fi
+  if [ "$MODE" = weekly ]; then py data/build_splits.py "$DL" "$SEASON" || return 1; fi
   py data/build_history.py "$DL" "$SEASON"
 }
 

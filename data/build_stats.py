@@ -10,6 +10,15 @@ snap counts in the NFL's official gamebooks; no free in-season alternative exist
 hurries, blitzes, missed and broken tackles, coverage, drops, bad throws, yards before and after contact) is not used.
 Pass rush comes from the box scores' def_sacks and def_qb_hits (built from play-by-play; QB hits include sacks).
 
+Estimated coverage (optional, when play_by_play_<S>.csv.gz is in the folder): no free data says which defender covered
+a receiver, so each pass is credited from play-by-play: an interception to the intercepting player, a broken-up
+incompletion to the player(s) credited with the pass defensed, a completion to the first defensive tackler (split
+between two assisted tacklers). Unmarked incompletions (throwaways, overthrows) and untackled catches (most
+touchdowns, catches out of bounds) are not credited: about 75% of passes are. Checked against Pro Football Reference's
+charting through 2026 Week 8 for corners with 10+ targets: targets r=0.81, yards per target r=0.62, catch rate r=0.66,
+passer-rating-allowed rank r=0.57 (safeties weaker: 0.68, 0.52, 0.44, 0.38). Fields: ct targets, cc catches, cy yards,
+ctd touchdowns, ci interceptions, ce EPA, all estimated.
+
 Players are matched across files by id, never by name: snap counts use the PFR id, box scores
 use the gsis id, and players.csv links the two. Names differ between files (Greg / Gregory Rousseau), so name
 matching split one player into two records and his card showed zero tackles. Name + team is only a fallback for
@@ -100,6 +109,31 @@ for r in sp:
         p['s']['cpoe_w'] += num(r['passing_cpoe']) * num(r['attempts']); p['s']['cpoe_n'] += num(r['attempts'])
     if r.get('fg_long'): p['s']['fg_long'] = max(p['s']['fg_long'], num(r['fg_long']))
     # team totals
+# estimated coverage from play-by-play (see the docstring)
+COV = defaultdict(lambda: defaultdict(float))
+_pbp = os.path.join(D, f'play_by_play_{S}.csv.gz')
+if os.path.exists(_pbp):
+    import gzip
+    ok = lambda v: v not in ('', 'NA', None)
+    for r in csv.DictReader(gzip.open(_pbp, 'rt', encoding='utf-8')):
+        if r['season_type'] != 'REG' or int(r['week'] or 0) > LAST: continue
+        if r['pass_attempt'] != '1' or r['sack'] == '1' or r['qb_spike'] == '1' or r['two_point_attempt'] == '1' or not ok(r['receiver_player_id']): continue
+        d = r['defteam']
+        if r['interception'] == '1' and ok(r['interception_player_id']): who, kind = [r['interception_player_id']], 'int'
+        elif r['complete_pass'] == '1':
+            kind = 'cmp'
+            if ok(r['solo_tackle_1_player_id']) and r['solo_tackle_1_team'] == d: who = [r['solo_tackle_1_player_id']]
+            else: who = [r[f'{k}_player_id'] for k in ('tackle_with_assist_1', 'tackle_with_assist_2', 'assist_tackle_1', 'assist_tackle_2')
+                         if ok(r.get(f'{k}_player_id')) and r.get(f'{k}_team') == d][:2]
+        else: kind, who = 'inc', [r[k] for k in ('pass_defense_1_player_id', 'pass_defense_2_player_id') if ok(r.get(k))][:2]
+        for g in who:
+            w = 1 / len(who); c = COV[g]; c['ct'] += w; c['ce'] += num(r['epa']) * w
+            if kind == 'cmp': c['cc'] += w; c['cy'] += num(r['yards_gained']) * w; c['ctd'] += w * (r['pass_touchdown'] == '1')
+            if kind == 'int': c['ci'] += 1
+    print('estimated coverage: defenders credited', len(COV))
+else:
+    print('estimated coverage skipped: no', os.path.basename(_pbp))
+
 # team context: targets, air yards, rush attempts, dropbacks, sacks allowed, ybc
 TT = defaultdict(lambda: defaultdict(float))
 for r in sp:
@@ -162,6 +196,8 @@ for k, p in P.items():
         tk = s['def_tackles_solo'] + s['def_tackle_assists']
         m.update(tk=tk, solo=s['def_tackles_solo'], tfl=s['def_tackles_for_loss'], sck=s['def_sacks'], qbh=s['def_qb_hits'], ff=s['def_fumbles_forced'],
                  dint=s['def_interceptions'], pd=s['def_pass_defended'], dtd2=s['def_tds'])
+        cv = COV.get(gid)
+        if cv: m.update({k2: rnd(v, 2) for k2, v in cv.items()})
     if s['fg_att'] or s['pat_att']:
         m.update(fgm=s['fg_made'], fga=s['fg_att'], fgp=(s['fg_made'] / s['fg_att'] if s['fg_att'] else 0), fg50=s['fg_made_50_59'] + s['fg_made_60_'],
                  fg40a=s['fg_made_40_49'] + s['fg_missed_40_49'] + s['fg_made_50_59'] + s['fg_missed_50_59'] + s['fg_made_60_'] + s['fg_missed_60_'],
