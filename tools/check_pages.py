@@ -55,46 +55,47 @@ async def main(args):
     problems = []
     async with async_playwright() as p:
         browser = await p.chromium.launch(executable_path=os.environ.get('PW_CHROMIUM') or None)   # PW_CHROMIUM: a browser already on the machine
-        for w, h, size in SIZES:
-            for scheme in ('light', 'dark'):
-                page = await browser.new_page(viewport={'width': w, 'height': h}, color_scheme=scheme)
-                page.on('pageerror', lambda e, s=size, c=scheme: problems.append(f'{s}/{c}: JS error: {e}'))
-                page.on('response', lambda r, s=size, c=scheme: r.status >= 400 and '/data/' in r.url
-                        and problems.append(f'{s}/{c}: {r.status} loading {r.url}'))
-                for v in VIEWS:
-                    await page.goto(base + v, wait_until='load')
-                    try:  # some pages keep polling (scores, weather), so networkidle can never come
-                        await page.wait_for_load_state('networkidle', timeout=5000)
+        # The four modes (phone/desktop x light/dark) run at the same time, each in its own page: same checks, about a quarter of the time.
+        async def run_mode(w, h, size, scheme):
+            page = await browser.new_page(viewport={'width': w, 'height': h}, color_scheme=scheme)
+            page.on('pageerror', lambda e, s=size, c=scheme: problems.append(f'{s}/{c}: JS error: {e}'))
+            page.on('response', lambda r, s=size, c=scheme: r.status >= 400 and '/data/' in r.url
+                    and problems.append(f'{s}/{c}: {r.status} loading {r.url}'))
+            for v in VIEWS:
+                await page.goto(base + v, wait_until='load')
+                try:  # some pages keep polling (scores, weather), so networkidle can never come
+                    await page.wait_for_load_state('networkidle', timeout=5000)
+                except Exception:
+                    pass
+                await page.wait_for_timeout(600)
+                wide = await page.evaluate('document.documentElement.scrollWidth - innerWidth')
+                if wide > 1:
+                    problems.append(f'{size}/{scheme} {v}: page scrolls sideways by {wide}px')
+                if v in SHARE_VIEWS:
+                    try:  # the buttons appear after the data loads and a short debounce, so wait for one instead of guessing
+                        await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
                     except Exception:
-                        pass
-                    await page.wait_for_timeout(600)
-                    wide = await page.evaluate('document.documentElement.scrollWidth - innerWidth')
-                    if wide > 1:
-                        problems.append(f'{size}/{scheme} {v}: page scrolls sideways by {wide}px')
-                    if v in SHARE_VIEWS:
-                        try:  # the buttons appear after the data loads and a short debounce, so wait for one instead of guessing
-                            await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
-                        except Exception:
-                            problems.append(f'{size}/{scheme} {v}: no visible "Share this" button on any chart or table')
-                    if v in CARD_VIEWS:
-                        try:  # the button needs the data, then drawing the card needs the photo to load or time out
-                            await page.wait_for_function("[...document.querySelectorAll('[data-card]')].some(b => b.offsetParent)", timeout=6000)
-                            await page.evaluate("[...document.querySelectorAll('[data-card]')].find(b => b.offsetParent).click()")
-                            await page.wait_for_function("document.querySelector('.ps-dlg[open] img') && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=15000)
-                            wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
-                            if wh != [1080, 1350]:
-                                problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
-                        except Exception:
-                            problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
-                    if v == '/stats':  # the Season stats table must fill with player rows
-                        try:
-                            await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)
-                        except Exception:
-                            problems.append(f'{size}/{scheme} #stats: the Season stats table has no rows')
-                    if args.shots:
-                        os.makedirs(args.shots, exist_ok=True)
-                        await page.screenshot(path=os.path.join(args.shots, f"{v.strip('/#').replace('/', '_') or 'home'}-{size}-{scheme}.png"))
-                await page.close()
+                        problems.append(f'{size}/{scheme} {v}: no visible "Share this" button on any chart or table')
+                if v in CARD_VIEWS:
+                    try:  # the button needs the data, then drawing the card needs the photo to load or time out
+                        await page.wait_for_function("[...document.querySelectorAll('[data-card]')].some(b => b.offsetParent)", timeout=6000)
+                        await page.evaluate("[...document.querySelectorAll('[data-card]')].find(b => b.offsetParent).click()")
+                        await page.wait_for_function("document.querySelector('.ps-dlg[open] img') && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=15000)
+                        wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
+                        if wh != [1080, 1350]:
+                            problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
+                    except Exception:
+                        problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
+                if v == '/stats':  # the Season stats table must fill with player rows
+                    try:
+                        await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)
+                    except Exception:
+                        problems.append(f'{size}/{scheme} #stats: the Season stats table has no rows')
+                if args.shots:
+                    os.makedirs(args.shots, exist_ok=True)
+                    await page.screenshot(path=os.path.join(args.shots, f"{v.strip('/#').replace('/', '_') or 'home'}-{size}-{scheme}.png"))
+            await page.close()
+        await asyncio.gather(*(run_mode(w, h, size, scheme) for w, h, size in SIZES for scheme in ('light', 'dark')))
         await browser.close()
     for line in problems:
         print('FAIL', line)
