@@ -51,7 +51,19 @@ with open(DATA / 'ledger.csv', newline='') as fh:
     for row in csv.DictReader(fh):
         LEDGER[(row['name'], row['team'])] = row
 
-ASOF = NFL['asOf']
+# The page date is the newest data the pages are built from (contracts, season stats or scores), so the footers and the
+# sitemap's lastmod move whenever any of them is refreshed.
+def _asof():
+    ds = [NFL.get('asOf') or '']
+    for fn in ('stats.json', 'schedule.json', 'moves.json'):
+        try:
+            ds.append(json.load(open(DATA / fn)).get('asOf') or '')
+        except Exception:
+            pass
+    return max(d for d in ds if re.match(r'\d{4}-\d{2}-\d{2}$', d or '')) if any(ds) else NFL['asOf']
+
+
+ASOF = _asof()
 CAP = NFL['cap']
 SEASON_YEAR = NFL['season']
 SOURCES = NFL['sources']
@@ -189,6 +201,8 @@ def substantive(p):
         return True
     if p.prov == 'f' and (p.cap or 0) > 1_000_000:
         return True
+    if p.prov == 'm' and 's' in p.ver and (p.base or 0) > 1_000_000:  # undrafted second-year players (these had pages as rookie-scale rows)
+        return True
     return False
 
 
@@ -213,7 +227,7 @@ def ok(p, letter):
 
 def contract_facts(p):
     """Confirmed contract fields only. Returns dict of confirmed values (None when not confirmed)."""
-    f = dict(total=None, apy=None, gtd=None, fg=None, end=None, cap=None, sb=None, years=None)
+    f = dict(total=None, apy=None, gtd=None, fg=None, end=None, cap=None, sb=None, years=None, base=None)
     if p.prov == 'u':
         return f
     if ok(p, 't'):
@@ -229,6 +243,8 @@ def contract_facts(p):
         f['end'] = p.end
     if ok(p, 'c'):
         f['cap'] = p.cap
+    if p.prov == 'm' and ok(p, 's'):
+        f['base'] = p.base  # undrafted player: this season's CBA minimum base salary, nothing else
     if p.prov == 'r' and ok(p, 'b') and p.sb:
         f['sb'] = p.sb
     led = LEDGER.get((p.name, p.team))
@@ -292,6 +308,9 @@ def player_summary(p, f):
     T = TEAMS[p.team]
     role = POSNAME.get(p.pos, p.pos)
     intro = f"{p.name} is {article(role)} {role} for the {T['full']}"
+    if f['base'] and not (f['total'] or f['apy'] or f['cap']):
+        return (intro + f". He went undrafted, so the CBA sets his {SEASON_YEAR} base salary at the league minimum of at least {mon(f['base'])}."
+                ' The length, signing bonus and guarantees of his deal are being verified.')
     if p.prov == 'u' or not (f['total'] or f['apy'] or f['cap']):
         return intro + '. PlainStats shows a contract only once a named report confirms it, so this contract is being verified.'
     deal = ''
@@ -336,6 +355,8 @@ def player_faq(p, f):
             a += f", which averages {mon(f['apy'])} a year"
         a += '.' + calc
         q.append((f'How much does {n} make?', a))
+    elif f['base']:
+        q.append((f'How much does {n} make?', f"{n} went undrafted, so his {SEASON_YEAR} base salary is the CBA league minimum of at least {mon(f['base'])}. The length, signing bonus and guarantees of his deal are being verified."))
     else:
         q.append((f'How much does {n} make?', f"{unver}"))
     if f['end'] or f['years']:
@@ -389,6 +410,8 @@ def player_card(p, f, T, has_deal):
         card.update(n=mon(f['total']), l='total contract', x=(f"Runs through {f['end']}" if f['end'] else None))
     elif f['cap']:
         card.update(n=mon(f['cap']), l=f'{SEASON_YEAR} cap hit')
+    elif f['base']:
+        card.update(n=mon(f['base']), l=f'{SEASON_YEAR} base salary (league minimum)', x='Undrafted · deal length being verified')
     else:
         # No confirmed contract: lead with a real season number and say the contract is still being verified.
         st = headline_stat(p)
@@ -489,13 +512,15 @@ def build_player(p):
     summary = player_summary(p, f)
     faq = player_faq(p, f)
     path = f'/players/{p.slug}'
-    has_deal = bool(f['total'] or f['apy'] or f['cap'])
+    has_deal = bool(f['total'] or f['apy'] or f['cap'] or f['base'])
     if f['total'] and f['end']:
         title = f"{p.name} contract explained: {mon(f['total'])} through {f['end']}"
     elif f['total']:
         title = f"{p.name} contract explained: {mon(f['total'])} deal"
     elif f['cap']:
         title = f"{p.name} contract explained: {mon(f['cap'])} cap hit in 2026"
+    elif f['base']:
+        title = f"{p.name} contract explained: {mon(f['base'])} base salary in {SEASON_YEAR}"
     else:
         title = f"{p.name} contract and 2026 stats explained"
     if len(title) <= 50:
@@ -509,6 +534,8 @@ def build_player(p):
         src_html = f'<p class="note">Source: <a href="{esc(surl)}" rel="nofollow noopener">{esc(sname)}</a>, a named report. Figures PlainStats has not confirmed are left out.</p>'
     elif p.prov == 'f':
         src_html = '<p class="note">Calculated by PlainStats from the draft slot and the CBA rookie scale (not a reported figure).</p>'
+    elif p.prov == 'm' and f['base']:
+        src_html = '<p class="note">Base salary from the CBA league-minimum salary table for his years in the league. Undrafted players can also get a small signing bonus and guarantees, which are not in any table, so they are left out until a named report confirms them.</p>'
     elif p.prov == 'm':
         src_html = '<p class="note">Calculated by PlainStats from the CBA league-minimum salary table.</p>'
     elif p.prov == 'p':
@@ -517,7 +544,9 @@ def build_player(p):
     rows = [('Position', esc(POSNAME.get(p.pos, p.pos)).capitalize()), ('Team', f'<a href="/teams/{T["slug"]}">{esc(T["full"])}</a>')]
     if p.age:
         rows.append(('Age', esc(p.age)))
-    if has_deal:
+    if has_deal and f['base'] and not (f['total'] or f['apy'] or f['cap']):
+        rows += [(f'{SEASON_YEAR} base salary', 'At least ' + mon(f['base']) + ' (league minimum)'), ('Length, bonus and guarantees', 'Being verified')]
+    elif has_deal:
         if f['years']:
             rows.append(('Contract length', f"{f['years']} year{'' if f['years'] == 1 else 's'}"))
         rows += [('Total value', mon(f['total'])), ('Average per year', mon(f['apy'])), ('Guaranteed', mon(f['gtd'])),

@@ -43,6 +43,17 @@
   ],
   "rewrites": [
     {
+      "source": "/:path((?!api/|data/|assets/|og-data/|_vercel/).*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Bb]ot|[Cc]rawler|[Ss]pider|facebookexternalhit|WhatsApp|Embedly|Slurp|Pinterest|vkShare|Iframely|Quora Link Preview).*"
+        }
+      ],
+      "destination": "/api/page?p=/:path"
+    },
+    {
       "source": "/scores",
       "destination": "/"
     },

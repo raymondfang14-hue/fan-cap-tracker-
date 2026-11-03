@@ -189,6 +189,12 @@ def apply_rookie(row, deal, cls, pick, name, gid=None, team=None, rnd=None):
     row[4:15] = [deal['total'], round(deal['total'] / 4), gtd, gtd, end, 0, deal['cap'][SEASON], deal['base'][SEASON],
                  pr, rem_bonus + (rem_base if gtd_full else 0), pr + (deal['base'][SEASON] if gtd_full else 0)]
 
+def udfa_row(row, cs):
+    # Undrafted players sign for the league minimum, but the length, signing bonus and guarantees are not in any table, and a
+    # signing bonus changes the cap hit. So only this season's minimum base salary is filled (ver 's'); the rest stays blank and
+    # the pages say it is being verified.
+    row[4:15] = [None, None, None, None, None, 0, None, minsal(cs, SEASON), None, None, None]
+
 def minimum_row(row, cs):
     vsb = CBA['vetSalaryBenefit']
     cap = minsal(vsb['countsAsCredited'], SEASON) if cs >= vsb['minCredited'] else minsal(cs, SEASON)
@@ -233,7 +239,7 @@ for p in D['players']:
         row[4:15] = [cap, cap, 0, 0, SEASON, 0, cap, cap, 0, 0, 0]
         prov, sid, ver = 'p', src_id(CBA['practiceSquad']['src'][0], CBA['practiceSquad']['src'][1]), 'tagfecb'
     elif r and not r['draft_number'] and int(r['rookie_year'] or 0) >= SEASON - 1:
-        minimum_row(row, int(r['years_exp'] or 0)); prov, sid, ver = 'f', CBA_SRC, 'tagfecb'
+        udfa_row(row, int(r['years_exp'] or 0)); prov, sid, ver = 'm', src_id(CBA['minSalary']['src'][0], CBA['minSalary']['src'][1]), 's'
     elif r and row[10] and row[4] and row[4] <= 1.6e6:
         exp = int(r['years_exp'] or 0)
         vsb = CBA['vetSalaryBenefit']
@@ -278,7 +284,9 @@ for r in ROST:
         cls, pk, rnd = picks[r['gsis_id']]
         apply_rookie(row, rookie_deal(pk, cls), cls, pk, r['full_name'], r['gsis_id'], t, rnd)
     elif not r['draft_number'] and int(r['rookie_year'] or 0) >= SEASON - 1:
-        minimum_row(row, int(r['years_exp'] or 0))
+        udfa_row(row, int(r['years_exp'] or 0))
+        out.append(row + ['m', src_id(CBA['minSalary']['src'][0], CBA['minSalary']['src'][1]), 's', None, r['gsis_id']]); count['m'] += 1; added += 1
+        continue
     else: continue
     out.append(row + ['f', CBA_SRC, 'tagfecb', None, r['gsis_id']]); count['f'] += 1; added += 1
 
@@ -307,9 +315,10 @@ for row in out:
         row[9] = 0
 D['players'] = out
 D['sources'] = SRC
+D['asOf'] = datetime.date.today().isoformat()  # the pages and the sitemap date themselves from this, so it moves with every rebuild
 D['prov'] = {'asOf': datetime.date.today().isoformat(), 'counts': count, 'added': added,
              'legend': {'r': 'Reported in a named news report or team announcement', 'f': 'Calculated with the rookie scale and CBA minimum salaries',
-                        'm': 'League-minimum deal, valued with the CBA minimum salary table', 'p': 'Practice squad pay set by the CBA',
+                        'm': 'League-minimum deal, valued with the CBA minimum salary table (undrafted players: this season\'s minimum base salary only)', 'p': 'Practice squad pay set by the CBA',
                         'u': 'No sourced figure yet; the page shows "contract being verified"'}}
 json.dump(D, open('data/nfl.json', 'w'), separators=(',', ':'))
 json.dump({'asOf': D['prov']['asOf'], 'note': 'Year-by-year cap hits PlainStats calculates itself: rookie contracts from the rookie scale and CBA minimums (data/cba.json), plus exercised fifth-year options. Each row: [base salary, bonus counted, cap hit].', 'contracts': YC},

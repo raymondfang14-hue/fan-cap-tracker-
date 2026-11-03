@@ -2234,7 +2234,8 @@ function prepare(d, mv) {
   PL = d.players.map((r, i) => ({ i, name: r[0], team: r[1], pos: r[2], age: r[3], total: r[4], apy: r[5], gtd: r[6], fg: r[7], end: r[8] != null ? r[8] + 1 : null /* data stores the final season; the page works in free-agency years */, voidy: !!r[9], cap: r[10], base: r[11], bonus: r[12], dpre: r[13], dpost: r[14], prov: r[15] || 'u', srcI: r[16] != null ? r[16] : -1, ver: r[17] || '', sb: r[18] || null, gid: r[19] || '', group: POSGROUP[r[2]] || 'ST' }));
   PL.forEach(p => { if (p.total > 0 && p.gtd > p.total) p.gtd = p.total; if (p.fg > p.gtd) p.fg = p.gtd; p.gtdp = p.total > 0 ? p.gtd / p.total : 0; p.yrs = p.apy > 0 ? Math.max(1, Math.round(p.total / p.apy)) : 1; p.key = (p.name + ' ' + p.team + ' ' + TB[p.team].name + ' ' + TB[p.team].city + ' ' + p.pos).toLowerCase(); });
   // A contract with no sourced figure (prov 'u') is hidden: no dollars are shown and it stays out of every ranking.
-  PL.forEach(p => { p.hid = p.prov === 'u'; });
+  // So is an undrafted player's (prov 'm' with no cap hit): only his CBA minimum base salary is known, not the length, bonus or guarantees.
+  PL.forEach(p => { p.hid = p.prov === 'u' || (p.prov === 'm' && p.cap == null); });
   const byPos = {};
   PL.forEach(p => { (byPos[p.pos] = byPos[p.pos] || []); if (!p.hid) byPos[p.pos].push(p.apy); });
   Object.values(byPos).forEach(a => a.sort((x, y) => y - x));
@@ -3493,6 +3494,7 @@ document.addEventListener('scroll', hideTip, { passive: true });
 /* ===== story ===== */
 function story(p) {
   const t = TB[p.team], out = [];
+  if (p.hid && p.prov === 'm') return [`${p.name} plays for the ${t.city} ${t.name}. He went undrafted, and the length, signing bonus and guarantees of his deal appear here once a news report confirms them.`];
   if (p.hid) return [`${p.name} plays for the ${t.city} ${t.name}. PlainStats has no sourced contract figure for him yet, so we are not showing one. It appears here once a news report confirms it.`];
   const fa = p.end ? ` He can become a free agent in ${p.end}.` : ' When his deal ends is still being verified.';
   if (!(p.total > 0)) {
@@ -3566,6 +3568,37 @@ const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', 
   teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
+// One plain-English description per page, for search results and link previews. api/page.js reads this block (ROUTES to SUBS) from
+// index.html to give crawlers each page's own title and description, so keep it plain data. Sub-pages get "<label>. " + their section's.
+const PDESC = {
+  scores: 'Every NFL score and this week\'s schedule, with the PlainStats model\'s pick, injury report and weather for each game.',
+  standings: 'NFL standings by division, with records, points for and against, streaks and the playoff seeds if the season ended today.',
+  projections: 'NFL playoff chances for all 32 teams from 10,000 simulated seasons of the PlainStats game model.',
+  news: 'The NFL news that matters, explained in plain English: contracts, trades, injuries, games and coaching changes.',
+  'news-contracts': 'NFL contract news explained in plain English: extensions, signings, trades, releases and restructures.',
+  'news-injuries': 'NFL injury news explained in plain English, with what each injury means for the team.',
+  'news-games': 'NFL game results explained in plain English.', 'news-coaching': 'NFL coaching and front office changes, explained in plain English.',
+  'news-league': 'NFL league news, rule changes and discipline, explained in plain English.',
+  teams: 'NFL team ratings: how every team rates on offense and defense, its best units and its roster.',
+  tiers: 'Weekly NFL team tiers: every team\'s offense against its defense by expected points added per play, updated after each week\'s games.',
+  cap: 'How much salary cap space every NFL team has, and where its money goes.',
+  rankings: 'Weekly NFL power rankings from results and roster strength, with risers and fallers.',
+  awards: 'NFL awards watch: MVP, Offensive and Defensive Player of the Year and rookie races, scored from this season\'s stats.',
+  ratings: 'The top NFL players right now at every position, rated from this season\'s play.',
+  'ratings-roles': 'What role each NFL player plays, from how teams use him.', 'ratings-pay': 'NFL pay vs. play: who outplays his contract and who does not.',
+  'ratings-rank': 'NFL player rankings by position from this season\'s play.', 'ratings-traits': 'NFL player trait badges: what each player does best.',
+  stats: 'NFL player season stats with week ranges, a minimum-snaps filter and a garbage-time toggle.',
+  contracts: 'NFL contracts explained in plain English: recent deals, the market at each position and every player\'s contract.',
+  value: 'The best and worst NFL contracts: what each player is paid against what his play is worth on today\'s market.',
+  rookies: 'NFL rookie contracts, fifth-year options and the players due for an extension.',
+  freeagency: 'The next NFL free agent class by position and team, with each team\'s projected cap room.',
+  'fa-tags': 'NFL free agency key dates and franchise tag prices.', analytics: 'Cap lab: how every NFL team spends its salary cap, by position and contract type.',
+  bigboard: 'The 2027 NFL draft big board: the top prospects ranked, with stats and NFL comparisons.',
+  mock: 'A 2027 NFL mock draft from the current standings, with traded picks moved to their new owners.',
+  'rookie-pay': 'The NFL rookie pay scale: what every draft slot is paid.', 'draft-guide': 'How the PlainStats draft board and mock draft work.',
+  builder: 'Build an NFL roster from every player in the league and see how it rates.', trade: 'Check an NFL trade: what each team gives and gets.',
+  compare: 'Compare NFL players side by side: contract and this season\'s stats.', learn: 'How the NFL salary cap works, in plain English: cap hits, dead money, guarantees and more.',
+  about: 'About PlainStats: where the data comes from and how it is checked.', search: 'Search NFL players, teams, prospects, games and news on PlainStats.', setup: 'PlainStats setup.' };
 /* Sub-pages: inside a section tab, each panel is its own page with its own address, so nothing sits below a long scroll.
    A panel carries data-sp="<page>"; anything in the box without data-sp shows on every page. Tight pairs (AFC and NFC odds,
    best and worst value) share one page. [box id, where the page bar goes ('top': first in the box, 'head': after its .sechead),
@@ -3589,7 +3622,7 @@ const SUBS = [
 const SUBOF = {};
 SUBS.forEach(([box, , pages], g) => pages.forEach(([page, label, k, path], n) => {
   SUBOF[k] = { g, box, page, parent: pages[0][2] };
-  if (n) { ROUTES.push([k, path]); PTITLE[k] = label + ' · ' + (PTITLE[pages[0][2]] || 'PlainStats'); }
+  if (n) { ROUTES.push([k, path]); PTITLE[k] = label + ' · ' + (PTITLE[pages[0][2]] || 'PlainStats'); PDESC[k] = PDESC[k] || label + '. ' + (PDESC[pages[0][2]] || ''); }
 }));
 // Team pages: /team/kc is the overview, /team/kc/<page> the rest (key 'team-KC/<page>').
 const TEAMSUBS = [['', 'Overview'], ['lineup', 'Lineup'], ['stats', 'Team stats'], ['depth-chart', 'Depth chart'], ['cap', 'Salary cap'], ['spending', 'Spending'], ['playing-well', 'Playing well'], ['news', 'News'], ['roster', 'Roster']];
@@ -3656,6 +3689,13 @@ function route() {
   $$('[data-nav]').forEach(a => a.dataset.nav === ng ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + pathOf(h0); }
   document.title = v === 'home' ? 'PlainStats: NFL contracts, salary cap and player stats' : v !== 'team' && PTITLE[h0] ? PTITLE[h0] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
+  { // description and link-preview tags follow the page (crawlers that skip JavaScript get the same from api/page.js)
+    const dsc = v === 'home' ? 'NFL contracts, stats and team analytics, explained in plain English.' : v !== 'team' ? PDESC[h0] : null;
+    const setM = (sel, val) => { const m = document.querySelector(sel); if (m && val) m.setAttribute('content', val); };
+    setM('meta[name=description]', dsc); setM('meta[property="og:description"]', dsc); setM('meta[name="twitter:description"]', dsc);
+    setM('meta[property="og:title"]', document.title); setM('meta[name="twitter:title"]', document.title);
+    if (PATHMODE) setM('meta[property="og:url"]', SITE_URL.replace(/\/$/, '') + pathOf(h0));
+  }
   if (D) {
     if (v === 'team') renderTeam(curTeam);
     if (v === 'tools') showTool(st.tool);
@@ -4061,6 +4101,7 @@ function provHTML(p) {
   let txt;
   if (p.prov === 'r') { const got = [...p.ver].map(c => c === 'b' && p.sb ? 'signing bonus ' + mon(p.sb, 1) : VERW[c]).filter(Boolean), miss = ['t', 'g', 'c'].filter(c => !p.ver.includes(c)).map(c => VERW[c]); txt = `From ${link || 'a news report'}: ${got.join(', ')}.${miss.length ? ' Not yet confirmed: ' + miss.join(', ') + '.' : ''}`; }
   else if (p.prov === 'f') txt = 'Calculated by PlainStats from his draft slot with the rookie pay scale and the league minimum salaries in the CBA. <a href="/cap-101">How we calculate</a>';
+  else if (p.prov === 'm' && p.cap == null) txt = `He went undrafted, so the CBA sets his ${D.season} base salary at the league minimum for his years in the league: at least ${mon(p.base, 1)}. The length, signing bonus and guarantees of his deal are being verified.`;
   else if (p.prov === 'm') txt = 'A one-year league-minimum deal, valued with the CBA minimum salary for his years in the league.';
   else if (p.prov === 'p') txt = 'Practice squad pay set by the CBA, for a full season.';
   else txt = 'PlainStats shows a contract only after a team announcement or a named news report confirms it. His is not confirmed yet, so no dollar figures appear.';

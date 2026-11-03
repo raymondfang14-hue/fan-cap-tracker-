@@ -26,6 +26,8 @@ def serve():
     # Same routing as Vercel: clean .html URLs, and the rewrites in vercel.json send app paths to index.html.
     pats = []
     for r in json.load(open(os.path.join(ROOT, 'vercel.json'))).get('rewrites', []):
+        if r.get('has'):  # the crawler-only rule (to api/page.js) needs a Vercel function; people get the plain rewrites
+            continue
         p = re.sub(r':\w+\(([^)]+)\)', r'(\1)', r['source'])
         pats.append(re.compile('^' + re.sub(r':\w+', '[^/]+', p) + '$'))
 
