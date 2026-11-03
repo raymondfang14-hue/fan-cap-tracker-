@@ -1,0 +1,196 @@
+{
+ "cover": {
+  "photo": "cover",
+  "label": "Week 8 NFL Team Tiers · ranked by net EPA/play, not record",
+  "line1": "The 6-1 Bills and 6-1 Vikings aren't top-5 teams.",
+  "line2": "Jacksonville is #1.",
+  "line2_color": "#00D1E6",
+  "pills": [
+   "JAX",
+   "BUF",
+   "MIN"
+  ]
+ },
+ "slides": [
+  {
+   "type": "tier",
+   "tier": 1,
+   "photo": "t1",
+   "hook": "Five teams winning on both sides of the ball.",
+   "why": {
+    "JAX": "Best pass offense (+0.27 EPA/dropback) and #1 run defense. Crushed IND 42-7.",
+    "SF": "#1 offense, best success rate (53%). Pass defense is 18th, the one soft spot.",
+    "KC": "#4 offense, #3 run game. Lost 28-24 at DEN, but the numbers still say top 3.",
+    "LAR": "#3 defense, #3 vs. the pass. A 4-4 record, but the numbers say top 5.",
+    "CIN": "#2 success rate (50%), #4 pass offense. 23rd-ranked run defense. Won 43-36 in OT."
+   }
+  },
+  {
+   "type": "tier",
+   "tier": 2,
+   "photo": "t2",
+   "hook": "The 6-1 Bills and Vikings land here. Each is elite on only one side.",
+   "why": {
+    "BUF": "#2 offense, #1 run game. Defense is the leak: 23rd, and 24th vs. the pass.",
+    "CHI": "Top 12 in pass and run offense, #4 defensive success rate. Won 34-17 at SEA.",
+    "GB": "#7 defense (-0.07). Pass offense is +0.13, but the run game ranks last (-0.24).",
+    "MIN": "#1 defense (-0.17 EPA allowed), but the 29th-ranked offense. Lost 19-15 at DET.",
+    "TB": "#2 defense (-0.16), #6 run game, 31st pass offense. Shut out ATL 16-0.",
+    "NE": "#8 offense, #7 pass offense (+0.16). 21st-ranked pass defense. Beat MIA 24-19.",
+    "PIT": "#2 run game (+0.12), #3 run defense. Four straight wins, 27-6 over CLE."
+   }
+  },
+  {
+   "type": "tier",
+   "tier": 3,
+   "photo": "t3",
+   "hook": "Ten teams within 0.07 EPA per play of each other.",
+   "why": {
+    "SEA": "Defense #5, offense #24. Lost 34-17 to CHI.",
+    "NYJ": "Offense #11, pass defense #25. Lost 38-33 to LV.",
+    "BAL": "Average everywhere. Lost 36-10 at BUF.",
+    "DET": "#3 pass offense, #30 defense. Beat MIN 19-15.",
+    "CAR": "28th-ranked run defense. Lost 27-19 at GB.",
+    "NYG": "Offense #16, defense #17. Pure middle.",
+    "DEN": "6-2, but 29th in offense success rate.",
+    "HOU": "Offense #13, defense #22, run game #24.",
+    "DAL": "#7 offense, #31 defense. Lost 33-30 in OT.",
+    "WAS": "Beat PHI 27-10. 29th-ranked run defense."
+   }
+  },
+  {
+   "type": "tier",
+   "tier": 4,
+   "photo": "t4",
+   "hook": "5-3 Cleveland is stuck here: 25th in net EPA per play.",
+   "why": {
+    "ATL": "28th offense (-0.09), 29th in the air. Shut out 16-0 at TB. Defense ranks 10th.",
+    "LV": "#6 pass offense (+0.18), but the 31st run game and 28th defense. Won 38-33 at NYJ.",
+    "CLE": "5-3 flatters them: 25th net EPA, 25th offense. Lost 27-6 at PIT.",
+    "ARI": "31st pass defense (+0.22 allowed), 5th vs. the run. Won 33-30 in OT at DAL.",
+    "NO": "31st run defense, 31st defensive success rate. Offense ranks 22nd."
+   }
+  },
+  {
+   "type": "tier",
+   "tier": 5,
+   "photo": "t5",
+   "hook": "The 0-7 Chargers aren't last. The 2-6 Eagles are.",
+   "why": {
+    "TEN": "26th offense, 25th defense, 28th pass D. Lost 43-36 in OT at CIN.",
+    "MIA": "Worst defense in the league (+0.13), worst pass D (+0.30). Lost 24-19 to NE.",
+    "IND": "30th offense (-0.12), 30th pass offense (-0.22). Beaten 42-7 at JAX.",
+    "LAC": "Worst offense in the league (-0.26), last in pass offense. Defense is 9th.",
+    "PHI": "Worst net EPA: 31st offense, 29th defense, last vs. the run. Six straight losses."
+   }
+  },
+  {
+   "type": "movers",
+   "photo": "mv",
+   "hook": "Steelers jump 7 spots. Seahawks and Ravens each fall 6.",
+   "up": [
+    "PIT",
+    "CHI"
+   ],
+   "down": [
+    "SEA",
+    "BAL"
+   ],
+   "why": {
+    "PIT": "Up 7, the biggest jump. Four straight wins, #2 run game. Beat CLE 27-6.",
+    "CHI": "Up 4. Won 34-17 at SEA. Top 12 in pass and run offense.",
+    "TB": "Up 4. The #2 defense shut out ATL 16-0. Pass offense is 31st.",
+    "SEA": "Down 6, the biggest drop. Lost 34-17 to CHI. 24th-ranked offense.",
+    "BAL": "Down 6 after losing 36-10 at BUF. Three straight losses.",
+    "CAR": "Down 5 after losing 27-19 at GB. 28th-ranked run defense."
+   },
+   "also": "Also up: TB +4, WAS +3, TEN +3. Also down: CAR -5, CLE -4, MIN -3, DEN -3, IND -3."
+  },
+  {
+   "type": "cta",
+   "photo": "cta"
+  }
+ ],
+ "crop": {
+  "cover": {
+   "ig": [
+    "cover",
+    "50% 0%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ]
+  },
+  "t1": {
+   "ig": [
+    "cover",
+    "50% 100%"
+   ],
+   "tt": [
+    "auto 128%",
+    "50% 100%"
+   ]
+  },
+  "t2": {
+   "ig": [
+    "cover",
+    "50% 100%"
+   ],
+   "tt": [
+    "auto 115%",
+    "50% 100%"
+   ]
+  },
+  "t3": {
+   "ig": [
+    "cover",
+    "50% 100%"
+   ],
+   "tt": [
+    "auto 108%",
+    "50% 100%"
+   ]
+  },
+  "t4": {
+   "ig": [
+    "cover",
+    "50% 100%"
+   ],
+   "tt": [
+    "auto 120%",
+    "50% 100%"
+   ]
+  },
+  "t5": {
+   "ig": [
+    "cover",
+    "50% 100%"
+   ],
+   "tt": [
+    "auto 120%",
+    "50% 100%"
+   ]
+  },
+  "mv": {
+   "ig": [
+    "cover",
+    "50% 0%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ]
+  },
+  "cta": {
+   "ig": [
+    "cover",
+    "50% 10%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ]
+  }
+ }
+}
