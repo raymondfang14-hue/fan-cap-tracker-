@@ -4872,6 +4872,7 @@ const DMET = {
   recg: ['Catches', 'per game', (s, g) => dPer(dSv(s, 'rec'), g), dN1],
   ydg: ['Receiving yards', 'per game', (s, g) => dPer(dSv(s, 'rey'), g), dN1],
   ypr: ['Yards per catch', 'big-play ability', s => dPer(dSv(s, 'rey'), s.rec), dN1],
+  reyg: ['Receiving yards', 'per game', (s, g) => dPer(dSv(s, 'rey'), g), dN1],
   rtdg: ['Receiving TDs', 'per game', (s, g) => dPer(dSv(s, 'retd'), g), dN1],
   skg: ['Sacks', 'per game', (s, g) => dPer(dSv(s, 'sk'), g), dN1],
   tflg: ['Tackles for loss', 'per game', (s, g) => dPer(dSv(s, 'tfl'), g), dN1],
@@ -4957,29 +4958,32 @@ function prole(p) {
   }
   return '';
 }
-// Traits: [name, meaning, groups, metric, floor]. A prospect earns one when he clears the floor; the tier comes from his percentile among the prospects at his position.
+// Traits: [name, meaning, groups, metric, [gold, silver, bronze] stat lines (or a function of the prospect giving them), fixed].
+// Pools are 3 to 10 prospects a position, too few for percentiles, so a tier is a set stat line: the same numbers mean the
+// same badge every week. A metric marked lower-is-better in DMET clears a line by being at or under it. With no metric,
+// the function decides (a tier, or null for no badge). Names match the NFL badges where the skill is the same, and no
+// badge repeats the stat and cutoff a prospect role is built on (Field stretcher, Bell cow, Green-dot tackler and so on).
+const ptLines = (v, L, low) => { for (const [i, t] of ['gold', 'silver', 'bronze'].entries()) { if (L[i] != null && (low ? v <= L[i] : v >= L[i])) return t; } return null; };
 const PTRAITS = {
-  surgeon: ['Surgeon', 'Completes 68% or more of his passes.', ['QB'], 'cmp', .68],
-  airraid: ['Air raid', 'Averages 9 or more yards a throw.', ['QB'], 'ypa', 9],
-  protect: ['Ball protector', 'Throws an interception on 2% of passes or fewer.', ['QB'], 'intr', .02],
-  scramble: ['Scramble threat', 'Runs for 25+ yards a game.', ['QB'], 'rydg', 25],
-  tdmaker: ['Touchdown maker', 'Throws a touchdown on 8% or more of his passes.', ['QB'], 'tdr', .08],
-  workhorse: ['Workhorse', 'Gets 14+ carries a game.', ['RB'], 'carg', 14],
-  chunk: ['Chunk runner', 'Averages 5.5+ yards a carry.', ['RB'], 'ypc', 5.5],
-  goalline: ['Goal-line hammer', 'Scores 0.9+ touchdowns a game.', ['RB'], 'tdg', .9],
-  magnet: ['Target magnet', 'Catches 5+ passes a game (4+ for tight ends).', ['WR', 'TE'], 'recg', p => p.grp === 'TE' ? 4 : 5],
-  bigplay: ['Big-play maker', 'Gains 16+ yards a catch.', ['WR', 'TE'], 'ypr', 16],
-  redzone: ['Red-zone threat', 'Catches a touchdown in most games (0.8+ a game, 0.5+ for tight ends).', ['WR', 'TE'], 'rtdg', p => p.grp === 'TE' ? .5 : .8],
-  engine: ['Yardage engine', 'Gains 90+ receiving yards a game (55+ for tight ends).', ['WR', 'TE'], 'ydg', p => p.grp === 'TE' ? 55 : 90],
-  sackartist: ['Sack artist', 'Gets 0.6+ sacks a game (0.4+ inside).', ['EDGE', 'DT'], 'skg', p => p.grp === 'DT' ? .4 : .6],
-  wrecker: ['Run wrecker', 'Makes 0.8+ tackles for loss a game (0.6+ for linebackers).', ['EDGE', 'DT', 'LB'], 'tflg', p => p.grp === 'LB' ? .6 : .8],
-  pressure: ['Pressure machine', 'Gets 1.2+ sacks and hurries a game (0.8+ inside).', ['EDGE', 'DT'], 'prg', p => p.grp === 'DT' ? .8 : 1.2],
-  tackler: ['Tackle machine', 'Makes 6.5+ tackles a game (4.5+ for safeties).', ['LB', 'S'], 'tkg', p => p.grp === 'S' ? 4.5 : 6.5],
-  ballhawk: ['Ballhawk', 'Gets his hands on 1+ pass a game (0.4+ for safeties).', ['CB', 'S'], 'ballg', p => p.grp === 'S' ? .4 : 1],
-  takeaway: ['Takeaway artist', 'Two or more forced fumbles and interceptions combined.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => dSv(p.st, 'ff') + dSv(p.st, 'int') >= 2],
-  frame: ['Prototype frame', 'Has the height and weight teams look for at his position.', 'ALL', null, p => { const h = dIn(p.ht) || 0, w = p.wt || 0, T = { QB: [76, 215], RB: [72, 215], WR: [76, 210], TE: [78, 245], OT: [78, 315], IOL: [77, 310], EDGE: [77, 255], DT: [76, 305], LB: [75, 235], CB: [74, 195], S: [74, 205] }[p.grp]; return T && h >= T[0] && w >= T[1]; }, 'bronze'],
-  consensus: ['Consensus first-rounder', 'Both boards rank him in their top 32: gold for top 10 on both.', 'ALL', null, p => p.w && p.b && p.w <= 32 && p.b <= 32, p => (p.w <= 10 && p.b <= 10 ? 'gold' : 'silver')],
-  early: ['Early entrant', 'A junior or younger, so he can enter the draft a year early with room to grow.', 'ALL', null, p => p.cls === 'JR' || p.cls === 'SO' || p.cls === 'FR', 'bronze']
+  efface: ['Efficiency ace', 'A high college passer rating: gold at 185+, silver at 170+, bronze at 160+.', ['QB'], 'eff', [185, 170, 160]],
+  tdmaker: ['Touchdown maker', 'Throws a touchdown on 10%+ of his passes for gold, 8.5%+ for silver, 7%+ for bronze.', ['QB'], 'tdr', [.1, .085, .07]],
+  protect: ['Ball protector', 'Rarely throws it to the other team: an interception on 0.8% of passes or fewer for gold, 1.5% for silver, 2.2% for bronze.', ['QB'], 'intr', [.008, .015, .022]],
+  qbrun: ['Rushing scorer', 'Scores with his legs: 8+ rushing touchdowns for gold, 6+ for silver, 4+ for bronze.', ['QB'], null, p => ptLines(dSv(p.st, 'rtd'), [8, 6, 4])],
+  chunk: ['Chunk runner', 'Gains a lot every time he runs: 6.5+ yards a carry for gold, 6+ for silver, 5.5+ for bronze.', ['RB'], 'ypc', [6.5, 6, 5.5]],
+  goalline: ['Goal-line hammer', 'Finds the end zone: 1.5+ touchdowns a game for gold, 1.1+ for silver, 0.8+ for bronze.', ['RB'], 'tdg', [1.5, 1.1, .8]],
+  rbhands: ['Pass-game weapon', 'Piles up receiving yards for a running back: 30+ a game for gold, 20+ for silver, 12+ for bronze.', ['RB'], 'reyg', [30, 20, 12]],
+  engine: ['Yardage engine', 'Piles up receiving yards: 130+ a game for gold, 105+ for silver, 85+ for bronze (70, 60 and 50 for tight ends).', ['WR', 'TE'], 'ydg', p => p.grp === 'TE' ? [70, 60, 50] : [130, 105, 85]],
+  redzone: ['Red-zone threat', 'Catches touchdowns: 1.5+ a game for gold, 1.25+ for silver, 1+ for bronze (0.8, 0.6 and 0.45 for tight ends).', ['WR', 'TE'], 'rtdg', p => p.grp === 'TE' ? [.8, .6, .45] : [1.5, 1.25, 1]],
+  catchavg: ['Big-catch average', 'A tight end who gains a lot on each catch: 15+ yards for gold, 13.5+ for silver, 12+ for bronze.', ['TE'], 'ypr', [15, 13.5, 12]],
+  sackartist: ['Sack artist', 'Finishes at the quarterback: 1.2+ sacks a game for gold, 0.8+ for silver, 0.6+ for bronze (0.7, 0.5 and 0.35 inside, 0.5, 0.35 and 0.25 for linebackers).', ['EDGE', 'DT', 'LB'], 'skg', p => p.grp === 'DT' ? [.7, .5, .35] : p.grp === 'LB' ? [.5, .35, .25] : [1.2, .8, .6]],
+  wrecker: ['Run wrecker', 'Lives in the backfield: 2+ tackles for loss a game for gold, 1.2+ for silver, 1+ for bronze (1.2, 0.8 and 0.6 inside and at linebacker, 0.8, 0.6 and 0.45 for safeties).', ['EDGE', 'DT', 'LB', 'S'], 'tflg', p => p.grp === 'EDGE' ? [2, 1.2, 1] : p.grp === 'S' ? [.8, .6, .45] : [1.2, .8, .6]],
+  stuffer: ['Run stuffer', 'An interior lineman who makes tackles: 4.5+ a game for gold, 3.75+ for silver, 3.25+ for bronze.', ['DT'], 'tkg', [4.5, 3.75, 3.25]],
+  breaker: ['Pass breaker', 'Gets his hands on throws: 1.5+ breakups a game for gold, 1+ for silver, 0.75+ for bronze.', ['CB'], 'pbug', [1.5, 1, .75]],
+  support: ['Run support', 'A corner who comes up and tackles: 5+ a game for gold, 4+ for silver, 3.5+ for bronze.', ['CB'], 'tkg', [5, 4, 3.5]],
+  picks: ['Pick artist', 'Intercepts passes: 4+ for gold, 3 for silver, 2 for bronze.', ['LB', 'CB', 'S'], null, p => ptLines(dSv(p.st, 'int'), [4, 3, 2])],
+  strip: ['Ball puncher', 'Knocks the ball loose: 3+ forced fumbles for gold, 2 for silver.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => ptLines(dSv(p.st, 'ff'), [3, 2, null])],
+  frame: ['Prototype frame', 'Has the height and weight teams look for at his position.', 'ALL', null, p => { const h = dIn(p.ht) || 0, w = p.wt || 0, T = { QB: [76, 215], RB: [72, 215], WR: [76, 210], TE: [78, 245], OT: [78, 315], IOL: [77, 310], EDGE: [77, 255], DT: [76, 305], LB: [75, 235], CB: [74, 195], S: [74, 205] }[p.grp]; return T && h >= T[0] && w >= T[1] ? 'bronze' : null; }, true],
+  consensus: ['Consensus first-rounder', 'Both boards rank him in their top 32: gold for top 10 on both.', 'ALL', null, p => p.w && p.b && p.w <= 32 && p.b <= 32 ? (p.w <= 10 && p.b <= 10 ? 'gold' : 'silver') : null, true]
 };
 const ptChip = ([k, t]) => `<span class="ot ${t}" title="${esc(TIER_NAME[t] + ': ' + PTRAITS[k][1])}"><i aria-hidden="true"></i>${esc(PTRAITS[k][0])}</span>`;
 const SCH = c => (DX && DX.schools[c]) || [c, '#555', '#ccc'];
@@ -5029,14 +5033,13 @@ function prepDraft() {
     const mix = p.prod != null ? .7 * p.br + .3 * p.prod : .85 * p.br + .15 * .5;
     p.gradePct = mix; p.grade = Math.round(40 + 59 * mix);
     p.role = prole(p);
-    Object.entries(PTRAITS).forEach(([k, [, , groups, met, floor, fixed]]) => {
+    Object.entries(PTRAITS).forEach(([k, [, , groups, met, lines, profile]]) => {
       if (groups !== 'ALL' && !groups.includes(p.grp)) return;
-      if (met) {
-        if (!p.q || p.pc[met] == null) return;
-        const v = DMET[met][2](p.st, p.g), fl = typeof floor === 'function' ? floor(p) : floor, low = DMET[met][4];
-        if (v == null || (low ? v > fl : v < fl)) return;
-        p.ot.push([k, tierOf(p.pc[met]) || 'bronze']);
-      } else if (floor(p)) p.ot.push([k, typeof fixed === 'function' ? fixed(p) : fixed || 'silver']);
+      if (!profile && !p.q) return;   // stat badges need a qualifying season; size and board badges do not
+      let t = null;
+      if (met) { const v = DMET[met][2](p.st, p.g || 1); if (v != null) t = ptLines(v, typeof lines === 'function' ? lines(p) : lines, DMET[met][4]); }
+      else t = lines(p);
+      if (t) p.ot.push([k, t]);
     });
     p.ot.sort((a, b) => TIER_ORDER[a[1]] - TIER_ORDER[b[1]]);
   });
