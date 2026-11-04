@@ -2134,7 +2134,7 @@ const LEARN_NFL = [
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
   ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, QB-hit rate and sacks for pass rushers, estimated coverage and plays on the ball for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average. Every stat comes from free NFL box scores and play-by-play, so there are no charted stats such as pressures, drops or missed tackles. Coverage numbers (targets, catch rate, yards and passer rating allowed) are estimates: each pass is credited to the defender who intercepted it, broke it up or made the tackle after the catch. A starting corner thrown at too rarely to have coverage numbers is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, Ballhawk and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
-  ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). A receiver can be a Deep threat and have Sure hands at the same time.'],
+  ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). Each badge measures a different skill from the player\'s role, so a receiver can be a Drive extender and an Air-yards magnet, and a corner can have Sticky coverage and be a Pick artist. Count badges (interceptions, forced fumbles, no fumbles lost, defensive touchdowns) use set numbers instead of percentiles.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
   ['Where the stats come from', 'Box scores, play-by-play and EPA come from nflverse, an open project built on official NFL data. Snap counts also come through nflverse, which takes them from Pro Football Reference\'s copy of the NFL\'s official gamebooks. They refresh with the daily update.'],
   ['Team ratings', 'Every team gets a 40 to 99 rating overall, for offense and defense, and for seven units: quarterback, backs and receivers, offensive line, pass rush and D-line, linebackers, secondary and the kicking game. Each unit blends the play ratings of the players with the most snaps there, then ranks it against the other 31 teams.'],
@@ -2462,6 +2462,10 @@ const MET = {
   solog: ['Solo tackles', 'a game', p => (sm(p).solo || 0) / gp(p), f1, 0, 'Solo/G'],
   tbp: ['Touchbacks', 'share of punts, lower is better', p => sm(p).pun ? (sm(p).ptb || 0) / sm(p).pun : null, pc0, 1, 'TB%'],
   pcov: ['Punt coverage', 'gross minus net yards, lower is better', p => sm(p).pun ? (sm(p).pavg || 0) - (sm(p).pnet || 0) : null, f1, 1, 'Ret yds'],
+  r10r: ['Chunk runs', '10+ yard runs per 100 carries', p => sm(p).car ? (sm(p).r10 || 0) / sm(p).car * 100 : null, f1, 0, '10+%'],
+  ypr: ['Yards per catch', '', p => sm(p).rec ? (sm(p).ypr || 0) : null, f1, 0, 'Y/Rec'],
+  skconv: ['Sack finish rate', 'sacks per QB hit, with a QB hit a game or more', p => (sm(p).qbh || 0) >= W() ? (sm(p).sck || 0) / sm(p).qbh : null, pc0, 0, 'Sck/Hit'],
+  cve: ['EPA allowed per target', 'estimated from play-by-play, lower is better', p => cvOK(p) ? (sm(p).ce || 0) / sm(p).ct : null, f2, 1, 'EPA alw'],
   kpts: ['Kicking points', 'a game', p => sm(p).fga || sm(p).pata ? (3 * (sm(p).fgm || 0) + (sm(p).patm || 0)) / gp(p) : null, f1, 0, 'Pts/G']
 };
 const MET_KEYS = Object.keys(MET);
@@ -2733,39 +2737,58 @@ const ROLES = {
     ['Workhorse punter', null, Qd(p => (sm(p).pun || 0) / gp(p) >= 4)]], 'Punter')
 };
 OL_G.forEach(g => { ROLES[g] = ROLES.OL; }); delete ROLES.OL;
-// On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate]. Tiers: gold top 6%, silver top 16%, bronze top 28%.
-// Traits are percentile tiers (gold 94+, silver 84+, bronze 72+) on stats that no role is built on, so a trait never repeats a role.
+// On-field traits: [name, what it means, positions, metric (percentile among qualifiers), extra gate, fixed tier].
+// Tiers: gold top 6%, silver top 16%, bronze top 28% (gold 94+, silver 84+, bronze 72+). A fixed tier (or a function
+// returning one, or null for no badge) is used for count badges instead of a percentile.
+// Rules: each trait at a position measures a different skill (no two traits on the same stat), and no trait reuses
+// the stat a role at that position is built on, so a badge always says something the role does not.
+const DEF5 = ['EDGE', 'DT', 'LB', 'CB', 'S'], SKILL4 = ['QB', 'RB', 'WR', 'TE'];
+const cntTier = (n, g, s, b) => n >= g ? 'gold' : n >= s ? 'silver' : b != null && n >= b ? 'bronze' : null;
 const OTRAITS = {
-  engine: ['EPA engine', 'Adds expected points on almost every play.', ['QB'], 'epa'],
-  dbeff: ['Dropback efficiency', 'Gains the most yards on each dropback, sacks included.', ['QB'], 'ny'],
-  yatt: ['Yards per throw', 'Gets more yards out of every pass attempt.', ['QB'], 'ypa'],
-  tdrate: ['Touchdown rate', 'Turns a high share of his throws into touchdowns.', ['QB'], 'tdp'],
-  scorer: ['Scoring machine', 'Throws touchdowns in bulk.', ['QB'], 'ptdt'],
-  fantasy: ['Fantasy engine', 'Scores a lot of PPR fantasy points a game.', ['QB', 'RB', 'WR', 'TE'], 'pprg'],
-  ypcace: ['Yards-per-carry ace', 'Averages more yards every time he runs.', ['RB'], 'ypc'],
-  ground: ['Ground gainer', 'Piles up rushing yards every game.', ['RB'], 'rydg'],
+  // quarterbacks
+  engine: ['EPA engine', 'Adds expected points on almost every dropback and run.', ['QB'], 'epa'],
+  bigarm: ['Big-play passer', 'Completes passes of 20+ yards more often than almost anyone.', ['QB'], 'deep'],
+  escape: ['Sack dodger', 'Rarely goes down: one of the lowest sack rates at the position.', ['QB'], 'skp'],
+  protect: ['Ball protector', 'Rarely throws it to the other team.', ['QB'], 'intp'],
+  legs: ['First-down legs', 'Moves the chains with his feet: rushing first downs a game.', ['QB'], 'rfdg', p => (sm(p).car || 0) >= 2 * W()],
+  // backs
   scrim: ['Scrimmage threat', 'Gains yards running and catching, game after game.', ['RB'], 'scrg'],
-  movechains: ['Chain-moving runner', 'Runs for first downs again and again.', ['RB'], 'rfdg'],
-  secure: ['Ball security', 'Rarely fumbles for the touches he gets.', ['RB', 'WR', 'TE'], 'fumt', p => tch(p) >= 15],
-  yardage: ['Yardage leader', 'Piles up receiving yards every game.', ['WR', 'TE'], 'ryg'],
-  volume: ['Catch volume', 'Makes more catches than almost anyone at his spot.', ['WR', 'TE'], 'rec'],
-  yptace: ['Yards-per-target ace', 'Gets a lot of yards every time he is thrown to.', ['WR', 'TE'], 'ypt'],
+  chunk: ['Chunk runner', 'Rips off 10+ yard runs more often than most backs.', ['RB'], 'r10r'],
+  rbhands: ['Pass-game weapon', 'Piles up receiving yards for a running back.', ['RB'], 'recg'],
+  // receivers and tight ends
+  extend: ['Drive extender', 'A high share of his targets go for first downs.', ['WR', 'TE'], 'fdpt'],
   airshare: ['Air-yards magnet', 'Draws a big share of his team\'s downfield throws.', ['WR', 'TE'], 'ash'],
-  passwall: ['Pass-block unit', 'His line keeps the quarterback clean (team play-by-play).', OL_G, 'tpbwr'],
-  runwall: ['Run-block unit', 'His line opens successful runs (team play-by-play).', OL_G, 'trbwr'],
-  sackproof: ['Sack-proof line', 'His quarterback rarely goes down behind this line.', OL_G, 'tskp'],
-  qbhitter: ['QB hitter', 'Lands hits on the quarterback even when it is not a sack.', ['EDGE', 'DT', 'LB'], 'qbhg'],
-  hurrier: ['Constant pressure', 'Hits the quarterback every game.', ['EDGE', 'DT', 'LB'], 'qbhg'],
-  solo: ['Solo tackler', 'Brings down ball carriers on his own.', ['EDGE', 'DT', 'LB', 'CB', 'S'], 'solog'],
-  defscore: ['Defensive scorer', 'Has scored a touchdown on defense this season.', ['EDGE', 'DT', 'LB', 'CB', 'S'], null, p => (sm(p).dtd2 || 0) >= 1, p => (sm(p).dtd2 || 0) >= 2 ? 'gold' : 'silver'],
+  catchavg: ['Big-catch average', 'Gains a lot of yards on each catch.', ['TE'], 'ypr'],
+  // all skill players
+  fantasy: ['Fantasy engine', 'Scores a lot of PPR fantasy points a game.', SKILL4, 'pprg'],
+  secure: ['Ball security', 'Has not lost a fumble all season on a big workload: gold, silver and bronze at 20+, 16+ and 12+ touches a game for backs, 8+, 6.5+ and 5+ for receivers, 6+, 5+ and 4+ for tight ends.', ['RB', 'WR', 'TE'], null, p => !sm(p).fum, p => cntTier(tch(p) / gp(p), ...({ RB: [20, 16, 12], WR: [8, 6.5, 5], TE: [6, 5, 4] })[p.sg])],
+  // offensive line (team play-by-play plus his own flags)
+  passwall: ['Clean-pocket line', 'His line keeps the quarterback clean: few sacks or QB hits (team play-by-play).', OL_G, 'tpbwr'],
+  runwall: ['Run-lane line', 'His line opens successful runs (team play-by-play).', OL_G, 'trbwr'],
+  clean: ['Disciplined blocker', 'Draws fewer flags per snap than most linemen at his spot.', OL_G, 'penr'],
+  // front seven
+  qbhitter: ['QB hitter', 'Lands hits on the quarterback every game, sacks included.', ['EDGE', 'DT'], 'qbhg'],
+  finisher: ['Finisher', 'Turns his QB hits into sacks more often than most: sacks per QB hit.', ['EDGE', 'DT'], 'skconv'],
+  motor: ['Every-down motor', 'Stays on the field: one of the biggest snap shares at his spot.', ['EDGE', 'DT'], 'dsh'],
+  solo: ['Solo tackler', 'Brings down ball carriers on his own.', ['EDGE', 'DT', 'LB', 'S'], 'solog'],
+  lbcover: ['Coverage stopper', 'Gives up few yards when thrown at (estimated from play-by-play).', ['LB'], 'cvy'],
+  // secondary
+  sticky: ['Sticky coverage', 'Allows one of the lowest catch rates when targeted (estimated from play-by-play).', ['CB', 'S'], 'cvc'],
+  eraser: ['Big-play eraser', 'Allows the fewest expected points per target (estimated from play-by-play).', ['CB', 'S'], 'cve'],
+  flagfree: ['Flag-free coverage', 'A corner with no penalties all season: silver at 50+ defensive snaps a game, bronze at 35+.', ['CB'], null, p => !sm(p).pen, p => cntTier((p.st.dsn || 0) / gp(p), 999, 50, 35)],
+  // takeaways and scores
+  picks: ['Pick artist', 'Intercepts passes: gold at 4+, silver at 3, bronze at 2.', ['LB', 'CB', 'S'], null, p => (sm(p).dint || 0) >= 2, p => cntTier(sm(p).dint || 0, 4, 3, 2)],
+  strip: ['Ball puncher', 'Knocks the ball loose: gold at 3+ forced fumbles, silver at 2.', ['DT', 'LB', 'CB'], null, p => (sm(p).ff || 0) >= 2, p => cntTier(sm(p).ff || 0, 3, 2)],
+  defscore: ['Defensive scorer', 'Has scored a touchdown on defense this season.', DEF5, null, p => (sm(p).dtd2 || 0) >= 1, p => (sm(p).dtd2 || 0) >= 2 ? 'gold' : 'silver'],
+  // kickers and punters
   points: ['Point producer', 'Scores a lot of points a game, field goals and extra points together.', ['K'], 'kpts'],
-  xp: ['Extra-point machine', 'Rarely misses an extra point.', ['K'], null, p => (sm(p).pata || 0) >= 10 && (sm(p).patm || 0) === sm(p).pata, 'bronze'],
+  xp: ['Extra-point machine', 'Has not missed an extra point on 10 or more tries.', ['K'], null, p => (sm(p).pata || 0) >= 10 && (sm(p).patm || 0) === sm(p).pata, 'bronze'],
+  chip: ['Chip-shot lock', 'Has not missed a field goal inside 40 yards on 8 or more tries.', ['K'], null, p => { const m = sm(p), a = (m.fga || 0) - (m.fg40a || 0); return a >= 8 && (m.fgm || 0) - (m.fg40m || 0) === a; }, 'silver'],
   touchback: ['Touchback-free', 'Rarely kicks it into the end zone.', ['P'], 'tbp'],
   cover: ['Coverage helper', 'Opponents get very little return yardage on his punts.', ['P'], 'pcov'],
-  iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DT', 'LB', 'CB', 'S'], null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold'],
-  defscore_: null
+  // everyone who plays offense or defense
+  iron: ['Iron man', 'Has played at least 97% of his team\'s snaps.', ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DT', 'LB', 'CB', 'S'], null, p => Math.max(p.st.osh || 0, p.st.dsh || 0) >= .97, 'gold']
 };
-delete OTRAITS.defscore_;
 const TIER_ORDER = { gold: 0, silver: 1, bronze: 2 };
 const TIER_NAME = { gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
 const tierOf = v => v >= .94 ? 'gold' : v >= .84 ? 'silver' : v >= .72 ? 'bronze' : null;
@@ -2810,7 +2833,7 @@ function calcTraits(p, g) {
   Object.entries(OTRAITS).forEach(([key, [, , groups, met, gate, fixed]]) => {
     if (groups !== 'ALL' && !groups.includes(g)) return;
     if (gate && !gate(p)) return;
-    if (fixed) { if (p.fq || key === 'defscore') p.ot.push([key, typeof fixed === 'function' ? fixed(p) : fixed]); return; }
+    if (fixed) { const t = typeof fixed === 'function' ? fixed(p) : fixed; if (t && (p.fq || key === 'defscore')) p.ot.push([key, t]); return; }
     if (!p.fq || p.pc[met] == null) return;
     const t = tierOf(p.pc[met]); if (t) p.ot.push([key, t]);
   });
