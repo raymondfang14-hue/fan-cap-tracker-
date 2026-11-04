@@ -861,7 +861,7 @@ APP_URLS = [('/scores', '0.9', 'daily'), ('/standings', '0.9', 'weekly'), ('/pro
             ('/mock-draft', '0.8', 'weekly'), ('/big-board', '0.7', 'weekly'), ('/free-agency', '0.8', 'weekly'), ('/free-agency/key-dates', '0.5', 'monthly'),
             ('/team-ratings', '0.7', 'weekly'), ('/team-tiers', '0.8', 'weekly'), ('/cap-room', '0.8', 'daily'), ('/awards', '0.6', 'weekly'), ('/best-worst-contracts', '0.6', 'weekly'),
             ('/rookie-contracts', '0.6', 'weekly'), ('/rookie-pay', '0.5', 'monthly'), ('/draft-guide', '0.4', 'monthly'), ('/cap-lab', '0.5', 'weekly'),
-            ('/roster-builder', '0.6', 'weekly'), ('/trade-checker', '0.5', 'weekly'), ('/compare', '0.5', 'weekly'), ('/cap-101', '0.6', 'monthly'),
+            ('/roster-builder', '0.6', 'weekly'), ('/trade-checker', '0.5', 'weekly'), ('/trade-deadline', '0.8', 'daily'), ('/compare', '0.5', 'weekly'), ('/cap-101', '0.6', 'monthly'),
             ('/about', '0.3', 'monthly')]
 # One page per panel inside a section tab (SUBS in src.html)
 APP_URLS += [(u, '0.5', 'weekly') for u in [

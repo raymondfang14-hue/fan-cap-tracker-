@@ -166,6 +166,10 @@
       "destination": "/"
     },
     {
+      "source": "/trade-deadline",
+      "destination": "/"
+    },
+    {
       "source": "/compare",
       "destination": "/"
     },

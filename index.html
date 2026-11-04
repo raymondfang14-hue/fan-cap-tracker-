@@ -1269,6 +1269,28 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .injh th,.injh td{padding:7px 8px;border-top:1px solid var(--line);text-align:left;white-space:nowrap}
 .injh th{color:var(--muted);font-weight:500;font-size:.78rem;border-top:0}
 .injh .o{color:var(--bad);font-weight:600}.injh .d{color:var(--bad)}.injh .q{color:var(--muted);font-weight:600}
+/* trade deadline page (/trade-deadline) */
+.td-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin-bottom:14px}
+.td-kpi{display:grid;gap:4px;padding:14px 16px;background:var(--surface);border-radius:var(--r-lg);min-width:0}
+.td-kpi .k{font-size:.8rem;color:var(--muted);font-weight:600}
+.td-kpi .v{font:650 1.5rem/1.1 var(--display);font-variant-numeric:tabular-nums;color:var(--fg)}
+.td-kpi .s{font-size:.8rem;color:var(--muted)}
+.td-list{display:grid;gap:12px;margin-top:12px}
+.td-deal{display:grid;gap:10px;padding:16px 18px;background:var(--surface);border-radius:var(--r-lg);min-width:0}
+.td-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.8rem;color:var(--muted)}
+.td-head .when{font:600 .78rem/1.3 var(--mono)}
+.td-deal h3{margin:0;font:650 1.1rem/1.25 var(--display);letter-spacing:-.012em;text-wrap:balance}
+.td-deal>p{margin:0;color:var(--muted);font-size:.92rem;max-width:72ch}
+.td-sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+.td-side{display:grid;gap:4px;align-content:start;padding:12px 14px;border-radius:var(--r);background:var(--bg);min-width:0}
+.td-team{display:flex;gap:8px;align-items:center;font-weight:650;color:var(--fg);text-decoration:none}
+.td-team:hover{text-decoration:underline}
+.td-side .rows b{white-space:normal;font-family:var(--body);font-weight:600}
+.td-side .rows b.num{font-family:var(--mono);font-weight:500}
+.td-side .rows b.up{color:var(--bad)}.td-side .rows b.dn{color:var(--good)}
+.td-side .rows b.ver{color:var(--muted);font-weight:500}
+.td-foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem}
+.trd-replay{margin:0 0 10px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);font-size:.88rem}
 </style>
 
 <header class="gn" id="gn">
@@ -1281,7 +1303,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
       <button class="gn-ic gn-burger" id="gn-mbtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="gn-sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
     </div>
   </div></div>
-  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="games" hidden><div class="gn-col lead"><h3>2026 season</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
+  <div class="gn-fly gut" id="gn-fly" hidden><div class="wrap"><div class="gn-panel" data-panel="teams" hidden><div class="gn-col lead"><h3>Explore teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div class="gn-teams" id="gn-teams" aria-label="Teams by division"></div></div><div class="gn-panel" data-panel="games" hidden><div class="gn-col lead"><h3>2026 season</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div></div><div class="gn-panel" data-panel="players" hidden><div class="gn-col lead"><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li></ul></div><div class="gn-col"><h3>Find a player</h3><ul><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="contracts" hidden><div class="gn-col lead"><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li></ul></div><div class="gn-col"><h3>Go deeper</h3><ul><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div></div><div class="gn-panel" data-panel="draft" hidden><div class="gn-col lead"><h3>2027 NFL Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div></div><div class="gn-panel" data-panel="tools" hidden><div class="gn-col lead"><h3>Play GM</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/trade-deadline">Trade deadline</a></li></ul></div><div class="gn-col"><h3>Quick checks</h3><ul><li><a href="/compare">Compare players</a></li></ul></div></div><div class="gn-panel" data-panel="news" hidden><div class="gn-col lead"><h3>Latest</h3><ul><li><a href="/news">All news</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li></ul></div><div class="gn-col"><h3>More topics</h3><ul><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div></div><div class="gn-panel" data-panel="learn" hidden><div class="gn-col lead"><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div></div></div>
   <div class="gn-fly gn-search gut" id="gn-search" hidden><div class="wrap">
     <div class="search">
       <label class="sr" for="q-nav">Search players and teams</label>
@@ -1290,7 +1312,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
     </div>
     <div class="gn-col"><h3>Quick links</h3><ul class="gs-quick"><li><a href="/news">Latest news</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/best-worst-contracts">Best and worst contracts</a></li><li><a href="/mock-draft">Mock draft</a></li></ul></div>
   </div></div>
-  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="/team-ratings">Teams home</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Games</summary><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="/player-ratings">Players home</a></li><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="/contracts">Contracts home</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="/big-board">Draft home</a></li><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="/roster-builder">Tools home</a></li><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="/news">News home</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="/cap-101">Learn home</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
+  <div class="gn-sheet gut" id="gn-sheet" hidden><div class="wrap"><details class="gs-group"><summary>Teams</summary><ul><li><a href="/team-ratings">Teams home</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></details><details class="gs-group"><summary>Games</summary><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></details><details class="gs-group"><summary>Players</summary><ul><li><a href="/player-ratings">Players home</a></li><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>Contracts</summary><ul><li><a href="/contracts">Contracts home</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></details><details class="gs-group"><summary>Draft</summary><ul><li><a href="/big-board">Draft home</a></li><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></details><details class="gs-group"><summary>Tools</summary><ul><li><a href="/roster-builder">Tools home</a></li><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></details><details class="gs-group"><summary>News</summary><ul><li><a href="/news">News home</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></details><details class="gs-group"><summary>Learn</summary><ul><li><a href="/cap-101">Learn home</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></details><div class="gs-stamp note" id="gs-stamp"></div></div></div>
 </header>
 <div class="gn-scrim" id="gn-scrim" hidden></div>
 <nav class="tabbar" aria-label="Quick sections">
@@ -1663,6 +1685,31 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 </section>
 
 <!-- TOOLS -->
+<!-- TRADE DEADLINE: every in-season trade from data/moves.json (kind Trade, with its "deal" detail) and what it does to each cap -->
+<section class="view" id="v-deadline" hidden aria-labelledby="h-deadline">
+  <div class="sechead">
+    <div><span class="eyebrow" id="td-eyebrow">2026 trade deadline</span><h1 class="title" id="h-deadline">Every trade this season, and what it does to each cap</h1></div>
+    <span class="note num" id="td-count"></span>
+  </div>
+  <p class="lede">Every NFL trade since Week 1, newest first. Each deal shows what both teams gave and got, how much salary moved for the rest of 2026 and any dead money left behind. Open a deal in the trade checker to see it against each team's cap room or try a follow-up move.</p>
+  <div class="td-kpis" id="td-kpis"></div>
+  <div class="controls">
+    <label class="f" for="td-q" style="flex:1 1 220px">Filter deals<input id="td-q" type="search" placeholder="Player, team or pick" autocomplete="off"></label>
+    <label class="f" for="td-team">Team<select id="td-team"></select></label>
+  </div>
+  <div class="td-list" id="td-list"><p class="note">Loading trades…</p></div>
+  <div class="panel" style="margin-top:16px">
+    <div class="sechead"><div><span class="eyebrow">Team by team</span><h2 class="sec">Every team's deadline so far</h2></div></div>
+    <div id="td-teams"></div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h2 class="sec">How the numbers work</h2>
+    <p class="note">In-season trades move only the salary still to be paid. Players are paid in 18 weekly checks during the regular season, so the new team takes on base salary × weeks left ÷ 18, and the old team has already paid the rest. The old team keeps this season's share of his signing bonus. Any bonus left for later years becomes dead money on its 2027 cap. Draft picks do not count against the cap.</p>
+    <p class="note">Salary figures are calculated from the CBA rookie scale or from a contract a named report confirms. A player without a confirmed 2026 salary shows "Contract being verified". Dead money appears only when a named report states it. Team cap room in the trade checker uses the team totals in PlainStats' data, which may not include every move yet.</p>
+  </div>
+  <p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p>
+</section>
+
 <section class="view" id="v-tools" hidden aria-labelledby="h-tools">
   <div class="sechead">
     <div><span class="eyebrow">Front office tools</span><h1 class="title" id="h-tools">Play general manager</h1></div>
@@ -2012,7 +2059,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 
 <aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h3>Games</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="/news">All news</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
+  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h3>Games</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="/news">All news</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
   <p id="foot-asof">Contract figures come from news reports, team announcements, the rookie pay scale and the CBA, and can change. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
   <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents" target="_blank" rel="noopener">NFL Football Operations: minimum salaries and tenders</a></li>
@@ -3555,12 +3602,12 @@ const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'
   ['teams', '/team-ratings'], ['tiers', '/team-tiers'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['ratings-roles', '/player-ratings/roles'], ['ratings-pay', '/player-ratings/pay-vs-play'], ['ratings-rank', '/player-ratings/rankings'], ['ratings-traits', '/player-ratings/traits'], ['stats', '/stats'],
   ['contracts', '/contracts'], ['value', '/best-worst-contracts'], ['rookies', '/rookie-contracts'], ['freeagency', '/free-agency'], ['fa-tags', '/free-agency/key-dates'], ['analytics', '/cap-lab'],
   ['bigboard', '/big-board'], ['mock', '/mock-draft'], ['rookie-pay', '/rookie-pay'], ['draft-guide', '/draft-guide'],
-  ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup']];
+  ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['deadline', '/trade-deadline'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup']];
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
   teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
-  builder: 'NFL roster builder', trade: 'NFL trade checker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
+  builder: 'NFL roster builder', trade: 'NFL trade checker', deadline: 'NFL trade deadline tracker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
 // One plain-English description per page, for search results and link previews. api/page.js reads this block (ROUTES to SUBS) from
 // index.html to give crawlers each page's own title and description, so keep it plain data. Sub-pages get "<label>. " + their section's.
 const PDESC = {
@@ -3590,6 +3637,7 @@ const PDESC = {
   mock: 'A 2027 NFL mock draft from the current standings, with traded picks moved to their new owners.',
   'rookie-pay': 'The NFL rookie pay scale: what every draft slot is paid.', 'draft-guide': 'How the PlainStats draft board and mock draft work.',
   builder: 'Build an NFL roster from every player in the league and see how it rates.', trade: 'Check an NFL trade: what each team gives and gets.',
+  deadline: 'Every NFL trade of the 2026 season up to the November 10 deadline, with what each deal does to both teams\' salary caps.',
   compare: 'Compare NFL players side by side: contract and this season\'s stats.', learn: 'How the NFL salary cap works, in plain English: cap hits, dead money, guarantees and more.',
   about: 'About PlainStats: where the data comes from and how it is checked.', search: 'Search NFL players, teams, prospects, games and news on PlainStats.', setup: 'PlainStats setup.' };
 /* Sub-pages: inside a section tab, each panel is its own page with its own address, so nothing sits below a long scroll.
@@ -3648,8 +3696,8 @@ if (PATHMODE && location.hash.length > 1) {   // an old /#scores or /#p-... link
   const old = location.hash.slice(1);
   if (KEY2PATH[ALIASES[old] || old] || /^(team|p|d|g)-|^team-/.test(old)) setURL(old, true);
 }
-const VIEWS = ['home', 'news', 'teams', 'tiers', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
-const NAVG = { home: 'home', news: 'news', teams: 'teams', tiers: 'teams', team: 'teams', games: 'games', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
+const VIEWS = ['home', 'news', 'deadline', 'teams', 'tiers', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
+const NAVG = { home: 'home', news: 'news', deadline: 'news', teams: 'teams', tiers: 'teams', team: 'teams', games: 'games', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
 let curTeam = null;
 function route() {
   route.at = location.href;
@@ -3663,6 +3711,7 @@ function route() {
   if (h === 'cap' || h === 'teams') { st.tView = h === 'cap' ? 'cap' : 'ratings'; v = 'teams'; if (D) renderTeamsView(); }
   if (h === 'freeagency' || h === 'fa-tags') { v = 'freeagency'; st.fa.tab = h === 'fa-tags' ? 'tags' : 'class'; }
   if (h === 'about') v = 'about';
+  if (h === 'deadline') v = 'deadline';
   if (h === 'search') { v = 'home'; setTimeout(() => window.openSearch && openSearch(), 30); }
   if (h.startsWith('team-')) { const [tid, ts] = h.slice(5).split('/'), id = tid.toUpperCase(); teamSub = ts || ''; if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
   if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
@@ -3699,6 +3748,7 @@ function route() {
     if (v === 'contracts') renderCTab();
     if (v === 'onfield') renderOFTab();
     if (v === 'games') renderGames();
+    if (v === 'deadline') renderTD();
   }
   setSubs(h0);
   hideTip();
@@ -4158,11 +4208,13 @@ function showTool(t) {
   st.tool = t;
   $$('#toolnav button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
   ['build', 'trade', 'compare'].forEach(x => ($('#tool-' + x).hidden = x !== t));
+  if (t === 'trade' && /[?&]a=/.test(location.search) && tradeFromQuery(location.search)) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
   if (t === 'build') renderBuilder(); if (t === 'trade') renderTrade(); if (t === 'compare') renderCompare();
 }
 function tradeRoster(side) {
   const id = st.trade[side], toks = (st.trade.q[side] || '').trim().toLowerCase().split(/\s+/).filter(Boolean), pos = st.trade.pos[side];
-  let all = PL.filter(p => p.team === id && p.cap).sort((a, b) => b.cap - a.cap);
+  const rp = st.trade.replay ? st.trade.replay[side] : null;   // a deal replayed from /trade-deadline: its players show with the team that sent them
+  let all = PL.filter(p => (p.team === id && p.cap) || (rp && rp.has(p.i))).sort((a, b) => (rp && rp.has(b.i)) - (rp && rp.has(a.i)) || (b.cap || 0) - (a.cap || 0));
   const filtered = toks.length > 0 || !!pos;
   if (toks.length) all = all.filter(p => { const h = (p.name + ' ' + posTag(p.pos)).toLowerCase(); return toks.every(t => h.includes(t)); });
   if (pos) all = all.filter(p => posTag(p.pos) === pos);
@@ -4170,7 +4222,7 @@ function tradeRoster(side) {
 }
 function drawTradeList(side) {
   const set = st.trade.out[side], { list, total, filtered } = tradeRoster(side);
-  $(`#tr-${side}-list`).innerHTML = list.length ? list.map(p => `<label><input type="checkbox" data-side="${side}" value="${p.i}"${set.has(p.i) ? ' checked' : ''}><span class="pos">${esc(posTag(p.pos))}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</span><span class="num">${mon(p.cap)}</span></label>`).join('') : '<p class="empty">Nobody on this team matches.</p>';
+  $(`#tr-${side}-list`).innerHTML = list.length ? list.map(p => `<label><input type="checkbox" data-side="${side}" value="${p.i}"${set.has(p.i) ? ' checked' : ''}><span class="pos">${esc(posTag(p.pos))}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</span><span class="num">${p.cap != null ? mon(p.cap) : 'Verifying'}</span></label>`).join('') : '<p class="empty">Nobody on this team matches.</p>';
   drawTradeNote(side, list.length, total, filtered);
 }
 function drawTradeNote(side, shown, total, filtered) {
@@ -4194,7 +4246,7 @@ function tradeSide(side) {
   drawTradeList(side);
   $(`#tr-${side}-q`).oninput = e => { st.trade.q[side] = e.target.value; drawTradeList(side); };
   $(`#tr-${side}-pos`).onchange = e => { st.trade.pos[side] = e.target.value; drawTradeList(side); };
-  $(`#tr-${side}-sel`).onchange = e => { const v = e.target.value; const other = side === 'a' ? 'b' : 'a'; if (v === st.trade[other]) return (e.target.value = id); st.trade[side] = v; st.trade.out[side] = new Set(); st.trade.q[side] = ''; st.trade.pos[side] = ''; renderTrade(); };
+  $(`#tr-${side}-sel`).onchange = e => { const v = e.target.value; const other = side === 'a' ? 'b' : 'a'; if (v === st.trade[other]) return (e.target.value = id); st.trade[side] = v; st.trade.out[side] = new Set(); st.trade.q[side] = ''; st.trade.pos[side] = ''; st.trade.replay = null; renderTrade(); };
 }
 function renderTrade() { tradeSide('a'); tradeSide('b'); renderTradeOut(); }
 function renderTradeOut() {
@@ -4202,18 +4254,141 @@ function renderTradeOut() {
   const sum = (s, f) => [...s].reduce((a, i) => a + f(PL[i]), 0);
   const A = TB[st.trade.a], B = TB[st.trade.b], oa = st.trade.out.a, ob = st.trade.out.b;
   const aAfter = A.space + sum(oa, sal) - sum(ob, sal), bAfter = B.space + sum(ob, sal) - sum(oa, sal);
-  const deadA = sum(oa, p => Math.max(0, (p.dpre || 0) - (p.dpost || 0))), deadB = sum(ob, p => Math.max(0, (p.dpre || 0) - (p.dpost || 0)));
+  // a replayed deadline deal: his row is already the new team's contract, so the old team's dead money is not in it (the deadline page shows any reported figure)
+  const rpl = st.trade.replay, isRp = (side, i) => !!(rpl && rpl[side].has(i));
+  const deadOf = (s, side) => [...s].some(i => isRp(side, i)) ? null : sum(s, p => Math.max(0, (p.dpre || 0) - (p.dpost || 0)));
+  const deadA = deadOf(oa, 'a'), deadB = deadOf(ob, 'b');
   const names = s => [...s].map(i => PL[i].name).join(', ') || 'nobody yet';
   const card = (T, after, gets, sends, deadLater) => `<div class="out">
       <div style="display:flex;gap:10px;align-items:center">${badge(T.id)}<b>${esc(T.city)} ${esc(T.name)}</b></div>
       <span class="eyebrow">Cap room after the trade</span><span class="v ${after >= 0 ? 'good' : 'bad'}">${after < 0 ? '−' : ''}${mon(Math.abs(after))}</span>
-      <div class="rows"><div><span>Room now</span><b>${mon(T.space)}</b></div><div><span>Gets</span><b style="white-space:normal">${esc(gets)}</b></div><div><span>Sends</span><b style="white-space:normal">${esc(sends)}</b></div><div><span>Dead money moved to 2027</span><b>${mon(deadLater)}</b></div></div>
+      <div class="rows"><div><span>Room now</span><b>${mon(T.space)}</b></div><div><span>Gets</span><b style="white-space:normal">${esc(gets)}</b></div><div><span>Sends</span><b style="white-space:normal">${esc(sends)}</b></div><div><span>Dead money moved to 2027</span><b>${deadLater == null ? '<a href="/trade-deadline">On the deadline page</a>' : mon(deadLater)}</b></div></div>
       ${after < 0 ? '<p style="color:var(--bad);font-size:.88rem;font-weight:600">Over the cap. This team would have to clear room before the trade could go through.</p>' : ''}</div>`;
-  $('#tr-out').innerHTML = `<h2 class="sec">What the trade does to each cap</h2>
+  const rp = st.trade.replay, unv = [...oa, ...ob].map(i => PL[i]).filter(p => p.cap == null).map(p => p.name);
+  $('#tr-out').innerHTML = `${rp ? `<p class="trd-replay">Replaying ${esc(rp.label)}. Players are shown with the team that sent them. <a href="/trade-deadline">See every deadline deal</a></p>` : ''}<h2 class="sec">What the trade does to each cap</h2>
     <div class="vs">${card(A, aAfter, names(ob), names(oa), deadA)}${card(B, bAfter, names(oa), names(ob), deadB)}</div>
-    <p class="note">A rough check. The team getting a player takes on his salary; the team sending him keeps this season's bonus slice and the rest of his bonus becomes 2027 dead money. Real in-season trades only move the salary for the weeks left, so actual numbers will be smaller.</p>`;
+    <p class="note">A rough check. The team getting a player takes on his salary; the team sending him keeps this season's bonus slice and the rest of his bonus becomes 2027 dead money. Real in-season trades only move the salary for the weeks left, so actual numbers will be smaller.</p>${unv.length ? `<p class="note">${esc(unv.join(', '))}: ${VERIFYING.toLowerCase()}, so ${unv.length === 1 ? 'his' : 'their'} salary is left out.</p>` : ''}`;
 }
 document.addEventListener('change', e => { const c = e.target; if (c.matches('.trade-list input')) { const s = st.trade.out[c.dataset.side]; c.checked ? s.add(+c.value) : s.delete(+c.value); renderTradeOut(); drawTradeNote(c.dataset.side); } });
+/* ===== trade deadline (/trade-deadline): every in-season trade in data/moves.json and what it does to each cap =====
+   A Trade move may carry "deal": { TEAM: { players: [{ name, gid, from }], picks: ['2027 1st-round pick'], dead: <reported dollars> } },
+   keyed by the team that GETS them. Players are matched by gsis id. Without "deal", teams[0] is the sender, teams[1] the receiver,
+   and the players are matched by name on the receiving team. Salary that moves is calculated (base salary x weeks left / 18) only
+   when his 2026 salary is calculated from the CBA or confirmed by a named report; dead money only when the report states it. */
+const td = { q: '', team: 'all' };
+const tdKick = () => (GSCHED && GSCHED.games && GSCHED.games.length ? GSCHED.games.reduce((m, g) => (g[2] < m ? g[2] : m), '9999') : '2026-09-01');
+const tdTrades = () => MOVES.filter(m => m.kind === 'Trade' && (m.iso || '') >= tdKick());
+const tdPlayer = x => (x.gid && PL.find(p => p.gid === x.gid)) || null;
+function tdDeal(m) {
+  if (m.deal && typeof m.deal === 'object') return m.deal;
+  const [from, to] = m.teams || []; if (!from || !to) return {};
+  return { [to]: { players: (m.players || []).map(n => { const p = PL.find(q => q.name === n && q.team === to); return { name: n, gid: p ? p.gid : '', from }; }) }, [from]: { picks: [], unknown: true } };
+}
+function tdWeeks(iso) {   // weekly paychecks left after the trade date (18 a season)
+  if (!GSCHED || !GSCHED.games) return null;
+  const last = {}; GSCHED.games.forEach(g => { if (!last[g[1]] || g[2] > last[g[1]]) last[g[1]] = g[2]; });
+  const done = Object.values(last).filter(d => d < iso).length;
+  return { left: Math.max(0, 18 - done), week: Math.min(18, done + 1) };
+}
+const tdSalOK = p => !!p && p.base != null && (p.prov === 'f' || p.prov === 'm' || (p.ver.includes('c') && p.ver.includes('b')));
+const tdRest = (p, w) => (tdSalOK(p) && w ? Math.round(p.base * w.left / 18) : null);
+function tdSides(m) {   // per team: what it gets and sends and the salary that moves this season
+  const deal = tdDeal(m), ids = [...new Set([...(m.teams || []), ...Object.keys(deal)])].filter(id => TB[id]), w = tdWeeks(m.iso || '');
+  const all = ids.flatMap(id => ((deal[id] || {}).players || []).map(x => ({ ...x, to: id, p: tdPlayer(x) })));
+  return ids.map(id => {
+    const d = deal[id] || {}, gets = all.filter(x => x.to === id), sends = all.filter(x => x.from === id);
+    const others = ids.filter(o => o !== id);
+    const sendPicks = others.length === 1 ? ((deal[others[0]] || {}).picks || []) : [];
+    const amt = x => tdRest(x.p, w);
+    const inn = gets.map(amt), out = sends.map(amt);
+    const known = [...inn, ...out].every(v => v != null);
+    const net = inn.reduce((a, v) => a + (v || 0), 0) - out.reduce((a, v) => a + (v || 0), 0);
+    return { id, gets, sends, picks: d.picks || [], sendPicks, dead: d.dead || null, unknown: !!d.unknown || (others.length === 1 && !!(deal[others[0]] || {}).unknown), known, net, moved: gets.length + sends.length, w };
+  });
+}
+const tdName = x => x.p ? `${x.name} (${posTag(x.p.pos)})` : x.name;
+const tdCap = s => !s.moved ? '<b>No change: draft picks do not count against the cap</b>'
+  : !s.known ? `<b class="ver">${VERIFYING}</b>`
+  : `<b class="num ${s.net > 0 ? 'up' : s.net < 0 ? 'dn' : ''}">${s.net > 0 ? 'Takes on ' + mon(s.net) : s.net < 0 ? 'Clears ' + mon(-s.net) : 'No change'}</b>`;
+function tdHref(m, sides) {   // two-team deals open in the trade checker with each side's players picked to send
+  if (sides.length !== 2) return null;
+  const [A, B] = sides, ga = A.sends.map(x => x.gid).filter(Boolean), gb = B.sends.map(x => x.gid).filter(Boolean);
+  if (!ga.length && !gb.length) return null;
+  const q = new URLSearchParams({ a: A.id, b: B.id }); if (ga.length) q.set('pa', ga.join(',')); if (gb.length) q.set('pb', gb.join(',')); q.set('d', m.iso || '');
+  return '/trade-checker?' + q.toString();
+}
+function tdDealHTML(m) {
+  const sides = tdSides(m), w = sides[0] ? sides[0].w : null, href = tdHref(m, sides);
+  const side = s => {
+    const gets = [...s.gets.map(tdName), ...s.picks], sends = [...s.sends.map(tdName), ...s.sendPicks];
+    return `<div class="td-side"><a class="td-team" href="${pathOf('team-' + s.id)}">${badge(s.id)}${esc(TB[s.id].city)} ${esc(TB[s.id].name)}</a>
+      <div class="rows"><div><span>Gets</span><b>${esc(gets.join(', ') || (s.unknown ? 'See the report' : 'Nothing listed'))}</b></div>
+      <div><span>Sends</span><b>${esc(sends.join(', ') || (s.unknown ? 'See the report' : 'Nothing listed'))}</b></div>
+      <div><span>Rest of 2026 salary</span>${tdCap(s)}</div>
+      ${s.dead ? `<div><span>Dead money left behind</span><b class="num">About ${mon(s.dead)} (reported)</b></div>` : ''}</div></div>`;
+  };
+  const hay = [m.head, m.plain, ...(m.players || []), ...sides.flatMap(s => [s.id, TB[s.id].city, TB[s.id].name, ...s.picks])].join(' ').toLowerCase();
+  return `<article class="td-deal" data-s="${esc(hay)}" data-teams="${esc(sides.map(s => s.id).join(' '))}">
+    <div class="td-head"><span class="when">${esc(m.date || m.iso || '')}</span><span class="kind Trade">Trade</span>${w ? `<span>Week ${w.week} · ${w.left} of 18 weekly paychecks left</span>` : ''}</div>
+    <h3>${esc(m.head)}</h3><p>${esc(m.plain || '')}</p>
+    <div class="td-sides">${sides.map(side).join('')}</div>
+    <div class="td-foot">${href ? `<a class="btn ghost" href="${esc(href)}" data-replay>Open in trade checker</a>` : ''}${safeUrl(m.url) ? `<a href="${safeUrl(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a>` : ''}</div>
+  </article>`;
+}
+function tdFilter() {
+  const toks = td.q.toLowerCase().split(/\s+/).filter(Boolean); let n = 0;
+  $$('#td-list .td-deal').forEach(el => { const ok = toks.every(t => el.dataset.s.includes(t)) && (td.team === 'all' || el.dataset.teams.split(' ').includes(td.team)); el.hidden = !ok; if (ok) n++; });
+  const tot = $$('#td-list .td-deal').length, e = $('#td-none');
+  if (e) e.hidden = n > 0 || !tot;
+  $('#td-count').textContent = tot ? (n === tot ? `${tot} trade${tot === 1 ? '' : 's'}` : `${n} of ${tot} trades`) : '';
+}
+function renderTD() {
+  if (!$('#td-list')) return;
+  if (!GSCHED) { loadGames().then(() => { if (!$('#v-deadline').hidden) renderTD(); }).catch(() => {}); }
+  const T = tdTrades(), all = T.map(m => ({ m, sides: tdSides(m) }));
+  const end = new Date(DEADLINE + 'T16:00:00-05:00'), days = Math.ceil((end - new Date()) / 864e5);
+  const dstr = end.toLocaleDateString([], { month: 'long', day: 'numeric' });
+  $('#td-eyebrow').textContent = `2026 trade deadline · ${dstr}, 4 PM ET`;
+  const players = all.reduce((a, x) => a + x.sides.reduce((b, s) => b + s.gets.length, 0), 0);
+  const picks = all.flatMap(x => x.sides.flatMap(s => s.picks)), firsts = picks.filter(p => /\b1st\b/.test(p)).length;
+  $('#td-kpis').innerHTML = [
+    [days > 0 ? 'Time left' : 'Deadline', days > 0 ? `${days} day${days === 1 ? '' : 's'}` : 'Passed', days > 0 ? `Until ${dstr} at 4 PM ET` : `Trading reopens in the new league year`],
+    ['Trades since Week 1', T.length, `${new Set(all.flatMap(x => x.sides.map(s => s.id))).size} teams involved`],
+    ['Players moved', players, 'Counted on their new team\'s cap'],
+    ['Draft picks moved', picks.length, `${firsts} first-round pick${firsts === 1 ? '' : 's'}`]
+  ].map(([k, v, s]) => `<div class="td-kpi"><span class="k">${esc(k)}</span><span class="v num">${esc(String(v))}</span><span class="s">${esc(s)}</span></div>`).join('');
+  const sel = $('#td-team'), ids = [...new Set(all.flatMap(x => x.sides.map(s => s.id)))].sort((a, b) => (TB[a].city + TB[a].name).localeCompare(TB[b].city + TB[b].name));
+  if (td.team !== 'all' && !ids.includes(td.team)) td.team = 'all';
+  sel.innerHTML = `<option value="all">All teams</option>` + ids.map(id => `<option value="${id}"${id === td.team ? ' selected' : ''}>${esc(TB[id].city)} ${esc(TB[id].name)}</option>`).join('');
+  $('#td-list').innerHTML = T.length ? T.map(tdDealHTML).join('') + '<p class="empty" id="td-none" hidden>No trades match.</p>' : '<p class="empty">No trades since Week 1 yet.</p>';
+  $('#td-q').value = td.q;
+  tdFilter();
+  // team by team
+  const byT = {};
+  all.forEach(({ sides }) => sides.forEach(s => {
+    const r = byT[s.id] = byT[s.id] || { id: s.id, n: 0, pin: [], pout: [], kin: 0, kout: 0, net: 0, unk: false };
+    r.n++; r.pin.push(...s.gets.map(x => x.name)); r.pout.push(...s.sends.map(x => x.name)); r.kin += s.picks.length; r.kout += s.sendPicks.length;
+    if (s.moved) { if (s.known) r.net += s.net; else r.unk = true; }
+  }));
+  const rows = Object.values(byT).sort((a, b) => b.n - a.n || (TB[a.id].city).localeCompare(TB[b.id].city));
+  const capCell = r => r.unk ? (r.net ? `${r.net > 0 ? '+' : '−'}${mon(Math.abs(r.net))} + being verified` : VERIFYING) : r.net ? `${r.net > 0 ? '+' : '−'}${mon(Math.abs(r.net))}` : 'No change';
+  $('#td-teams').innerHTML = rows.length ? tfBox('td-t', 'Filter teams or players') + `<div class="tw"><table class="t" id="td-t"><thead><tr><th><span>Team</span></th><th class="r"><span>Trades</span></th><th><span>Players in</span></th><th><span>Players out</span></th><th class="r"><span>Picks in</span></th><th class="r"><span>Picks out</span></th><th class="r"><span>Rest of 2026 salary</span></th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td><a class="td-team" href="${pathOf('team-' + r.id)}">${badge(r.id)}${esc(TB[r.id].city)} ${esc(TB[r.id].name)}</a></td><td class="r num">${r.n}</td><td>${esc(r.pin.join(', ') || '—')}</td><td>${esc(r.pout.join(', ') || '—')}</td><td class="r num">${r.kin}</td><td class="r num">${r.kout}</td><td class="r num">${esc(capCell(r))}</td></tr>`).join('') +
+    `</tbody></table></div><p class="note">Rest of 2026 salary: + means the team took on salary, − means it cleared salary. "Being verified" means a player in the deal has no confirmed 2026 salary yet.</p>` : '<p class="empty">No trades yet.</p>';
+  applyTF($('#td-t'));
+}
+document.addEventListener('input', e => { if (e.target.id === 'td-q') { td.q = e.target.value; tdFilter(); } });
+document.addEventListener('change', e => { if (e.target.id === 'td-team') { td.team = e.target.value; tdFilter(); } });
+// "Open in trade checker": load the deal before the in-app link handler (on document) switches pages
+document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-replay]'); if (a) tradeFromQuery(new URL(a.href, location.href).search); }, true);
+function tradeFromQuery(search) {   // ?a=TEN&b=CHI&pa=<gsis ids team a sends>&pb=...&d=<trade date>
+  const q = new URLSearchParams(search || ''), a = (q.get('a') || '').toUpperCase(), b = (q.get('b') || '').toUpperCase();
+  if (!TB[a] || !TB[b] || a === b) return false;
+  const ids = k => new Set((q.get(k) || '').split(',').filter(Boolean).map(g => PL.find(p => p.gid === g)).filter(Boolean).map(p => p.i));
+  const oa = ids('pa'), ob = ids('pb'), m = MOVES.find(x => x.kind === 'Trade' && x.iso === q.get('d') && (x.teams || []).includes(a) && (x.teams || []).includes(b));
+  Object.assign(st.trade, { a, b, out: { a: oa, b: ob }, q: { a: '', b: '' }, pos: { a: '', b: '' }, replay: { a: new Set(oa), b: new Set(ob), label: m ? `${m.date}: ${m.head}` : 'a deadline trade' } });
+  return true;
+}
 function radarSVG(a, b) {
   const R = 100, cx = 140, cy = 128, N = P_DEFS.length;
   const pt = (i, v) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(ang) * R * v, cy + Math.sin(ang) * R * v]; };
@@ -6053,7 +6228,7 @@ const SPAGES = [['scores', 'Scores and schedule', 'games week results score sche
   ['teams', 'Team ratings', 'lineup depth chart unit ratings'], ['tiers', 'Weekly team tiers', 'offense defense epa per play tiers best teams logos'], ['cap', 'Cap room by team', 'salary cap space dead money spending'], ['rankings', 'Power rankings', 'best teams ranked'],
   ['awards', 'Awards watch', 'mvp opoy dpoy rookie of the year coach comeback'], ['analytics', 'Cap lab', 'heatmap cap health doppelganger analytics'],
   ['bigboard', 'Draft big board', '2027 prospects college rankings'], ['mock', 'Mock draft', 'draft order first round picks'], ['rookie-pay', 'Rookie pay scale', 'draft slot value'],
-  ['draft-guide', 'How the draft board works', 'grades method'], ['builder', 'Roster builder', 'build lineup play gm'], ['trade', 'Trade checker', 'trade cap'], ['compare', 'Compare players', 'side by side'],
+  ['draft-guide', 'How the draft board works', 'grades method'], ['builder', 'Roster builder', 'build lineup play gm'], ['trade', 'Trade checker', 'trade cap'], ['deadline', 'Trade deadline tracker', 'trades deadline deals picks cap'], ['compare', 'Compare players', 'side by side'],
   ['news', 'News', 'latest moves trades signings injuries'], ['news-injuries', 'Injury news', 'injured out hurt'], ['learn', 'Cap 101', 'glossary explain terms'], ['about', 'About PlainStats', 'contact sources']];
 const sNorm = x => String(x || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[.'’]/g, '');
 const sScore = (hay, q, toks) => { const h = sNorm(hay); if (h.startsWith(q)) return 3; if (h.includes(' ' + q) || h.includes(q)) return 2; return toks.every(t => h.includes(t)) ? 1 : 0; };

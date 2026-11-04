@@ -474,7 +474,28 @@
    "head": "Bears get DT Jeffery Simmons from the Titans for two first-round picks",
    "plain": "Tennessee gets Chicago's 2027 and 2028 first-round picks and a 2027 fourth. Chicago also gets a 2028 fifth. Simmons, 29, is a first-team All-Pro who signed a three-year, $105.8M extension in June. He has 4 sacks and 12 pressures in 7 games for the 1-6 Titans, and the 5-2 Bears had been looking for help rushing the passer.",
    "source": "ESPN",
-   "url": "https://www.espn.com/nfl/story/_/id/50318351/sources-bears-trade-all-pro-dt-jeffery-simmons"
+   "url": "https://www.espn.com/nfl/story/_/id/50318351/sources-bears-trade-all-pro-dt-jeffery-simmons",
+   "deal": {
+    "CHI": {
+     "players": [
+      {
+       "name": "Jeffery Simmons",
+       "gid": "00-0035643",
+       "from": "TEN"
+      }
+     ],
+     "picks": [
+      "2028 5th-round pick"
+     ]
+    },
+    "TEN": {
+     "picks": [
+      "2027 1st-round pick",
+      "2028 1st-round pick",
+      "2027 4th-round pick"
+     ]
+    }
+   }
   },
   {
    "iso": "2026-10-28",
@@ -586,7 +607,23 @@
    "head": "Colts trade DT DeForest Buckner back to the 49ers",
    "plain": "Indianapolis sends the 32-year-old defensive tackle to San Francisco, where he started his career, for a 2027 fourth-round pick. He had four sacks in seven games for the 2-5 Colts. The 49ers have lost several defensive linemen to injury, and no new contract was reported.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/colts-to-trade-deforest-buckner-to-49ers-for-fourth-round-pick"
+   "url": "https://www.nfl.com/news/colts-to-trade-deforest-buckner-to-49ers-for-fourth-round-pick",
+   "deal": {
+    "SF": {
+     "players": [
+      {
+       "name": "DeForest Buckner",
+       "gid": "00-0032378",
+       "from": "IND"
+      }
+     ]
+    },
+    "IND": {
+     "picks": [
+      "2027 4th-round pick"
+     ]
+    }
+   }
   },
   {
    "iso": "2026-10-27",
@@ -602,7 +639,24 @@
    "head": "Colts agree to trade G Quenton Nelson to the Seahawks",
    "plain": "Seattle sends Indianapolis a 2027 third-round pick and a 2028 fifth-round pick for the veteran guard. He is in the last year of his contract, and no new deal was reported.",
    "source": "NBC Sports / Pro Football Talk",
-   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/colts-agree-to-trade-quenton-nelson-to-seahawks"
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/colts-agree-to-trade-quenton-nelson-to-seahawks",
+   "deal": {
+    "SEA": {
+     "players": [
+      {
+       "name": "Quenton Nelson",
+       "gid": "00-0034342",
+       "from": "IND"
+      }
+     ]
+    },
+    "IND": {
+     "picks": [
+      "2027 3rd-round pick",
+      "2028 5th-round pick"
+     ]
+    }
+   }
   },
   {
    "iso": "2026-10-26",
@@ -1320,10 +1374,30 @@
     "Marvin Harrison Jr."
    ],
    "head": "Texans get WR Marvin Harrison Jr. from the Cardinals",
-   "plain": "Arizona gets a 2027 second-round pick and a 2027 sixth. Houston also sends back a 2027 seventh. Harrison now counts on Houston's cap.",
+   "plain": "Arizona gets Houston's 2027 second-round and sixth-round picks and also sends a 2027 seventh to Houston, per the Cardinals' announcement. Harrison now counts on Houston's cap.",
    "source": "SI trade tracker",
    "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
-   "iso": "2026-10-11"
+   "iso": "2026-10-11",
+   "deal": {
+    "HOU": {
+     "players": [
+      {
+       "name": "Marvin Harrison Jr.",
+       "gid": "00-0039849",
+       "from": "ARI"
+      }
+     ],
+     "picks": [
+      "2027 7th-round pick"
+     ]
+    },
+    "ARI": {
+     "picks": [
+      "2027 2nd-round pick",
+      "2027 6th-round pick"
+     ]
+    }
+   }
   },
   {
    "iso": "2026-10-09",
@@ -1358,10 +1432,31 @@
     "Cam Jurgens"
    ],
    "head": "Ravens get center Cam Jurgens from the Eagles",
-   "plain": "Philadelphia gets a 2027 fifth-round pick and a 2028 second. Baltimore sends back a 2027 seventh. The Eagles still carry about $4.6M of his old bonus as dead money.",
+   "plain": "Philadelphia gets a 2027 fifth-round pick and a 2028 second and also sends a 2027 seventh to Baltimore. The Eagles still carry about $4.6M of his old bonus as dead money.",
    "source": "SI trade tracker",
    "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
-   "iso": "2026-10-08"
+   "iso": "2026-10-08",
+   "deal": {
+    "BAL": {
+     "players": [
+      {
+       "name": "Cam Jurgens",
+       "gid": "00-0038112",
+       "from": "PHI"
+      }
+     ],
+     "picks": [
+      "2027 7th-round pick"
+     ]
+    },
+    "PHI": {
+     "picks": [
+      "2027 5th-round pick",
+      "2028 2nd-round pick"
+     ],
+     "dead": 4600000
+    }
+   }
   },
   {
    "iso": "2026-10-02",
@@ -1392,7 +1487,24 @@
    "plain": "Contract talks stalled. Porter reportedly wanted about $30M a year and Pittsburgh would not go past the high $20Ms in new money. The Steelers get a 2027 sixth and a 2028 second.",
    "source": "SI trade tracker",
    "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
-   "iso": "2026-09-30"
+   "iso": "2026-09-30",
+   "deal": {
+    "DAL": {
+     "players": [
+      {
+       "name": "Joey Porter Jr.",
+       "gid": "00-0039167",
+       "from": "PIT"
+      }
+     ]
+    },
+    "PIT": {
+     "picks": [
+      "2027 6th-round pick",
+      "2028 2nd-round pick"
+     ]
+    }
+   }
   },
   {
    "date": "Sep 28",
@@ -1408,7 +1520,24 @@
    "plain": "Minnesota gets a 2027 fifth-round pick. McCarthy is still on his rookie deal; the Vikings keep about $5.1M of dead money from it.",
    "source": "SI trade tracker",
    "url": "https://www.si.com/nfl/trade-deadline/tracking-every-big-move-across-league",
-   "iso": "2026-09-28"
+   "iso": "2026-09-28",
+   "deal": {
+    "NYG": {
+     "players": [
+      {
+       "name": "J.J. McCarthy",
+       "gid": "00-0039923",
+       "from": "MIN"
+      }
+     ]
+    },
+    "MIN": {
+     "picks": [
+      "2027 5th-round pick"
+     ],
+     "dead": 5100000
+    }
+   }
   },
   {
    "date": "Sep 12",
