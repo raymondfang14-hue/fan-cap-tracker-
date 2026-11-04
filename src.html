@@ -6476,6 +6476,14 @@ const ADS = {
       setTimeout(() => { sf.innerHTML = '<p class="ok">Thanks. Check your inbox to confirm.</p>'; }, 300);
     });
   }
+  // /?signup=1 (the Cap Sheet panel on the static player and team pages): jump to the signup once the home page is up
+  if (su && !su.hidden && /[?&]signup=1(&|$)/.test(location.search)) {
+    try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])signup=1&?/, '$1').replace(/[?&]$/, '') + location.hash); } catch (e) {}
+    setTimeout(() => {
+      su.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+      const em = $('#signup-email'); if (em) em.focus({ preventScroll: true });
+    }, 400);
+  }
 
   // ads
   const live = ADS.client && ADS.hosts.includes(location.hostname);

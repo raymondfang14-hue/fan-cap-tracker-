@@ -441,6 +441,13 @@ table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:
 .scroll{overflow-x:auto}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}.cta.alt{background:transparent;color:var(--br);border:1px solid var(--br);margin-left:8px}
 .faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
 ul.list{columns:2 220px;list-style:none;padding:0;margin:0}ul.list li{padding:3px 0;break-inside:avoid}
+ul.doors{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:10px;list-style:none;padding:0;margin:0}
+ul.doors a{display:block;height:100%;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+ul.doors b{display:block;color:var(--lk)}ul.doors span{display:block;color:var(--mu);font-size:.88rem;margin-top:2px}
+.signup{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:20px;margin:28px 0 8px}.signup h2{margin:0 0 .2em}.signup p{color:var(--mu);margin:0 0 12px}
+.signup form{display:flex;gap:10px;flex-wrap:wrap}.signup input[type=email]{flex:1 1 220px;min-width:0;font:inherit;padding:10px 16px;border-radius:999px;border:1px solid var(--ln);background:var(--bg);color:var(--fg)}
+.signup button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 18px;background:var(--br);color:#fff;cursor:pointer}.signup .cta{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
 footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}
 .consent{position:fixed;z-index:60;left:12px;right:12px;bottom:12px;max-width:560px;margin-inline:auto;background:var(--sf);color:var(--fg);border:1px solid var(--ln);border-radius:18px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.18);display:grid;gap:12px;font-size:.88rem;line-height:1.45}
@@ -475,6 +482,56 @@ def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), ca
             f'<a href="{esc(u)}">{esc(n)}</a>' for n, u in crumbs[:-1]) + (' › ' if len(crumbs) > 1 else '') + esc(crumbs[-1][0]) + '</nav>'
     meta_robots = f'<meta name="robots" content="{robots}">' if robots else ''
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="canonical" href="{canon}">{meta_robots}<meta property="og:type" content="article"><meta property="og:site_name" content="PlainStats"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{canon}"><meta property="og:image" content="{esc(img)}">{img_meta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{esc(img)}"><meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="manifest" href="/manifest.json"><link rel="preconnect" href="https://a.espncdn.com"><style>{CSS}</style>{ld({'@context': 'https://schema.org', '@graph': graph})}{VA}{GA}</head><body><header class="top"><div><a class="logo" href="/">PlainStats</a><a href="/teams">Teams</a><a href="/players">Players</a><a href="/draft">Draft</a></div></header><main>{crumb_html}{body}</main><footer><p>PlainStats explains NFL contracts and stats in plain English. Contract figures come from named reports or are calculated from the CBA, and anything unconfirmed says so. Data as of {esc(ASOF)}. Spot a mistake? <a href="{fix_href(path)}"{FIX_ATTR}>Suggest a fix</a>.</p><p><a href="/">Open PlainStats</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p></footer></body></html>"""
+
+
+# The Cap Sheet newsletter. Static pages carry no third-party script, so this is a plain HTML form that opens beehiiv's hosted
+# subscribe page in a new tab (email prefilled). Fill in the publication's subscribe URL, e.g. https://<name>.beehiiv.com/subscribe.
+# Left empty, the panel links to the signup on the app's home page instead (/?signup=1 scrolls to it).
+CAP_SHEET_URL = ''
+CAP_SHEET_PITCH = 'One short email a week: the contract moves that mattered and one chart. Free.'
+
+
+def signup_html():
+    if CAP_SHEET_URL:
+        form = (f'<form method="get" action="{esc(CAP_SHEET_URL)}" target="_blank" rel="noopener"><label class="sr" for="cs-email">Email address</label>'
+                '<input id="cs-email" name="email" type="email" required placeholder="you@email.com" autocomplete="email"><button type="submit">Subscribe</button></form>')
+    else:
+        form = '<a class="cta" href="/?signup=1">Sign up for The Cap Sheet</a>'
+    return f'<section class="signup" aria-labelledby="h-capsheet"><h2 id="h-capsheet">The Cap Sheet</h2><p>{esc(CAP_SHEET_PITCH)}</p>{form}</section>'
+
+
+def doors_html(items, heading='Keep exploring'):
+    """Doorway links: tiles from a search page into the app tools that answer the next question."""
+    return (f'<h2>{esc(heading)}</h2><ul class="doors">'
+            + ''.join(f'<li><a href="{esc(u)}"><b>{esc(t)}</b><span>{esc(s)}</span></a></li>' for t, u, s in items) + '</ul>')
+
+
+def player_doors(p, f, T):
+    nick = T['name']
+    pos = POSNAME.get(p.pos, p.pos)
+    items = [('Compare players', '/compare', f'Put {p.name} side by side with any other player'),
+             ('Trade checker', '/trade-checker', f'Test a trade with the {nick} and see if it fits the cap')]
+    if f['end'] == SEASON_YEAR:
+        items.append(('Free agency', '/free-agency', f'{p.name} is set to hit the market in {SEASON_YEAR + 1}. See who joins him'))
+    else:
+        items.append(('Best and worst contracts', '/best-worst-contracts', 'Which deals pay off and which ones hurt'))
+    items += [('Season stats', '/stats', f'Every {SEASON_YEAR} stat leader, filter by team or position'),
+              ('Player ratings', '/player-ratings', f'How {pos}s rank on the field this season'),
+              ('Cap 101', '/cap-101', 'Cap hits, guarantees and dead money in plain English')]
+    return doors_html(items)
+
+
+def team_doors(t):
+    nick = t['name']
+    return doors_html([
+        ('Cap lab', '/cap-lab', f'Where the {nick}\' money goes, next to the other 31 teams'),
+        ('Roster builder', '/roster-builder', f'Build your own {nick} depth chart'),
+        ('Trade checker', '/trade-checker', f'Test a trade with the {nick} and see if it fits the cap'),
+        ('Team ratings', '/team-ratings', f'How the {nick} grade on offense, defense and special teams'),
+        ('Cap room', '/cap-room', 'Cap space for all 32 teams, side by side'),
+        ('Standings', '/standings', f'Where the {nick} stand in the {t["div"]}'),
+        ('NFL news', '/news', 'Every move this season and what it means for the cap'),
+    ])
 
 
 def faq_html(faq):
@@ -569,7 +626,8 @@ def build_player(p):
             f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
-            f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>')
+            f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
+            f'{player_doors(p, f, T)}{signup_html()}')
     person = {'@type': 'Person', 'name': p.name, 'jobTitle': f"{POSNAME.get(p.pos, p.pos).capitalize()}, NFL",
               'url': SITE + path, 'memberOf': {'@type': 'SportsTeam', 'name': T['full'], 'sport': 'American football', 'url': f'{SITE}/teams/{T["slug"]}'}}
     if img:
@@ -658,7 +716,8 @@ def build_team(t):
     body = (f'<div class="id">{logo}<h1>{esc(full)} cap space, contracts and roster</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}'
             f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li><li><a rel="nofollow" href="/team/{tid.lower()}?share=1">Share the {esc(nick)} as an image</a></li></ul>'
             f'{top_html}{faq_html(faq)}{roster_html}'
-            f'<p class="note">Team cap figures are PlainStats\' latest team totals as of {esc(ASOF)}. Player contracts are being re-sourced one by one from named reports, so team totals can change.</p>')
+            f'<p class="note">Team cap figures are PlainStats\' latest team totals as of {esc(ASOF)}. Player contracts are being re-sourced one by one from named reports, so team totals can change.</p>'
+            f'{team_doors(t)}{signup_html()}')
     team_ld = {'@type': 'SportsTeam', 'name': full, 'sport': 'American football', 'url': SITE + path, 'memberOf': {'@type': 'SportsOrganization', 'name': 'National Football League'}}
     if t.get('logo'):
         team_ld['logo'] = t['logo']
@@ -686,7 +745,8 @@ def build_team(t):
     top2 = reported_table(top, f'{esc(nick)} contracts confirmed by named reports')
     body = (f'<h1>How much cap space do the {esc(nick)} have?</h1><p class="lede">{esc(answer)}</p>{facts_html(facts)}'
             f'<p class="note">Team totals are PlainStats\' latest figures as of {esc(ASOF)}; individual contracts are being re-sourced from named reports, so these can shift.</p>{top2}{faq_html(faq)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>')
+            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>'
+            f'{team_doors(t)}{signup_html()}')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)])]
     write(f'teams/{slug}/cap.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)], card=og_add('teams', f'{slug}-cap', **card_space)))
@@ -707,7 +767,8 @@ def build_team(t):
     body = (f'<h1>{esc(nick)} dead money</h1><p class="lede">{esc(answer)}</p>'
             f'{facts_html([("Dead money", mon(t["dead"])), ("Rank in the NFL", ordn(t["r_dead"]) + " most of 32"), ("Share of the cap", f"{t['dead'] / CAP * 100:.1f}%")])}'
             f'{dead_tbl}<p class="note">The five biggest dead-money charges are PlainStats\' latest team figures as of {esc(ASOF)} and can change as contracts are re-sourced.</p>{faq_html(faq)}'
-            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>')
+            f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>'
+            f'{team_doors(t)}{signup_html()}')
     graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)])]
     write(f'teams/{slug}/dead-money.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)], card=og_add('teams', f'{slug}-dead-money', **card_dead)))
