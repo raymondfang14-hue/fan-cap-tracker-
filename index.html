@@ -1182,6 +1182,16 @@ tr.gm-div:hover{background:none}
 .results .rt{font:500 .7rem/1 var(--body);color:var(--muted);white-space:nowrap}
 .results .ric{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--surface-2);color:var(--muted);font:700 .72rem/1 var(--body)}
 @media (prefers-reduced-motion:reduce){.hm-tile{transition:none}}
+.doors{display:grid;gap:12px;margin-top:8px}
+.doors .hm-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+@media (max-width:640px){.doors .hm-grid{grid-template-columns:1fr 1fr}}
+#sheet-body .doors{margin-top:18px}#sheet-body .doors .hm-tile{background:var(--bg)}
+.cs-mini{display:grid;gap:12px;background:var(--surface);border-radius:var(--r-lg);padding:clamp(18px,4vw,26px);margin-top:12px}
+#sheet-body .cs-mini{background:var(--bg)}
+.cs-mini p{color:var(--muted);margin-top:4px}
+.cs-mini form{display:flex;gap:10px;flex-wrap:wrap}.cs-mini label{display:flex;flex:1 1 220px;min-width:0}
+.cs-mini input[type=email]{flex:1;min-width:0;font:inherit;padding:12px 16px;border-radius:980px;border:1px solid var(--line,rgba(128,128,128,.35));background:var(--bg);color:var(--fg)}
+#sheet-body .cs-mini input[type=email]{background:var(--surface)}
 .gd-open{border:0;background:none;padding:0;color:var(--link);font:600 .8rem/1 var(--body);cursor:pointer}
 .gd-open:hover{text-decoration:underline}
 .gtag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:6px;background:var(--surface-2);color:var(--muted);font:500 .68rem/1.2 var(--body)}
@@ -4007,6 +4017,7 @@ function renderTeam(id) {
       <tbody>${sorted.map(p => `<tr data-p="${p.i}" data-s="${esc((p.name + ' ' + posTag(p.pos) + ' ' + p.pos + ' ' + ((p.roles || []).join(' '))).toLowerCase())}"><td><span class="pn">${esc(p.name)}</span></td><td><span class="pos">${esc(posTag(p.pos))}</span></td><td>${p.role ? `<span class="role sm">${esc(p.role)}</span>` : ''}</td><td class="r">${p.play != null ? `<span class="pscore" style="--pc:${pColor(p.playPct)}">${p.play}</span>` : '—'}</td><td class="r">${p.age || '—'}</td><td class="r">${mon(p.cap)}</td><td class="r">${mon(p.apy)}</td><td class="r">${gtdBar(p)} ${pct(p.gtdp)}</td><td class="r">${mon(p.dpost)}</td><td class="r">${p.end || '—'}${p.voidy ? '*' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="note">* Contract has void years. Dead if cut assumes a post-June 1 release this season.</p>
     </div>
+    ${teamDoors(t)}
   </div>`;
   applyTF($('#roster-t'));
   $$('#team-body [data-newsteam]').forEach(b => b.onclick = () => { st.newsTeam = b.dataset.newsteam; st.newsTopic = 'All'; st.newsQ = ''; st.newsLimit = 20; renderNews(); go('news'); });
@@ -4150,6 +4161,31 @@ function provHTML(p) {
   else txt = 'PlainStats shows a contract only after a team announcement or a named news report confirms it. His is not confirmed yet, so no dollar figures appear.';
   return `<div class="prov"><span class="srcb ${cls}">${lab}</span><span>${txt}</span></div>`;
 }
+// Doorway links and The Cap Sheet signup at the end of every player sheet and team page.
+// The static /players and /teams pages carry the same block (tools/build_seo.py: player_doors, team_doors, signup_html).
+const CAP_SHEET_URL = 'https://raymonds-newsletter-e9eade.beehiiv.com/subscribe';
+const doorsHTML = items => `<section class="doors" aria-label="Keep exploring"><h2 class="sec">Keep exploring</h2><div class="hm-grid">${items.map(([t, u, s]) => `<a class="hm-tile" href="${u}"><b>${esc(t)}</b><span>${esc(s)}</span></a>`).join('')}</div></section>`;
+const capSheetHTML = () => `<section class="cs-mini" aria-label="The Cap Sheet newsletter"><div><h2 class="sec">The Cap Sheet</h2><p>One short email a week: the contract moves that mattered and one chart. Free.</p></div><form method="get" action="${CAP_SHEET_URL}" target="_blank" rel="noopener"><label><span class="sr">Email address</span><input name="email" type="email" required placeholder="you@email.com" autocomplete="email"></label><button class="btn" type="submit">Subscribe</button></form></section>`;
+function playerDoors(p) {
+  const t = TB[p.team], pos = POS_WORD[p.pos] || p.pos;
+  return doorsHTML([
+    ['Compare players', '/compare', `Put ${p.name} side by side with any other player`],
+    ['Trade checker', '/trade-checker', `Test a trade with the ${t.name} and see if it fits the cap`],
+    !p.hid && p.end === 2026 ? ['Free agency', '/free-agency', `${p.name} is set to hit the market in 2027. See who joins him`] : ['Best and worst contracts', '/best-worst-contracts', 'Which deals pay off and which ones hurt'],
+    ['Season stats', '/stats', 'Every 2026 stat leader, filter by team or position'],
+    ['Player ratings', '/player-ratings', `How ${pos}s rank on the field this season`],
+    ['Cap 101', '/cap-101', 'Cap hits, guarantees and dead money in plain English']]) + capSheetHTML();
+}
+function teamDoors(t) {
+  return doorsHTML([
+    ['Cap lab', '/cap-lab', `Where the ${t.name}' money goes, next to the other 31 teams`],
+    ['Roster builder', '/roster-builder', `Build your own ${t.name} depth chart`],
+    ['Trade checker', '/trade-checker', `Test a trade with the ${t.name} and see if it fits the cap`],
+    ['Team ratings', '/team-ratings', `How the ${t.name} grade on offense, defense and special teams`],
+    ['Cap room', '/cap-room', 'Cap space for all 32 teams, side by side'],
+    ['Standings', '/standings', `Where the ${t.name} stand in the ${t.div}`],
+    ['NFL news', '/news', 'Every move this season and what it means for the cap']]) + capSheetHTML();
+}
 function openPlayer(i) {
   const p = PL[i]; if (!p) return; const t = TB[p.team];
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
@@ -4191,6 +4227,7 @@ function openPlayer(i) {
       <a class="btn ghost" href="${pathOf('team-' + p.team)}" data-act="team">${esc(t.name)} cap page</a>
     </div>
     </div>
+    ${playerDoors(p)}
     <p class="note" style="margin:14px 0 0">Something look wrong? <button type="button" class="fixl" data-act="fix">Suggest a fix</button></p>`;
   if (!sheet.open) { try { sheet.showModal(); } catch (e) { sheet.setAttribute('open', ''); } }
   $('#sh-x').onclick = () => sheet.close();
