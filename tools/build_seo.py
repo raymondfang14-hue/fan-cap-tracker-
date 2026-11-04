@@ -487,7 +487,7 @@ def shell(path, title, desc, body, graph, robots=None, image=None, crumbs=(), ca
 # The Cap Sheet newsletter. Static pages carry no third-party script, so this is a plain HTML form that opens beehiiv's hosted
 # subscribe page in a new tab (email prefilled). Fill in the publication's subscribe URL, e.g. https://<name>.beehiiv.com/subscribe.
 # Left empty, the panel links to the signup on the app's home page instead (/?signup=1 scrolls to it).
-CAP_SHEET_URL = ''
+CAP_SHEET_URL = 'https://raymonds-newsletter-e9eade.beehiiv.com/subscribe'
 CAP_SHEET_PITCH = 'One short email a week: the contract moves that mattered and one chart. Free.'
 
 
