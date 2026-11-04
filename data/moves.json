@@ -1,6 +1,115 @@
 {
- "asOf": "2026-11-03",
+ "asOf": "2026-11-04",
  "moves": [
+  {
+   "iso": "2026-11-04",
+   "date": "Nov 4",
+   "kind": "Injury",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "Tyler Huntley"
+   ],
+   "head": "Ravens QB Tyler Huntley out for the season with turf toe",
+   "plain": "Huntley will have surgery and is expected to go on injured reserve. With Lamar Jackson also out, Joe Fagnano is set to make his first career start in Week 9 and Baltimore could look for a veteran QB before the Nov. 10 trade deadline.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-tyler-huntley-to-miss-rest-of-season-with-turf-toe-injury"
+  },
+  {
+   "iso": "2026-11-04",
+   "date": "Nov 4",
+   "kind": "Injury",
+   "teams": [
+    "CLE"
+   ],
+   "players": [
+    "Deshaun Watson"
+   ],
+   "head": "Browns QB Deshaun Watson in concussion protocol",
+   "plain": "Watson took a helmet-to-helmet hit in Week 8. He must clear the protocol by Saturday to play Week 9; otherwise Shedeur Sanders starts.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/browns-qb-deshaun-watson-placed-in-concussion-protocol"
+  },
+  {
+   "iso": "2026-11-04",
+   "date": "Nov 4",
+   "kind": "Injury",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Daron Payne",
+    "Javon Kinlaw",
+    "Jeremy McNichols"
+   ],
+   "head": "Commanders put DT Daron Payne, DL Javon Kinlaw and RB Jeremy McNichols on IR",
+   "plain": "All three are done for the year: Payne with a fractured foot, Kinlaw after MCL surgery. Washington also claimed RB Robert Henry Jr. off waivers from Seattle.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/commanders-make-series-of-moves"
+  },
+  {
+   "iso": "2026-11-03",
+   "date": "Nov 3",
+   "kind": "Extension",
+   "teams": [
+    "NYG"
+   ],
+   "players": [
+    "Greg Newsome II"
+   ],
+   "head": "Giants extend CB Greg Newsome for three years, $46M",
+   "plain": "Newsome gets $46M over three more years, about $15.3M a year, with $32M guaranteed. He had been on a one-year, $8M deal, so he will not reach free agency in 2027.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/giants-to-extend-cb-greg-newsome"
+  },
+  {
+   "iso": "2026-11-03",
+   "date": "Nov 3",
+   "kind": "Extension",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Adetomiwa Adebawore"
+   ],
+   "head": "Colts agree to two-year, $35M extension with DT Adetomiwa Adebawore",
+   "plain": "The deal is worth $35M with a $13M signing bonus, and $22.5M of it is new money due by the end of 2027. The report gives the average as $17M a year; guaranteed money was not stated.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-agree-to-2-year-extension-with-dt-adetomiwa-adebawore"
+  },
+  {
+   "iso": "2026-11-03",
+   "date": "Nov 3",
+   "kind": "Release",
+   "teams": [
+    "BUF"
+   ],
+   "players": [
+    "C.J. Gardner-Johnson"
+   ],
+   "head": "Bills release S C.J. Gardner-Johnson",
+   "plain": "Cutting him frees $500K in cap space and leaves $2.02M in dead money. He was on a one-year, $3.5M deal with $3.02M guaranteed.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/bills-release-s-c-j-gardner-johnson"
+  },
+  {
+   "iso": "2026-11-03",
+   "date": "Nov 3",
+   "kind": "Release",
+   "teams": [
+    "NO",
+    "CLE"
+   ],
+   "players": [
+    "Daniel Carlson",
+    "Audric Estime"
+   ],
+   "head": "Saints release K Daniel Carlson, claim RB Audric Estime from Browns",
+   "plain": "Releasing Carlson saves $1.26M in cap room; his 2026 deal was $1.49M with none guaranteed. New Orleans also claimed running back Audric Estime off waivers from Cleveland.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-release-k-daniel-carlson-claim-rb-audric-estime"
+  },
   {
    "iso": "2026-11-02",
    "date": "Nov 2",
@@ -15,6 +124,21 @@
    "plain": "Pearce is eligible to be activated after serving his suspension under the personal conduct policy. The Falcons also waived EDGE Jared Ivey and Drake Jackson.",
    "source": "Pro Football Rumors",
    "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-2-26"
+  },
+  {
+   "iso": "2026-11-02",
+   "date": "Nov 2",
+   "kind": "Coaching",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "DeAngelo Hall"
+   ],
+   "head": "Panthers hire DeAngelo Hall as cornerbacks coach",
+   "plain": "The former Pro Bowl cornerback returns to Carolina's staff after the team fired defensive coordinator Ejiro Evero. Todd Wash is the interim coordinator.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff"
   },
   {
    "iso": "2026-11-01",
@@ -75,21 +199,6 @@
    "plain": "Rams beat Chargers 24-9 (Chargers 0-7), Patriots beat Dolphins 24-19. Philadelphia has lost six straight.",
    "source": "NFL.com",
    "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
-  },
-  {
-   "iso": "2026-11-02",
-   "date": "Nov 2",
-   "kind": "Coaching",
-   "teams": [
-    "CAR"
-   ],
-   "players": [
-    "DeAngelo Hall"
-   ],
-   "head": "Panthers hire DeAngelo Hall as cornerbacks coach",
-   "plain": "The former Pro Bowl cornerback returns to Carolina's staff after the team fired defensive coordinator Ejiro Evero. Todd Wash is the interim coordinator.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff"
   },
   {
    "iso": "2026-11-01",
