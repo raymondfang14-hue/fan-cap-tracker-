@@ -1,0 +1,76 @@
+{
+ "slides": [
+  {
+   "id": "cover",
+   "photo": "img/btj.jpg",
+   "pos": "center 20%",
+   "credit": "\"Brian Thomas Jr.\" (at LSU, 2023) by Tammy Anthony Baker, CC BY 2.0, cropped",
+   "kick": "NFL trade deadline: Tue, Nov 10 \u00b7 the 3 most-reported names",
+   "head": "5 days left. 3 names keep coming up.",
+   "acc": "One of them plays for an 0-7 team.",
+   "chips": [
+    "#1 Josh Downs",
+    "#2 Brian Thomas Jr.",
+    "#3 Khalil Mack"
+   ],
+   "sub": "Swipe for who's calling, and the numbers \u2192"
+  },
+  {
+   "id": "downs",
+   "num": "1 of 3",
+   "kick": "Josh Downs \u00b7 Colts WR \u00b7 most likely to move",
+   "head": "He asked for a trade. The 6-2 Steelers are interested.",
+   "acc": "Pittsburgh's passing offense ranks 26th of 32.",
+   "chips": [
+    "30 catches, 330 yds",
+    "20% of Colts targets",
+    "$3.9M cap hit"
+   ],
+   "sub": "Last year of his rookie deal, so he's a free agent in 2027.",
+   "src": "Trade request: ESPN's Jeremy Fowler. Steelers among interested AFC teams: insider Jordan Schultz. Stats through Week 8 (nflverse). Pass offense rank: PlainStats EPA per pass play. Cap hit: CBA rookie scale."
+  },
+  {
+   "id": "thomas",
+   "num": "2 of 3",
+   "photo": "img/btj.jpg",
+   "pos": "center 20%",
+   "credit": "\"Brian Thomas Jr.\" (at LSU, 2023) by Tammy Anthony Baker, CC BY 2.0, cropped",
+   "kick": "Brian Thomas Jr. \u00b7 Jaguars WR \u00b7 2024 first-round pick",
+   "head": "The NFL's #1 team might move its 2024 first-rounder.",
+   "acc": "He's on the field for just 41% of snaps.",
+   "chips": [
+    "10 catches, 117 yds",
+    "2 TD",
+    "$3.7M cap hit"
+   ],
+   "sub": "No team named yet. The league expects it would cost about a 3rd-round pick.",
+   "src": "Price: Yahoo Sports' Jori Epstein. ESPN's Jeremy Fowler: Jacksonville has not \"shown a willingness\" to deal him. #1 = PlainStats Week 8 team tiers. Stats and snaps through Week 8 (nflverse). Cap hit: CBA rookie scale."
+  },
+  {
+   "id": "mack",
+   "num": "3 of 3",
+   "kick": "Khalil Mack \u00b7 Chargers EDGE \u00b7 age 35",
+   "head": "The Chargers are 0-7. The Bears called about Mack.",
+   "acc": "Harbaugh: \"He's one of the pillars of our team.\"",
+   "chips": [
+    "3 sacks",
+    "6 QB hits",
+    "$18M, 1 year"
+   ],
+   "sub": "The 6-2 Bears already added Jeffery Simmons. Mack's deal is fully guaranteed and ends after this season.",
+   "src": "Bears call: FOX Sports report. NFL Network's Ian Rapoport: \"Wouldn't be surprised\" by a Mack trade. Contract: AP. Stats through Week 8 (nflverse)."
+  },
+  {
+   "id": "outro",
+   "kick": "Deadline: Tuesday, Nov 10, 4 p.m. ET",
+   "head": "Every deal, cap number and pick, as it happens.",
+   "acc": "plainstatsnfl.com/trade-deadline",
+   "chips": [
+    "Trade tracker",
+    "Trade checker",
+    "Team tiers"
+   ],
+   "sub": "Free. No paywall. Contract figures only from named reports."
+  }
+ ]
+}
