@@ -1301,7 +1301,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .td-foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem}
 .trd-replay{margin:0 0 10px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);font-size:.88rem}
 /* PlainScore panel at the top of the player sheet (plainScoreHTML) */
-.plsc{display:grid;gap:12px;padding:14px 16px;margin:0 0 14px;background:var(--surface);border-radius:var(--r);border:1px solid var(--line)}
+.plsc{display:grid;gap:12px;padding:14px 16px;margin:0;background:var(--surface);border-radius:var(--r);border:1px solid var(--line)}
 .plsc-head{display:flex;gap:14px;align-items:center}
 .plsc-head p{margin:0;font-size:.92rem;line-height:1.4}
 .plsc-n{flex:none;display:grid;place-items:center;align-content:center;width:72px;height:72px;border-radius:12px;background:color-mix(in srgb,var(--pc,var(--muted)) 16%,var(--surface));box-shadow:inset 0 -5px 0 var(--pc,var(--muted))}
@@ -2972,8 +2972,8 @@ function fieldHTML(p) {
   if (!p.sg) return '<p class="empty">PlainStats does not rate long snappers.</p>';
   if (!p.st) return `<p class="empty">No 2026 snaps through Week ${THRU}. He may be injured, suspended, inactive or new to the team.</p>`;
   const s = p.st, cfg = GCFG[p.sg], snapSh = Math.max(s.osh || 0, s.dsh || 0);
-  const tiles = cfg.cols.map(k => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
-  const bars = cfg.bars.map(([k]) => { const v = p.pc[k], r = p.rk[k]; return `<div class="pb"><span class="lbl">${esc(MET[k][0])}<small>${esc(MET[k][1] || '')}</small></span><span class="tr">${v != null ? `<i style="width:${(v * 100).toFixed(0)}%;background:${pColor(v)}"></i>` : ''}</span><b>${v != null ? Math.round(v * 100) : '—'}</b><span class="pv num">${fmtMet(p, k)}${r ? ` · ${ord(r[0])}` : ''}</span></div>`; }).join('');
+  // Tiles show the stats that build his play rating (the same keys as the PlainScore bars), with his rank in each.
+  const tiles = cfg.bars.map(([k]) => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
   const verdict = p.vlab ? `<div class="pvp"><div><span class="eyebrow">Pay rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.payPct * 100)}%"></i></div><span class="note">${ord(p.payRk)} highest paid of ${p.payN} qualified</span></div><div><span class="eyebrow">Play rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.playPct * 100)}%;background:var(--good)"></i></div><span class="note">${ord(p.prk)} of ${p.pn} qualified</span></div><span class="vlab ${vClass(p.vlab)}">${esc(p.vlab)}</span></div>` : '';
   return `<div class="field">
     <div class="fhead">
@@ -2987,7 +2987,7 @@ function fieldHTML(p) {
     ${p.ot.length ? `<div class="traits" style="justify-content:flex-start">${p.ot.map(otChip).join('')}</div>` : ''}
     ${!p.fq ? `<p class="note">Not enough playing time for a rating or ranks yet. ${esc(SG_NAME[p.sg])}s need ${esc(cfg.need())} through Week ${THRU}.</p>` : ''}
     <div class="stiles">${tiles}</div>
-    ${p.fq ? `<div style="display:grid;gap:8px"><span class="eyebrow">Percentiles among ${p.pn} qualified ${esc(SG_NAME[p.sg].toLowerCase())}s · these build the play rating</span><div class="pbars wide">${bars}</div></div>` : ''}
+    ${plainScoreHTML(p)}
     ${verdict}
     ${OL_G.includes(p.sg) ? '<p class="note">No free source tracks every block one lineman at a time, so his rating blends playing time, penalties and how the whole line performs: his team\'s pass protection and run success from play-by-play (through Week ${OLWK}), sack rate and yards before contact. </p>' : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims" id="sh-fsim"></div></div>` : ''}
@@ -4238,7 +4238,6 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
-    ${plainScoreHTML(p)}
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}<div id="sh-inj"></div></div>
