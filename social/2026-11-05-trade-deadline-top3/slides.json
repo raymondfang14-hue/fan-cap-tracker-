@@ -2,23 +2,20 @@
  "slides": [
   {
    "id": "cover",
-   "photo": "img/btj.jpg",
-   "pos": "center 20%",
-   "credit": "\"Brian Thomas Jr.\" (at LSU, 2023) by Tammy Anthony Baker, CC BY 2.0, cropped",
-   "kick": "NFL trade deadline: Tue, Nov 10 \u00b7 the 3 most-reported names",
-   "head": "5 days left. 3 names keep coming up.",
-   "acc": "One of them plays for an 0-7 team.",
+   "kick": "NFL trade deadline: Tuesday, Nov 10",
+   "head": "3 NFL players who could be gone by Tuesday.",
+   "acc": "One asked out. One lost his role. One is stuck on an 0-7 team.",
    "chips": [
     "#1 Josh Downs",
     "#2 Brian Thomas Jr.",
     "#3 Khalil Mack"
    ],
-   "sub": "Swipe for who's calling, and the numbers \u2192"
+   "sub": "Swipe for who's calling, and the numbers →"
   },
   {
    "id": "downs",
    "num": "1 of 3",
-   "kick": "Josh Downs \u00b7 Colts WR \u00b7 most likely to move",
+   "kick": "Josh Downs · Colts WR · most likely to move",
    "head": "He asked for a trade. The 6-2 Steelers are interested.",
    "acc": "Pittsburgh's passing offense ranks 26th of 32.",
    "chips": [
@@ -32,24 +29,21 @@
   {
    "id": "thomas",
    "num": "2 of 3",
-   "photo": "img/btj.jpg",
-   "pos": "center 20%",
-   "credit": "\"Brian Thomas Jr.\" (at LSU, 2023) by Tammy Anthony Baker, CC BY 2.0, cropped",
-   "kick": "Brian Thomas Jr. \u00b7 Jaguars WR \u00b7 2024 first-round pick",
-   "head": "The NFL's #1 team might move its 2024 first-rounder.",
-   "acc": "He's on the field for just 41% of snaps.",
+   "kick": "Brian Thomas Jr. · Jaguars WR · 2024 first-round pick",
+   "head": "A first-round WR, on the field for 41% of snaps.",
+   "acc": "The price: about a 3rd-round pick.",
    "chips": [
     "10 catches, 117 yds",
     "2 TD",
     "$3.7M cap hit"
    ],
-   "sub": "No team named yet. The league expects it would cost about a 3rd-round pick.",
-   "src": "Price: Yahoo Sports' Jori Epstein. ESPN's Jeremy Fowler: Jacksonville has not \"shown a willingness\" to deal him. #1 = PlainStats Week 8 team tiers. Stats and snaps through Week 8 (nflverse). Cap hit: CBA rookie scale."
+   "sub": "No team named yet, and Jacksonville hasn't shown a willingness to deal him.",
+   "src": "Price: Yahoo Sports' Jori Epstein. Jaguars' stance: ESPN's Jeremy Fowler. Stats and snaps through Week 8 (nflverse). Cap hit: CBA rookie scale."
   },
   {
    "id": "mack",
    "num": "3 of 3",
-   "kick": "Khalil Mack \u00b7 Chargers EDGE \u00b7 age 35",
+   "kick": "Khalil Mack · Chargers EDGE · age 35",
    "head": "The Chargers are 0-7. The Bears called about Mack.",
    "acc": "Harbaugh: \"He's one of the pillars of our team.\"",
    "chips": [
