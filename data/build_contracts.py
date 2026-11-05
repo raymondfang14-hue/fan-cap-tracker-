@@ -214,8 +214,10 @@ for p in D['players']:
     lg = L.get(key)
     if lg:
         prov, sid = 'r', src_id(lg['source'], lg['url'])
-        if len(p) > 15 and p[15] == 'f':  # a rookie deal replaced by a reported new deal: the formula figures no longer apply
-            row[4:15] = [None] * 5 + [0] + [None] * 5
+        # Every contract figure on a reported deal comes from its ledger row. Figures left from the old table (or from a
+        # replaced rookie-scale deal) have no named report, so they are cleared and only what the report gives is filled in.
+        kept_end = row[8] if len(p) > 15 and p[15] == 'r' else None  # an end this script worked out for a new signing on an earlier run
+        row[4:15] = [None] * 5 + [0] + [None] * 5
         F =[('total', 4, 't'), ('apy', 5, 'a'), ('gtd', 6, 'g'), ('fully_gtd', 7, 'f'), ('end', 8, 'e'), ('cap2026', 10, 'c'), ('bonus', 12, 'b')]
         for col, i, ch in F:
             v = (lg.get(col) or '').strip()
@@ -223,6 +225,8 @@ for p in D['players']:
                 v = int(float(v))
                 if col == 'bonus': sb = v; ver += ch; continue  # total signing bonus is shown as reported, not as this year's share
                 row[i] = v; ver += ch
+        if row[8] is None: row[8] = kept_end
+        if row[5] is None and row[4] and lg.get('years'): row[5] = round(row[4] / int(lg['years']))  # yearly average = reported total / years, as for new signings below
         if lg['pos']: row[2] = row[2] or lg['pos']
     elif r and r['gsis_id'] in picks and picks[r['gsis_id']][0] >= SEASON - 3:
         cls, pk, rnd = picks[r['gsis_id']]
@@ -268,9 +272,7 @@ for (k, team), lg in L.items():
         row[i] = v; ver += ch
     if row[5] is None and row[4] and lg.get('years'): row[5] = round(row[4] / int(lg['years']))
     if row[8] is None and lg.get('years') and lg.get('signed'): row[8] = int(lg['signed'][:4]) + int(lg['years']) - (0 if lg['signed'][5:7] > '02' else 1)
-    if row[10] is None and row[4] and lg.get('years'):  # estimate this year's cap hit from the terms
-        yrs = int(lg['years']); row[10] = round((sb or 0) / min(yrs, 5) + (row[4] - (sb or 0)) / yrs * 0.6)
-        row[12] = round((sb or 0) / min(yrs, 5)); row[11] = row[10] - row[12]
+    # no cap-hit estimate: a cap hit appears only when the report gives one (cap2026)
     if seen is not None and r: seen.add(r['gsis_id'])
     out.append(row + ['r', src_id(lg['source'], lg['url']), ver, sb, r['gsis_id'] if r else '']); count['r'] += 1
 
