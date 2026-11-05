@@ -14,7 +14,7 @@ Who actually moves by Tuesday? Drop your pick 👇
 
 Every deal, cap number and pick as it happens: plainstatsnfl.com/trade-deadline (link in bio)
 
-Sources: ESPN's Jeremy Fowler, Jordan Schultz, Yahoo Sports' Jori Epstein, FOX Sports, NFL Network's Ian Rapoport, AP. Stats through Week 8 (nflverse).
+Sources: ESPN's Jeremy Fowler, Jordan Schultz, Yahoo Sports' Jori Epstein, FOX Sports, NFL Network's Ian Rapoport, AP. Stats through Week 8 (nflverse). Cover photo: Joe Glorioso / All-Pro Reels (CC BY-SA 4.0).
 
 #NFL #NFLTradeDeadline #TradeDeadline #JoshDowns #BrianThomasJr #KhalilMack #Colts #Jaguars #Chargers #Steelers #Bears #NFLRumors #FantasyFootball
 

@@ -55,6 +55,10 @@ body{font-family:IX,Inter,sans-serif;color:#fff;position:relative;background:var
 .row .n{font-weight:800;font-size:36px;letter-spacing:-.8px}.row .t{font-weight:600;font-size:22px;color:rgba(255,255,255,.75);margin-top:4px}
 .row .q{width:96px;height:96px;border-radius:50%;border:3px dashed rgba(255,255,255,.4);display:grid;place-items:center;font-weight:800;font-size:46px;color:rgba(255,255,255,.6)}
 .lrow{display:flex;gap:22px;margin-top:44px}.lrow img{width:150px;height:150px;object-fit:contain;background:rgba(255,255,255,.94);border-radius:50%;padding:20px}
+.photo{position:absolute;left:0;right:0;top:0;height:1300px;background-size:cover;background-position:center 12%}
+.pshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,11,20,.4) 0%,rgba(8,11,20,0) 14%,rgba(8,11,20,0) 34%,rgba(8,11,20,.72) 48%,rgba(8,11,20,.95) 60%,#080b14 67%)}
+.cbox{position:absolute;left:0;right:0;top:800px}
+.cred{font-weight:600;font-size:19px;color:rgba(255,255,255,.55);margin-top:30px}
 .swipe{font-weight:600;font-size:31px;margin-top:34px;color:rgba(255,255,255,.88)}
 .chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}.chip{background:#fff;color:#0b0f1a;font-weight:800;font-size:30px;padding:9px 20px;border-radius:999px}
 `;
@@ -66,9 +70,8 @@ const foot = `<div class="foot"><span>PlainStats · nflverse through Week 8</spa
 function body(s, i, n) {
   const top = `<div class="top"><span class="pill">PlainStats</span>${dots(n, i)}</div>`;
   if (s.type === 'cover') return `${top}
-    <div class="kick">${esc(s.kick)}</div><div class="hook">${esc(s.head)}</div><div class="hacc">${esc(s.acc)}</div>
-    <div class="rows">${s.rows.map(r => `<div class="row"><img src="${logo(r.from)}"><div><div class="n">${esc(r.name)}</div><div class="t">${esc(r.note)}</div></div><div class="arrow">→</div>${r.to ? `<img src="${logo(r.to)}">` : '<div class="q">?</div>'}</div>`).join('')}</div>
-    <div class="swipe">${esc(s.sub)}</div>`;
+    <div class="cbox"><div class="kick">${esc(s.kick)}</div><div class="hook">${esc(s.head)}</div><div class="hacc">${esc(s.acc)}</div>
+    <div class="swipe">${esc(s.sub)}</div>${s.credit ? `<div class="cred">${esc(s.credit)}</div>` : ''}</div>`;
   if (s.type === 'outro') return `${top}
     <div class="kick">${esc(s.kick)}</div><div class="hook">${esc(s.head)}</div><div class="hacc">${esc(s.acc)}</div>
     ${s.logos ? `<div class="lrow">${s.logos.map(t => `<img src="${logo(t)}">`).join('')}</div>` : ''}<div class="chips">${s.chips.map(c => `<span class="chip">${esc(c)}</span>`).join('')}</div><div class="swipe">${esc(s.sub)}</div>`;
@@ -89,7 +92,7 @@ const n = spec.slides.length;
 for (const [i, s] of spec.slides.entries()) {
   const vars = `--bg1:${s.bg1};--bg2:${s.bg2};--acc:${s.acc2 || s.accent}`;
   const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body style="${vars}">
-    <div class="bgc"></div>${s.wm ? `<div class="wm" style="background-image:url('${logo(s.wm)}')"></div>` : ''}<div class="wrap">${body(s, i, n)}</div></body></html>`;
+    <div class="bgc"></div>${s.photo ? `<div class="photo" style="background-image:url('file://${DIR}/${s.photo}')"></div><div class="pshade"></div>` : ''}${s.wm ? `<div class="wm" style="background-image:url('${logo(s.wm)}')"></div>` : ''}<div class="wrap">${body(s, i, n)}</div></body></html>`;
   const f = path.join(outDir, `_s${i}.html`); fs.writeFileSync(f, html);
   await page.goto('file://' + path.resolve(f)); await page.evaluate(() => document.fonts.ready);
   const bottom = await page.evaluate(() => document.querySelector('.wrap').getBoundingClientRect().bottom);

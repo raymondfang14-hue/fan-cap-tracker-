@@ -9,27 +9,9 @@
    "kick": "NFL trade deadline: Tuesday, Nov 10",
    "head": "3 NFL players who could be gone by Tuesday.",
    "acc": "One asked out. One lost his role. One is stuck on an 0-7 team.",
-   "rows": [
-    {
-     "from": "IND",
-     "to": "PIT",
-     "name": "Josh Downs",
-     "note": "Asked for a trade · Steelers interested"
-    },
-    {
-     "from": "JAX",
-     "to": null,
-     "name": "Brian Thomas Jr.",
-     "note": "Role has shrunk · no buyer named yet"
-    },
-    {
-     "from": "LAC",
-     "to": "CHI",
-     "name": "Khalil Mack",
-     "note": "Chargers are 0-7 · Bears called"
-    }
-   ],
-   "sub": "Swipe for each deal, the price and the cap math →"
+   "sub": "Swipe to see who, and what it would cost →",
+   "photo": "harbaugh.png",
+   "credit": "\"Jim Harbaugh\" by Joe Glorioso / All-Pro Reels, CC BY-SA 4.0, cropped"
   },
   {
    "id": "downs",
