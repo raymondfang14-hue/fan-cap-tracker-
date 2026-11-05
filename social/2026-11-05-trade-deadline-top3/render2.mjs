@@ -4,7 +4,8 @@ import fs from 'fs';
 import path from 'path';
 const { chromium } = pw;
 
-const [, , specPath, outDir] = process.argv;
+const [, , specPath, outDir, fmt] = process.argv;
+const IG = fmt === 'ig', H = IG ? 1350 : 1920;
 const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 const DIR = path.dirname(path.resolve(specPath));
 const FONTS = '/home/user/fan-cap-tracker-/assets/fonts';
@@ -15,7 +16,7 @@ const css = `
 @font-face{font-family:IX;src:url(file://${FONTS}/Inter-ExtraBold.otf);font-weight:800}
 @font-face{font-family:IX;src:url(file://${FONTS}/Inter-SemiBold.otf);font-weight:600}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1080px;height:1920px;overflow:hidden}
+html,body{width:1080px;height:${H}px;overflow:hidden}
 body{font-family:IX,Inter,sans-serif;color:#fff;position:relative;background:var(--bg2)}
 .bgc{position:absolute;inset:0;background:radial-gradient(1100px 900px at 85% 12%,var(--bg1) 0%,transparent 70%),linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,#080b14 100%)}
 .wm{position:absolute;right:-260px;top:120px;width:1100px;height:1100px;background-size:contain;background-repeat:no-repeat;opacity:.07;filter:grayscale(1) brightness(2)}
@@ -63,6 +64,20 @@ body{font-family:IX,Inter,sans-serif;color:#fff;position:relative;background:var
 .chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}.chip{background:#fff;color:#0b0f1a;font-weight:800;font-size:30px;padding:9px 20px;border-radius:999px}
 `;
 
+
+const igCss = `
+.wrap{left:72px;right:72px;top:64px}
+.hero{margin-top:26px}.title{font-size:96px}.rec{font-size:26px;margin-top:8px}.who{font-size:24px;margin-top:18px}
+.biglogo{width:230px;height:230px;margin-top:30px}
+.wm{top:40px;width:900px;height:900px;right:-220px}
+.tiles{margin-top:26px;gap:16px}.tile{min-height:0;padding:18px 18px 20px}.tile .v{font-size:48px}.tile .l{font-size:19px}
+.lab{margin-top:28px;font-size:23px}.deal{margin-top:12px}.side{min-height:0;padding:18px 20px}.side .m{font-size:29px}.side .s{font-size:19px}
+.chk{font-size:22px;margin-top:18px;line-height:1.32}.fine{font-size:17px;margin-top:16px}.foot{margin-top:14px;font-size:20px}.foot b{font-size:25px}
+.photo{height:1000px;background-position:center 8%}
+.pshade{background:linear-gradient(180deg,rgba(8,11,20,.4) 0%,rgba(8,11,20,0) 12%,rgba(8,11,20,0) 30%,rgba(8,11,20,.75) 48%,rgba(8,11,20,.96) 62%,#080b14 72%)}
+.cbox{top:600px}.kick{margin-top:40px;font-size:29px}.hook{font-size:88px}.hacc{font-size:48px}.swipe{font-size:28px;margin-top:24px}.cred{margin-top:18px;font-size:18px}
+.lrow img{width:130px;height:130px;padding:18px}.lrow{margin-top:34px}
+`;
 const dots = (n, i) => `<div class="dots">${Array.from({ length: n }, (_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>`;
 const side = s => `<div class="side${s.dim ? ' dim' : ''}"><div class="h">${s.team ? `<img src="${logo(s.team)}">` : ''}${esc(s.h)}</div><div class="m">${esc(s.m)}</div>${s.s ? `<div class="s">${esc(s.s)}</div>` : ''}</div>`;
 const foot = `<div class="foot"><span>PlainStats · nflverse through Week 8</span><b>plainstatsnfl.com</b></div>`;
@@ -87,16 +102,17 @@ function body(s, i, n) {
 
 fs.mkdirSync(outDir, { recursive: true });
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+const page = await browser.newPage({ viewport: { width: 1080, height: H }, deviceScaleFactor: 1 });
 const n = spec.slides.length;
 for (const [i, s] of spec.slides.entries()) {
   const vars = `--bg1:${s.bg1};--bg2:${s.bg2};--acc:${s.acc2 || s.accent}`;
-  const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body style="${vars}">
+  const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}${IG ? igCss : ''}</style></head><body style="${vars}">
     <div class="bgc"></div>${s.photo ? `<div class="photo" style="background-image:url('file://${DIR}/${s.photo}')"></div><div class="pshade"></div>` : ''}${s.wm ? `<div class="wm" style="background-image:url('${logo(s.wm)}')"></div>` : ''}<div class="wrap">${body(s, i, n)}</div></body></html>`;
   const f = path.join(outDir, `_s${i}.html`); fs.writeFileSync(f, html);
   await page.goto('file://' + path.resolve(f)); await page.evaluate(() => document.fonts.ready);
+  if (IG && s.type !== 'cover') await page.evaluate(H => { const w = document.querySelector('.wrap'); const h = w.getBoundingClientRect().height; w.style.top = Math.max(64, Math.round((H - h) / 2)) + 'px'; }, H);
   const bottom = await page.evaluate(() => document.querySelector('.wrap').getBoundingClientRect().bottom);
-  if (bottom > 1660) console.warn(`slide ${i + 1}: content ends at ${Math.round(bottom)}px (TikTok caption zone)`);
+  if (bottom > (IG ? H - 50 : 1660)) console.warn(`slide ${i + 1}: content ends at ${Math.round(bottom)}px (too low)`);
   await page.screenshot({ path: path.join(outDir, `${String(i + 1).padStart(2, '0')}-${s.id}.png`) });
   fs.unlinkSync(f);
 }
