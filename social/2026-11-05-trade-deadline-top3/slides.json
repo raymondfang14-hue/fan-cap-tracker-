@@ -1,0 +1,203 @@
+{
+ "slides": [
+  {
+   "id": "cover",
+   "type": "cover",
+   "bg1": "#143a6b",
+   "bg2": "#0b0f1a",
+   "accent": "#22D3EE",
+   "kick": "NFL trade deadline: Tuesday, Nov 10",
+   "head": "3 NFL players who could be gone by Tuesday.",
+   "acc": "One asked out. One lost his role. One is stuck on an 0-7 team.",
+   "sub": "Swipe to see who, and what it would cost →",
+   "photo": "harbaugh.png",
+   "credit": "\"Jim Harbaugh\" by Joe Glorioso / All-Pro Reels, CC BY-SA 4.0, cropped"
+  },
+  {
+   "id": "downs",
+   "type": "deal",
+   "bg1": "#4a3c10",
+   "bg2": "#111114",
+   "accent": "#FFB612",
+   "logo": "PIT",
+   "wm": "PIT",
+   "badge": "#1 · most likely to move",
+   "title": "Steelers",
+   "rec": "6-2 · won 4 straight",
+   "whoB": "Target:",
+   "who": "WR Josh Downs (Colts)",
+   "who2": "30 catches · 330 yds · 1 TD in 8 games",
+   "tiles": [
+    {
+     "v": "84%",
+     "acc": true,
+     "l": "Steelers' playoff odds (PlainStats model)"
+    },
+    {
+     "v": "26th",
+     "l": "Steelers' passing offense (EPA per pass play)"
+    },
+    {
+     "v": "$11.1M",
+     "l": "Steelers' cap space (PlainStats team total)"
+    }
+   ],
+   "label": "Trade scenario · Steelers among interested teams (Jordan Schultz)",
+   "left": {
+    "team": "IND",
+    "h": "Colts get",
+    "m": "Price not reported yet",
+    "s": "No pick has been named in any report.",
+    "dim": true
+   },
+   "right": {
+    "team": "PIT",
+    "h": "Steelers get",
+    "m": "WR Josh Downs",
+    "s": "20% of Colts targets · free agent in 2027"
+   },
+   "checks": [
+    [
+     "Why now:",
+     "Downs asked for a trade (ESPN's Jeremy Fowler). The Colts are 2-6."
+    ],
+    [
+     "Cap check:",
+     "Pittsburgh has $11.1M of space. Traded at the deadline, Downs is owed about $1.8M of this year's base salary (9 of 18 weekly paychecks left)."
+    ]
+   ],
+   "fine": "Reported interest, not a done deal. Downs' $3.9M cap hit and base salary come from the CBA rookie scale."
+  },
+  {
+   "id": "thomas",
+   "type": "deal",
+   "bg1": "#006778",
+   "bg2": "#071f26",
+   "accent": "#E0B13A",
+   "logo": "JAX",
+   "wm": "JAX",
+   "badge": "#2 · role has shrunk",
+   "title": "Jaguars",
+   "rec": "5-2 · haven't shown they'll sell",
+   "whoB": "On the block?",
+   "who": "WR Brian Thomas Jr.",
+   "who2": "10 catches · 117 yds · 2 TD in 7 games",
+   "tiles": [
+    {
+     "v": "41%",
+     "acc": true,
+     "l": "Thomas Jr.'s share of offensive snaps"
+    },
+    {
+     "v": "3rd",
+     "l": "Round of pick the league expects it to cost"
+    },
+    {
+     "v": "$3.7M",
+     "l": "His 2026 cap hit (CBA rookie scale)"
+    }
+   ],
+   "label": "Trade scenario · No buyer reported yet",
+   "left": {
+    "team": "JAX",
+    "h": "Jaguars get",
+    "m": "About a 3rd-round pick",
+    "s": "What the league expects (Yahoo Sports' Jori Epstein)"
+   },
+   "right": {
+    "h": "Buyer gets",
+    "m": "WR Brian Thomas Jr.",
+    "s": "2024 first-round pick, signed through 2027"
+   },
+   "checks": [
+    [
+     "Stance check:",
+     "ESPN's Jeremy Fowler says Jacksonville hasn't shown a willingness to deal him."
+    ],
+    [
+     "Cap check:",
+     "A buyer would owe about $940K of this year's base salary after the deadline, and gets him cheap through 2027."
+    ]
+   ],
+   "fine": "No team has been named in a report, so the buyer is left blank. Stats and snaps through Week 8 (nflverse)."
+  },
+  {
+   "id": "mack",
+   "type": "deal",
+   "bg1": "#1d3463",
+   "bg2": "#0B162A",
+   "accent": "#FF7A2E",
+   "logo": "CHI",
+   "wm": "CHI",
+   "badge": "#3 · the Chargers say no",
+   "title": "Bears",
+   "rec": "6-2 · won 3 straight",
+   "whoB": "Target:",
+   "who": "EDGE Khalil Mack (Chargers, 0-7)",
+   "who2": "3 sacks · 6 QB hits in 7 games · age 35",
+   "tiles": [
+    {
+     "v": "83%",
+     "acc": true,
+     "l": "Bears' playoff odds (PlainStats model)"
+    },
+    {
+     "v": "12th",
+     "l": "Bears' defense (EPA allowed per play)"
+    },
+    {
+     "v": "$9.5M",
+     "l": "Bears' cap space (PlainStats team total)"
+    }
+   ],
+   "label": "Trade scenario · Bears called about Mack (FOX Sports report)",
+   "left": {
+    "team": "LAC",
+    "h": "Chargers get",
+    "m": "Price not reported yet",
+    "s": "LA says it wants to keep him.",
+    "dim": true
+   },
+   "right": {
+    "team": "CHI",
+    "h": "Bears get",
+    "m": "EDGE Khalil Mack",
+    "s": "$18M, 1-year deal, fully guaranteed (AP)"
+   },
+   "checks": [
+    [
+     "Stance check:",
+     "Harbaugh: \"He's one of the pillars of our team.\" NFL Network's Ian Rapoport \"wouldn't be surprised\" by a Mack trade. Chicago already added Jeffery Simmons."
+    ],
+    [
+     "Cap check:",
+     "Chicago has $9.5M of space. Mack's base salary for this year hasn't been confirmed, so the salary that would move is still being verified."
+    ]
+   ],
+   "fine": "Reported interest, not a done deal. Stats through Week 8 (nflverse)."
+  },
+  {
+   "id": "outro",
+   "type": "outro",
+   "bg1": "#143a6b",
+   "bg2": "#0b0f1a",
+   "accent": "#22D3EE",
+   "kick": "Deadline: Tuesday, Nov 10, 4 p.m. ET",
+   "head": "Every deal, cap number and pick, as it happens.",
+   "acc": "plainstatsnfl.com/trade-deadline",
+   "chips": [
+    "Trade tracker",
+    "Trade checker",
+    "Team tiers"
+   ],
+   "sub": "Free. No paywall. Contract figures only from named reports.",
+   "logos": [
+    "IND",
+    "PIT",
+    "JAX",
+    "LAC",
+    "CHI"
+   ]
+  }
+ ]
+}
