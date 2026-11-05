@@ -64,6 +64,13 @@ def _asof():
 
 
 ASOF = _asof()
+
+# PlainScore (0 to 100) and its percentile bars, keyed by gsis id. The page computes these itself; tools/refresh_helpers.py plainscore
+# exports them to data/plainscore.json so these pages print exactly what the app shows. Missing file = no PlainScore section.
+try:
+    PSCORE = json.loads((DATA / 'plainscore.json').read_text())
+except Exception:
+    PSCORE = {'week': None, 'players': {}}
 CAP = NFL['cap']
 SEASON_YEAR = NFL['season']
 SOURCES = NFL['sources']
@@ -447,6 +454,10 @@ ul.doors b{display:block;color:var(--lk)}ul.doors span{display:block;color:var(-
 .signup{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:20px;margin:28px 0 8px}.signup h2{margin:0 0 .2em}.signup p{color:var(--mu);margin:0 0 12px}
 .signup form{display:flex;gap:10px;flex-wrap:wrap}.signup input[type=email]{flex:1 1 220px;min-width:0;font:inherit;padding:10px 16px;border-radius:999px;border:1px solid var(--ln);background:var(--bg);color:var(--fg)}
 .signup button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 18px;background:var(--br);color:#fff;cursor:pointer}.signup .cta{margin:0}
+.psh{display:flex;gap:14px;align-items:center;padding:10px 0}.psh p{margin:0}.psn{flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:12px;font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums;background:var(--bs);box-shadow:inset 0 -5px 0 var(--c)}
+ul.pbars{list-style:none;padding:0 0 10px;margin:0;display:grid;gap:8px}ul.pbars li{display:grid;grid-template-columns:8.5rem minmax(0,1fr) 2rem 6.5rem;gap:10px;align-items:center;font-size:.9rem}
+ul.pbars .tr{height:10px;border-radius:5px;background:var(--ln);overflow:hidden}ul.pbars .tr i{display:block;height:100%;border-radius:5px}ul.pbars b{text-align:right;font-variant-numeric:tabular-nums}ul.pbars .v{color:var(--mu);font-size:.85rem;text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:480px){ul.pbars li{grid-template-columns:7rem minmax(0,1fr) 2rem}ul.pbars .v{grid-column:1/-1;text-align:left;margin-top:-6px}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
 footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}
@@ -559,6 +570,40 @@ PAGE_BY_TEAM = {}
 for p in PAGES:
     PAGE_BY_TEAM.setdefault(p.team, []).append(p)
 
+# ---------------------------------------------------------------- PlainScore
+PS_COLOR = lambda v: '#1565C0' if v >= 80 else '#2A78D6' if v >= 50 else '#9FB4CF' if v >= 25 else '#E0602C'   # same steps as pColor() in src.html
+
+
+def plainscore(p, f):
+    """This player's PlainScore from data/plainscore.json, or None. The pay bar stays only when contract_facts() confirms his yearly pay."""
+    ps = PSCORE['players'].get(p.gid) if p.gid else None
+    if not ps:
+        return None
+    bars = [b for b in ps['bars'] if b[3] != 'pay' or f['apy']]
+    return dict(ps, bars=bars, pay=any(b[3] == 'pay' for b in bars))
+
+
+def ps_rank_words(ps):
+    return 'first' if ps.get('rk') == 1 else 'last' if ps.get('rk') == ps['n'] else f"better than {ps['s']}%"
+
+
+def plainscore_sentence(p, ps):
+    return (f"{p.name} has a PlainScore of {ps['s']} out of 100: he ranks {ps_rank_words(ps)} of the {ps['n']} qualified {ps['grp']} "
+            f"on the field in {SEASON_YEAR}, through week {PSCORE['week']}.")
+
+
+def plainscore_html(p, ps):
+    if not ps:
+        return ''
+    bars = ''.join(f'<li><span>{esc(l)}</span><span class="tr" aria-hidden="true"><i style="width:{v}%;background:{PS_COLOR(v)}"></i></span><b>{v}</b><span class="v">{esc(val)}</span></li>'
+                   for l, v, val, _k in ps['bars'])
+    play = f" Play rating {ps['play']}." if ps.get('play') is not None else ''
+    return (f'<h2>PlainScore</h2><div class="card"><div class="psh"><b class="psn" style="--c:{PS_COLOR(ps["s"])}" aria-label="PlainScore {ps["s"]} out of 100">{ps["s"]}</b>'
+            f'<p>{esc(plainscore_sentence(p, ps))}{play}</p></div><ul class="pbars" aria-label="Percentiles behind his PlainScore">{bars}</ul></div>'
+            f'<p class="note">Each bar is a percentile against the same {ps["n"]} {esc(ps["grp"])}: 90 means better than 90% of them.'
+            f'{" Yearly pay is against everyone at his position." if ps["pay"] else ""} From nflverse box scores and play-by-play. <a href="/cap-101">How PlainScore works</a></p>')
+
+
 # ---------------------------------------------------------------- player pages
 URLS = []  # (path, priority, changefreq)
 
@@ -568,6 +613,9 @@ def build_player(p):
     f = contract_facts(p)
     summary = player_summary(p, f)
     faq = player_faq(p, f)
+    ps = plainscore(p, f)
+    if ps:
+        faq.insert(1, (f"What is {poss(p.name)} PlainScore?", plainscore_sentence(p, ps) + ' PlainScore ranks his play rating against everyone at his position with enough snaps.'))
     path = f'/players/{p.slug}'
     has_deal = bool(f['total'] or f['apy'] or f['cap'] or f['base'])
     if f['total'] and f['end']:
@@ -623,7 +671,7 @@ def build_player(p):
     spa = f'/player/{slugify(p.name)}-{p.team.lower()}'
     PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
     body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
-            f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{stats_html}'
+            f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{plainscore_html(p, ps)}{stats_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'

@@ -96,6 +96,8 @@ line_and_tiers() {
   get pbp/play_by_play_$SEASON.csv.gz && py data/build_olwin.py "$DL/play_by_play_$SEASON.csv.gz" && py data/build_tiers.py "$DL/play_by_play_$SEASON.csv.gz"
 }
 
+plainscore_export() { sh build.sh && py tools/refresh_helpers.py plainscore; }
+
 search_pages() { py tools/build_seo.py && sh build.sh && py -c "import xml.dom.minidom as m;m.parse('sitemap.xml')"; }
 
 scripts_parse() {
@@ -131,6 +133,8 @@ case "$MODE" in
   *) echo "unknown mode $MODE"; exit 2 ;;
 esac
 
+# PlainScore is computed by the page itself; export it for the static player pages. On failure the last export is kept.
+step "PlainScore export" "data/plainscore.json" -- plainscore_export
 step "search pages" "players teams draft sitemap.xml tools/seo-nav.html data/pageslugs.json og-data index.html" -- search_pages
 # A broken page must never be pushed: these two are hard failures (exit 3, the workflow commits nothing).
 HARD=0

@@ -1300,6 +1300,16 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .td-side .rows b.ver{color:var(--muted);font-weight:500}
 .td-foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem}
 .trd-replay{margin:0 0 10px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);font-size:.88rem}
+/* PlainScore panel at the top of the player sheet (plainScoreHTML) */
+.plsc{display:grid;gap:12px;padding:14px 16px;margin:0 0 14px;background:var(--surface);border-radius:var(--r);border:1px solid var(--line)}
+.plsc-head{display:flex;gap:14px;align-items:center}
+.plsc-head p{margin:0;font-size:.92rem;line-height:1.4}
+.plsc-n{flex:none;display:grid;place-items:center;align-content:center;width:72px;height:72px;border-radius:12px;background:color-mix(in srgb,var(--pc,var(--muted)) 16%,var(--surface));box-shadow:inset 0 -5px 0 var(--pc,var(--muted))}
+.plsc-n b{font:800 2.1rem/1 var(--display);font-variant-numeric:tabular-nums}
+.plsc-n small{font:600 .62rem/1.2 var(--body);color:var(--muted);margin-top:2px}
+.plsc.na{grid-template-columns:auto minmax(0,1fr);align-items:center}
+.plsc.na .plsc-n{width:60px;height:60px;background:var(--surface-2);box-shadow:none}
+.plsc .note{margin:0}
 </style>
 
 <header class="gn" id="gn">
@@ -2189,6 +2199,7 @@ const LEARN_NFL = [
   ['Market and Security scores', 'On every player card. Market is where his yearly pay ranks among players at his position, from 0 to 99. Security blends how much of his deal is guaranteed, how much dead money his team would take by cutting him, and how many years are left. A high Security score means his money is hard to take away.'],
   ['Cap health', 'A 0 to 100 team score on the Analytics page. It blends cap room, low dead money, how much pay comes off the books after this season, and how evenly money is spread beyond the top five contracts.'],
   ['Play rating', 'A 40 to 99 score on the Players page and every player card. It is a grade, not a ranking: each stat that matters most at his position (EPA and accuracy for quarterbacks, QB-hit rate and sacks for pass rushers, estimated coverage and plays on the ball for corners) is scored as a percentile against everyone at his position with enough snaps, the stats are blended by weight, and the blend is put on a 40 to 99 scale, so a strong position can have many high grades. A stat he has no number for is left out rather than counted as average. Every stat comes from free NFL box scores and play-by-play, so there are no charted stats such as pressures, drops or missed tackles. Coverage numbers (targets, catch rate, yards and passer rating allowed) are estimates: each pass is credited to the defender who intercepted it, broke it up or made the tackle after the catch. A starting corner thrown at too rarely to have coverage numbers is credited for how rarely he is targeted. It is PlainStats\'s own number from public stats, not a PFF grade or a Madden rating.'],
+  ['PlainScore', 'A 0 to 100 number at the top of every rated player\'s card and page. It is his rank by play rating among the qualified players at his position this season, as a percentile: a PlainScore of 87 means he rates better than 87% of them. The play rating is a grade, so a whole position can grade high; PlainScore is always a ranking. The bars under it are the stats that count most in his play rating, each a percentile against the same players, plus his yearly pay against his position when his contract is confirmed. Players need enough snaps to get one, and the numbers update after every week of games.'],
   ['Roles', 'One label for how a team uses a player: Bell cow, Field stretcher, Green-dot tackler, Ball hawk and so on. Roles come from playing time and usage, so a backup and a starter at the same position get different roles.'],
   ['Trait badges', 'Skills a player stands out in this season, in gold (top 6% at his position), silver (top 16%) or bronze (top 28%). Each badge measures a different skill from the player\'s role, so a receiver can be a Drive extender and an Air-yards magnet, and a corner can have Sticky coverage and be a Pick artist. Badges are re-ranked every week, so the bar moves with the season; a few count badges (no fumbles lost, defensive touchdowns, perfect kicking) use set numbers instead.'],
   ['Pay vs. play', 'Compares where a player ranks in yearly pay at his position with where he ranks on the field. A big gap one way is a Bargain; the other way is Overpaid so far. Early in a season a few games can swing it.'],
@@ -2981,6 +2992,43 @@ function fieldHTML(p) {
     ${OL_G.includes(p.sg) ? '<p class="note">No free source tracks every block one lineman at a time, so his rating blends playing time, penalties and how the whole line performs: his team\'s pass protection and run success from play-by-play (through Week ${OLWK}), sack rate and yards before contact. </p>' : ''}
     ${p.fq ? `<div style="display:grid;gap:6px"><span class="eyebrow">Plays most like him</span><div class="sims" id="sh-fsim"></div></div>` : ''}
   </div>`;
+}
+
+/* ===== PlainScore: a 0 to 100 summary on the player sheet, the static /players pages and the share card =====
+   PlainScore is his play-rating rank among the qualified players in his rating group, as a percentile: 87 means better than 87% of them.
+   Its bars are the stats that weigh most in his play rating, plus yearly pay against his position when his deal is confirmed (no pay
+   bar while a contract is "being verified"). One function feeds all three places: window.__plainScores() exports it for every player,
+   tools/refresh_helpers.py plainscore writes that to data/plainscore.json, and tools/build_seo.py prints it on the static pages. */
+function plainScore(p) {
+  const g = p.sg && GCFG[p.sg];
+  if (!(p.fq && p.pc && g && p.playPct != null)) return null;
+  const bar = (k, label, v, val) => (v == null || isNaN(v) ? null : { k, label, v: Math.max(0, Math.min(1, v)), val: val == null ? '' : String(val) });
+  const bars = [...g.bars].sort((a, b) => b[1] - a[1]).map(([k]) => bar(k, MET[k][0], p.pc[k], fmtMet(p, k))).filter(Boolean).slice(0, p.hid ? 5 : 4);
+  if (!p.hid && p.pApy != null && p.apy > 0) bars.push(bar('pay', 'Yearly pay', p.pApy, mon(p.apy) + ' a year'));
+  const score = Math.max(0, Math.min(100, Math.round(p.playPct * 100))), grp = SG_NAME[p.sg].toLowerCase() + 's';
+  return { score, bars, grp, n: p.pn, cap: `Percentiles among ${p.pn} qualified ${grp}, 2026 through Week ${THRU}.${bars.some(b => b.k === 'pay') ? ' Pay is against his position.' : ''}` };
+}
+const psWords = (p, s) => p.prk === 1 ? 'first' : p.prk === p.pn ? 'last' : `better than ${s}%`;
+function plainScoreHTML(p) {
+  const ps = plainScore(p);
+  if (!ps) {
+    if (!p.sg || !p.st || !GCFG[p.sg]) return '';
+    return `<section class="plsc na" aria-label="PlainScore"><div class="plsc-n"><b>—</b><small>PlainScore</small></div><p class="note">No PlainScore yet. ${esc(SG_NAME[p.sg])}s need ${esc(GCFG[p.sg].need())} through Week ${THRU} to be ranked. <a href="/cap-101">How PlainScore works</a></p></section>`;
+  }
+  const c = pColor(ps.score / 100);
+  const bars = ps.bars.map(b => `<div class="pb"><span class="lbl">${esc(b.label)}</span><span class="tr"><i style="width:${(b.v * 100).toFixed(0)}%;background:${pColor(b.v)}"></i></span><b>${Math.round(b.v * 100)}</b><span class="pv num">${esc(b.val)}</span></div>`).join('');
+  return `<section class="plsc" aria-label="PlainScore ${ps.score}">
+    <div class="plsc-head"><div class="plsc-n" style="--pc:${c}"><b>${ps.score}</b><small>PlainScore</small></div>
+    <p><b>${esc(p.name)} ranks ${psWords(p, ps.score)}</b> of the ${ps.n} qualified ${esc(ps.grp)} on the field this season.${p.play != null ? ` Play rating ${p.play}.` : ''}</p></div>
+    <div class="pbars wide">${bars}</div>
+    <p class="note">${esc(ps.cap)} <a href="/cap-101">How PlainScore works</a></p>
+  </section>`;
+}
+// Every player's PlainScore, keyed by gsis id, for the static pages (tools/refresh_helpers.py plainscore). Bars are [label, 0-100, value, key].
+function plainScoresExport() {
+  const out = {};
+  PL.forEach(p => { const ps = p.gid && plainScore(p); if (ps) out[p.gid] = { s: ps.score, rk: p.prk, n: ps.n, grp: ps.grp, play: p.play, bars: ps.bars.map(b => [b.label, Math.round(b.v * 100), b.val, b.k]) }; });
+  return { week: THRU, players: out };
 }
 
 /* on-field view */
@@ -4190,6 +4238,7 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    ${plainScoreHTML(p)}
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}<div id="sh-inj"></div></div>
@@ -6349,6 +6398,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   analyze();
   if (sd && Array.isArray(sd.players)) attachStats(sd);
   analyzeField();
+  window.__plainScores = plainScoresExport;
   if (SD) $('#of-eyebrow').textContent = `2026 season stats through Week ${THRU} · updated ${new Date((sd.asOf || d.asOf) + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
   analyzeTeams(); analyzeYears(); wireFA(); wireBuilder();
   analyzeSeason(se);
@@ -6767,11 +6817,11 @@ const ADS = {
   function playerSpec(p) {
     const t = TB[p.team], g = GCFG[p.sg];
     let bars = [], big, cap;
-    if (p.fq && p.pc && g) {
-      bars = [...g.bars].sort((a, b) => b[1] - a[1]).map(([k]) => bar(MET[k][0], p.pc[k], fmtMet(p, k))).filter(Boolean).slice(0, p.hid ? 5 : 4);
-      if (!p.hid && p.pApy != null) bars.push(bar('Yearly pay', p.pApy, mon(p.apy) + ' a year'));
-      big = { num: String(p.play), label: 'Play rating' };
-      cap = `Percentiles among ${p.pn} qualified ${SG_NAME[p.sg].toLowerCase()}s, 2026 through Week ${THRU}.${!p.hid ? ' Pay is against his position.' : ''}`;
+    const ps = plainScore(p);
+    if (ps) {
+      bars = ps.bars.map(b => bar(b.label, b.v, b.val));
+      big = { num: String(ps.score), label: 'PlainScore' };
+      cap = ps.cap;
     } else if (!p.hid) {
       bars = [bar('Yearly pay', p.pApy, mon(p.apy)), bar('Guaranteed share', p.pGtd, pct(p.gtdp)), bar('Cap hit', p.pCap, mon(p.cap)), bar('Years left', p.pYrs, p.yl + (p.yl === 1 ? ' year' : ' years')), bar('Youth', p.pYouth, p.age ? 'age ' + p.age : '')].filter(Boolean);
       big = { num: mon(p.apy), label: 'a year' };

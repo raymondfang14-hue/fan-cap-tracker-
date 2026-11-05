@@ -6,6 +6,8 @@
   python3 -I tools/refresh_helpers.py snapshot <out.json>                  window.__pcSnapshot() from the built page (power ranks, week)
   python3 -I tools/refresh_helpers.py prev-ranks <old.json>                set data/season.json week from data/stats.json "thru", and
                                                                           prevRanks from the old snapshot when the week moved forward
+  python3 -I tools/refresh_helpers.py plainscore                           window.__plainScores() from the built page -> data/plainscore.json
+                                                                          (read by tools/build_seo.py; run build.sh first so index.html is current)
 """
 import csv, functools, http.server, json, os, sys, threading
 
@@ -33,23 +35,39 @@ def played_week(path, season):
     return max(w) if w else 0
 
 
-def snapshot(out):
+def from_page(ready, expr, frag=''):
+    """Serve the repo, open the built index.html in Chromium, wait for <ready> and return the value of <expr>."""
     from playwright.sync_api import sync_playwright
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *a):
             pass
     srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=ROOT))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    with sync_playwright() as p:
-        b = p.chromium.launch(executable_path=os.environ.get('PW_CHROMIUM') or None)
-        page = b.new_page()
-        page.goto(f'http://127.0.0.1:{srv.server_address[1]}/index.html#rankings')
-        page.wait_for_function('() => window.__pcSnapshot && window.__pcSnapshot().power.length === 32', timeout=30000)
-        snap = page.evaluate('() => window.__pcSnapshot()')
-        b.close()
-    srv.shutdown()
+    try:
+        with sync_playwright() as p:
+            b = p.chromium.launch(executable_path=os.environ.get('PW_CHROMIUM') or None)
+            page = b.new_page()
+            page.goto(f'http://127.0.0.1:{srv.server_address[1]}/index.html{frag}')
+            page.wait_for_function(ready, timeout=30000)
+            val = page.evaluate(expr)
+            b.close()
+    finally:
+        srv.shutdown()
+    return val
+
+
+def snapshot(out):
+    snap = from_page('() => window.__pcSnapshot && window.__pcSnapshot().power.length === 32', '() => window.__pcSnapshot()', '#rankings')
     json.dump({'week': snap['week'], 'power': snap['power']}, open(out, 'w'))
     print('snapshot week', snap['week'], 'top 3', [t['id'] for t in snap['power'][:3]])
+
+
+def plainscore():
+    """PlainScore for every rated player, computed by the page itself so the static pages can never disagree with the app."""
+    d = from_page('() => window.__plainScores && Object.keys(window.__plainScores().players).length > 300', '() => window.__plainScores()')
+    out = os.path.join(ROOT, 'data', 'plainscore.json')
+    json.dump(d, open(out, 'w'), separators=(',', ':'))
+    print('plainscore: week', d['week'], '|', len(d['players']), 'players')
 
 
 def prev_ranks(old_path):
@@ -78,6 +96,8 @@ if __name__ == '__main__':
         print(f"{sum(final(g) for g in gs)}/{len(gs)}")
     elif cmd == 'snapshot':
         snapshot(sys.argv[2])
+    elif cmd == 'plainscore':
+        plainscore()
     elif cmd == 'prev-ranks':
         prev_ranks(sys.argv[2] if len(sys.argv) > 2 else None)
     else:
