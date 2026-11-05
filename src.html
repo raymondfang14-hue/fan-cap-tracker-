@@ -2972,8 +2972,9 @@ function fieldHTML(p) {
   if (!p.sg) return '<p class="empty">PlainStats does not rate long snappers.</p>';
   if (!p.st) return `<p class="empty">No 2026 snaps through Week ${THRU}. He may be injured, suspended, inactive or new to the team.</p>`;
   const s = p.st, cfg = GCFG[p.sg], snapSh = Math.max(s.osh || 0, s.dsh || 0);
-  // Tiles show the stats that build his play rating (the same keys as the PlainScore bars), with his rank in each.
-  const tiles = cfg.bars.map(([k]) => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
+  // A qualified player's tiles show the stats that build his play rating, with his rank in each; anyone without a PlainScore
+  // yet keeps the season-total tiles, since per-game rates with no rank say little about a backup.
+  const tiles = (p.fq ? cfg.bars.map(([k]) => k) : cfg.cols).map(k => { const r = p.rk[k]; return `<div><span class="k">${esc(MET[k][0])}</span><div class="v num">${fmtMet(p, k)}</div>${r ? `<span class="s">${ord(r[0])} of ${r[1]}</span>` : ''}</div>`; }).join('');
   const verdict = p.vlab ? `<div class="pvp"><div><span class="eyebrow">Pay rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.payPct * 100)}%"></i></div><span class="note">${ord(p.payRk)} highest paid of ${p.payN} qualified</span></div><div><span class="eyebrow">Play rank at ${esc(p.sg)}</span><div class="meter"><i style="width:${Math.round(p.playPct * 100)}%;background:var(--good)"></i></div><span class="note">${ord(p.prk)} of ${p.pn} qualified</span></div><span class="vlab ${vClass(p.vlab)}">${esc(p.vlab)}</span></div>` : '';
   return `<div class="field">
     <div class="fhead">
