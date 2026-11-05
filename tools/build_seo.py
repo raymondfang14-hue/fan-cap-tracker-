@@ -1002,7 +1002,6 @@ def learn_content():
     avg_sr = sum(v['offSr'] for v in tt.values()) / len(tt)
     sgn = lambda v: f'{v:+.2f}'
     conf = [(p, contract_facts(p)) for p in PLAYERS]
-    caps = sorted([(p, f) for p, f in conf if f['cap']], key=lambda x: -x[1]['cap'])[:5]
     gtds = sorted([(p, f) for p, f in conf if f['gtd']], key=lambda x: -x[1]['gtd'])[:5]
     dead = by_dead[:5]
     league_dead = sum(t['dead'] or 0 for t in TEAMS.values())
@@ -1062,7 +1061,7 @@ def learn_content():
         ],
         example=('Example', 'A player signs for four years with a $20M signing bonus and a $5M base salary this season. The bonus counts $5M a year, so this season\'s cap hit is $5M + $5M = $10M, even though he was paid $25M in cash.'),
         now_h=f'Largest {SEASON_YEAR} cap hits PlainStats has confirmed so far',
-        now=[(f'{link_or_name(p)} <span class="note">{esc(p.pos)}, {esc(TEAMS[p.team]["name"]) if p.team in TEAMS else esc(p.team)}</span>', mon(f['cap'])) for p, f in caps],
+        now=[],  # no confirmed-cap-hit list until more veteran deals are verified (it was led by rookie deals)
         now_note='Only cap hits confirmed by a named report or calculated from the CBA are listed. Contracts still being verified are left out, so this is not a full league ranking.',
         where=[('All contracts', '/contracts', 'Every player\'s cap hit, sortable'), ('Cap room', '/cap-room', 'What all those cap hits leave each team'), ('Cap 101', '/cap-101', 'Signing bonuses, restructures and void years')],
         faq=[('Is a cap hit the same as salary?', 'No. Base salary is one part of it. The cap hit also counts a share of the signing bonus and other bonuses for the season.'),
