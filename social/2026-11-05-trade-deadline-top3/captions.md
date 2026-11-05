@@ -4,25 +4,29 @@ Slides: 01-cover, 02-downs, 03-thomas, 04-mack, 05-outro (1080x1920, works for T
 
 ## Instagram
 
-3 NFL players who could be gone by Tuesday 👇 One asked out. One lost his role. One is stuck on an 0-7 team.
+3 NFL players who could be gone by Tuesday 👀
 
-1️⃣ Josh Downs (Colts WR) asked for a trade. The 6-2 Steelers are among the interested teams, and their passing offense ranks 26th.
-2️⃣ Brian Thomas Jr. (Jaguars WR) is on the field for 41% of snaps. The league expects he'd cost about a 3rd-round pick.
-3️⃣ Khalil Mack (Chargers EDGE): LA is 0-7, the Bears called, and Harbaugh calls Mack "one of the pillars of our team."
+One asked out. One lost his role. One is stuck on an 0-7 team. Swipe to see who ➡️
 
-Who actually moves by Tuesday? Drop your pick 👇
+Inside each slide:
+🔁 who's calling, and what the trade would look like
+💰 the price (when a report has one)
+🧮 the cap check: can the buyer actually afford him?
+
+Who moves before Tuesday's 4 p.m. ET deadline, and who stays put? Drop your call in the comments 👇
 
 Every deal, cap number and pick as it happens: plainstatsnfl.com/trade-deadline (link in bio)
 
-Sources: ESPN's Jeremy Fowler, Jordan Schultz, Yahoo Sports' Jori Epstein, FOX Sports, NFL Network's Ian Rapoport, AP. Stats through Week 8 (nflverse). Cover photo: Joe Glorioso / All-Pro Reels (CC BY-SA 4.0).
+Sources: ESPN's Jeremy Fowler, Jordan Schultz, Yahoo Sports' Jori Epstein, FOX Sports, NFL Network's Ian Rapoport, AP. Stats through Week 8 (nflverse). Cover photo: Joe Glorioso / All-Pro Reels, CC BY-SA 4.0.
 
-#NFL #NFLTradeDeadline #TradeDeadline #JoshDowns #BrianThomasJr #KhalilMack #Colts #Jaguars #Chargers #Steelers #Bears #NFLRumors #FantasyFootball
+#NFL #NFLTradeDeadline #TradeDeadline #NFLRumors #NFLNews #Steelers #Bears #Colts #Jaguars #Chargers #JoshDowns #BrianThomasJr #KhalilMack #FantasyFootball
 
 ## TikTok
 
-3 NFL players who could be gone by Tuesday 👀 One asked out. One lost his role. One is stuck on an 0-7 team. Who moves? 👇 Full tracker: plainstatsnfl.com/trade-deadline
+3 NFL players who could be gone by Tuesday 👀 One asked out. One lost his role. One is stuck on an 0-7 team. Swipe to see who, then tell me who actually moves 👇 Cap math for every deal: plainstatsnfl.com/trade-deadline
+Cover photo: All-Pro Reels, CC BY-SA 4.0
 
-#NFL #NFLTradeDeadline #JoshDowns #BrianThomasJr #KhalilMack #Steelers #Bears #Jaguars #footballtiktok #nflnews
+#NFL #NFLTradeDeadline #tradedeadline #nflnews #footballtiktok #Steelers #Bears #Colts #Jaguars #Chargers #JoshDowns #KhalilMack
 
 ## Notes behind the numbers (not for posting)
 - Downs: trade request reported by ESPN's Jeremy Fowler (Oct 28). Steelers named among interested AFC teams by Jordan Schultz. 30 rec, 330 yds, 1 TD, 20% target share in 8 games. 2026 cap hit $3,928,608 (CBA rookie scale, confirmed in data/nfl.json); rookie deal ends 2026.
