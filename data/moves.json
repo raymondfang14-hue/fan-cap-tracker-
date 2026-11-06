@@ -1,6 +1,49 @@
 {
- "asOf": "2026-11-05",
+ "asOf": "2026-11-06",
  "moves": [
+  {
+   "iso": "2026-11-05",
+   "date": "Nov 5",
+   "kind": "Injury",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "Lamar Jackson",
+    "Tyler Huntley"
+   ],
+   "head": "Ravens place QBs Lamar Jackson and Tyler Huntley on injured reserve",
+   "plain": "Both Baltimore quarterbacks are on IR. Huntley's turf toe ends his season. The Ravens activated rookie QB Austin Reed and have undrafted rookie Joe Fagnano as the Week 9 starter, so they went looking for help at the position.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/ravens-place-lamar-jackson-tyler-huntley-on-ir"
+  },
+  {
+   "iso": "2026-11-05",
+   "date": "Nov 5",
+   "kind": "Trade",
+   "teams": [
+    "BAL",
+    "ARI"
+   ],
+   "players": [
+    "Jacoby Brissett"
+   ],
+   "head": "Ravens agree to acquire QB Jacoby Brissett from the Cardinals",
+   "plain": "Baltimore is set to get the 33-year-old backup quarterback, who had fallen to third string in Arizona. The trade is expected to be finalized after Week 9. What Arizona gets back was not reported, so no picks are listed here. Arizona reworked his 2026 deal to make it easier for Baltimore to take on, turning $2.7M of remaining salary into a signing bonus. He is a pending free agent.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cardinals-restructure-jacoby-brissetts-contract-to-facilitate-ravens-trade",
+   "deal": {
+    "BAL": {
+     "players": [
+      {
+       "name": "Jacoby Brissett",
+       "gid": "00-0033119",
+       "from": "ARI"
+      }
+     ]
+    }
+   }
+  },
   {
    "iso": "2026-11-04",
    "date": "Nov 4",
