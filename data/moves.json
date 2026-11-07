@@ -1,6 +1,21 @@
 {
- "asOf": "2026-11-06",
+ "asOf": "2026-11-07",
  "moves": [
+  {
+   "iso": "2026-11-06",
+   "date": "Nov 6",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Quenton Nelson"
+   ],
+   "head": "Seahawks LG Quenton Nelson to have knee surgery, miss multiple games",
+   "plain": "Nelson, acquired from the Colts last month, needs knee cartilage surgery and is expected to miss a few weeks. He was not placed on injured reserve.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/seahawks-lg-quenton-nelson-to-undergo-surgery"
+  },
   {
    "iso": "2026-11-05",
    "date": "Nov 5",
