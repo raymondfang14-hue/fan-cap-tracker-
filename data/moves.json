@@ -1,6 +1,51 @@
 {
- "asOf": "2026-11-07",
+ "asOf": "2026-11-08",
  "moves": [
+  {
+   "iso": "2026-11-07",
+   "date": "Nov 7",
+   "kind": "Injury",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Christian Kirk"
+   ],
+   "head": "49ers place WR Christian Kirk on injured reserve with a knee injury",
+   "plain": "Kirk has a meniscus injury in his knee and must miss at least four games. San Francisco activated WR Demarcus Robinson to fill the spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-lose-wr-christian-kirk-to-ir-activate-wr-demarcus-robinson"
+  },
+  {
+   "iso": "2026-11-07",
+   "date": "Nov 7",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Myles Garrett"
+   ],
+   "head": "Rams activate DE Myles Garrett from injured reserve",
+   "plain": "Garrett was hurt in Week 1 and had arthroscopic knee surgery. He is set to return after missing everything since his Rams debut.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir"
+  },
+  {
+   "iso": "2026-11-07",
+   "date": "Nov 7",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Jaylen Watson"
+   ],
+   "head": "Rams place CB Jaylen Watson on injured reserve for shoulder surgery",
+   "plain": "Watson will have season-ending shoulder surgery, so the Rams put him on IR to open a roster spot for Garrett.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir"
+  },
   {
    "iso": "2026-11-06",
    "date": "Nov 6",
