@@ -1325,6 +1325,31 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .t th:has(>a.xq)>:is(button,span){display:inline-block;width:auto;padding-right:0}
 .t th>a.xq{margin-right:10px}
 .ps-cap a.xq{display:none}
+/* Pick'em against the PlainStats model (scores page, pk* in the games script; picks stay in this browser) */
+.pk-box{display:grid;gap:12px;padding:14px 16px;background:var(--surface);border-radius:var(--r-lg);min-width:0}
+.pk-head{display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;align-items:baseline}
+.pk-head h2{margin:0;font:600 1.05rem/1.25 var(--body)}
+.pk-head span{font-size:.82rem;color:var(--muted)}
+.pk-score{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,132px),1fr));gap:8px}
+.pk-score>div{display:grid;gap:2px;align-content:start;padding:10px 12px;border-radius:var(--r);background:var(--bg);min-width:0}
+.pk-score .k{font-size:.78rem;color:var(--muted)}
+.pk-score .v{font:700 1.45rem/1.1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.pk-score .s{font-size:.76rem;color:var(--muted)}
+.pk-score .lead .v{color:var(--good)}
+.pk-weeks{display:flex;flex-wrap:wrap;gap:6px}
+.pk-weeks span{padding:3px 8px;border-radius:6px;background:var(--bg);font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.pk-weeks b{color:var(--fg);font-weight:600}
+.pk-foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.pk-foot .note{margin:0;flex:1 1 260px}
+.pk-link{border:0;background:none;padding:6px 0;color:var(--brand);font:500 .86rem/1.2 var(--body);cursor:pointer}
+.pk-link:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+.pk-slot{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;font-size:.8rem;color:var(--muted)}
+.pk-slot button{min-width:0;min-height:36px;padding:7px 8px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg);font:600 .82rem/1.1 var(--body);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-slot button[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.pk-slot button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.pk-slot.done{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pk-slot.done b{color:var(--fg);font-weight:600}
+@media (prefers-reduced-motion:no-preference){.pk-slot button{transition:background-color .15s,color .15s,border-color .15s}}
 </style>
 
 <header class="gn" id="gn">
@@ -1559,6 +1584,7 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 
   <div id="gm-scores" style="display:grid;gap:16px;min-width:0">
     <div class="chips gm-weeks" id="gm-weeks" role="group" aria-label="Week"></div>
+    <section class="pk-box" id="gm-pk" aria-labelledby="gm-pk-h"><div class="pk-head"><h2 id="gm-pk-h">Pick'em: you vs. the PlainStats model</h2></div></section>
     <div class="gm-sum" id="gm-sum"></div>
     <div class="gdays" id="gm-days"><p class="empty">Loading the schedule…</p></div>
     <p class="note" id="gm-note"></p>
@@ -3708,7 +3734,7 @@ const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', 
 // One plain-English description per page, for search results and link previews. api/page.js reads this block (ROUTES to SUBS) from
 // index.html to give crawlers each page's own title and description, so keep it plain data. Sub-pages get "<label>. " + their section's.
 const PDESC = {
-  scores: 'Every NFL score and this week\'s schedule, with the PlainStats model\'s pick, injury report and weather for each game.',
+  scores: 'Every NFL score and this week\'s schedule, with the PlainStats model\'s pick, injury report and weather for each game. Play Pick\'em: pick every game and see your record against the model\'s.',
   standings: 'NFL standings by division, with records, points for and against, streaks and the playoff seeds if the season ended today.',
   projections: 'NFL playoff chances for all 32 teams from 10,000 simulated seasons of the PlainStats game model.',
   news: 'The NFL news that matters, explained in plain English: contracts, trades, injuries, games and coaching changes.',
@@ -6115,7 +6141,7 @@ function gCard(g, R) {
     } else model = `<div class="gmodel"><span class="ln"><span>Model: <b>${esc(fav)} ${fp}%</b>${K && K.inj ? '<span class="gtag">injuries</span>' : ''}${K && K.wx ? '<span class="gtag">weather</span>' : ''}</span><span>Projected ${esc(a)} ${pa_s}, ${esc(h)} ${ph_s}</span></span>${bar}</div>`;
   }
   const status = fin ? `Final${ot ? '/OT' : ''}` : gTime(time);
-  return `<article class="gcard">${team(a, as, fin && as < hs)}${team(h, hs, fin && hs < as)}${model}<div class="gmeta"><span class="st">${status}</span><span>${site ? esc(site) : `at ${esc(TB[h] ? TB[h].city : h)}`}</span>${live ? `<button type="button" class="gd-open" data-gd="${id}">Game details, injuries ›</button>` : ''}</div></article>`;
+  return `<article class="gcard">${team(a, as, fin && as < hs)}${team(h, hs, fin && hs < as)}${model}${pkSlot(g)}<div class="gmeta"><span class="st">${status}</span><span>${site ? esc(site) : `at ${esc(TB[h] ? TB[h].city : h)}`}</span>${live ? `<button type="button" class="gd-open" data-gd="${id}">Game details, injuries ›</button>` : ''}</div></article>`;
 }
 
 /* ----- this week's games: injuries (data/gameday.json, daily) and live weather (US National Weather Service, public domain) ----- */
@@ -6152,6 +6178,81 @@ function gWxLoad(week) {   // fetch this week's forecasts, then redraw the cards
   if (!GDAY || week !== GDAY.week) return;
   const ids = GSCHED.games.filter(g => g[1] === week && !gFinal(g)).map(g => g[0]).filter(id => GDAY.games[id] && GDAY.games[id].ll && !WXP[id]);
   if (ids.length) Promise.all(ids.map(wxFor)).then(() => { if (gm.tab === 'scores' && gm.week === week) renderScores(); });
+}
+/* ----- Pick'em against the PlainStats model. Picks stay in this browser (localStorage pc.pickem), no account.
+   { season, picks: { gameId: { t: team you picked, m: the model's pick when you made yours, at } } }.
+   Each pick is graded against the model pick you saw (injuries and weather included this week); older picks with no m use the
+   weekly model pick (data/projections.json). Picks lock at kickoff; ties count for neither side. ----- */
+function pkLoad() { const s = store.get('pickem', null), yr = GSCHED ? GSCHED.season : 0; return s && s.season === yr && s.picks ? s : { season: yr, picks: {} }; }
+function gKick(g) {   // kickoff in ms: gameday.json has it for this week; otherwise the schedule's Eastern date and time
+  const G = GDAY && GDAY.games[g[0]]; if (G && G.kick) return Date.parse(G.kick);
+  const [y, mo, d] = g[2].split('-').map(Number), [h, mi] = (g[3] || '00:00').split(':').map(Number);
+  let off = -5; try { const z = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', timeZoneName: 'shortOffset' }).formatToParts(Date.UTC(y, mo - 1, d, 12)).find(x => x.type === 'timeZoneName'); const m = z && z.value.match(/GMT([+-]\d+)/); if (m) off = +m[1]; } catch (e) {}
+  return Date.UTC(y, mo - 1, d, h - off, mi);
+}
+const pkLocked = g => gFinal(g) || Date.now() >= gKick(g);
+function pkModel(id, g) { const K = gPick(id); return K ? (K.p >= .5 ? g[5] : g[4]) : null; }
+function pkGrade(g, pk) {   // { you: 1|0, model: 1|0|null } for a final, non-tied game you picked; null otherwise
+  if (!pk || !gFinal(g) || g[6] === g[7]) return null;
+  const win = g[7] > g[6] ? g[5] : g[4], P = GPROJ && GPROJ.games[g[0]], m = pk.m || (P ? (P[0] >= .5 ? g[5] : g[4]) : null);
+  return { you: +(pk.t === win), model: m ? +(m === win) : null, diff: !!m && m !== pk.t };
+}
+function pkSlot(g) {
+  const [id, , , , a, h] = g, pk = pkLoad().picks[id], nm = t => esc(TB[t] ? TB[t].name : t);
+  if (!pkLocked(g)) return `<div class="pk-slot" data-pks="${id}"><span>Your pick</span>${[a, h].map(t => `<button type="button" data-pkg="${id}" data-pt="${t}" aria-pressed="${!!pk && pk.t === t}" aria-label="Pick the ${nm(t)}">${nm(t)}</button>`).join('')}</div>`;
+  if (!pk) return '';
+  const r = pkGrade(g, pk);
+  if (!gFinal(g)) return `<div class="pk-slot done" data-pks="${id}"><span>Your pick: <b>${nm(pk.t)}</b></span><span>Locked at kickoff</span></div>`;
+  return `<div class="pk-slot done" data-pks="${id}"><span>You picked <b>${nm(pk.t)}</b>${r && r.diff ? ' over the model' : ''}</span>${r ? `<span class="gpick ${r.you ? 'good' : 'bad'}">${r.you ? 'You got it' : 'You missed'}</span>` : '<span>Tie</span>'}</div>`;
+}
+function pkTally(filter) {
+  const S = pkLoad(), o = { w: 0, l: 0, mw: 0, ml: 0, dw: 0, dl: 0, n: 0 };
+  GSCHED.games.forEach(g => { if (filter && !filter(g)) return; const r = pkGrade(g, S.picks[g[0]]); if (!r) return; o.n++;
+    r.you ? o.w++ : o.l++; if (r.model != null) r.model ? o.mw++ : o.ml++; if (r.diff) r.you ? o.dw++ : o.dl++; });
+  return o;
+}
+const pkPct = (w, l) => w + l ? Math.round(w / (w + l) * 100) + '%' : '';
+function renderPk() {
+  const box = $('#gm-pk'); if (!box || !GSCHED) return;
+  const S = pkLoad(), wk = gm.week, games = GSCHED.games.filter(g => g[1] === wk), open = games.filter(g => !pkLocked(g));
+  const mine = games.filter(g => S.picks[g[0]]).length, T = pkTally(), W = pkTally(g => g[1] === wk);
+  const head = `<div class="pk-head"><h2 id="gm-pk-h">Pick'em: you vs. the PlainStats model</h2><span>Week ${wk}: ${mine} picked${open.length ? ` · ${open.length} of ${games.length} games still open` : ' · picks closed'}</span></div>`;
+  if (!Object.keys(S.picks).length) {
+    box.innerHTML = head + `<div class="pk-foot"><p class="note">Pick the winner of each game below, then come back after the games to see your record next to the model's. Picks lock at kickoff. ${open.length ? '' : 'This week is closed, so try the next week.'}</p>${open.length * 2 > games.length || wk >= GSCHED.weeks ? '' : `<button type="button" class="pk-link" data-pkw="${wk + 1}">Go to week ${wk + 1} ›</button>`}</div>`;
+    return;
+  }
+  const lead = T.w + T.l && T.w !== T.mw ? (T.w > T.mw ? 'you' : 'model') : '';
+  const weeks = [...new Set(GSCHED.games.filter(g => S.picks[g[0]]).map(g => g[1]))].sort((x, y) => x - y)
+    .map(w => { const t = pkTally(g => g[1] === w); return t.n ? `<span>Wk ${w}: you <b>${t.w}-${t.l}</b> · model ${t.mw}-${t.ml}</span>` : `<span>Wk ${w}: waiting on games</span>`; }).join('');
+  box.innerHTML = head + `<div class="pk-score">
+      <div class="${lead === 'you' ? 'lead' : ''}"><span class="k">You this season</span><span class="v">${T.w}-${T.l}</span><span class="s">${T.n ? pkPct(T.w, T.l) + ' right' : 'No finished games yet'}</span></div>
+      <div class="${lead === 'model' ? 'lead' : ''}"><span class="k">Model, same games</span><span class="v">${T.mw}-${T.ml}</span><span class="s">${T.n ? pkPct(T.mw, T.ml) + ' right' : 'Graded after each game'}</span></div>
+      <div><span class="k">Week ${wk}</span><span class="v">${W.w}-${W.l}</span><span class="s">Model ${W.mw}-${W.ml}</span></div>
+      <div><span class="k">When you went against the model</span><span class="v">${T.dw}-${T.dl}</span><span class="s">${T.dw + T.dl ? (T.dw > T.dl ? 'Your hunches are paying off' : T.dw < T.dl ? 'The model is winning these' : 'Even so far') : 'No upsets picked yet'}</span></div>
+    </div>${weeks ? `<div class="pk-weeks" aria-label="Your record by week">${weeks}</div>` : ''}
+    <div class="pk-foot"><p class="note">${lead === 'you' ? 'You are ahead of the model. ' : lead === 'model' ? 'The model is ahead. ' : ''}Picks lock at kickoff. Each pick is graded against the model's pick when you made it. Your picks stay on this phone or browser, with no account; clearing your browser data erases them.</p>
+      ${T.n ? '<button type="button" class="pk-link" data-pkx="share">Share my record</button>' : ''}<button type="button" class="pk-link" data-pkx="clear">Clear my picks</button></div>`;
+}
+function pkClick(e) {
+  const w = e.target.closest('[data-pkw]'); if (w) { gm.week = +w.dataset.pkw; renderScores(); return; }
+  const x = e.target.closest('[data-pkx]');
+  if (x && x.dataset.pkx === 'clear') { if (confirm('Clear every pick you have made this season? This cannot be undone.')) { store.set('pickem', { season: GSCHED.season, picks: {} }); renderScores(); } return; }
+  if (x && x.dataset.pkx === 'share') { const T = pkTally(), url = shareUrl('scores', 'pickem');
+    const text = `I'm ${T.w}-${T.l} picking NFL games this season. The PlainStats model is ${T.mw}-${T.ml} on the same games. Can you beat it?`;
+    if (window.gtag) gtag('event', 'share', { method: 'pickem', content_type: 'pickem', item_id: 'scores' });
+    (navigator.share ? navigator.share({ title: 'PlainStats Pick\'em', text, url }) : navigator.clipboard.writeText(text + ' ' + url).then(() => { x.textContent = 'Copied'; setTimeout(() => (x.textContent = 'Share my record'), 2200); })).catch(() => {});
+    return; }
+  const b = e.target.closest('[data-pkg]'); if (!b) return;
+  const id = b.dataset.pkg, g = GSCHED.games.find(q => q[0] === id); if (!g) return;
+  const S = pkLoad();
+  if (!pkLocked(g)) {
+    if (S.picks[id] && S.picks[id].t === b.dataset.pt) delete S.picks[id];
+    else { S.picks[id] = { t: b.dataset.pt, m: pkModel(id, g), at: Date.now() }; if (window.gtag) gtag('event', 'pickem_pick', { week: g[1] }); }
+    store.set('pickem', S);
+  }
+  const slot = b.closest('[data-pks]'), html = pkSlot(g);
+  if (slot) { if (html) slot.outerHTML = html; else slot.remove(); }
+  renderPk();
 }
 const IST = { Out: 'out', Doubtful: 'dbt', Questionable: 'qst' };
 function gdInjHTML(gid, t) {
@@ -6233,8 +6334,9 @@ function renderScores() {
   const byes = TEAMS.filter(t => !games.some(g => g[4] === t.id || g[5] === t.id)).map(t => t.id);
   const pk = GPROJ && GPROJ.model.picks;
   $('#gm-sum').innerHTML = [`<span><b>${games.length}</b> games · ${fin.length} final</span>`, called ? `<span>Model this week: <b>${right}-${called - right}</b></span>` : '', pk && pk.w + pk.l ? `<span>Model this season: <b>${pk.w}-${pk.l}</b> (${Math.round(pk.w / (pk.w + pk.l) * 100)}%) as of ${gShort(GPROJ.asOf)}</span>` : '', byes.length && byes.length < 32 ? `<span>Bye: ${byes.map(esc).join(', ')}</span>` : ''].join('');
+  renderPk();
   gWxLoad(gm.week);
-  $('#gm-note').textContent = `Scores update every morning from nflverse game results. Kickoff times are Eastern. ${GPROJ ? `Model picks come from the PlainStats game model (updated every Tuesday); this week's picks also count the official injury report (updated daily${GDAY ? ', last ' + gShort(GDAY.asOf) : ''}) and the kickoff weather forecast. Tap Game details for injuries, weather and team stats.` : 'Model picks did not load.'}`;
+  $('#gm-note').textContent = `Scores update every morning from nflverse game results. Kickoff times are Eastern. ${GPROJ ? `Model picks come from the PlainStats game model (updated every Tuesday); this week's picks also count the official injury report (updated daily${GDAY ? ', last ' + gShort(GDAY.asOf) : ''}) and the kickoff weather forecast. Tap Game details for injuries, weather and team stats. Pick\'em picks are saved only in this browser.` : 'Model picks did not load.'}`;
 }
 function renderStandings() {
   $$('#gm-conf button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.gc === gm.conf)));
@@ -6335,6 +6437,7 @@ function renderGProj() {
 function wireGames() {
   gm.wired = true;
   $('#gm-tab').onclick = e => { const b = e.target.closest('[data-gt]'); if (b) go({ scores: 'scores', standings: 'standings', proj: 'projections' }[b.dataset.gt]); };
+  $('#gm-days').addEventListener('click', pkClick); $('#gm-pk').addEventListener('click', pkClick);
   $('#gm-weeks').onclick = e => { const b = e.target.closest('[data-gw]'); if (b) { gm.week = +b.dataset.gw; renderScores(); } };
   $('#gm-conf').onclick = e => { const b = e.target.closest('[data-gc]'); if (b) { gm.conf = b.dataset.gc; store.set('gmConf', gm.conf); renderStandings(); } };
   $('#gm-pp-mode').onclick = e => { const b = e.target.closest('[data-pp]'); if (b) { gm.pp = b.dataset.pp; renderPlayoffPicture(); } };
@@ -6344,7 +6447,7 @@ function wireGames() {
 }
 
 /* ===== search everything: pages, teams, players, prospects, this season's games, news and Cap 101 terms ===== */
-const SPAGES = [['scores', 'Scores and schedule', 'games week results score schedule kickoff picks'], ['standings', 'Standings', 'division record seeds wild card playoff picture'],
+const SPAGES = [['scores', 'Scores and schedule', 'games week results score schedule kickoff picks pickem pick em contest beat the model'], ['standings', 'Standings', 'division record seeds wild card playoff picture'],
   ['projections', 'Playoff projections', 'odds super bowl chances model simulation elo predictions playoff picture bracket wild card bye'], ['ratings', 'Player ratings', 'play rating best players roles traits positions'],
   ['stats', 'Season stats', 'passing rushing receiving yards touchdowns sacks leaders box score fantasy'], ['contracts', 'Contracts', 'deals salary guaranteed cap hit every contract'],
   ['value', 'Best and worst contracts', 'surplus value overpaid bargain'], ['rookies', 'Rookie contracts', 'draft pick fifth-year option extension'],
@@ -6421,7 +6524,8 @@ function renderHomeTiles() {
   if (DR_ORDER && DR_ORDER[0] && DR_ORDER[0].p) set('mock', `No. 1: ${DR_ORDER[0].p.name} to ${TB[DR_ORDER[0].own] ? TB[DR_ORDER[0].own].name : DR_ORDER[0].own}`);
   loadGames().then(() => { const wk = gCurWeek(), gs = GSCHED.games.filter(g => g[1] === wk), fin = gs.filter(gFinal).length;
     { const n = tdTrades().length; if (n) set('deadline', `${n} trade${n === 1 ? '' : 's'} so far · every cap change`); }
-    set('scores', `Week ${wk} · ${gs.length} games${fin ? ` · ${fin} final` : ''}`);
+    { const P = pkLoad().picks, mine = gs.filter(g => P[g[0]]).length, open = gs.filter(g => !pkLocked(g)).length, T = pkTally();
+      set('scores', `Week ${wk} · ${gs.length} games${fin ? ` · ${fin} final` : ''}${T.n ? ` · you ${T.w}-${T.l}, model ${T.mw}-${T.ml}` : open ? ` · ${mine ? `${mine} of ${gs.length} picked` : 'beat the model'}` : ''}`); }
     if (GPROJ) { const T = GPROJ.teams, ids = Object.keys(T), sb = ids.sort((a, b) => T[b].sb - T[a].sb)[0], lead = Object.keys(T).sort((a, b) => (T[b].w - T[a].w) || (T[a].l - T[b].l))[0];
       set('projections', `${TB[sb] ? TB[sb].name : sb}: ${gPct(T[sb].sb)} to win the Super Bowl`); set('standings', `Best record: ${TB[lead] ? TB[lead].name : lead} ${gRec(T[lead].w, T[lead].l, T[lead].t)}`); } }).catch(() => {});
 }
