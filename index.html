@@ -3071,7 +3071,7 @@ function plainScore(p) {
   const bar = (k, label, v, val) => (v == null || isNaN(v) ? null : { k, label, v: Math.max(0, Math.min(1, v)), val: val == null ? '' : String(val) });
   const bars = [...g.bars].sort((a, b) => b[1] - a[1]).map(([k]) => bar(k, MET[k][0], p.pc[k], fmtMet(p, k))).filter(Boolean).slice(0, p.hid ? 5 : 4);
   if (!p.hid && p.pApy != null && p.apy > 0) bars.push(bar('pay', 'Yearly pay', p.pApy, mon(p.apy) + ' a year'));
-  const score = Math.max(0, Math.min(100, Math.round(p.playPct * 100))), grp = SG_NAME[p.sg].toLowerCase() + 's';
+  const score = Math.max(0, Math.min(100, Math.round(p.playPct * 100))), grp = (SG_NAME[p.sg].toLowerCase() + 's').replace(/ys$/, 'ies');
   return { score, bars, grp, n: p.pn, cap: `Percentiles among ${p.pn} qualified ${grp}, 2026 through Week ${THRU}.${bars.some(b => b.k === 'pay') ? ' Pay is against his position.' : ''}` };
 }
 const psWords = (p, s) => p.prk === 1 ? 'first' : p.prk === p.pn ? 'last' : `better than ${s}%`;

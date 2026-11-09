@@ -11,7 +11,7 @@ Writes plain static HTML (no JavaScript, inline CSS, system fonts) into
   draft/<name>.html              /draft/jeremiah-smith
   learn/<term>.html              /learn/dead-money   (stat explainers; learn/index.html is their hub)
   players/index.html, teams/index.html, draft/index.html   (hub pages that link to everything)
-and rewrites sitemap.xml. vercel.json has cleanUrls on, so the .html is dropped from the address.
+and rewrites sitemap.xml (each URL dated by when its page text last changed, kept in data/lastmod.json). vercel.json has cleanUrls on, so the .html is dropped from the address.
 It also writes og-data/<kind>.json (players, teams, draft, pages): the text behind each page's social card. Every page's og:image is
 /api/og?k=<kind>&s=<slug>&v=<asOf>, which api/og.js draws on demand (the sandbox can't reach ESPN's image CDN, Vercel can).
 
@@ -24,7 +24,7 @@ Data rules (CLAUDE.md) are enforced here, not just in the page:
 
 Re-run after every data refresh (build.sh does it too), then commit the generated folders and sitemap.xml.
 """
-import csv, datetime as dt, html, json, pathlib, re, shutil, unicodedata, urllib.parse
+import csv, datetime as dt, hashlib, html, json, pathlib, re, shutil, unicodedata, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / 'data'
@@ -565,10 +565,45 @@ def facts_html(rows):
     return '<div class="card"><dl>' + ''.join(f'<div><dt>{esc(k)}</dt><dd>{v}</dd></div>' for k, v in rows) + '</dl></div>'
 
 
+# ---------------------------------------------------------------- per-page dates (sitemap lastmod, JSON-LD dateModified)
+# data/lastmod.json keeps, for every generated page, a hash of its text and the date that text last changed. A page's date moves
+# only when what it says changes (lm_norm: title, description and main text), so a daily refresh or a script change that leaves
+# a page's words alone leaves its date alone. Build input; kept out of the deployment (.vercelignore).
+LM_FILE = DATA / 'lastmod.json'
+LM_TOKEN = '@@LASTMOD@@'
+TODAY = dt.datetime.now(dt.timezone.utc).date().isoformat()
+try:
+    LM_OLD = json.loads(LM_FILE.read_text())
+except Exception:
+    LM_OLD = {}
+LM = {}
+
+
+def lm_norm(text):
+    """What a reader sees: the title, the description and the <main> text. Scripts, styles, JSON-LD, og tags and the footer's
+    "Data as of" date are left out, so a code-only change does not move the date. Also used on older builds by a one-off seed."""
+    keep = [m.group(0) for m in re.finditer(r'<title>.*?</title>|<meta name="description"[^>]*>|<main>.*?</main>', text, re.S)]
+    return '\n'.join(keep) if keep else text
+
+
+def lm_track(path, text):
+    """Record the page's hash; returns its date (kept when the text is unchanged, today otherwise)."""
+    h = hashlib.sha1(lm_norm(text).encode('utf-8')).hexdigest()[:16]
+    old = LM_OLD.get(path)
+    LM[path] = [h, old[1] if old and old[0] == h else TODAY]
+    return LM[path][1]
+
+
+def page_path(rel):
+    """players/x.html -> /players/x, teams/chiefs/index.html -> /teams/chiefs."""
+    rel = re.sub(r'(^|/)index\.html$', '', rel)
+    return '/' + re.sub(r'\.html$', '', rel)
+
+
 def write(rel, text):
     out = ROOT / rel
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(text, encoding='utf-8')
+    out.write_text(text.replace(LM_TOKEN, lm_track(page_path(rel), text)), encoding='utf-8')
 
 
 def player_name_link(p):
@@ -613,6 +648,134 @@ def plainscore_html(p, ps):
             f'{" Yearly pay is against everyone at his position." if ps["pay"] else ""} From nflverse box scores and play-by-play. <a href="/cap-101">How PlainScore works</a></p>')
 
 
+
+# ---------------------------------------------------------------- player titles by search intent
+# People search a player for one of four reasons, and the title and description lead with the one the page answers best:
+#   contract  veteran with a reported deal ("trey hendrickson contract")
+#   rookie    on a rookie-scale deal PlainStats calculated from the draft slot ("cyrus allen rookie contract")
+#   salary    undrafted, CBA league-minimum base salary ("jalon daniels salary")
+#   stats     qualified this season (has a PlainScore) and not on a big reported deal ("fernando mendoza stats"),
+#             or has played but has no confirmed contract
+# Contract figures still come only from contract_facts(), so an unconfirmed deal never reaches a title.
+BIG_DEAL = 5_000_000  # a reported deal at or above this a year stays contract-first even when he is playing well
+
+
+def page_intent(p, f, ps):
+    reported = p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap'])
+    if ps and not (reported and (f['apy'] or 0) >= BIG_DEAL):
+        return 'stats'
+    if reported:
+        return 'contract'
+    if p.prov == 'f' and (f['total'] or f['apy'] or f['cap']):
+        return 'rookie'
+    if f['base'] and not (f['total'] or f['apy'] or f['cap']):
+        return 'salary'
+    if f['total'] or f['apy'] or f['cap']:
+        return 'contract'
+    return 'stats' if headline_stat(p) else 'contract'
+
+
+def fit(head, parts, n=60):
+    """head + ': ' + parts, dropping parts from the end until it fits in n characters (Google shows about 60)."""
+    parts = [x for x in parts if x]
+    while parts and len(head + ': ' + ', '.join(parts)) > n:
+        parts.pop()
+    t = head + (': ' + ', '.join(parts) if parts else '')
+    return t + ' | PlainStats' if len(t) + 13 <= n else t
+
+
+def pack(sentences, n=158):
+    """Whole sentences, in order, while they fit in n characters; the first is clipped only if it alone is too long."""
+    out = ''
+    for x in [x for x in sentences if x]:
+        if not out:
+            out = clip(x, n)
+        elif len(out) + 1 + len(x) <= n:
+            out += ' ' + x
+    return out
+
+
+def deal_words(f):
+    """'$112.0M through 2029' / '$4.5M deal' / '$14.0M a year' from confirmed figures only."""
+    if f['total'] and f['end']:
+        return f"{mon(f['total'])} through {f['end']}"
+    if f['total']:
+        return f"{mon(f['total'])} deal"
+    if f['apy']:
+        return f"{mon(f['apy'])} a year"
+    return None
+
+
+def deal_sentence(p, f, rookie=False, short=False):
+    """The contract in one sentence, confirmed figures only. short: total, end and cap hit only."""
+    kind = 'rookie contract' if rookie else 'contract'
+    bits = []
+    if f['years'] and f['total']:
+        bits.append(f"{f['years']}-year, {mon(f['total'])}")
+    elif f['total']:
+        bits.append(mon(f['total']))
+    if f['end']:
+        bits.append(f"through {f['end']}")
+    lead = f"{poss(p.name)} {kind}: " + ' '.join(bits) if bits else f"{poss(p.name)} {kind}"
+    extra = []
+    if f['apy'] and not (short and f['total']):
+        extra.append(f"{mon(f['apy'])} a year")
+    if f['gtd'] and f['total'] and not short:
+        extra.append(f"{mon(f['gtd'])} guaranteed")
+    if f['cap']:
+        extra.append(f"{mon(f['cap'])} {SEASON_YEAR} cap hit")
+    return lead + (', ' + ', '.join(extra) if extra else '') + '.'
+
+
+def season_line(p):
+    """'2,104 passing yards in 2026 through week 9' or None."""
+    st = headline_stat(p)
+    if not st:
+        return None
+    return f"{st[0]} {st[1]} in {SEASON_YEAR} through week {HIST.get('thru')}"
+
+
+def player_meta(p, f, ps, intent, summary):
+    """(title, description, h1) for a player page, led by its search intent."""
+    n, T = p.name, TEAMS[p.team]
+    role = POSNAME.get(p.pos, p.pos)
+    who = f"{article(role).capitalize()} {role} for the {T['full']}."
+    psw = f"PlainScore {ps['s']}" if ps else None
+    calc = {'f': ' Calculated from the CBA rookie scale.', 'm': ' Calculated from the CBA league minimum.',
+            'p': ' Practice squad pay set by the CBA.'}.get(p.prov, '')
+    if intent == 'stats':
+        st = headline_stat(p)
+        stw = f"{st[0]} {st[1]}" if st else None
+        parts = [psw, stw] if st and 'games played' in st[1] or st and 'game played' in st[1] else [stw, psw]
+        title = fit(f"{n} {SEASON_YEAR} stats and contract", parts)
+        line = season_line(p)
+        if f['total'] or f['apy'] or f['cap']:
+            deal = deal_sentence(p, f, rookie=p.prov == 'f', short=True) + calc  # one piece, so the note never shows without its figures
+        elif f['base']:
+            deal = f"League-minimum base salary of at least {mon(f['base'])}."
+        else:
+            deal = 'Contract being verified.'
+        d = [f"{n}: {line}." if line else None,
+             f"PlainScore {ps['s']}, {ps_rank_words(ps)} of {ps['n']} qualified {ps['grp']}." if ps else None,
+             deal, who]
+        return title, pack(d), f"{n}: {SEASON_YEAR} stats and contract"
+    line = season_line(p)
+    line = line[0].upper() + line[1:] + '.' if line else None
+    if intent == 'rookie':
+        title = fit(f"{n} rookie contract", [deal_words(f), f"{mon(f['cap'])} cap hit" if f['cap'] else None])
+        return title, pack([deal_sentence(p, f, rookie=True, short=True), calc.strip(), who, line]), f"{poss(n)} rookie contract explained"
+    if intent == 'salary':
+        title = fit(f"{n} salary", [f"{mon(f['base'])} in {SEASON_YEAR} (league minimum)"])
+        d = [f"{n} went undrafted, so his {SEASON_YEAR} base salary is the CBA league minimum of at least {mon(f['base'])}.", who,
+             'Length, signing bonus and guarantees are being verified.', line]
+        return title, pack(d), f"{poss(n)} salary explained"
+    if f['total'] or f['apy'] or f['cap']:
+        title = fit(f"{n} contract", [deal_words(f), f"{mon(f['cap'])} cap hit" if f['cap'] else None])
+        d = [deal_sentence(p, f), calc.strip(), who, f"PlainScore {ps['s']} of 100 in {SEASON_YEAR}." if ps else line]
+        return title, pack(d), f"{poss(n)} contract explained"
+    return fit(f"{n} contract and {SEASON_YEAR} stats", []), clip(summary, 158), f"{poss(n)} contract explained"
+
+
 # ---------------------------------------------------------------- player pages
 URLS = []  # (path, priority, changefreq)
 
@@ -627,20 +790,8 @@ def build_player(p):
         faq.insert(1, (f"What is {poss(p.name)} PlainScore?", plainscore_sentence(p, ps) + ' PlainScore ranks his play rating against everyone at his position with enough snaps.'))
     path = f'/players/{p.slug}'
     has_deal = bool(f['total'] or f['apy'] or f['cap'] or f['base'])
-    if f['total'] and f['end']:
-        title = f"{p.name} contract explained: {mon(f['total'])} through {f['end']}"
-    elif f['total']:
-        title = f"{p.name} contract explained: {mon(f['total'])} deal"
-    elif f['cap']:
-        title = f"{p.name} contract explained: {mon(f['cap'])} cap hit in 2026"
-    elif f['base']:
-        title = f"{p.name} contract explained: {mon(f['base'])} base salary in {SEASON_YEAR}"
-    else:
-        title = f"{p.name} contract and 2026 stats explained"
-    if len(title) <= 50:
-        title += ' | PlainStats'
-    desc = summary if len(summary) + 26 > 158 else summary + ' Plain-English breakdown.'
-    desc = clip(desc, 158)
+    intent = page_intent(p, f, ps)
+    title, desc, h1 = player_meta(p, f, ps, intent, summary)
 
     src_html = ''
     if p.prov == 'r' and p.srcI >= 0 and p.srcI < len(SOURCES):
@@ -679,8 +830,11 @@ def build_player(p):
     img_html = f'<img src="{esc(img)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     spa = f'/player/{slugify(p.name)}-{p.team.lower()}'
     PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
-    body = (f'<div class="id">{img_html}<div><h1>{esc(poss(p.name))} contract explained</h1></div></div>'
-            f'<p class="lede">{esc(summary)}</p>{facts_html(rows)}{src_html}{plainscore_html(p, ps)}{stats_html}'
+    deal_html = facts_html(rows) + src_html
+    # Stats-first pages put the season (PlainScore, stats) above the contract; the rest lead with the contract.
+    main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent == 'stats' else (deal_html + plainscore_html(p, ps) + stats_html)
+    body = (f'<div class="id">{img_html}<div><h1>{esc(h1)}</h1></div></div>'
+            f'<p class="lede">{esc(summary)}</p>{main_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
@@ -689,7 +843,7 @@ def build_player(p):
               'url': SITE + path, 'memberOf': {'@type': 'SportsTeam', 'name': T['full'], 'sport': 'American football', 'url': f'{SITE}/teams/{T["slug"]}'}}
     if img:
         person['image'] = img
-    graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}, 'about': {'@type': 'Person', 'name': p.name}},
+    graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}, 'about': {'@type': 'Person', 'name': p.name}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Players', '/players'), (p.name, path)])]
     crumbs = [('PlainStats', '/'), ('Players', '/players'), (p.name, path)]
     thin = not has_deal
@@ -780,7 +934,7 @@ def build_team(t):
         team_ld['logo'] = t['logo']
     if rec and rec[1].get('coach'):
         team_ld['coach'] = {'@type': 'Person', 'name': rec[1]['coach']}
-    graph = [team_ld, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
+    graph = [team_ld, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, path)])]
     write(f'teams/{slug}/index.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, path)], card=og_add('teams', slug, **card_space)))
     URLS.append((path, '0.8', 'daily'))
@@ -804,7 +958,7 @@ def build_team(t):
             f'<p class="note">Team totals are PlainStats\' latest figures as of {esc(ASOF)}; individual contracts are being re-sourced from named reports, so these can shift.</p>{top2}{faq_html(faq)}'
             f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>'
             f'{team_doors(t)}{signup_html()}')
-    graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
+    graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)])]
     write(f'teams/{slug}/cap.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Cap space', path)], card=og_add('teams', f'{slug}-cap', **card_space)))
     URLS.append((path, '0.8', 'daily'))
@@ -826,7 +980,7 @@ def build_team(t):
             f'{dead_tbl}<p class="note">The five biggest dead-money charges are PlainStats\' latest team figures as of {esc(ASOF)} and can change as contracts are re-sourced.</p>{faq_html(faq)}'
             f'<ul class="chips"><li><a href="/teams/{slug}">{esc(full)} overview</a></li><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/team/{tid.lower()}">Open in the app</a></li></ul>'
             f'{team_doors(t)}{signup_html()}')
-    graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': ASOF, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
+    graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'about': {'@type': 'SportsTeam', 'name': full, 'sport': 'American football'}, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)])]
     write(f'teams/{slug}/dead-money.html', shell(path, title, desc, body, graph, image=t.get('logo'), crumbs=[('PlainStats', '/'), ('Teams', '/teams'), (full, f'/teams/{slug}'), ('Dead money', path)], card=og_add('teams', f'{slug}-dead-money', **card_dead)))
     URLS.append((path, '0.7', 'daily'))
@@ -900,7 +1054,7 @@ def build_prospect(pr):
     person = {'@type': 'Person', 'name': pr['name'], 'jobTitle': f'College {role}', 'alumniOf': {'@type': 'CollegeOrUniversity', 'name': school}, 'url': SITE + path}
     if img:
         person['image'] = img
-    graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': DRAFT.get('asOf', ASOF), 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
+    graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Draft', '/draft'), (pr['name'], path)])]
     # Card: college headshot on the school color, school logo in the corner, big board rank as the key number.
     sch = SCHOOLS.get(pr['sch'], [pr['sch']])
@@ -1138,7 +1292,7 @@ def build_learn():
                 + f'{doors_html(L["where"], "Where you see it on PlainStats")}'
                 f'{faq_html(L["faq"])}'
                 f'<h2>More stat explainers</h2><ul class="chips">{others}<li><a href="/cap-101">Cap 101 glossary</a></li></ul>{signup_html()}')
-        graph = [{'@type': 'Article', 'headline': L['q'], 'description': desc, 'url': SITE + path, 'dateModified': ASOF,
+        graph = [{'@type': 'Article', 'headline': L['q'], 'description': desc, 'url': SITE + path, 'dateModified': LM_TOKEN,
                   'author': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}, 'publisher': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'},
                   'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}},
                  {'@type': 'DefinedTerm', 'name': name, 'description': L['answer'], 'url': SITE + path, 'inDefinedTermSet': SITE + '/learn'},
@@ -1214,14 +1368,20 @@ APP_URLS += [(u, '0.5', 'weekly') for u in [
 
 
 def build_sitemap():
+    """Each generated page carries the date its own text last changed (data/lastmod.json). The home page and the app pages
+    (APP_URLS, one index.html filled with live data) use the data date, since their numbers change with every refresh."""
+    for f in ('privacy.html', 'terms.html'):
+        lm_track(page_path(f), (ROOT / f).read_text(encoding='utf-8'))
+    date = lambda path: LM[path][1] if path in LM else ASOF
     lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
              f'  <url><loc>{SITE}/</loc><lastmod>{ASOF}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>']
     for path, pri, freq in sorted(URLS + APP_URLS, key=lambda u: (-float(u[1]), u[0])):
-        lines.append(f'  <url><loc>{SITE}{esc(path)}</loc><lastmod>{ASOF}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>')
+        lines.append(f'  <url><loc>{SITE}{esc(path)}</loc><lastmod>{date(path)}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>')
     for path in ('/privacy', '/terms'):
-        lines.append(f'  <url><loc>{SITE}{path}</loc><lastmod>{ASOF}</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>')
+        lines.append(f'  <url><loc>{SITE}{path}</loc><lastmod>{date(path)}</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>')
     lines.append('</urlset>')
     (ROOT / 'sitemap.xml').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    LM_FILE.write_text(json.dumps(LM, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
 
 
 def build_og_data():
