@@ -7,6 +7,7 @@ src.html
 tools
 .claude
 .mcp.json
+.github
 .gitignore
 __pycache__
 data/*.py

@@ -4403,6 +4403,7 @@ function renderTradeOut() {
   const sal = p => Math.max(0, (p.cap || 0) - (p.bonus || 0));
   const sum = (s, f) => [...s].reduce((a, i) => a + f(PL[i]), 0);
   const A = TB[st.trade.a], B = TB[st.trade.b], oa = st.trade.out.a, ob = st.trade.out.b;
+  if (oa.size + ob.size) psLater('trade', 2000, () => psTrack('trade_check', { teams: st.trade.a + '-' + st.trade.b, player_count: oa.size + ob.size, replay: String(!!st.trade.replay) }));
   const aAfter = A.space + sum(oa, sal) - sum(ob, sal), bAfter = B.space + sum(ob, sal) - sum(oa, sal);
   // a replayed deadline deal: his row is already the new team's contract, so the old team's dead money is not in it (the deadline page shows any reported figure)
   const rpl = st.trade.replay, isRp = (side, i) => !!(rpl && rpl[side].has(i));
@@ -4528,7 +4529,7 @@ function renderTD() {
   applyTF($('#td-t'));
 }
 document.addEventListener('input', e => { if (e.target.id === 'td-q') { td.q = e.target.value; tdFilter(); } });
-document.addEventListener('change', e => { if (e.target.id === 'td-team') { td.team = e.target.value; tdFilter(); } });
+document.addEventListener('change', e => { if (e.target.id === 'td-team') { td.team = e.target.value; tdFilter(); psTrack('deadline_team', { team: td.team || 'all' }); } });
 // "Open in trade checker": load the deal before the in-app link handler (on document) switches pages
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-replay]'); if (a) tradeFromQuery(new URL(a.href, location.href).search); }, true);
 function tradeFromQuery(search) {   // ?a=TEN&b=CHI&pa=<gsis ids team a sends>&pb=...&d=<trade date>
@@ -4632,6 +4633,9 @@ function renderCompare() {
   $$('#cmp-mode button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.cm === st.cmpMode)));
   const ps = st.cmp.map(i => (i == null ? null : PL[i])).filter(Boolean);
   if (ps.length < 2) { $('#cmp-out').innerHTML = `<p class="empty">${ps.length ? 'Now pick another player.' : 'Pick two to four players to compare.'}</p>`; return; }
+  { const key = ps.map(p => p.gid || p.name).sort().join('|') + '|' + st.cmpMode;   // one compare event per new line-up, not per redraw
+    if (renderCompare.sent !== key && renderCompare.n) psLater('cmp', 800, () => { renderCompare.sent = key; psTrack('compare', { players: ps.map(p => p.name).join(' vs ').slice(0, 100), player_count: ps.length, mode: st.cmpMode }); });
+    renderCompare.n = 1; if (!renderCompare.sent) renderCompare.sent = key; }
   if (ps.length > 2) {
     const faces = `<div class="fcs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ps.map(faceCard).join('')}</div>`;
     $('#cmp-out').innerHTML = st.cmpMode === 'stats' ? cmpStatsN(ps) : `<div class="vs" style="align-items:center">${radarMulti(ps)}${faces}</div>${cmpContractN(ps)}`;
@@ -5761,7 +5765,7 @@ sheet.addEventListener('close', () => { if (/^[pdg]-/.test(curKey())) setURL(LAS
 document.addEventListener('click', e => {
   const b = e.target.closest('.cplink'); if (!b) return; e.stopPropagation();
   const url = shareUrl(b.dataset.link, 'copylink');
-  if (window.gtag) gtag('event', 'share', { method: 'copy_link', content_type: 'sheet', item_id: b.dataset.link });
+  psTrack('share', { method: 'copy_link', content_type: 'sheet', item_id: b.dataset.link });
   const fail = () => { b.textContent = 'Copy this link'; if (!b.nextElementSibling || !b.nextElementSibling.classList.contains('cpbox')) b.insertAdjacentHTML('afterend', `<input class="cpbox" readonly value="${esc(url)}" aria-label="Link to this page">`); const i = b.nextElementSibling; i.focus(); i.select(); };
   try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link copied'; setTimeout(() => (b.textContent = 'Copy link'), 2200); }, fail); } catch (err) { fail(); }
 }, true);
@@ -5770,7 +5774,7 @@ document.addEventListener('click', e => {
 document.addEventListener('click', async e => {
   if (!e.target.closest('#tool-send-btn')) return;
   const url = shareUrl(curKey() || 'tools', 'tool');
-  if (window.gtag) gtag('event', 'share', { method: 'send_friend', content_type: 'tool', item_id: curKey() || 'tools' });
+  psTrack('share', { method: 'send_friend', content_type: 'tool', item_id: curKey() || 'tools' });
   try {
     if (navigator.share) await navigator.share({ title: 'PlainStats', text: 'Try this NFL tool on PlainStats', url });
     else { await navigator.clipboard.writeText(url); const b = e.target.closest('#tool-send-btn'); b.textContent = 'Link copied'; setTimeout(() => (b.textContent = 'Send to a friend'), 2200); }
@@ -6236,18 +6240,19 @@ function renderPk() {
 function pkClick(e) {
   const w = e.target.closest('[data-pkw]'); if (w) { gm.week = +w.dataset.pkw; renderScores(); return; }
   const x = e.target.closest('[data-pkx]');
-  if (x && x.dataset.pkx === 'clear') { if (confirm('Clear every pick you have made this season? This cannot be undone.')) { store.set('pickem', { season: GSCHED.season, picks: {} }); renderScores(); } return; }
+  if (x && x.dataset.pkx === 'clear') { if (confirm('Clear every pick you have made this season? This cannot be undone.')) { psTrack('pickem_clear', { pick_count: Object.keys(pkLoad().picks).length }); store.set('pickem', { season: GSCHED.season, picks: {} }); renderScores(); } return; }
   if (x && x.dataset.pkx === 'share') { const T = pkTally(), url = shareUrl('scores', 'pickem');
     const text = `I'm ${T.w}-${T.l} picking NFL games this season. The PlainStats model is ${T.mw}-${T.ml} on the same games. Can you beat it?`;
-    if (window.gtag) gtag('event', 'share', { method: 'pickem', content_type: 'pickem', item_id: 'scores' });
+    psTrack('share', { method: 'pickem', content_type: 'pickem', item_id: 'scores' });
     (navigator.share ? navigator.share({ title: 'PlainStats Pick\'em', text, url }) : navigator.clipboard.writeText(text + ' ' + url).then(() => { x.textContent = 'Copied'; setTimeout(() => (x.textContent = 'Share my record'), 2200); })).catch(() => {});
     return; }
   const b = e.target.closest('[data-pkg]'); if (!b) return;
   const id = b.dataset.pkg, g = GSCHED.games.find(q => q[0] === id); if (!g) return;
   const S = pkLoad();
   if (!pkLocked(g)) {
-    if (S.picks[id] && S.picks[id].t === b.dataset.pt) delete S.picks[id];
-    else { S.picks[id] = { t: b.dataset.pt, m: pkModel(id, g), at: Date.now() }; if (window.gtag) gtag('event', 'pickem_pick', { week: g[1] }); }
+    if (S.picks[id] && S.picks[id].t === b.dataset.pt) { delete S.picks[id]; psTrack('pickem_unpick', { week: g[1], game_id: id }); }
+    else { const m = pkModel(id, g); S.picks[id] = { t: b.dataset.pt, m, at: Date.now() };
+      psTrack('pickem_pick', { week: g[1], game_id: id, with_model: m ? String(m === b.dataset.pt) : 'no_pick', pick_count: Object.keys(S.picks).length }); }
     store.set('pickem', S);
   }
   const slot = b.closest('[data-pks]'), html = pkSlot(g);
@@ -6490,10 +6495,18 @@ function pickSearch(it) {
   else if (it.type === 'news') { st.newsQ = it.m.head; st.newsTopic = 'All'; st.newsTeam = 'all'; go('news'); }
   else if (it.type === 'term') { go('learn'); setTimeout(() => { const d = $$('#faq-nfl details')[it.i]; if (d) { d.open = true; d.scrollIntoView({ block: 'center' }); } }, 40); }
 }
+function searchPicked(input, it) {   // the search event is sent when the visitor picks a result, not on every keystroke
+  clearTimeout(psWait['q-' + input.id]); const q = input.value.trim();
+  if (input._sent !== q) psTrack('search', { search_term: q.slice(0, 60), search_location: input.id === 'q-home' ? 'home' : 'nav', results: 1 });
+  input._sent = '';
+  psTrack('select_content', { content_type: 'search_' + it.type, item_id: String(it.title).slice(0, 80) });
+}
 function bindSearchAll(input, box) {
   let items = [], on = -1;
   const draw = () => {
     items = searchEverything(input.value); on = -1;
+    const q = input.value.trim();
+    if (q.length > 1) psLater('q-' + input.id, 2500, () => { input._sent = q; psTrack('search', { search_term: q.slice(0, 60), search_location: input.id === 'q-home' ? 'home' : 'nav', results: items.length }); });
     if (!items.length) { box.innerHTML = input.value.trim().length > 1 ? '<p class="empty" style="padding:14px">Nothing matches. Try a player, team, page or topic.</p>' : ''; box.hidden = input.value.trim().length < 2; return; }
     box.innerHTML = items.map((it, n) => `<button type="button" data-n="${n}">${searchIcon(it)}<span><b>${esc(it.title)}</b><br><small>${esc(it.sub)}</small></span><small class="rt">${SLAB[it.type]}</small></button>`).join('');
     box.hidden = false;
@@ -6504,10 +6517,10 @@ function bindSearchAll(input, box) {
     if (box.hidden) return;
     const bs = $$('button', box);
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!bs.length) return; on = (on + (e.key === 'ArrowDown' ? 1 : bs.length - 1)) % bs.length; bs.forEach((b, n) => b.classList.toggle('on', n === on)); }
-    if (e.key === 'Enter') { e.preventDefault(); const it = items[on < 0 ? 0 : on]; if (it) { box.hidden = true; input.blur(); pickSearch(it); } }
+    if (e.key === 'Enter') { e.preventDefault(); const it = items[on < 0 ? 0 : on]; if (it) { box.hidden = true; input.blur(); searchPicked(input, it); pickSearch(it); } }
     if (e.key === 'Escape') box.hidden = true;
   });
-  box.addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (!b) return; box.hidden = true; pickSearch(items[+b.dataset.n]); });
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (!b) return; box.hidden = true; searchPicked(input, items[+b.dataset.n]); pickSearch(items[+b.dataset.n]); });
   document.addEventListener('click', e => { if (!box.contains(e.target) && e.target !== input) box.hidden = true; });
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-try]'); if (!b) return; const i = $('#q-home'); i.value = b.dataset.try; i.focus(); i.dispatchEvent(new Event('input')); });
@@ -6662,6 +6675,27 @@ function buildMenus() {
    ads.client: AdSense publisher ID (ca-pub-...), plus optional slot IDs. */
 const LIVE_HOSTS = ['plainstatsnfl.com', 'www.plainstatsnfl.com', 'fan-cap-tracker.vercel.app'];
 const ANALYTICS = { ga4: 'G-PLKGBKTLC3' };
+/* GA4 events. psTrack sends one only after the visitor has accepted cookies (gtag exists only then); otherwise it does nothing.
+   Event names and parameters are listed in README ("Analytics events"); register the custom parameters in GA4 as custom dimensions. */
+function psTrack(name, params) { try { if (window.gtag) gtag('event', name, params || {}); } catch (e) {} }
+const psWait = {};   // debounce per key: typing fires one event once the visitor pauses
+const psLater = (key, ms, fn) => { clearTimeout(psWait[key]); psWait[key] = setTimeout(fn, ms); };
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('a,button'); if (!t) return;
+  const at = (location.pathname.replace(/\/$/, '') || '/');
+  if (t.matches('.doors a')) psTrack('door_click', { link_url: t.getAttribute('href'), from_page: at });
+  else if (t.matches('a.xq')) psTrack('explainer_open', { term: t.getAttribute('href').split('/').pop(), from_page: at });
+  else if (t.matches('a[data-replay]')) psTrack('trade_replay', { from_page: at });
+  else if (t.matches('[data-card]')) psTrack('share_card_open', { item_id: t.dataset.card });
+}, true);
+document.addEventListener('submit', e => {   // The Cap Sheet forms (player sheet, team page) and the plain home form
+  const f = e.target; if (!f || !f.action) return;
+  if (f.action.indexOf(CAP_SHEET_URL) === 0 || f.id === 'signup-form') psTrack('sign_up', { method: 'cap_sheet', from_page: location.pathname.replace(/\/$/, '') || '/' });
+}, true);
+document.addEventListener('input', e => {   // table filter boxes
+  const i = e.target; if (!i || !i.dataset || !i.dataset.tf || i.closest('.ps-cap')) return;
+  psLater('tf-' + i.dataset.tf, 1500, () => { const v = i.value.trim(); if (v.length > 1) psTrack('table_filter', { table: i.dataset.tf, search_term: v.slice(0, 60) }); });
+}, true);
 const WAITLIST = { beehiivForm: '5f4b7895-a58d-49c2-a019-4706196fa376', action: '' };
 const ADS = {
   client: '',
@@ -6700,6 +6734,7 @@ const ADS = {
     const s = document.createElement('script'); s.async = true;
     s.src = 'https://subscribe-forms.beehiiv.com/v3/loader.js'; s.dataset.beehiivForm = WAITLIST.beehiivForm;
     holder.appendChild(s);
+    window.addEventListener('blur', () => { const a = document.activeElement; if (a && a.tagName === 'IFRAME' && holder.contains(a) && !holder._t) { holder._t = 1; psTrack('sign_up_start', { method: 'cap_sheet', from_page: '/' }); } });
   } else if (su && sf && WAITLIST.action) {
     su.hidden = false; sf.action = WAITLIST.action;
     sf.addEventListener('submit', e => {
@@ -6921,7 +6956,7 @@ const ADS = {
         if (a === 'copy') { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('Image copied'); }
         if (a === 'link') { await navigator.clipboard.writeText(link()); toast('Link copied'); }
         if (a === 'save') { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; document.body.appendChild(l); l.click(); l.remove(); }
-        if (window.gtag) gtag('event', 'share', { method: 'image_' + a, content_type: 'panel', item_id: slugOf(heading) });
+        psTrack('share', { method: 'image_' + a, content_type: 'panel', item_id: slugOf(heading) });
       } catch (err) { if (!err || err.name !== 'AbortError') toast('That did not work here. Try Save image instead.'); }
     };
     d.querySelector('#ps-dlg-t').textContent = heading.length > 60 ? 'Share this' : 'Share: ' + heading;
@@ -7111,7 +7146,7 @@ const ADS = {
     const was = btn.textContent; btn.textContent = 'Making…';
     try {
       const blob = await cardDraw(spec);
-      if (window.gtag) gtag('event', 'share', { method: 'card_make', content_type: spec.kind, item_id: spec.key });
+      psTrack('share', { method: 'card_make', content_type: spec.kind, item_id: spec.key });
       window.psShowImage({ blob, heading: spec.name });
     } catch (err) { console.error('share card failed', err); window.psToast && window.psToast('Could not make the card. Try again.'); }
     finally { btn.removeAttribute('aria-busy'); btn.textContent = was; }

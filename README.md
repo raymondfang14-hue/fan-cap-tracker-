@@ -52,6 +52,31 @@ Check a card's layout without deploying: `node tools/preview_og.mjs OUT_DIR [IMA
 ## Share this (src.html, last script block)
 Each panel that holds a chart or table gets a "Share this" button. It copies the panel offscreen (the live page never changes), drops the controls, keeps the filters as a small "Filter: ..." line, caps tables at 20 rows with a note, adds a small PlainStats watermark and the data date, and photographs the copy with `html-to-image` (loaded from jsDelivr on first click only). A preview opens with Share (phones), Save image and Copy image. ESPN logos and headshots are copied in only if ESPN's CDN allows it from the browser; otherwise they are left out of the image rather than breaking it. `tools/check_pages.py` fails if the buttons stop appearing.
 
+## Analytics events (GA4) and the weekly Search Console report
+Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads only on the live domains and only after the visitor clicks Accept. Search Console has no events of its own; it reports Google searches, so the events below go to GA4 and Search Console is read by the weekly report. In the app every event goes through `psTrack(name, params)` (next to `ANALYTICS`); the static pages send the same names from the `GA` snippet. Register the custom parameters (`search_location`, `results`, `players`, `player_count`, `mode`, `game_id`, `with_model`, `pick_count`, `table`, `term`, `from_page`, `teams`, `replay`, `team`) as event-scoped custom dimensions in GA4 (Admin > Custom definitions) to see them in reports. Give any new feature an event here and in this list.
+
+| Event | When | Parameters |
+|---|---|---|
+| `search` | Site search (home or nav): a result is picked, or the visitor stops typing for 2.5 s | `search_term`, `search_location`, `results` (0 = nothing matched) |
+| `select_content` | A site-search result is picked | `content_type` (`search_player`, `search_team`, ...), `item_id` |
+| `compare` | Compare shows a new line-up of 2 to 4 players (not the default pair) | `players`, `player_count`, `mode` |
+| `sign_up` | The Cap Sheet form is submitted (player sheet, team page, static pages) | `method: cap_sheet`, `from_page` |
+| `sign_up_start` | The visitor clicks into the beehiiv form on the home page (it is a cross-origin iframe, so the submit itself is counted in beehiiv) | `method`, `from_page` |
+| `pickem_pick` / `pickem_unpick` / `pickem_clear` | Pick'em on /scores | `week`, `game_id`, `with_model` (`true`, `false`, `no_pick`), `pick_count` |
+| `share` | Copy link, Send to a friend, Share this image, share card made, Pick'em record shared | `method`, `content_type`, `item_id` |
+| `share_card_open` | A "Share" card button (app) or `?share=1` link (static pages) | `item_id` or `link_url` |
+| `trade_check` | The trade checker has players in it (once the visitor pauses) | `teams`, `player_count`, `replay` |
+| `trade_replay` | "Replay in the trade checker" on /trade-deadline | `from_page` |
+| `deadline_team` | Team filter on /trade-deadline | `team` |
+| `table_filter` | A table filter box (once the visitor pauses) | `table`, `search_term` |
+| `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
+| `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
+| `app_open` | "See ... in the PlainStats app" on a static page | `link_url`, `from_page` |
+
+Page views (including app pages and player sheets) come from GA4's enhanced measurement ("page changes based on browser history events", on by default).
+
+**Weekly Search Console report.** `.github/workflows/search-console-weekly.yml` runs `tools/gsc_report.py` every Monday and posts a GitHub issue (label `search-console`) listing the `/players/<name>` pages that gained the most Google impressions over the last 7 days of data against the 7 before, the ones showing up for the first time, and the biggest drops. It needs the repository secret `GSC_SERVICE_ACCOUNT` (setup steps at the top of the workflow); without it the run only says so. `python3 -I tools/gsc_report.py --demo` prints the layout with made-up numbers.
+
 ## Where contract numbers come from (data/nfl.json, data/ledger.csv, data/cba.json)
 PlainStats does not copy Over The Cap or Spotrac. `data/build_contracts.py` builds every player row and tags where it comes from:
 - `r` reported: `data/ledger.csv` has one row per deal from a named news report or team announcement, with its URL. Blank fields stay unverified and the player page says so.

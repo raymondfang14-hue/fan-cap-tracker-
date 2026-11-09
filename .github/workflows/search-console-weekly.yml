@@ -1,0 +1,56 @@
+# Weekly Search Console check: which /players/<name> pages gained Google impressions this week.
+# Runs tools/gsc_report.py and posts the report as a GitHub issue labelled "search-console" (and in the run summary).
+#
+# One-time setup (see the top of tools/gsc_report.py):
+#   1. Google Cloud: make a service account, enable the "Google Search Console API", create a JSON key.
+#   2. Search Console > Settings > Users and permissions: add the service account's email as a Restricted user.
+#   3. GitHub repo > Settings > Secrets and variables > Actions: add the JSON key as the secret GSC_SERVICE_ACCOUNT
+#      (and, for a URL-prefix property, the secret GSC_SITE = https://plainstatsnfl.com/).
+# Until the secret exists the run says so and does nothing else.
+name: Search Console weekly
+
+on:
+  schedule:
+    - cron: '17 16 * * 1'               # Monday 8:17 AM PT in winter (UTC-8)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build the report
+        id: gsc
+        env:
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+          GSC_SITE: ${{ secrets.GSC_SITE }}
+        run: |
+          if [ -z "$GSC_SERVICE_ACCOUNT" ]; then
+            echo "GSC_SERVICE_ACCOUNT is not set; see the top of this workflow." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "ready=0" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          pip install --quiet google-auth requests
+          python3 -I tools/gsc_report.py --out "$RUNNER_TEMP/gsc.md"
+          cat "$RUNNER_TEMP/gsc.md" >> "$GITHUB_STEP_SUMMARY"
+          echo "ready=1" >> "$GITHUB_OUTPUT"
+
+      - name: Post it as an issue
+        if: steps.gsc.outputs.ready == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create search-console --color 0E8A16 --description 'Weekly Search Console report' 2>/dev/null || true
+          gh issue create --title "Search Console: player pages, week of $(date -u +%Y-%m-%d)" \
+            --label search-console --body-file "$RUNNER_TEMP/gsc.md"

@@ -134,7 +134,13 @@ GA = ("<script>(function(){if(!/(^|\\.)plainstatsnfl\\.com$/.test(location.hostn
       "function decide(v){try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}var b=document.getElementById('consent');if(b)b.remove();if(v==='yes')load()}"
       "if(c==='yes')load();else if(c===null)document.addEventListener('DOMContentLoaded',function(){var b=document.createElement('div');b.className='consent';b.id='consent';b.setAttribute('role','dialog');b.setAttribute('aria-label','Cookie choices');"
       "b.innerHTML='<p>PlainStats uses cookies for visit counts. You can accept, or decline and still use everything. <a href=\"/privacy\">Details</a></p><div class=\"row\"><button type=\"button\" data-c=\"no\">Decline</button><button type=\"button\" data-c=\"yes\">Accept</button></div>';"
-      "b.addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(t)decide(t.dataset.c)});document.body.appendChild(b)})})();</script>")
+      "b.addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(t)decide(t.dataset.c)});document.body.appendChild(b)});"
+      # GA4 events, the same names as the app's psTrack (README, "Analytics events"); sent only once gtag exists, i.e. after Accept
+      "function ev(n,p){if(window.gtag)gtag('event',n,p)}var at=location.pathname;"
+      "document.addEventListener('submit',function(e){var f=e.target;if(f&&/beehiiv\\.com/.test(f.action||''))ev('sign_up',{method:'cap_sheet',from_page:at})},true);"
+      "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';"
+      "if(a.closest('.doors'))ev('door_click',{link_url:h,from_page:at});else if(a.classList.contains('xq'))ev('explainer_open',{term:h.split('/').pop(),from_page:at});"
+      "else if(a.classList.contains('cta'))ev(/[?&]share=1/.test(h)?'share_card_open':'app_open',{link_url:h,from_page:at})},true)})();</script>")
 
 
 
