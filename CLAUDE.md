@@ -47,6 +47,8 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 - Games tab (`/scores`, `/standings`, `/projections`, game pages `/game/<id>`): `data/schedule.json` (daily, `data/build_schedule.py`) and `data/projections.json` (weekly, `data/build_projections.py`, PlainStats Elo model). Never use the betting columns in nflverse games.csv. This week's game pages use `data/gameday.json` (daily, `data/build_gameday.py`: official injury report via nflverse plus injury-adjusted picks) and live weather from api.weather.gov (public domain, fetched in the browser; the sandbox can't reach it).
 
+- Analytics: GA4 events go through `psTrack()` in src.html (static pages: the `GA` snippet in build_seo.py). Every new feature gets an event, listed in README "Analytics events". Search Console is read weekly by `.github/workflows/search-console-weekly.yml` (`tools/gsc_report.py`).
+
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
 - `python3 -I tools/check_stats.py <nflverse folder>` checks every player card's season stats (On the field tab) against the raw nflverse box scores, by gsis id, and flags players listed twice. Run it after rebuilding `data/stats.json`.
