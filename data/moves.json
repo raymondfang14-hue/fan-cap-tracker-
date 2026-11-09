@@ -1,6 +1,39 @@
 {
- "asOf": "2026-11-08",
+ "asOf": "2026-11-09",
  "moves": [
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "JAX",
+    "ATL"
+   ],
+   "players": [
+    "Jessie Bates III"
+   ],
+   "head": "Jaguars acquire S Jessie Bates from the Falcons for a 2027 second-round pick and a 2028 fifth-round pick",
+   "plain": "Jacksonville gets the All-Pro safety and Atlanta gets two future picks. Atlanta is keeping most of his remaining 2026 salary to make the deal work, per NFL Network. His contract voids shortly after this season, so he is set to be a free agent.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jaguars-to-acquire-s-jessie-bates-from-falcons",
+   "deal": {
+    "JAX": {
+     "players": [
+      {
+       "name": "Jessie Bates III",
+       "gid": "00-0034675",
+       "from": "ATL"
+      }
+     ]
+    },
+    "ATL": {
+     "picks": [
+      "2027 second-round pick (from JAX)",
+      "2028 fifth-round pick (from JAX)"
+     ]
+    }
+   }
+  },
   {
    "iso": "2026-11-07",
    "date": "Nov 7",
@@ -1733,21 +1766,6 @@
    "source": "NFL.com roundup",
    "url": "https://nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-may-11",
    "iso": "2026-05-11"
-  },
-  {
-   "date": "Feb 18",
-   "kind": "Restructure",
-   "teams": [
-    "KC"
-   ],
-   "players": [
-    "Patrick Mahomes"
-   ],
-   "head": "Chiefs rework Mahomes' deal and free $43.6M of 2026 cap space",
-   "plain": "His 2026 cap hit fell from $78.2M to $34.65M. The move turns salary into guaranteed bonus money, which pushes cost into later years. His 2027 cap number is $85.3M.",
-   "source": "Front Office Sports",
-   "url": "https://frontofficesports.com/article/mahomes-reworks-deal-clears-43-6m-for-cap-strapped-chiefs/",
-   "iso": "2026-02-18"
   }
  ],
  "deadline": "2026-11-10"
