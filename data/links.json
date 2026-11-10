@@ -1,4 +1,12 @@
 {
   "_how": "Posts shown on plainstatsnfl.com/links (the /ig and /tt bio links land there), newest first. Add one line per carousel or video at the top of posts: date (YYYY-MM-DD), title (what the post is about), path (the page the post's end slide names, e.g. /team-tiers) and platform (instagram, tiktok or both).",
-  "posts": []
+  "posts": [
+    {"date": "2026-11-10", "title": "Mid-season awards", "path": "/awards", "platform": "both"},
+    {"date": "2026-11-05", "title": "3 potential NFL trades", "path": "/trade-deadline", "platform": "both"},
+    {"date": "2026-11-03", "title": "Week 8 team tiers", "path": "/team-tiers", "platform": "both"},
+    {"date": "2026-11-02", "title": "Potential Jonathan Taylor trades", "path": "/players/jonathan-taylor", "platform": "both"},
+    {"date": "2026-11-01", "title": "Backup QBs by EPA", "path": "/player-ratings/rankings", "platform": "both"},
+    {"date": "2026-10-29", "title": "Jeffery Simmons trade", "path": "/trade-deadline", "platform": "both"},
+    {"date": "2026-10-28", "title": "Nelson and Buckner trades", "path": "/trade-deadline", "platform": "both"}
+  ]
 }
