@@ -1349,6 +1349,17 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .pk-slot.done{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .pk-slot.done b{color:var(--fg);font-weight:600}
 @media (prefers-reduced-motion:no-preference){.pk-slot button{transition:background-color .15s,color .15s,border-color .15s}}
+/* Links from our posts (/links, /links/instagram, /links/tiktok): where the Instagram and TikTok bio links land. */
+.lk-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.lk-list a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:14px 16px;background:var(--surface);border-radius:var(--r-lg);color:var(--fg);text-decoration:none;min-width:0}
+.lk-list a:hover{background:var(--surface-2)}
+.lk-list a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.lk-list b{font:600 1rem/1.25 var(--body);min-width:0;overflow-wrap:anywhere}
+.lk-list span{grid-column:1;color:var(--muted);font-size:.84rem;min-width:0;overflow-wrap:anywhere}
+.lk-list i{grid-row:1/span 2;grid-column:2;font-style:normal;color:var(--brand);font-weight:600;font-size:1.2rem}
+.lk-list .lk-new{color:var(--brand);font-weight:600;font-style:normal}
+#v-links .sec{margin:22px 0 10px}
+@media (prefers-reduced-motion:no-preference){.lk-list a{transition:background-color .15s}}
 </style>
 
 <header class="gn" id="gn">
@@ -1769,6 +1780,20 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
   </div>
   <p class="disc">PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA or any team. Team names, logos and player images belong to their owners and appear only to identify teams and players.</p>
 </section>
+
+<!-- LINKS: the Instagram and TikTok bio links (/ig, /tt in vercel.json) land here. Posts come from data/links.json, newest first. -->
+<section class="view" id="v-links" hidden aria-labelledby="h-links">
+  <div><span class="eyebrow" id="lk-eyebrow">Link in bio</span><h1 class="title" id="h-links">The pages from our posts</h1></div>
+  <p class="lede">Every carousel ends with the page it came from. Find the post here and tap through to the full table.</p>
+  <div class="controls">
+    <label class="f" for="lk-q" style="flex:1 1 220px">Filter links<input id="lk-q" type="search" placeholder="Post, player or page" autocomplete="off"></label>
+  </div>
+  <div id="lk-posts"></div>
+  <h2 class="sec">Start here</h2>
+  <ul class="lk-list" id="lk-start"></ul>
+  <p class="empty" id="lk-none" hidden>No links match.</p>
+</section>
+
 
 <section class="view" id="v-tools" hidden aria-labelledby="h-tools">
   <div class="sechead">
@@ -3724,12 +3749,14 @@ const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'
   ['teams', '/team-ratings'], ['tiers', '/team-tiers'], ['cap', '/cap-room'], ['rankings', '/power-rankings'], ['awards', '/awards'], ['ratings', '/player-ratings'], ['ratings-roles', '/player-ratings/roles'], ['ratings-pay', '/player-ratings/pay-vs-play'], ['ratings-rank', '/player-ratings/rankings'], ['ratings-traits', '/player-ratings/traits'], ['stats', '/stats'],
   ['contracts', '/contracts'], ['value', '/best-worst-contracts'], ['rookies', '/rookie-contracts'], ['freeagency', '/free-agency'], ['fa-tags', '/free-agency/key-dates'], ['analytics', '/cap-lab'],
   ['bigboard', '/big-board'], ['mock', '/mock-draft'], ['rookie-pay', '/rookie-pay'], ['draft-guide', '/draft-guide'],
-  ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['deadline', '/trade-deadline'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup']];
+  ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['deadline', '/trade-deadline'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup'],
+  ['links', '/links'], ['links-instagram', '/links/instagram'], ['links-tiktok', '/links/tiktok']];
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
   teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
-  builder: 'NFL roster builder', trade: 'NFL trade checker', deadline: 'NFL trade deadline tracker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup' };
+  builder: 'NFL roster builder', trade: 'NFL trade checker', deadline: 'NFL trade deadline tracker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup',
+  links: 'Links from our posts', 'links-instagram': 'Links from our Instagram posts', 'links-tiktok': 'Links from our TikTok posts' };
 // One plain-English description per page, for search results and link previews. api/page.js reads this block (ROUTES to SUBS) from
 // index.html to give crawlers each page's own title and description, so keep it plain data. Sub-pages get "<label>. " + their section's.
 const PDESC = {
@@ -3761,7 +3788,10 @@ const PDESC = {
   builder: 'Build an NFL roster from every player in the league and see how it rates.', trade: 'Check an NFL trade: what each team gives and gets.',
   deadline: 'Every NFL trade of the 2026 season up to the November 10 deadline, with what each deal does to both teams\' salary caps.',
   compare: 'Compare NFL players side by side: contract and this season\'s stats.', learn: 'How the NFL salary cap works, in plain English: cap hits, dead money, guarantees and more.',
-  about: 'About PlainStats: where the data comes from and how it is checked.', search: 'Search NFL players, teams, prospects, games and news on PlainStats.', setup: 'PlainStats setup.' };
+  about: 'About PlainStats: where the data comes from and how it is checked.', search: 'Search NFL players, teams, prospects, games and news on PlainStats.', setup: 'PlainStats setup.',
+  links: 'The PlainStats pages behind our Instagram and TikTok posts: tap through from a carousel to the full table.',
+  'links-instagram': 'The PlainStats pages behind our Instagram posts: tap through from a carousel to the full table.',
+  'links-tiktok': 'The PlainStats pages behind our TikTok posts: tap through from a carousel to the full table.' };
 /* Sub-pages: inside a section tab, each panel is its own page with its own address, so nothing sits below a long scroll.
    A panel carries data-sp="<page>"; anything in the box without data-sp shows on every page. Tight pairs (AFC and NFC odds,
    best and worst value) share one page. [box id, where the page bar goes ('top': first in the box, 'head': after its .sechead),
@@ -3818,7 +3848,7 @@ if (PATHMODE && location.hash.length > 1) {   // an old /#scores or /#p-... link
   const old = location.hash.slice(1);
   if (KEY2PATH[ALIASES[old] || old] || /^(team|p|d|g)-|^team-/.test(old)) setURL(old, true);
 }
-const VIEWS = ['home', 'news', 'deadline', 'teams', 'tiers', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
+const VIEWS = ['home', 'news', 'deadline', 'links', 'teams', 'tiers', 'team', 'games', 'onfield', 'contracts', 'tools', 'analytics', 'awards', 'freeagency', 'draft', 'learn', 'about'];
 const NAVG = { home: 'home', news: 'news', deadline: 'deadline', teams: 'teams', tiers: 'teams', team: 'teams', games: 'games', onfield: 'players', awards: 'players', contracts: 'contracts', freeagency: 'contracts', analytics: 'contracts', draft: 'draft', tools: 'tools', learn: 'learn', about: 'learn' };
 let curTeam = null;
 function route() {
@@ -3834,6 +3864,7 @@ function route() {
   if (h === 'freeagency' || h === 'fa-tags') { v = 'freeagency'; st.fa.tab = h === 'fa-tags' ? 'tags' : 'class'; }
   if (h === 'about') v = 'about';
   if (h === 'deadline') v = 'deadline';
+  if (h === 'links' || h.startsWith('links-')) { lk.src = h.slice(6); v = 'links'; renderLinks(); }
   if (h === 'search') { v = 'home'; setTimeout(() => window.openSearch && openSearch(), 30); }
   if (h.startsWith('team-')) { const [tid, ts] = h.slice(5).split('/'), id = tid.toUpperCase(); teamSub = ts || ''; if (TB[id] || !D) { v = 'team'; curTeam = id; } else v = 'teams'; }
   if (['deals', 'contracts', 'value', 'rookies'].includes(h)) { v = 'contracts'; st.ctab = h === 'value' || h === 'rookies' ? h : 'all'; }
@@ -3851,14 +3882,15 @@ function route() {
   const navv = v === 'team' ? 'teams' : v;
   const ng = NAVG[v] || v;
   $$('[data-nav]').forEach(a => a.dataset.nav === ng ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + pathOf(h0); }
+  const canon = /^links-/.test(h0) ? '/links' : pathOf(h0);   // the per-platform /links pages are one page
+  if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + canon; }
   document.title = v === 'home' ? 'PlainStats: NFL contracts, salary cap and player stats' : v !== 'team' && PTITLE[h0] ? PTITLE[h0] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
   { // description and link-preview tags follow the page (crawlers that skip JavaScript get the same from api/page.js)
     const dsc = v === 'home' ? 'NFL contracts, stats and team analytics, explained in plain English.' : v !== 'team' ? PDESC[h0] : null;
     const setM = (sel, val) => { const m = document.querySelector(sel); if (m && val) m.setAttribute('content', val); };
     setM('meta[name=description]', dsc); setM('meta[property="og:description"]', dsc); setM('meta[name="twitter:description"]', dsc);
     setM('meta[property="og:title"]', document.title); setM('meta[name="twitter:title"]', document.title);
-    if (PATHMODE) setM('meta[property="og:url"]', SITE_URL.replace(/\/$/, '') + pathOf(h0));
+    if (PATHMODE) setM('meta[property="og:url"]', SITE_URL.replace(/\/$/, '') + canon);
   }
   if (D) {
     if (v === 'team') renderTeam(curTeam);
@@ -4492,6 +4524,55 @@ function tdFilter() {
   if (e) e.hidden = n > 0 || !tot;
   $('#td-count').textContent = tot ? (n === tot ? `${tot} trade${tot === 1 ? '' : 's'}` : `${n} of ${tot} trades`) : '';
 }
+/* ===== Links from our posts (/links): the Instagram and TikTok bio links land here =====
+   /ig and /tt (vercel.json redirects) send a visitor to /links/instagram or /links/tiktok with utm_ tags, so Google Analytics credits the
+   platform and Vercel Web Analytics (no cookies) counts each platform as its own path. Posts come from data/links.json, newest first:
+   {"date": "YYYY-MM-DD", "title": "what the post was about", "path": "/team-tiers", "platform": "instagram" | "tiktok" | "both"}.
+   The carousel end slide (share-card script, psEndSlide) names the same path, so a fan can match the post to its link. */
+const lk = { src: '', q: '', posts: null };
+const LK_START = [['/team-tiers', 'Weekly team tiers', 'Every offense against every defense, updated each Tuesday'],
+  ['/scores', 'Scores and Pick\'em', 'This week\'s games, the model\'s picks and your record against it'],
+  ['/power-rankings', 'Power rankings', 'All 32 teams from results and roster strength'],
+  ['/player-ratings', 'Top players right now', 'Every position, rated from this season\'s play'],
+  ['/contracts', 'Contracts explained', 'Recent deals and what is really guaranteed'],
+  ['/compare', 'Compare players', 'Any two players side by side'],
+  ['/?signup=1', 'The Cap Sheet', 'One short email a week: the moves that mattered and one chart. Free.']];
+const lkSafe = p => typeof p === 'string' && /^\/(?!\/)[\w\-\/.?=&%]*$/.test(p) ? p : null;
+function lkItem(path, title, sub, extra) {
+  const full = /^\/\?/.test(path);   // a link with a query (the signup) loads the page so its ?signup=1 runs
+  return `<li data-s="${esc((title + ' ' + sub + ' ' + path).toLowerCase())}"><a href="${esc(path)}"${full ? ' target="_self"' : ''} data-lk="${esc(path)}"><b>${esc(title)}</b><span>${extra || ''}${esc(sub)}</span><i aria-hidden="true">›</i></a></li>`;
+}
+function renderLinks() {
+  if (!$('#lk-start')) return;
+  const name = { instagram: 'Instagram', tiktok: 'TikTok' }[lk.src];
+  $('#lk-eyebrow').textContent = name ? `From PlainStats on ${name}` : 'Link in bio';
+  $('#lk-start').innerHTML = LK_START.map(([p, t, d]) => lkItem(p, t, d)).join('');
+  if (lk.posts === null) {
+    lk.posts = [];
+    fetch('data/links.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : { posts: [] }).then(j => { lk.posts = Array.isArray(j.posts) ? j.posts : []; renderLinks(); }).catch(() => {});
+  }
+  const today = new Date(), shown = lk.posts
+    .filter(x => x && lkSafe(x.path) && x.title && (!lk.src || !x.platform || x.platform === 'both' || x.platform === lk.src))
+    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 20);
+  $('#lk-posts').innerHTML = shown.length ? '<h2 class="sec">Recent posts</h2><ul class="lk-list" id="lk-recent">' + shown.map(x => {
+    const d = x.date ? new Date(x.date + 'T12:00:00') : null, ok = d && !isNaN(d);
+    const when = ok ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' · ' : '';
+    const isNew = ok && (today - d) / 864e5 < 7 ? '<em class="lk-new">New · </em>' : '';
+    return lkItem(x.path, x.title, 'plainstatsnfl.com' + x.path.replace(/\?.*$/, ''), isNew + esc(when));
+  }).join('') + '</ul>' : '';
+  $('#lk-q').value = lk.q;
+  lkFilter();
+}
+function lkFilter() {
+  const toks = lk.q.toLowerCase().split(/\s+/).filter(Boolean); let n = 0;
+  $$('#v-links .lk-list li').forEach(li => { const ok = toks.every(t => li.dataset.s.includes(t)); li.hidden = !ok; if (ok) n++; });
+  $('#lk-none').hidden = n > 0;
+}
+document.addEventListener('input', e => { if (e.target && e.target.id === 'lk-q') { lk.q = e.target.value; lkFilter(); } });
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('[data-lk]'); if (!a) return;
+  psTrack('links_click', { link_url: a.dataset.lk, source: lk.src || 'direct', from_page: location.pathname });
+}, true);
 function renderTD() {
   if (!$('#td-list')) return;
   if (!GSCHED) { loadGames().then(() => { if (!$('#v-deadline').hidden) renderTD(); }).catch(() => {}); }
@@ -6460,7 +6541,7 @@ const SPAGES = [['scores', 'Scores and schedule', 'games week results score sche
   ['awards', 'Awards watch', 'mvp opoy dpoy rookie of the year coach comeback'], ['analytics', 'Cap lab', 'heatmap cap health doppelganger analytics'],
   ['bigboard', 'Draft big board', '2027 prospects college rankings'], ['mock', 'Mock draft', 'draft order first round picks'], ['rookie-pay', 'Rookie pay scale', 'draft slot value'],
   ['draft-guide', 'How the draft board works', 'grades method'], ['builder', 'Roster builder', 'build lineup play gm'], ['trade', 'Trade checker', 'trade cap'], ['deadline', 'Trade deadline tracker', 'trades deadline deals picks cap'], ['compare', 'Compare players', 'side by side'],
-  ['news', 'News', 'latest moves trades signings injuries'], ['news-injuries', 'Injury news', 'injured out hurt'], ['learn', 'Cap 101', 'glossary explain terms'], ['about', 'About PlainStats', 'contact sources']];
+  ['news', 'News', 'latest moves trades signings injuries'], ['news-injuries', 'Injury news', 'injured out hurt'], ['learn', 'Cap 101', 'glossary explain terms'], ['about', 'About PlainStats', 'contact sources'], ['links', 'Links from our posts', 'instagram tiktok link in bio social posts carousel']];
 const sNorm = x => String(x || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[.'’]/g, '');
 const sScore = (hay, q, toks) => { const h = sNorm(hay); if (h.startsWith(q)) return 3; if (h.includes(' ' + q) || h.includes(q)) return 2; return toks.every(t => h.includes(t)) ? 1 : 0; };
 function searchEverything(raw) {
@@ -6928,14 +7009,16 @@ const ADS = {
     dlg.innerHTML = '<div class="ps-dlg-h"><h2 id="ps-dlg-t">Share this</h2><button type="button" class="ps-dlg-x" data-a="close" aria-label="Close">&times;</button></div>'
       + '<div class="ps-dlg-img"><img alt="Preview of the image you are about to share"></div>'
       + '<p class="note ps-dlg-note">The image includes a small PlainStats watermark.</p>'
-      + '<div class="ps-dlg-a"><button type="button" class="btn" data-a="share" hidden>Share</button><button type="button" class="btn ghost" data-a="save">Save image</button><button type="button" class="btn ghost" data-a="copy" hidden>Copy image</button><button type="button" class="btn ghost" data-a="link">Copy link</button></div>';
+      + '<div class="ps-dlg-a"><button type="button" class="btn" data-a="share" hidden>Share</button><button type="button" class="btn ghost" data-a="save">Save image</button><button type="button" class="btn ghost" data-a="copy" hidden>Copy image</button><button type="button" class="btn ghost" data-a="link">Copy link</button><button type="button" class="btn ghost" data-a="end">Make end slide</button></div>';
     document.body.appendChild(dlg);
     dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
     dlg.addEventListener('close', () => { if (curUrl) { URL.revokeObjectURL(curUrl); curUrl = ''; } });
     return dlg;
   }
-  function openPreview({ blob, heading }) {
-    const file = new File([blob], 'plainstats-' + slugOf(heading) + '.png', { type: 'image/png' });
+  let lastHeading = '';
+  function openPreview({ blob, heading, end, path }) {
+    if (!end) lastHeading = heading;
+    const file = new File([blob], 'plainstats-' + slugOf(end ? 'end-slide' + (path || '') : heading) + '.png', { type: 'image/png' });
     loadPageMap();
     const link = () => shareUrl(curKey(), 'image');
     const d = ensureDialog();
@@ -6946,10 +7029,17 @@ const ADS = {
     const canCopy = !!(navigator.clipboard && window.ClipboardItem);
     d.querySelector('[data-a="share"]').hidden = !canShare;
     d.querySelector('[data-a="copy"]').hidden = !canCopy;
+    d.querySelector('[data-a="end"]').hidden = !!end || !window.psEndSlide;
+    d.querySelector('.ps-dlg-note').textContent = end ? 'Save this as the last slide of the carousel. It names the exact page, so every post can be traced to its link.' : 'The image includes a small PlainStats watermark.';
     d.onclick = async e => {
       const a = e.target.closest('[data-a]') && e.target.closest('[data-a]').dataset.a;
       if (!a) return;
       if (a === 'close') return d.close();
+      if (a === 'end') {
+        try { openPreview(await window.psEndSlide({ key: curKey(), heading: lastHeading })); }
+        catch (err) { console.error('end slide failed', err); toast('Could not make the end slide. Try again.'); }
+        return;
+      }
       try {
         if (a === 'share') await navigator.share({ files: [file], title: heading, text: heading + ' ' + link() });
         if (a === 'copy') { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('Image copied'); }
@@ -6958,8 +7048,8 @@ const ADS = {
         psTrack('share', { method: 'image_' + a, content_type: 'panel', item_id: slugOf(heading) });
       } catch (err) { if (!err || err.name !== 'AbortError') toast('That did not work here. Try Save image instead.'); }
     };
-    d.querySelector('#ps-dlg-t').textContent = heading.length > 60 ? 'Share this' : 'Share: ' + heading;
-    if (typeof d.showModal === 'function') d.showModal();
+    d.querySelector('#ps-dlg-t').textContent = end ? 'Carousel end slide' : heading.length > 60 ? 'Share this' : 'Share: ' + heading;
+    if (typeof d.showModal === 'function') { if (!d.open) d.showModal(); }
     else { const l = document.createElement('a'); l.href = curUrl; l.download = file.name; l.click(); }
   }
 
@@ -7134,6 +7224,61 @@ const ADS = {
     ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(800, 46); ctx.fillText('plainstatsnfl.com', CW - X, CH - 36);
     return await new Promise((ok, no) => cv.toBlob(b => (b ? ok(b) : no(new Error('empty image'))), 'image/png'));
   }
+
+
+  // ---- carousel end slide: "See the full table" and the exact page, so a post can always be traced to one address ----
+  // Same 1080x1350 size and dark look as the cards. The address is the page the image came from (pathOf the current key), which is
+  // also what the post's entry in data/links.json should use, so a fan who taps the bio link finds the same address on /links.
+  async function endDraw({ title, path, kind }) {
+    const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH;
+    const ctx = cv.getContext('2d'), X = 80, W = CW - 2 * X;
+    ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    ctx.fillStyle = '#0D1117'; ctx.fillRect(0, 0, CW, CH);
+    ctx.fillStyle = MID; ctx.fillRect(0, 0, CW, 14);
+    // brand
+    ctx.fillStyle = MID; ctx.beginPath(); ctx.arc(X + 14, 118, 14, 0, 7); ctx.fill();
+    ctx.fillStyle = '#F2F5F9'; ctx.font = font(800, 46); ctx.fillText('PlainStats', X + 42, 134);
+    // ask
+    ctx.fillStyle = MID; ctx.font = font(700, 50); ctx.fillText(kind === 'page' ? 'See the full table' : 'See the full page', X, 330);
+    ctx.fillStyle = '#F2F5F9';
+    let tpx = 92;   // largest size at which the whole title fits on two lines
+    for (; tpx > 52; tpx -= 4) { ctx.font = font(800, tpx); if (wrapLines(ctx, title, W, 9).length <= 2) break; }
+    ctx.font = font(800, tpx);
+    let y = 330 + tpx + 24;
+    wrapLines(ctx, title, W, 2).forEach(l => { ctx.fillText(l, X, y); y += tpx * 1.08; });
+    // the address, in a box
+    const segs = path === '/' ? ['/'] : path.split(/(?=\/)/), host = 'plainstatsnfl.com';
+    const lines = []; let cur = host;
+    ctx.font = font(800, 60);
+    segs.forEach(sg => { if (ctx.measureText(cur + sg).width > W - 80 && cur) { lines.push(cur); cur = sg; } else cur += sg; });
+    lines.push(cur);
+    const upx = Math.min(...lines.map(l => fitText(ctx, l, 800, 60, 36, W - 80))), boxH = 70 + lines.length * upx * 1.2 + 40, boxY = Math.max(y + 40, 700);
+    ctx.fillStyle = '#161D29'; rrect(ctx, X, boxY, W, boxH, 28); ctx.fill();
+    ctx.strokeStyle = MID; ctx.lineWidth = 3; rrect(ctx, X, boxY, W, boxH, 28); ctx.stroke();
+    ctx.fillStyle = '#8B95A5'; ctx.font = font(600, 30); ctx.fillText('Go to', X + 40, boxY + 58);
+    ctx.fillStyle = '#FFFFFF'; ctx.font = font(800, upx);
+    lines.forEach((l, i) => ctx.fillText(l, X + 40, boxY + 70 + (i + 1) * upx * 1.12));
+    // how to get there from the app
+    let fy = boxY + boxH + 90;
+    ctx.fillStyle = '#F2F5F9'; ctx.font = font(700, 44); ctx.fillText('Tap the link in our bio', X, fy);
+    ctx.fillStyle = '#8B95A5'; ctx.font = font(500, 34);
+    ctx.fillText(wrapLines(ctx, 'This post is at the top. Free, no sign-up.', W, 1)[0], X, fy + 56);
+    // footer
+    ctx.fillStyle = '#2A3140'; ctx.fillRect(X, CH - 120, W, 2);
+    const date = (() => { try { return typeof D !== 'undefined' && D && D.asOf ? new Date(D.asOf + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : ''; } catch (e) { return ''; } })();
+    ctx.fillStyle = '#8B95A5'; ctx.font = font(500, 28); ctx.fillText(date ? 'Data as of ' + date : 'NFL stats in plain English', X, CH - 60);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(800, 40); ctx.fillText(host, CW - X, CH - 58);
+    return await new Promise((ok, no) => cv.toBlob(b => (b ? ok(b) : no(new Error('empty image'))), 'image/png'));
+  }
+  // key: the page the image came from. heading: the card's name or the panel's heading.
+  window.psEndSlide = async ({ key, heading }) => {
+    const card = /^(p|d|team)-/.test(key || '');
+    const page = (PTITLE[SUBOF[key] ? SUBOF[key].parent : key] || (document.title || '').replace(/\s*·.*$/, '')).trim();   // a sub-page uses its section's title
+    const title = card ? heading : page && heading && page.toLowerCase() !== heading.toLowerCase() && !/^PlainStats/.test(page) ? page + ': ' + heading : heading || page || 'PlainStats';
+    const path = pathOf(key || 'home');
+    psTrack('share', { method: 'end_slide_make', content_type: card ? 'card' : 'page', item_id: path });
+    return { blob: await endDraw({ title, path, kind: card ? 'card' : 'page' }), heading: title, end: true, path };
+  };
 
   // ---- buttons ----
   async function make(key, btn) {

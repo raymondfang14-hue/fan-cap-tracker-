@@ -12,7 +12,8 @@ VIEWS = ['/', '/news', '/team-ratings', '/team-tiers', '/team/kc', '/contracts',
          # one sub-page from each section tab, and team sub-pages
          '/team-ratings/roster-ratings', '/team-tiers/offense-vs-defense', '/power-rankings/results-vs-roster', '/standings/playoff-seeds', '/projections/playoff-odds',
          '/contracts/all-players', '/best-worst-contracts/all', '/rookie-contracts/all', '/cap-lab/spending-heatmap', '/free-agency/all', '/free-agency/franchise-tags',
-         '/big-board/full', '/mock-draft/pick-owners', '/rookie-pay/savings', '/awards/how-it-works', '/team/kc/depth-chart', '/team/kc/roster']
+         '/big-board/full', '/mock-draft/pick-owners', '/rookie-pay/savings', '/awards/how-it-works', '/team/kc/depth-chart', '/team/kc/roster',
+         '/links/instagram']
 
 SHARE_VIEWS = ['/team-ratings', '/team-tiers/offense-vs-defense', '/contracts/all-players', '/power-rankings', '/big-board/full']   # views whose charts and tables must each get a "Share this" button
 SIZES = [(390, 844, 'phone'), (1280, 900, 'desktop')]
@@ -86,6 +87,14 @@ async def main(args):
                             problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
                     except Exception:
                         problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
+                    try:  # the carousel end slide from the same preview: same size, names the page
+                        await page.evaluate("document.querySelector('.ps-dlg[open] [data-a=end]').click()")
+                        await page.wait_for_function("document.querySelector('#ps-dlg-t').textContent === 'Carousel end slide' && document.querySelector('.ps-dlg[open] img').complete && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=8000)
+                        wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
+                        if wh != [1080, 1350]:
+                            problems.append(f'{size}/{scheme} {v}: end slide is {wh[0]}x{wh[1]}, expected 1080x1350')
+                    except Exception:
+                        problems.append(f'{size}/{scheme} {v}: "Make end slide" did not make a slide')
                 if v == '/stats':  # the Season stats table must fill with player rows
                     try:
                         await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)

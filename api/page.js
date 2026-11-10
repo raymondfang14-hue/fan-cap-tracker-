@@ -46,7 +46,8 @@ function pageMeta(path, C) {
   const route = meta.ROUTES.find(([, p]) => p === path);
   if (route && route[0] !== 'home') {
     const k = route[0];
-    return { title: (meta.PTITLE[k] || 'PlainStats') + ' · PlainStats', desc: meta.PDESC[k] || DEFAULT_DESC, canon: SITE + path };
+    // /links/instagram and /links/tiktok are the same page as /links (they only exist so each platform counts as its own path)
+    return { title: (meta.PTITLE[k] || 'PlainStats') + ' · PlainStats', desc: meta.PDESC[k] || DEFAULT_DESC, canon: SITE + (/^links-/.test(k) ? '/links' : path) };
   }
   let m = path.match(/^\/team\/([a-z]{2,3})(?:\/([a-z-]+))?$/);
   if (m && teams[m[1]]) {
