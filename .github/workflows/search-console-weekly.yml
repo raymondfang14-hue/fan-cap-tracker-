@@ -1,4 +1,5 @@
-# Weekly Search Console check: which /players/<name> pages gained Google impressions this week.
+# Weekly Search Console check: which /players/<name> pages gained Google impressions this week,
+# the top searches behind them and their click rates.
 # Runs tools/gsc_report.py and posts the report as a GitHub issue labelled "search-console" (and in the run summary).
 #
 # One-time setup (see the top of tools/gsc_report.py):
