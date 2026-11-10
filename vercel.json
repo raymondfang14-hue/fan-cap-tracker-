@@ -39,6 +39,26 @@
       ],
       "destination": "https://www.plainstatsnfl.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/ig",
+      "destination": "/links/instagram?utm_source=instagram&utm_medium=social&utm_campaign=bio",
+      "permanent": false
+    },
+    {
+      "source": "/tt",
+      "destination": "/links/tiktok?utm_source=tiktok&utm_medium=social&utm_campaign=bio",
+      "permanent": false
+    },
+    {
+      "source": "/ig/:path*",
+      "destination": "/:path*?utm_source=instagram&utm_medium=social&utm_campaign=post",
+      "permanent": false
+    },
+    {
+      "source": "/tt/:path*",
+      "destination": "/:path*?utm_source=tiktok&utm_medium=social&utm_campaign=post",
+      "permanent": false
     }
   ],
   "rewrites": [
@@ -339,6 +359,18 @@
     },
     {
       "source": "/game/:id",
+      "destination": "/"
+    },
+    {
+      "source": "/links",
+      "destination": "/"
+    },
+    {
+      "source": "/links/instagram",
+      "destination": "/"
+    },
+    {
+      "source": "/links/tiktok",
       "destination": "/"
     }
   ]

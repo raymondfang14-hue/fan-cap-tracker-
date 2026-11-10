@@ -1,0 +1,4 @@
+{
+  "_how": "Posts shown on plainstatsnfl.com/links (the /ig and /tt bio links land there), newest first. Add one line per carousel or video at the top of posts: date (YYYY-MM-DD), title (what the post is about), path (the page the post's end slide names, e.g. /team-tiers) and platform (instagram, tiktok or both).",
+  "posts": []
+}
