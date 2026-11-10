@@ -87,7 +87,7 @@ jobs:
         run: |
           git config user.name 'PlainStats refresh'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A data players teams draft og-data sitemap.xml tools/seo-nav.html index.html
+          git add -A data players teams draft learn og-data sitemap.xml tools/seo-nav.html index.html
           git reset -q data/__pycache__ 2>/dev/null || true
           if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
           summary=$(sed -n '/^== summary/,$p' "$RUNNER_TEMP/refresh.log" | sed '1d')
@@ -99,7 +99,7 @@ jobs:
             git fetch -q origin main && git reset -q --hard origin/main
             tools/refresh.sh "$MODE" "$RUNNER_TEMP/nflverse" > "$RUNNER_TEMP/retry.log" 2>&1; c=$?
             [ $c -le 1 ] || { echo "rebuild failed the checks (exit $c); not pushing"; exit 1; }
-            git add -A data players teams draft og-data sitemap.xml tools/seo-nav.html index.html
+            git add -A data players teams draft learn og-data sitemap.xml tools/seo-nav.html index.html
             git reset -q data/__pycache__ 2>/dev/null || true
             git diff --cached --quiet && exit 0
             git commit -q -m "nflverse refresh ($MODE), $(date -u +%Y-%m-%d)" -m "$summary"
