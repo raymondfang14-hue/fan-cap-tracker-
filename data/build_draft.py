@@ -30,7 +30,7 @@ import json, re, sys, pathlib
 
 HERE = pathlib.Path(__file__).parent
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / 'draft.json'
-ASOF = '2026-11-03'
+ASOF = '2026-11-10'
 STATS_THRU = '2026-10-24'
 BOARD_DATES = {'w': '2026-10-20', 'b': '2026-10-21'}
 
