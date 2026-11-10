@@ -179,6 +179,7 @@ doc = {
    {'orig': 'LAR', 'own': 'CLE', 'note': 'Myles Garrett trade'},
    {'orig': 'DAL', 'own': 'NYJ', 'swap': 'GB', 'note': 'Quinnen Williams trade: the Jets get the earlier of the Cowboys\' own pick and the Packers\' pick Dallas holds'},
    {'orig': 'GB', 'own': 'DAL', 'swap': 'DAL', 'note': 'Micah Parsons trade'},
+   {'orig': 'JAX', 'own': 'PHI', 'note': 'Jordan Davis trade'},
  ],
  'sources': [
    ['WalterFootball 2027 big board', 'https://walterfootball.com/nfldraftbigboard2027.php'],

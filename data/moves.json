@@ -1,6 +1,104 @@
 {
- "asOf": "2026-11-09",
+ "asOf": "2026-11-10",
  "moves": [
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "PHI",
+    "JAX"
+   ],
+   "players": [
+    "Jordan Davis"
+   ],
+   "head": "Jaguars acquire DT Jordan Davis from the Eagles for a 2027 first-round pick and a 2029 second-round pick",
+   "plain": "Jacksonville pays a first and a second for the Eagles' defensive tackle, who signed a three-year, $78M extension in March that runs through 2029. Pro Football Rumors reports the Eagles will carry barely $3M in 2026 dead money for sending him out.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jaguars-to-acquire-dt-jordan-davis-from-eagles",
+   "deal": {
+    "JAX": {
+     "players": [
+      {
+       "name": "Jordan Davis",
+       "gid": "00-0037073",
+       "from": "PHI"
+      }
+     ]
+    },
+    "PHI": {
+     "picks": [
+      "2027 1st-round pick (from JAX)",
+      "2029 2nd-round pick (from JAX)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "NO",
+    "JAX"
+   ],
+   "players": [
+    "Davon Godchaux"
+   ],
+   "head": "Jaguars acquire DT Davon Godchaux from the Saints for a conditional 2028 sixth-round pick",
+   "plain": "Jacksonville adds a veteran defensive tackle for a conditional late pick. The reports we found do not state his contract, so the site keeps showing \"Contract being verified\" for him.",
+   "source": "Pro Football Rumors (2026 NFL Trades; NFL.com transactions agrees)",
+   "url": "https://www.profootballrumors.com/2026/11/2026-nfl-trades",
+   "deal": {
+    "JAX": {
+     "players": [
+      {
+       "name": "Davon Godchaux",
+       "gid": "00-0033860",
+       "from": "NO"
+      }
+     ]
+    },
+    "NO": {
+     "picks": [
+      "conditional 2028 6th-round pick (from JAX)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "NYJ",
+    "DET"
+   ],
+   "players": [
+    "Andre Cisco"
+   ],
+   "head": "Lions acquire S Andre Cisco from the Jets for a 2028 sixth-round pick",
+   "plain": "Detroit gets a safety on a one-year, $2.5M deal and New York gets a late pick. Pro Football Rumors says the Jets save $1.75M and keep $500K in dead money.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jets-to-trade-s-andre-cisco-to-lions",
+   "deal": {
+    "DET": {
+     "players": [
+      {
+       "name": "Andre Cisco",
+       "gid": "00-0036941",
+       "from": "NYJ"
+      }
+     ]
+    },
+    "NYJ": {
+     "picks": [
+      "2028 6th-round pick (from DET)"
+     ],
+     "dead": 500000
+    }
+   }
+  },
   {
    "iso": "2026-11-09",
    "date": "Nov 9",
