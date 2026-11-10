@@ -1,8 +1,11 @@
-"""Weekly Search Console report: which /players/<name> pages gained impressions.
+"""Weekly Search Console report: which /players/<name> pages gained impressions, and which searches bring them.
 
-Compares the last 7 days that Search Console has data for (it runs about 3 days behind) with the 7 days before, per page,
-and writes a Markdown report: the biggest gainers in impressions, pages showing up for the first time, and the biggest drops.
-It reads only our own site's Search Console numbers.
+Compares the last 7 days that Search Console has data for (it runs about 3 days behind) with the 7 days before and writes
+a Markdown report: totals with the click rate, the top searches that show a player page (with their change, click rate and
+the page Google showed), searches seen often but rarely clicked (the ones titles and descriptions should answer), then per
+page the biggest gainers in impressions, pages showing up for the first time and the biggest drops, each with its click
+rate and its top search. It reads only our own site's Search Console numbers. Google leaves rare searches out of the
+per-search numbers for privacy, so search totals come in below page totals.
 
 Run by .github/workflows/search-console-weekly.yml (Monday mornings), which posts the report as a GitHub issue.
 Needs:
@@ -38,19 +41,21 @@ def token():
     return cred.token
 
 
-def query(tok, site, start, end):
-    """Clicks, impressions and position per /players/ page for start..end (inclusive)."""
+def query(tok, site, start, end, dims=('page',)):
+    """Clicks, impressions and position on /players/ pages for start..end (inclusive), keyed by the dims values
+    (one value: a string; several, e.g. ('query', 'page'): a tuple)."""
     url = API.format(site=urllib.parse.quote(site, safe=''))
     rows, at = {}, 0
     while True:
-        body = {'startDate': start.isoformat(), 'endDate': end.isoformat(), 'dimensions': ['page'], 'rowLimit': 25000, 'startRow': at,
+        body = {'startDate': start.isoformat(), 'endDate': end.isoformat(), 'dimensions': list(dims), 'rowLimit': 25000, 'startRow': at,
                 'dimensionFilterGroups': [{'filters': [{'dimension': 'page', 'operator': 'contains', 'expression': '/players/'}]}]}
         req = urllib.request.Request(url, data=json.dumps(body).encode(), method='POST',
                                      headers={'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json'})
         with urllib.request.urlopen(req, timeout=60) as r:
             got = json.load(r).get('rows', [])
         for x in got:
-            rows[x['keys'][0]] = {'clicks': x['clicks'], 'imp': x['impressions'], 'pos': x['position']}
+            k = x['keys'][0] if len(dims) == 1 else tuple(x['keys'])
+            rows[k] = {'clicks': x['clicks'], 'imp': x['impressions'], 'pos': x['position']}
         if len(got) < 25000:
             return rows
         at += len(got)
@@ -61,33 +66,104 @@ def name_of(url):
     return slug.replace('.html', '').replace('-', ' ').title()
 
 
-def report(now, prev, start, end, top):
+ZERO = {'clicks': 0, 'imp': 0, 'pos': None}
+MIN_IMP = 20      # "seen but rarely clicked": searches with at least this many impressions ...
+LOW_CTR = 0.01    # ... and a click rate below this
+
+
+def ctr(r):
+    return r['clicks'] / r['imp'] if r['imp'] else None
+
+
+def pct(x):
+    return '–' if x is None else f'{x * 100:.1f}%'
+
+
+def pos(r):
+    return f"{r['pos']:.1f}" if r['pos'] else '–'
+
+
+def cell(text):
+    """A search as typed, safe inside a Markdown table cell."""
+    return str(text).replace('|', '\\|').replace('\n', ' ')
+
+
+def page_link(u):
+    path = urllib.parse.urlparse(u).path
+    return f'[{name_of(u)}](https://plainstatsnfl.com{path})'
+
+
+def top_by_page(pairs):
+    """The search with the most impressions for each page, from {(query, page): row}."""
+    best = {}
+    for (q, u), r in pairs.items():
+        if r['imp'] > best.get(u, ('', ZERO))[1]['imp']:
+            best[u] = (q, r)
+    return best
+
+
+def top_page_by_query(pairs):
+    """The page with the most impressions for each search, from {(query, page): row}."""
+    best = {}
+    for (q, u), r in pairs.items():
+        if r['imp'] > best.get(q, ('', ZERO))[1]['imp']:
+            best[q] = (u, r)
+    return best
+
+
+def report(now, prev, qnow, qprev, pairs, start, end, top):
     pages = set(now) | set(prev)
     diff = []
     for u in pages:
-        a, b = now.get(u, {'clicks': 0, 'imp': 0, 'pos': None}), prev.get(u, {'clicks': 0, 'imp': 0, 'pos': None})
+        a, b = now.get(u, ZERO), prev.get(u, ZERO)
         diff.append((a['imp'] - b['imp'], u, a, b))
     up = sorted([d for d in diff if d[0] > 0 and d[3]['imp'] > 0], key=lambda d: -d[0])[:top]
     new = sorted([d for d in diff if d[3]['imp'] == 0 and d[2]['imp'] > 0], key=lambda d: -d[0])[:top]
     down = sorted([d for d in diff if d[0] < 0], key=lambda d: d[0])[:10]
-    ti, pi = sum(x['imp'] for x in now.values()), sum(x['imp'] for x in prev.values())
-    tc, pc = sum(x['clicks'] for x in now.values()), sum(x['clicks'] for x in prev.values())
-    pos = lambda r: f"{r['pos']:.1f}" if r['pos'] else '–'
+    tot = lambda rows: {'clicks': sum(x['clicks'] for x in rows.values()), 'imp': sum(x['imp'] for x in rows.values())}
+    t, p = tot(now), tot(prev)
+    search_of, page_of = top_by_page(pairs), top_page_by_query(pairs)
     out = [f'## Player pages in Google search, {start:%b %-d} to {end:%b %-d}',
            '', f'Compared with the 7 days before. Search Console data runs about {LAG} days behind.', '',
            f'- Player pages with impressions: **{len(now)}** (was {len(prev)})',
-           f'- Impressions: **{ti:,}** (was {pi:,}, {ti - pi:+,})',
-           f'- Clicks: **{tc:,}** (was {pc:,}, {tc - pc:+,})', '']
+           f"- Impressions: **{t['imp']:,}** (was {p['imp']:,}, {t['imp'] - p['imp']:+,})",
+           f"- Clicks: **{t['clicks']:,}** (was {p['clicks']:,}, {t['clicks'] - p['clicks']:+,})",
+           f'- Click rate: **{pct(ctr(t))}** (was {pct(ctr(p))})',
+           f'- Searches that showed a player page: **{len(qnow):,}** (was {len(qprev):,})', '']
+
+    def searches(title, note, rows):
+        out.extend([f'### {title}', '', note, ''])
+        if not rows:
+            out.extend(['None this week.', ''])
+            return
+        out.extend(['| Search | Impressions | Change | Clicks | Click rate | Avg. position | Page shown most |',
+                    '|---|---:|---:|---:|---:|---:|---|'])
+        for q, a in rows:
+            b = qprev.get(q, ZERO)
+            u = page_of.get(q, (None,))[0]
+            out.append(f"| {cell(q)} | {a['imp']:,} | {a['imp'] - b['imp']:+,} | {a['clicks']:,} | {pct(ctr(a))} | "
+                       f"{pos(a)} (was {pos(b)}) | {page_link(u) if u else '–'} |")
+        out.append('')
+
+    ranked = sorted(qnow.items(), key=lambda kv: (-kv[1]['imp'], -kv[1]['clicks']))
+    searches('Top searches', 'The searches that showed a player page most often. Google leaves rare searches out, '
+             'so these add up to less than the page totals.', ranked[:top])
+    searches('Seen but rarely clicked',
+             f'Searches with {MIN_IMP}+ impressions and a click rate under {LOW_CTR:.0%}: what people wanted that the '
+             'title and description did not promise.',
+             [kv for kv in ranked if kv[1]['imp'] >= MIN_IMP and ctr(kv[1]) < LOW_CTR][:15])
 
     def table(title, rows):
         out.extend([f'### {title}', ''])
         if not rows:
             out.extend(['None this week.', ''])
             return
-        out.extend(['| Player | Impressions | Change | Clicks | Avg. position |', '|---|---:|---:|---:|---:|'])
+        out.extend(['| Player | Impressions | Change | Clicks | Click rate | Avg. position | Top search |',
+                    '|---|---:|---:|---:|---:|---:|---|'])
         for d, u, a, b in rows:
-            path = urllib.parse.urlparse(u).path
-            out.append(f"| [{name_of(u)}](https://plainstatsnfl.com{path}) | {a['imp']:,} | {d:+,} | {a['clicks']:,} | {pos(a)} (was {pos(b)}) |")
+            q = search_of.get(u)
+            out.append(f"| {page_link(u)} | {a['imp']:,} | {d:+,} | {a['clicks']:,} | {pct(ctr(a))} (was {pct(ctr(b))}) | "
+                       f"{pos(a)} (was {pos(b)}) | {cell(q[0]) + ' (' + format(q[1]['imp'], ',') + ')' if q else '–'} |")
         out.append('')
 
     table('Biggest gains', up)
@@ -110,11 +186,19 @@ def main():
         prev = {u + 'example-one': {'clicks': 2, 'imp': 40, 'pos': 18.2}, u + 'example-two': {'clicks': 0, 'imp': 90, 'pos': 25.0}}
         now = {u + 'example-one': {'clicks': 9, 'imp': 310, 'pos': 9.4}, u + 'example-three': {'clicks': 1, 'imp': 55, 'pos': 30.1},
                u + 'example-two': {'clicks': 0, 'imp': 60, 'pos': 27.3}}
+        pairs = {('example one stats', u + 'example-one'): {'clicks': 7, 'imp': 140, 'pos': 8.1},
+                 ('example one contract', u + 'example-one'): {'clicks': 2, 'imp': 90, 'pos': 6.5},
+                 ('example two', u + 'example-two'): {'clicks': 0, 'imp': 45, 'pos': 26.8},
+                 ('example three injury', u + 'example-three'): {'clicks': 1, 'imp': 30, 'pos': 31.0}}
+        qnow = {q: r for (q, _), r in pairs.items()}
+        qprev = {'example one contract': {'clicks': 2, 'imp': 30, 'pos': 17.9}, 'example two': {'clicks': 0, 'imp': 70, 'pos': 24.2}}
     else:
         site = os.environ.get('GSC_SITE') or 'sc-domain:plainstatsnfl.com'
         tok = token()
         now, prev = query(tok, site, start, end), query(tok, site, pstart, pend)
-    md = report(now, prev, start, end, a.top)
+        qnow, qprev = query(tok, site, start, end, ('query',)), query(tok, site, pstart, pend, ('query',))
+        pairs = query(tok, site, start, end, ('query', 'page'))
+    md = report(now, prev, qnow, qprev, pairs, start, end, a.top)
     if a.out:
         with open(a.out, 'w') as f:
             f.write(md + '\n')
