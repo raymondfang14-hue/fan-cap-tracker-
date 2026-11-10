@@ -61,9 +61,21 @@ def query(tok, site, start, end, dims=('page',)):
         at += len(got)
 
 
+NAMES = None
+
+
 def name_of(url):
-    slug = urllib.parse.urlparse(url).path.rstrip('/').split('/')[-1]
-    return slug.replace('.html', '').replace('-', ' ').title()
+    """The player's name as the site spells it (Tanner McKee, Joe Milton III), from og-data/players.json;
+    the address, title-cased, only for a page that file does not know."""
+    global NAMES
+    if NAMES is None:
+        try:
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'og-data', 'players.json')) as f:
+                NAMES = {k: v.get('t') for k, v in json.load(f).get('cards', {}).items()}
+        except (OSError, ValueError):
+            NAMES = {}
+    slug = urllib.parse.urlparse(url).path.rstrip('/').split('/')[-1].replace('.html', '')
+    return NAMES.get(slug) or slug.replace('-', ' ').title()
 
 
 ZERO = {'clicks': 0, 'imp': 0, 'pos': None}

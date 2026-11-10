@@ -62,9 +62,17 @@ function pageMeta(path, C) {
   }
   m = path.match(/^\/player\/([a-z0-9-]+)-([a-z]{2,3})$/);
   if (m && teams[m[2]]) {
-    const stat = (slugs.p || {})['p-' + m[1] + '-' + m[2]], card = stat && cards.players[stat];
+    const P = slugs.p || {};
+    let key = 'p-' + m[1] + '-' + m[2];
+    if (!P[key]) {
+      // an old address from before a trade (/player/joe-milton-iii-den): find the player under his new team, as the app's
+      // openPending() does; only when exactly one player has that name, so two players who share a name are never mixed up
+      const re = new RegExp('^p-' + m[1] + '-[a-z]{2,3}$'), hits = Object.keys(P).filter(k => re.test(k));
+      if (hits.length === 1) key = hits[0];
+    }
+    const stat = P[key], card = stat && cards.players[stat];
     const name = card ? card.t : m[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const t = teams[m[2]];
+    const t = teams[key.slice(key.lastIndexOf('-') + 1)] || teams[m[2]];
     return {
       title: `${name}, ${t.city} ${t.name} · PlainStats`,
       desc: `${name} of the ${t.city} ${t.name}: contract, season stats and injury report, explained in plain English.`,
