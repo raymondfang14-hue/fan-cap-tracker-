@@ -1,6 +1,358 @@
 {
- "asOf": "2026-11-09",
+ "asOf": "2026-11-11",
  "moves": [
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "MIN",
+    "LV"
+   ],
+   "players": [
+    "Kirk Cousins"
+   ],
+   "head": "Vikings reacquire QB Kirk Cousins from the Raiders for a 2027 third-round pick",
+   "plain": "Cousins goes back to Minnesota, where he played from 2018 to 2023. The Raiders get a third-round pick and no longer owe him a fully guaranteed $10M roster bonus due in March 2027. Las Vegas pays him only about $500K of his 2026 salary; the Vikings cover the rest.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/raiders-to-trade-qb-kirk-cousins-back-to-vikings",
+   "deal": {
+    "MIN": {
+     "players": [
+      {
+       "name": "Kirk Cousins",
+       "gid": "00-0029604",
+       "from": "LV"
+      }
+     ]
+    },
+    "LV": {
+     "picks": [
+      "2027 third-round pick (from MIN)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "KC",
+    "IND"
+   ],
+   "players": [
+    "Josh Downs"
+   ],
+   "head": "Chiefs acquire WR Josh Downs and a 2027 seventh-round pick from the Colts for 2027 fourth- and fifth-round picks",
+   "plain": "Kansas City adds a slot receiver for the second half of the season. Downs is in the last year of his rookie deal, so he can be a free agent after the season. Indianapolis, at 2-7, picks up two mid-round picks.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
+   "deal": {
+    "KC": {
+     "players": [
+      {
+       "name": "Josh Downs",
+       "gid": "00-0038997",
+       "from": "IND"
+      }
+     ],
+     "picks": [
+      "2027 seventh-round pick (from IND)"
+     ]
+    },
+    "IND": {
+     "picks": [
+      "2027 fourth-round pick (from KC)",
+      "2027 fifth-round pick (from KC)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "BUF",
+    "TEN"
+   ],
+   "players": [
+    "Amani Hooker"
+   ],
+   "head": "Bills acquire S Amani Hooker and a 2027 fifth-round pick from the Titans for a 2027 second-round pick",
+   "plain": "Buffalo adds a starting safety under contract through 2028. Tennessee keeps none of the roughly $4.5M left on his 2026 pay. The Bills restructured LT Dion Dawkins' deal to make the cap room; the figures were not reported.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
+   "deal": {
+    "BUF": {
+     "players": [
+      {
+       "name": "Amani Hooker",
+       "gid": "00-0035632",
+       "from": "TEN"
+      }
+     ],
+     "picks": [
+      "2027 fifth-round pick (from TEN)"
+     ]
+    },
+    "TEN": {
+     "picks": [
+      "2027 second-round pick (from BUF)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "SF",
+    "IND"
+   ],
+   "players": [
+    "Keenan Allen"
+   ],
+   "head": "49ers acquire WR Keenan Allen from the Colts for a 2027 sixth-round pick",
+   "plain": "San Francisco adds a veteran receiver with Mike Evans and Deebo Samuel hurt. Allen signed a one-year deal with Indianapolis in August, so he is a free agent again after the season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-to-acquire-wr-keenan-allen",
+   "deal": {
+    "SF": {
+     "players": [
+      {
+       "name": "Keenan Allen",
+       "gid": "00-0030279",
+       "from": "IND"
+      }
+     ]
+    },
+    "IND": {
+     "picks": [
+      "2027 sixth-round pick (from SF)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "DEN",
+    "LAC"
+   ],
+   "players": [
+    "Daiyan Henley"
+   ],
+   "head": "Broncos acquire LB Daiyan Henley from the Chargers for a 2027 fourth-round pick and a 2028 fifth-round pick",
+   "plain": "Denver adds linebacker depth. Henley is in the last year of his rookie deal, and the Broncos owe only the rest of his 2026 salary. The 0-8 Chargers pick up two mid-round picks.",
+   "source": "Pro Football Talk",
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/chargers-trade-daiyan-henley-to-broncos-for-2027-fourth-2028-fifth-round-picks",
+   "deal": {
+    "DEN": {
+     "players": [
+      {
+       "name": "Daiyan Henley",
+       "gid": "00-0038553",
+       "from": "LAC"
+      }
+     ]
+    },
+    "LAC": {
+     "picks": [
+      "2027 fourth-round pick (from DEN)",
+      "2028 fifth-round pick (from DEN)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Trade",
+   "teams": [
+    "BAL",
+    "ATL"
+   ],
+   "players": [
+    "Ryan Neuzil",
+    "Andrew Vorhees"
+   ],
+   "head": "Ravens get C Ryan Neuzil from the Falcons for G Andrew Vorhees and a 2028 sixth-round pick",
+   "plain": "Baltimore has put three centers on injured reserve this season, and Neuzil has started all 38 of his career games at center. Atlanta gets a backup guard and a late pick. Neuzil is a pending free agent.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/falcons-ravens-to-swap-ol-ryan-neuzil-andrew-vorhees",
+   "deal": {
+    "BAL": {
+     "players": [
+      {
+       "name": "Ryan Neuzil",
+       "gid": "00-0036833",
+       "from": "ATL"
+      }
+     ]
+    },
+    "ATL": {
+     "players": [
+      {
+       "name": "Andrew Vorhees",
+       "gid": "00-0038383",
+       "from": "BAL"
+      }
+     ],
+     "picks": [
+      "2028 sixth-round pick (from BAL)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Injury",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Zach Sieler",
+    "Malik Willis"
+   ],
+   "head": "Dolphins put DT Zach Sieler (biceps, season-ending surgery) and QB Malik Willis (groin) on injured reserve",
+   "plain": "Sieler needs surgery on a ruptured biceps and is out for the season. Willis will miss at least four games, so Kyle McCord starts at quarterback in Week 10.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10"
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Injury",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Gardner Minshew",
+    "Michael Wilson"
+   ],
+   "head": "Cardinals put QB Gardner Minshew (elbow) and WR Michael Wilson (neck) on injured reserve",
+   "plain": "Minshew's elbow injury will likely need season-ending surgery, and Wilson is out for the season. Carson Beck is in line to start at quarterback, and Arizona signed QBs Josh Johnson and Joey Aguilar for depth.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10"
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "JAX",
+    "PHI"
+   ],
+   "players": [
+    "Jordan Davis"
+   ],
+   "head": "Jaguars acquire DT Jordan Davis from the Eagles for a 2027 first-round pick and a 2029 second-round pick",
+   "plain": "Jacksonville takes on Davis' three-year, $78M extension signed in March, which runs through 2029. Philadelphia, at 2-7, adds a second 2027 first-round pick. It was the Jaguars' third trade of the day.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jaguars-to-acquire-dt-jordan-davis-from-eagles",
+   "deal": {
+    "JAX": {
+     "players": [
+      {
+       "name": "Jordan Davis",
+       "gid": "00-0037073",
+       "from": "PHI"
+      }
+     ]
+    },
+    "PHI": {
+     "picks": [
+      "2027 first-round pick (from JAX)",
+      "2029 second-round pick (from JAX)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "JAX",
+    "NO"
+   ],
+   "players": [
+    "Davon Godchaux"
+   ],
+   "head": "Jaguars acquire DT Davon Godchaux from the Saints for a conditional 2028 sixth-round pick",
+   "plain": "Godchaux steps in at nose tackle after DaVon Hamilton's season-ending quad injury. He is in the last year of his contract. Per ESPN, the pick becomes a 2027 sixth-rounder if Jacksonville acquires one.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-to-trade-dt-davon-godchaux-to-jaguars",
+   "deal": {
+    "JAX": {
+     "players": [
+      {
+       "name": "Davon Godchaux",
+       "gid": "00-0033860",
+       "from": "NO"
+      }
+     ]
+    },
+    "NO": {
+     "picks": [
+      "2028 sixth-round pick, conditional (from JAX)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Trade",
+   "teams": [
+    "DET",
+    "NYJ"
+   ],
+   "players": [
+    "Andre Cisco"
+   ],
+   "head": "Lions acquire S Andre Cisco from the Jets for a 2028 sixth-round pick",
+   "plain": "Detroit adds safety depth while Kerby Joseph works back from a knee injury. Cisco, 26, had barely played on defense since Week 3 and is in the final year of his contract.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-9",
+   "deal": {
+    "DET": {
+     "players": [
+      {
+       "name": "Andre Cisco",
+       "gid": "00-0036941",
+       "from": "NYJ"
+      }
+     ]
+    },
+    "NYJ": {
+     "picks": [
+      "2028 sixth-round pick (from DET)"
+     ]
+    }
+   }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Puka Nacua"
+   ],
+   "head": "Rams WR Puka Nacua likely headed to injured reserve with knee sprains and turf toe",
+   "plain": "An MRI showed sprained MCL and PCL ligaments in his right knee plus turf toe. Coach Sean McVay said injured reserve is likely, which would cost him at least four games. It does not look season-ending.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/rams-wr-puka-nacua-likely-to-be-placed-on-injured-reserve-with-turf-toe-sprained-mcl-and-pcl"
+  },
   {
    "iso": "2026-11-09",
    "date": "Nov 9",
@@ -122,7 +474,7 @@
     "Jacoby Brissett"
    ],
    "head": "Ravens agree to acquire QB Jacoby Brissett from the Cardinals",
-   "plain": "Baltimore is set to get the 33-year-old backup quarterback, who had fallen to third string in Arizona. The trade is expected to be finalized after Week 9. What Arizona gets back was not reported, so no picks are listed here. Arizona reworked his 2026 deal to make it easier for Baltimore to take on, turning $2.7M of remaining salary into a signing bonus. He is a pending free agent.",
+   "plain": "Baltimore gets the 33-year-old backup quarterback and a 2027 fifth-round pick; Arizona gets a 2027 fourth-round pick and a 2028 seventh-round pick, per NFL.com. Arizona reworked his 2026 deal to make it easier for Baltimore to take on, turning $2.7M of remaining salary into a signing bonus. He is a pending free agent and is expected to start for the Ravens.",
    "source": "Pro Football Rumors",
    "url": "https://www.profootballrumors.com/2026/11/cardinals-restructure-jacoby-brissetts-contract-to-facilitate-ravens-trade",
    "deal": {
@@ -133,6 +485,15 @@
        "gid": "00-0033119",
        "from": "ARI"
       }
+     ],
+     "picks": [
+      "2027 fifth-round pick (from ARI)"
+     ]
+    },
+    "ARI": {
+     "picks": [
+      "2027 fourth-round pick (from BAL)",
+      "2028 seventh-round pick (from BAL)"
      ]
     }
    }
