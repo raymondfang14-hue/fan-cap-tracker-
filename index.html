@@ -1364,6 +1364,34 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .pnews .k{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:2px}
 .pnews p{margin:0;font-size:.92rem;line-height:1.45}
 .pnews a{color:var(--brand);font-weight:600}
+/* Your team on the home page (renderMine) */
+.hm-mine:empty{display:none}
+.mine-empty{display:grid;gap:10px;justify-items:start;padding:18px 20px;border-radius:var(--r-lg);background:var(--surface)}
+.mine-empty p{color:var(--muted);font-size:.92rem}
+#mine-pick{padding:9px 12px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);font:500 .9rem/1.2 var(--body);max-width:100%}
+.mine{display:grid;gap:12px}
+.mine-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.mine-head>div{flex:1 1 180px}
+.mine-head h2 a{color:inherit;text-decoration:none}
+.mine-head h2 a::after{content:" \203A";color:var(--muted)}
+.mine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px}
+.mine-c{display:grid;gap:8px;align-content:start;padding:16px 18px;border-radius:var(--r-lg);background:var(--surface);color:inherit;text-decoration:none;min-width:0}
+.mine-c .k{font-size:.8rem;font-weight:600;color:var(--muted)}
+.mine-c a{color:var(--brand)}
+.mine-game{display:flex;gap:10px;align-items:center;text-decoration:none;color:inherit!important}
+.mine-game b{display:block;font:650 1rem/1.25 var(--display)}
+.mine-game small{color:var(--muted);font-size:.84rem}
+.mine-pick{font-size:.88rem}.mine-pick.good b{color:var(--good)}.mine-pick.bad b{color:var(--bad)}
+.mine-cap b{font:700 1.7rem/1.1 var(--display);letter-spacing:-.02em;color:var(--good)}
+.mine-cap small{color:var(--muted);font-size:.84rem}
+.mine-cap:focus-visible,.mine-game:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.mine-inj,.mine-news{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mine-inj li{display:flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline;font-size:.9rem}
+.mine-inj button{all:unset;cursor:pointer;color:var(--brand);font-weight:600}
+.mine-inj button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.mine-inj .st{flex-basis:100%;color:var(--muted);font-size:.84rem}.mine-inj .st.bad{color:var(--bad);font-weight:600}
+.mine-news li{display:grid;gap:2px;font-size:.9rem;line-height:1.35}
+.mine-news a{color:var(--fg)!important;text-decoration:none;font-weight:600}.mine-news a:hover{text-decoration:underline}
 </style>
 
 <header class="gn" id="gn">
@@ -1411,6 +1439,8 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
     </div>
     <p class="hm-try" id="hm-try">Try <button type="button" data-try="Patrick Mahomes">Patrick Mahomes</button> <button type="button" data-try="Chiefs">Chiefs</button> <button type="button" data-try="Mock draft">Mock draft</button> <button type="button" data-try="Dead money">Dead money</button></p>
   </div>
+
+  <section class="hm-block hm-mine" id="hm-mine" aria-labelledby="h-mine"></section>
 
   <section class="hm-block" aria-labelledby="h-pop">
     <h2 class="hm-sec" id="h-pop">Popular</h2>
@@ -4040,6 +4070,59 @@ function renderDeadline() {
     : `<span class="eyebrow" style="color:#C9DAF2">Trade deadline</span><b>The ${dstr} deadline has passed</b><span>Teams can sign free agents but cannot trade until the new league year.</span>`;
 }
 
+/* ===== Your team on the home page: the favorite team (store 'fav', set here or with "Make this my team" on a team page) gets its
+   next game and the model's pick, this week's injury report for that game (data/gameday.json), cap room and its latest news.
+   Without a favorite the block is a one-line team picker. Games data loads in the background; the block redraws when it arrives. ===== */
+const MINE_ST = { Out: 'Out', Doubtful: 'Doubtful', Questionable: 'Questionable' };
+function teamPickerHTML(sel) {
+  return `<select id="mine-pick" aria-label="Your team"><option value="">${sel ? 'No favorite team' : 'Pick your team'}</option>${[...TEAMS].sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name)).map(t => `<option value="${t.id}"${t.id === sel ? ' selected' : ''}>${esc(t.city)} ${esc(t.name)}</option>`).join('')}</select>`;
+}
+function mineGameHTML(id) {
+  if (!GSCHED) return '<p class="note">Loading the schedule…</p>';
+  const g = GSCHED.games.find(x => !gFinal(x) && (x[4] === id || x[5] === id));
+  if (!g) return '<p class="note">No games left on the regular-season schedule.</p>';
+  const [gid, wk, date, time, a, h] = g, home = h === id, opp = home ? a : h, cur = gCurWeek();
+  const K = gPick(gid), rec = GPROJ && GPROJ.teams[opp], recS = rec ? ` (${rec.w}-${rec.l}${rec.t ? '-' + rec.t : ''})` : '';
+  let pick = '';
+  if (K) {
+    const pTeam = K.p >= 0.5 ? h : a, pc = Math.round(Math.max(K.p, 1 - K.p) * 100), mine = pTeam === id;
+    pick = `<p class="mine-pick ${mine ? 'good' : 'bad'}">Model pick: <b>${esc(TB[pTeam].name)} ${pc}%</b> · projected ${esc(TB[a].name)} ${K.as}, ${esc(TB[h].name)} ${K.hs}${K.inj ? ' · injuries counted' : ''}</p>`;
+  }
+  const bye = wk > cur ? `<p class="note">Bye in week ${cur}.</p>` : '';
+  return `<span class="k">Next game · week ${wk}</span><a class="mine-game" href="/game/${gid.toLowerCase().replace(/_/g, '-')}">${crest(opp, 30)}<span><b>${home ? 'vs.' : 'at'} the ${esc(TB[opp].city)} ${esc(TB[opp].name)}${recS}</b><small>${esc(new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }))} · ${esc(gTime(time))}</small></span></a>${pick}${bye}`;
+}
+function mineInjHTML(id) {
+  if (!GSCHED) return '';
+  const g = GSCHED.games.find(x => !gFinal(x) && (x[4] === id || x[5] === id)), G = g && GDAY && GDAY.games[g[0]];
+  if (!G) return `<span class="k">Injury report</span><p class="note">The official report for ${g ? 'week ' + g[1] : 'the next game'} comes out during game week.</p>`;
+  const rows = ((G.inj || {})[id] || []).slice().sort((x, y) => (y[7] || 0) - (x[7] || 0));
+  if (!rows.length) return `<span class="k">Injury report · week ${g[1]}</span><p class="note">Nobody listed so far this week.</p>`;
+  const li = rows.slice(0, 5).map(([n, pos, stt, inj, pr, gidP]) => { const q = gidP && plOf(gidP);
+    return `<li>${q ? `<button type="button" data-p="${q.i}">${esc(n)}</button>` : `<b>${esc(n)}</b>`} <span class="note">${esc(pos)}</span><span class="st ${stt === 'Out' ? 'bad' : ''}">${esc(MINE_ST[stt] || (pr || 'Listed').replace(' Participation', '').replace('Did Not Participate', 'Did not practice').replace(/^Limited$/, 'Limited in practice').replace(/^Full$/, 'Full practice'))}${inj ? ' · ' + esc(inj.toLowerCase()) : ''}</span></li>`; }).join('');
+  return `<span class="k">Injury report · week ${g[1]}</span><ul class="mine-inj">${li}</ul>${rows.length > 5 ? `<p class="note">${rows.length - 5} more on the <a href="/game/${g[0].toLowerCase().replace(/_/g, '-')}">game page</a>.</p>` : ''}`;
+}
+function renderMine() {
+  const box = $('#hm-mine'); if (!box || !TEAMS.length) return;
+  const id = favTeam && TB[favTeam] ? favTeam : null;
+  if (!id) {
+    box.innerHTML = `<div class="mine-empty"><h2 class="hm-sec" id="h-mine">Your team</h2><p>Pick a team to see its next game, injuries, cap room and news here every time you visit.</p>${teamPickerHTML(null)}</div>`;
+  } else {
+    const t = TB[id], rec = GPROJ && GPROJ.teams[id], news = MOVES.filter(m => (m.teams || []).includes(id)).slice(0, 3);
+    box.innerHTML = `<div class="mine" style="${teamVars(id)}">
+      <div class="mine-head">${badge(id, true)}<div style="min-width:0"><span class="eyebrow">Your team${rec ? ` · ${rec.w}-${rec.l}${rec.t ? '-' + rec.t : ''}, ${esc(t.div)}` : ` · ${esc(t.div)}`}</span><h2 class="hm-sec" id="h-mine"><a href="${pathOf('team-' + id)}">${esc(t.city)} ${esc(t.name)}</a></h2></div>${teamPickerHTML(id)}</div>
+      <div class="mine-grid">
+        <div class="mine-c">${mineGameHTML(id)}</div>
+        <div class="mine-c">${mineInjHTML(id) || '<p class="note">Loading the injury report…</p>'}</div>
+        <div class="mine-c"><span class="k">Latest news</span>${news.length ? `<ul class="mine-news">${news.map(m => `<li><span class="note">${esc(m.date)} · ${esc(m.kind)}</span><a href="${pathOf('team-' + id)}/news">${esc(m.head)}</a></li>`).join('')}</ul>` : '<p class="note">No news on file yet this season.</p>'}</div>
+        <a class="mine-c mine-cap" href="${pathOf('team-' + id)}/cap"><span class="k">Cap room</span><b class="num">${mon(t.space)}</b><small>${ord(t.r_space)} most in the NFL · dead money ${mon(t.dead)}</small></a>
+      </div></div>`;
+  }
+  const sel = $('#mine-pick');
+  if (sel) sel.onchange = () => { favTeam = sel.value || null; store.set('fav', favTeam); psTrack('my_team_set', { team: favTeam || 'none', from_page: location.pathname }); renderMine(); renderLeaderboard(); renderTeamGrid(); };
+  if (id && !GSCHED) loadGames().then(() => { if (favTeam === id) renderMine(); }).catch(() => {});
+}
+document.addEventListener('click', e => { const a = e.target.closest('#hm-mine a, #hm-mine [data-p]'); if (a) psTrack('my_team_click', { link_url: a.getAttribute('href') || 'player', team: favTeam || '' }); }, true);
+
 let hcSel = 'top';
 function renderHomeCards() {
   if (!$('#home-cards')) return;
@@ -4169,7 +4252,7 @@ function renderTeam(id) {
   </div>`;
   applyTF($('#roster-t'));
   $$('#team-body [data-newsteam]').forEach(b => b.onclick = () => { st.newsTeam = b.dataset.newsteam; st.newsTopic = 'All'; st.newsQ = ''; st.newsLimit = 20; renderNews(); go('news'); });
-  $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); };
+  $('#fav-btn').onclick = () => { favTeam = favTeam === id ? null : id; store.set('fav', favTeam); renderTeam(id); renderLeaderboard(); renderTeamGrid(); renderMine(); };
   $$('#roster-t th[data-k] button').forEach(b => b.onclick = () => { const k = b.parentElement.dataset.k; if (r.sort === k) r.dir *= -1; else { r.sort = k; r.dir = ['name', 'pos', 'role'].includes(k) ? 1 : -1; } renderTeam(id); });
   wireTeamField(t);
   const tabs = TEAMSUBS.filter(([k]) => (k !== 'news' || team_moves.length) && (k !== 'playing-well' || SD));
@@ -6704,7 +6787,7 @@ function boot(d, mv, sd, se, ty, fx, yx, px) {
   analyzeSeason(se);
   wireOnField(); renderOnField();
   renderTraits(); renderHeat(); renderHealth(); renderDG(); renderHomeCards();
-  renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderDeadline(); buildNewsControls(); renderNews(); renderTeamsView();
+  renderKPIs(); renderLeaderboard(); renderLeagueGroups(); renderHomeFeed(); renderMine(); renderDeadline(); buildNewsControls(); renderNews(); renderTeamsView();
   buildContractControls(); renderDeals(); renderMarket(); renderTable();
   renderHomeAwards();
   idle(renderHomeTiles);
