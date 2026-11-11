@@ -4113,8 +4113,8 @@ function renderMine() {
       <div class="mine-grid">
         <div class="mine-c">${mineGameHTML(id)}</div>
         <div class="mine-c">${mineInjHTML(id) || '<p class="note">Loading the injury report…</p>'}</div>
-        <a class="mine-c mine-cap" href="${pathOf('team-' + id)}/cap"><span class="k">Cap room</span><b class="num">${mon(t.space)}</b><small>${ord(t.r_space)} most in the NFL · dead money ${mon(t.dead)}</small></a>
         <div class="mine-c"><span class="k">Latest news</span>${news.length ? `<ul class="mine-news">${news.map(m => `<li><span class="note">${esc(m.date)} · ${esc(m.kind)}</span><a href="${pathOf('team-' + id)}/news">${esc(m.head)}</a></li>`).join('')}</ul>` : '<p class="note">No news on file yet this season.</p>'}</div>
+        <a class="mine-c mine-cap" href="${pathOf('team-' + id)}/cap"><span class="k">Cap room</span><b class="num">${mon(t.space)}</b><small>${ord(t.r_space)} most in the NFL · dead money ${mon(t.dead)}</small></a>
       </div></div>`;
   }
   const sel = $('#mine-pick');
