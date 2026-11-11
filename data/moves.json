@@ -31,7 +31,10 @@
       "2027 third-round pick (from MIN)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0029604"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -67,7 +70,10 @@
       "2027 fifth-round pick (from KC)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0038997"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -102,7 +108,10 @@
       "2027 second-round pick (from BUF)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0035632"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -134,7 +143,10 @@
       "2027 sixth-round pick (from SF)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0030279"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -167,7 +179,10 @@
       "2028 fifth-round pick (from DEN)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0038553"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -207,7 +222,11 @@
       "2028 sixth-round pick (from BAL)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0036833",
+    "00-0038383"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -223,7 +242,11 @@
    "head": "Dolphins put DT Zach Sieler (biceps, season-ending surgery) and QB Malik Willis (groin) on injured reserve",
    "plain": "Sieler needs surgery on a ruptured biceps and is out for the season. Willis will miss at least four games, so Kyle McCord starts at quarterback in Week 10.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10"
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
+   "gids": [
+    "00-0034285",
+    "00-0038128"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -239,7 +262,11 @@
    "head": "Cardinals put QB Gardner Minshew (elbow) and WR Michael Wilson (neck) on injured reserve",
    "plain": "Minshew's elbow injury will likely need season-ending surgery, and Wilson is out for the season. Carson Beck is in line to start at quarterback, and Arizona signed QBs Josh Johnson and Joey Aguilar for depth.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10"
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
+   "gids": [
+    "00-0035289",
+    "00-0038559"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -258,7 +285,12 @@
    "head": "Ravens, Patriots and Panthers restructure Nnamdi Madubuike, Hunter Henry and Taylor Moton for cap room",
    "plain": "Baltimore turned most of Madubuike's 2026 salary into a bonus and added two void years, clearing $8.66M. New England's base-to-bonus conversion for Henry cleared $3.3M. Carolina converted $5.3M of Moton's salary, saving $3.5M now and pushing more of his cap charge into later years.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/nfl-restructures-madubuike-ravens-henry-patriots-panthers"
+   "url": "https://www.profootballrumors.com/2026/11/nfl-restructures-madubuike-ravens-henry-patriots-panthers",
+   "gids": [
+    "00-0036130",
+    "00-0033090",
+    "00-0033284"
+   ]
   },
   {
    "iso": "2026-11-10",
@@ -273,7 +305,10 @@
    "head": "49ers rookie DT Gracen Halton out for the season with a broken ankle",
    "plain": "The fourth-round pick had started 7 of 9 games. San Francisco placed him on injured reserve.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/49ers-rookie-dt-gracen-halton-out-for-season"
+   "url": "https://www.profootballrumors.com/2026/11/49ers-rookie-dt-gracen-halton-out-for-season",
+   "gids": [
+    "00-0041557"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -306,7 +341,10 @@
       "2029 second-round pick (from JAX)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0037073"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -338,7 +376,10 @@
       "2028 sixth-round pick, conditional (from JAX)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0033860"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -371,7 +412,10 @@
      ],
      "dead": 500000
     }
-   }
+   },
+   "gids": [
+    "00-0036941"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -386,7 +430,10 @@
    "head": "Rams WR Puka Nacua likely headed to injured reserve with knee sprains and turf toe",
    "plain": "An MRI showed sprained MCL and PCL ligaments in his right knee plus turf toe. Coach Sean McVay said injured reserve is likely, which would cost him at least four games. It does not look season-ending.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/rams-wr-puka-nacua-likely-to-be-placed-on-injured-reserve-with-turf-toe-sprained-mcl-and-pcl"
+   "url": "https://www.nfl.com/news/rams-wr-puka-nacua-likely-to-be-placed-on-injured-reserve-with-turf-toe-sprained-mcl-and-pcl",
+   "gids": [
+    "00-0039075"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -419,7 +466,10 @@
       "2028 fifth-round pick (from JAX)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0034675"
+   ]
   },
   {
    "iso": "2026-11-09",
@@ -434,7 +484,10 @@
    "head": "Bills place WR Josh Palmer on injured reserve with a hamstring injury",
    "plain": "Palmer will miss at least four games. He is in the second year of the three-year deal he signed in 2025.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/bills-place-wr-josh-palmer-on-ir-2"
+   "url": "https://www.profootballrumors.com/2026/11/bills-place-wr-josh-palmer-on-ir-2",
+   "gids": [
+    "00-0036988"
+   ]
   },
   {
    "iso": "2026-11-07",
@@ -449,7 +502,10 @@
    "head": "49ers place WR Christian Kirk on injured reserve with a knee injury",
    "plain": "Kirk has a meniscus injury in his knee and must miss at least four games. San Francisco activated WR Demarcus Robinson to fill the spot.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/49ers-lose-wr-christian-kirk-to-ir-activate-wr-demarcus-robinson"
+   "url": "https://www.profootballrumors.com/2026/11/49ers-lose-wr-christian-kirk-to-ir-activate-wr-demarcus-robinson",
+   "gids": [
+    "00-0034775"
+   ]
   },
   {
    "iso": "2026-11-07",
@@ -464,7 +520,10 @@
    "head": "Rams activate DE Myles Garrett from injured reserve",
    "plain": "Garrett was hurt in Week 1 and had arthroscopic knee surgery. He is set to return after missing everything since his Rams debut.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir"
+   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir",
+   "gids": [
+    "00-0033868"
+   ]
   },
   {
    "iso": "2026-11-07",
@@ -479,7 +538,10 @@
    "head": "Rams place CB Jaylen Watson on injured reserve for shoulder surgery",
    "plain": "Watson will have season-ending shoulder surgery, so the Rams put him on IR to open a roster spot for Garrett.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir"
+   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir",
+   "gids": [
+    "00-0037195"
+   ]
   },
   {
    "iso": "2026-11-06",
@@ -494,7 +556,10 @@
    "head": "Seahawks LG Quenton Nelson to have knee surgery, miss multiple games",
    "plain": "Nelson, acquired from the Colts last month, needs knee cartilage surgery and is expected to miss a few weeks. He was not placed on injured reserve.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/seahawks-lg-quenton-nelson-to-undergo-surgery"
+   "url": "https://www.profootballrumors.com/2026/11/seahawks-lg-quenton-nelson-to-undergo-surgery",
+   "gids": [
+    "00-0034342"
+   ]
   },
   {
    "iso": "2026-11-05",
@@ -510,7 +575,11 @@
    "head": "Ravens place QBs Lamar Jackson and Tyler Huntley on injured reserve",
    "plain": "Both Baltimore quarterbacks are on IR. Huntley's turf toe ends his season. The Ravens activated rookie QB Austin Reed and have undrafted rookie Joe Fagnano as the Week 9 starter, so they went looking for help at the position.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-place-lamar-jackson-tyler-huntley-on-ir"
+   "url": "https://www.profootballrumors.com/2026/11/ravens-place-lamar-jackson-tyler-huntley-on-ir",
+   "gids": [
+    "00-0034796",
+    "00-0035993"
+   ]
   },
   {
    "iso": "2026-11-05",
@@ -546,7 +615,10 @@
       "2028 seventh-round pick (from BAL)"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0033119"
+   ]
   },
   {
    "iso": "2026-11-04",
@@ -559,7 +631,10 @@
    "head": "CB Arthur Maulet retires at 33",
    "plain": "Maulet played nine NFL seasons for six teams. No contract figures were reported.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/cb-arthur-maulet-retiring-at-33"
+   "url": "https://www.profootballrumors.com/2026/11/cb-arthur-maulet-retiring-at-33",
+   "gids": [
+    ""
+   ]
   },
   {
    "iso": "2026-11-04",
@@ -574,7 +649,10 @@
    "head": "Ravens QB Tyler Huntley out for the season with turf toe",
    "plain": "Huntley will have surgery and is expected to go on injured reserve. With Lamar Jackson also out, Joe Fagnano is set to make his first career start in Week 9 and Baltimore could look for a veteran QB before the Nov. 10 trade deadline.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-tyler-huntley-to-miss-rest-of-season-with-turf-toe-injury"
+   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-tyler-huntley-to-miss-rest-of-season-with-turf-toe-injury",
+   "gids": [
+    "00-0035993"
+   ]
   },
   {
    "iso": "2026-11-04",
@@ -589,7 +667,10 @@
    "head": "Browns QB Deshaun Watson in concussion protocol",
    "plain": "Watson took a helmet-to-helmet hit in Week 8. He must clear the protocol by Saturday to play Week 9; otherwise Shedeur Sanders starts.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/browns-qb-deshaun-watson-placed-in-concussion-protocol"
+   "url": "https://www.profootballrumors.com/2026/11/browns-qb-deshaun-watson-placed-in-concussion-protocol",
+   "gids": [
+    "00-0033537"
+   ]
   },
   {
    "iso": "2026-11-04",
@@ -606,7 +687,12 @@
    "head": "Commanders put DT Daron Payne, DL Javon Kinlaw and RB Jeremy McNichols on IR",
    "plain": "All three are done for the year: Payne with a fractured foot, Kinlaw after MCL surgery. Washington also claimed RB Robert Henry Jr. off waivers from Seattle.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/commanders-make-series-of-moves"
+   "url": "https://www.profootballrumors.com/2026/11/commanders-make-series-of-moves",
+   "gids": [
+    "00-0034333",
+    "00-0036260",
+    "00-0033955"
+   ]
   },
   {
    "iso": "2026-11-03",
@@ -621,7 +707,10 @@
    "head": "Giants extend CB Greg Newsome for three years, $46M",
    "plain": "Newsome gets $46M over three more years, about $15.3M a year, with $32M guaranteed. He had been on a one-year, $8M deal, so he will not reach free agency in 2027.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/giants-to-extend-cb-greg-newsome"
+   "url": "https://www.profootballrumors.com/2026/11/giants-to-extend-cb-greg-newsome",
+   "gids": [
+    "00-0036996"
+   ]
   },
   {
    "iso": "2026-11-03",
@@ -636,7 +725,10 @@
    "head": "Colts agree to two-year, $35M extension with DT Adetomiwa Adebawore",
    "plain": "The deal is worth $35M with a $13M signing bonus, and $22.5M of it is new money due by the end of 2027. The report gives the average as $17M a year; guaranteed money was not stated.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/colts-agree-to-2-year-extension-with-dt-adetomiwa-adebawore"
+   "url": "https://www.profootballrumors.com/2026/11/colts-agree-to-2-year-extension-with-dt-adetomiwa-adebawore",
+   "gids": [
+    "00-0039031"
+   ]
   },
   {
    "iso": "2026-11-03",
@@ -651,7 +743,10 @@
    "head": "Bills release S C.J. Gardner-Johnson",
    "plain": "Cutting him frees $500K in cap space and leaves $2.02M in dead money. He was on a one-year, $3.5M deal with $3.02M guaranteed.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/bills-release-s-c-j-gardner-johnson"
+   "url": "https://www.profootballrumors.com/2026/11/bills-release-s-c-j-gardner-johnson",
+   "gids": [
+    "00-0035253"
+   ]
   },
   {
    "iso": "2026-11-03",
@@ -668,7 +763,11 @@
    "head": "Saints release K Daniel Carlson, claim RB Audric Estime from Browns",
    "plain": "Releasing Carlson saves $1.26M in cap room; his 2026 deal was $1.49M with none guaranteed. New Orleans also claimed running back Audric Estime off waivers from Cleveland.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/saints-release-k-daniel-carlson-claim-rb-audric-estime"
+   "url": "https://www.profootballrumors.com/2026/11/saints-release-k-daniel-carlson-claim-rb-audric-estime",
+   "gids": [
+    "00-0034161",
+    "00-0039373"
+   ]
   },
   {
    "iso": "2026-11-02",
@@ -683,7 +782,10 @@
    "head": "Falcons DE James Pearce Jr. finishes eight-game suspension",
    "plain": "Pearce is eligible to be activated after serving his suspension under the personal conduct policy. The Falcons also waived EDGE Jared Ivey and Drake Jackson.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-2-26"
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-2-26",
+   "gids": [
+    "00-0040578"
+   ]
   },
   {
    "iso": "2026-11-02",
@@ -698,7 +800,10 @@
    "head": "Panthers hire DeAngelo Hall as cornerbacks coach",
    "plain": "The former Pro Bowl cornerback returns to Carolina's staff after the team fired defensive coordinator Ejiro Evero. Todd Wash is the interim coordinator.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff"
+   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff",
+   "gids": [
+    ""
+   ]
   },
   {
    "iso": "2026-11-01",
@@ -773,7 +878,10 @@
    "head": "Lions LB Jack Campbell hospitalized with a neck injury",
    "plain": "Campbell was carted off in the fourth quarter against the Vikings and stayed in a local hospital overnight for monitoring. The Lions will give more updates.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/lions-lb-jack-campbell-hospitalized-with-neck-injury"
+   "url": "https://www.profootballrumors.com/2026/11/lions-lb-jack-campbell-hospitalized-with-neck-injury",
+   "gids": [
+    "00-0039018"
+   ]
   },
   {
    "iso": "2026-11-01",
@@ -788,7 +896,10 @@
    "head": "Ravens QB Lamar Jackson to have thumb surgery, goes on injured reserve",
    "plain": "Jackson hurt his thumb on the first snap of the Week 8 loss in Buffalo. He will miss at least four games and it is unclear if he returns this season. Baltimore is down to rookie Joe Fagnano as its only healthy QB.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-lamar-jackson-to-undergo-thumb-surgery-land-on-ir"
+   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-lamar-jackson-to-undergo-thumb-surgery-land-on-ir",
+   "gids": [
+    "00-0034796"
+   ]
   },
   {
    "iso": "2026-11-01",
@@ -803,7 +914,10 @@
    "head": "Eagles will not trade RB Saquon Barkley before the deadline",
    "plain": "ESPN reports Philadelphia is keeping Barkley, who is under contract through 2028. The trade deadline is Nov 10.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/eagles-will-not-trade-rb-saquon-barkley-prior-to-deadline"
+   "url": "https://www.profootballrumors.com/2026/11/eagles-will-not-trade-rb-saquon-barkley-prior-to-deadline",
+   "gids": [
+    "00-0034844"
+   ]
   },
   {
    "iso": "2026-11-01",
@@ -820,7 +934,10 @@
    "head": "Steelers and Chiefs linked to Jaguars WR Brian Thomas Jr.",
    "plain": "Jacksonville is reportedly open to moving Thomas but may wait until closer to the Nov 10 deadline.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/steelers-chiefs-to-pursue-jaguars-wr-brian-thomas-jr"
+   "url": "https://www.profootballrumors.com/2026/11/steelers-chiefs-to-pursue-jaguars-wr-brian-thomas-jr",
+   "gids": [
+    "00-0039893"
+   ]
   },
   {
    "iso": "2026-11-01",
@@ -835,7 +952,10 @@
    "head": "Raiders want Kirk Cousins to keep starting as long as possible",
    "plain": "Per ESPN, Las Vegas is not ruling out a QB change but does not blame Cousins for the slump. Rookie Fernando Mendoza would be next. Las Vegas named rookie Fernando Mendoza its starter after the trade.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/raiders-not-ruling-out-qb-change"
+   "url": "https://www.profootballrumors.com/2026/11/raiders-not-ruling-out-qb-change",
+   "gids": [
+    "00-0029604"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -850,7 +970,10 @@
    "head": "Colts open to trading RB Jonathan Taylor",
    "plain": "Indianapolis is not actively shopping him but would listen. The Giants and Vikings are seen as the front-runners.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/colts-willing-to-trade-rb-jonathan-taylor"
+   "url": "https://www.profootballrumors.com/2026/10/colts-willing-to-trade-rb-jonathan-taylor",
+   "gids": [
+    "00-0036223"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -865,7 +988,10 @@
    "head": "NFL reviewing new abuse allegations against Packers RB Josh Jacobs",
    "plain": "The league says it will review the new allegations as part of its open investigation.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/nfl-reviewing-new-josh-jacobs-abuse-allegations"
+   "url": "https://www.profootballrumors.com/2026/10/nfl-reviewing-new-josh-jacobs-abuse-allegations",
+   "gids": [
+    "00-0035700"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -880,7 +1006,10 @@
    "head": "Chargers place S Derwin James on injured reserve",
    "plain": "James has a hamstring injury and can return no earlier than Week 12.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir"
+   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir",
+   "gids": [
+    "00-0034790"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -895,7 +1024,10 @@
    "head": "Broncos place RB RJ Harvey on injured reserve",
    "plain": "Harvey has a knee injury. Denver added S Taylor Rapp from the practice squad.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/broncos-to-place-rb-rj-harvey-on-ir"
+   "url": "https://www.profootballrumors.com/2026/10/broncos-to-place-rb-rj-harvey-on-ir",
+   "gids": [
+    "00-0040730"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -910,7 +1042,10 @@
    "head": "Jets place DT T'Vondre Sweat on injured reserve",
    "plain": "Sweat has a knee injury and will miss at least four games. New York signed DT Payton Page from the practice squad.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/jets-placing-dt-tvondre-sweat-on-ir"
+   "url": "https://www.profootballrumors.com/2026/10/jets-placing-dt-tvondre-sweat-on-ir",
+   "gids": [
+    "00-0039886"
+   ]
   },
   {
    "iso": "2026-10-31",
@@ -925,7 +1060,10 @@
    "head": "Chiefs CB L'Jarius Sneed headed back to injured reserve",
    "plain": "Sneed has a knee issue. CB Melvin Smith takes his roster spot.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chiefs-cb-ljarius-sneed-headed-back-to-ir"
+   "url": "https://www.profootballrumors.com/2026/10/chiefs-cb-ljarius-sneed-headed-back-to-ir",
+   "gids": [
+    "00-0036374"
+   ]
   },
   {
    "iso": "2026-10-30",
@@ -940,7 +1078,10 @@
    "head": "Commanders DT Daron Payne likely headed to injured reserve",
    "plain": "Payne hurt his foot in practice and will miss significant time. Washington is expected to put him on injured reserve, which means at least four games out.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/commanders-dt-daron-payne-to-miss-extensive-time"
+   "url": "https://www.profootballrumors.com/2026/10/commanders-dt-daron-payne-to-miss-extensive-time",
+   "gids": [
+    "00-0034333"
+   ]
   },
   {
    "iso": "2026-10-30",
@@ -956,7 +1097,11 @@
    "head": "Panthers fire defensive coordinator Ejiro Evero",
    "plain": "Carolina dropped to 3-4 after a loss at Green Bay and moved on from its defensive coordinator. Todd Wash is the interim replacement.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/panthers-fire-dc-ejiro-evero"
+   "url": "https://www.profootballrumors.com/2026/10/panthers-fire-dc-ejiro-evero",
+   "gids": [
+    "",
+    ""
+   ]
   },
   {
    "iso": "2026-10-29",
@@ -987,7 +1132,12 @@
    "head": "Eagles expected to listen to offers for Dickerson, Goedert and Woolen",
    "plain": "At 2-5, Philadelphia is reported to be open to trades for the guard, tight end and cornerback before the Nov. 10 deadline. Nothing has been agreed.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/eagles-expected-to-field-offers-on-landon-dickerson-dallas-goedert-riq-woolen"
+   "url": "https://www.profootballrumors.com/2026/10/eagles-expected-to-field-offers-on-landon-dickerson-dallas-goedert-riq-woolen",
+   "gids": [
+    "00-0037002",
+    "00-0034351",
+    "00-0037079"
+   ]
   },
   {
    "iso": "2026-10-29",
@@ -1003,7 +1153,11 @@
    "head": "Jets coach Aaron Glenn reported on the hot seat",
    "plain": "ESPN's Jeremy Fowler reports Glenn's job is in question with the Jets at 2-5. General manager Darren Mougey is considered more likely to be kept. Nothing has been decided.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/jets-aaron-glenn-on-hot-seat-gm-darren-mougey-likelier-to-be-retained"
+   "url": "https://www.profootballrumors.com/2026/10/jets-aaron-glenn-on-hot-seat-gm-darren-mougey-likelier-to-be-retained",
+   "gids": [
+    "",
+    ""
+   ]
   },
   {
    "iso": "2026-10-29",
@@ -1018,7 +1172,10 @@
    "head": "Chargers safety Derwin James may go on injured reserve",
    "plain": "James has missed games since Week 3 with a hamstring injury, and coach Jim Harbaugh said he had a setback. If he goes on IR he misses at least four more games. He has not been placed there yet.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir"
+   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir",
+   "gids": [
+    "00-0034790"
+   ]
   },
   {
    "iso": "2026-10-29",
@@ -1055,7 +1212,10 @@
       "2027 4th-round pick"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0035643"
+   ]
   },
   {
    "iso": "2026-10-28",
@@ -1070,7 +1230,10 @@
    "head": "Cardinals likely to trade RB James Conner if he is healthy by the deadline",
    "plain": "Jason La Canfora reports Arizona would move Conner if he returns from injured reserve before Nov. 10. He has not practiced this season.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/cardinals-rb-james-conner-a-trade-candidate"
+   "url": "https://www.profootballrumors.com/2026/10/cardinals-rb-james-conner-a-trade-candidate",
+   "gids": [
+    "00-0033553"
+   ]
   },
   {
    "iso": "2026-10-28",
@@ -1086,7 +1249,10 @@
    "head": "Titans claim DT Jonah Laulu off waivers",
    "plain": "The Raiders cut Laulu on Oct 27 and Tennessee won the waiver claim, then waived DT Timmy Horne. Several other teams also put in claims. No contract figures were reported.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/titans-claim-dt-jonah-laulu-off-waivers"
+   "url": "https://www.profootballrumors.com/2026/10/titans-claim-dt-jonah-laulu-off-waivers",
+   "gids": [
+    "00-0039423"
+   ]
   },
   {
    "iso": "2026-10-28",
@@ -1101,7 +1267,10 @@
    "head": "Texans place WR Jaylin Noel on injured reserve",
    "plain": "Noel is out after toe surgery, according to the CBS Sports transactions log. He must miss at least four games.",
    "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/transactions/"
+   "url": "https://www.cbssports.com/nfl/transactions/",
+   "gids": [
+    "00-0040138"
+   ]
   },
   {
    "iso": "2026-10-27",
@@ -1116,7 +1285,10 @@
    "head": "Packers C Sean Rhyan out at least four weeks with a high ankle sprain",
    "plain": "CBS Sports' Matt Zenitz reports the center could land on injured reserve. LB Zaire Franklin also has a leg fracture but is not on IR.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/packers-c-sean-rhyan-lb-zaire-franklin-to-miss-time"
+   "url": "https://www.profootballrumors.com/2026/10/packers-c-sean-rhyan-lb-zaire-franklin-to-miss-time",
+   "gids": [
+    "00-0037076"
+   ]
   },
   {
    "iso": "2026-10-27",
@@ -1132,7 +1304,10 @@
    "head": "Seahawks cut G Christian Haynes; Dolphins claim him",
    "plain": "Seattle released the guard on Oct 27 and Miami picked him up off waivers the next day, cutting DJ Campbell. No contract figures were reported.",
    "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/transactions/"
+   "url": "https://www.cbssports.com/nfl/transactions/",
+   "gids": [
+    "00-0039839"
+   ]
   },
   {
    "iso": "2026-10-27",
@@ -1151,7 +1326,12 @@
    "head": "Bengals TE Erick All feared to have torn his ACL; Giants RB Tyrone Tracy Jr. headed to IR",
    "plain": "Cincinnati tight end Erick All is believed to have torn his ACL in Sunday's win over the Ravens. Giants running back Tyrone Tracy Jr. will go on injured reserve with a hamstring injury, and Ravens rookie guard Olaivavega Ioane has an MCL sprain and will miss a little time.",
    "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-oct-27"
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-oct-27",
+   "gids": [
+    "00-0039814",
+    "00-0040866",
+    "00-0039384"
+   ]
   },
   {
    "iso": "2026-10-27",
@@ -1183,7 +1363,10 @@
       "2027 4th-round pick"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0032378"
+   ]
   },
   {
    "iso": "2026-10-27",
@@ -1216,7 +1399,10 @@
       "2028 5th-round pick"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0034342"
+   ]
   },
   {
    "iso": "2026-10-24",
@@ -1231,7 +1417,10 @@
    "head": "Browns extend DT Maliek Collins for two years",
    "plain": "Cleveland agreed to a two-year, $30 million extension with the defensive tackle, with $23 million guaranteed. It keeps him under contract through 2028.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/browns-maliek-collins-agree-to-extension"
+   "url": "https://www.profootballrumors.com/2026/10/browns-maliek-collins-agree-to-extension",
+   "gids": [
+    "00-0033131"
+   ]
   },
   {
    "iso": "2026-10-23",
@@ -1246,7 +1435,10 @@
    "head": "49ers release DL Ogbonnia Okoronkwo",
    "plain": "San Francisco released the defensive lineman on Oct. 23. No other detail was reported.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/transactions"
+   "url": "https://www.profootballrumors.com/transactions",
+   "gids": [
+    ""
+   ]
   },
   {
    "iso": "2026-10-23",
@@ -1262,7 +1454,11 @@
    "head": "Vikings release RB DeeJay Dallas and T Tristan Leigh",
    "plain": "Minnesota cut both players and added OLB Jihad Ward to the practice squad. No contract terms were reported.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/transactions"
+   "url": "https://www.profootballrumors.com/transactions",
+   "gids": [
+    "00-0036425",
+    ""
+   ]
   },
   {
    "iso": "2026-10-21",
@@ -1277,7 +1473,10 @@
    "head": "Steelers release S Rayshawn Jenkins",
    "plain": "Pittsburgh cut the 32-year-old safety, who had mostly become a special-teams player. The move likely clears a roster spot for starter DeShon Elliott to return from injured reserve. Jenkins was on a one-year deal worth about $1.3 million.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/steelers-release-s-rayshawn-jenkins"
+   "url": "https://www.profootballrumors.com/2026/10/steelers-release-s-rayshawn-jenkins",
+   "gids": [
+    "00-0033941"
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1293,7 +1492,11 @@
    "head": "Rams sign veteran K Brandon McManus after Blake Grupe's ACL tear",
    "plain": "The Rams lost kicker Blake Grupe to a torn ACL, so they worked out Brandon McManus and Matt Prater and chose McManus. It is their third kicker in about two weeks. His deal is expected to be a veteran-minimum contract.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/rams-to-stage-workout-with-brandon-mcmanus-matt-prater"
+   "url": "https://www.profootballrumors.com/2026/10/rams-to-stage-workout-with-brandon-mcmanus-matt-prater",
+   "gids": [
+    "00-0029822",
+    "00-0038905"
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1311,7 +1514,13 @@
    "head": "Winless Dolphins cut K Riley Patterson and CB Storm Duck and bring back Zane Gonzalez",
    "plain": "Miami is 0-5 and releasing kicker Riley Patterson after early misses. Zane Gonzalez returns on a practice-squad deal to kick, and Justin Tucker also worked out for the team. Patterson was on a one-year, $1.4M deal with no guaranteed money, so cutting him costs little. Cornerback Storm Duck, who started the year on PUP, goes to waivers.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/dolphins-to-cut-cb-storm-duck-k-riley-patterson"
+   "url": "https://www.profootballrumors.com/2026/10/dolphins-to-cut-cb-storm-duck-k-riley-patterson",
+   "gids": [
+    "00-0036816",
+    "00-0039481",
+    "00-0033862",
+    ""
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1328,7 +1537,11 @@
    "head": "Falcons poach edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice",
    "plain": "Atlanta signed edge rusher Charles Snowden to its active roster from Washington's practice squad. To make room, it is waiving Bralen Trice, who could return to the practice squad if he clears waivers.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/falcons-to-sign-charles-snowden-off-commanders-taxi-squad-cut-bralen-trice"
+   "url": "https://www.profootballrumors.com/2026/10/falcons-to-sign-charles-snowden-off-commanders-taxi-squad-cut-bralen-trice",
+   "gids": [
+    "00-0036711",
+    "00-0039837"
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1350,7 +1563,14 @@
    "head": "Tuesday roster churn: Eagles waive two RBs, 49ers cut Naquan Jones, Cowboys waive Caelen Carson",
    "plain": "The Eagles waived RB Jaydon Blue and RB Carson Steele (Steele with an injury designation). The 49ers released DT Naquan Jones, and the Cowboys waived CB Caelen Carson to promote S Juanyeh Thomas from the practice squad. Along with Davante Adams, the Rams also put DT Poona Ford on IR.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/minor-nfl-transactions-10-20-26"
+   "url": "https://www.profootballrumors.com/2026/10/minor-nfl-transactions-10-20-26",
+   "gids": [
+    "00-0040586",
+    "00-0039325",
+    "00-0036695",
+    "00-0039387",
+    "00-0034234"
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1365,7 +1585,10 @@
    "head": "Titans release DT Jordan Elliott after an off-field incident",
    "plain": "The release follows an incident on Oct 15. His two-year, $8M deal had $3.24M guaranteed at signing. Guaranteed money is owed even after a cut, so expect some of it to show up as dead money.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/"
+   "url": "https://www.profootballrumors.com/",
+   "gids": [
+    "00-0036266"
+   ]
   },
   {
    "iso": "2026-10-20",
@@ -1388,7 +1611,16 @@
    "head": "Giants cut RB Najee Harris as teams reshuffle their rosters",
    "plain": "Harris was on a veteran-minimum deal with no guaranteed money, so cutting him costs the Giants almost nothing. The Falcons added edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice. The Dolphins swapped kickers and waived CB Storm Duck.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/"
+   "url": "https://www.profootballrumors.com/",
+   "gids": [
+    "00-0036893",
+    "00-0033046",
+    "00-0036711",
+    "00-0039837",
+    "00-0036816",
+    "00-0033862",
+    "00-0039481"
+   ]
   },
   {
    "date": "Oct 11",
@@ -1424,7 +1656,10 @@
       "2027 6th-round pick"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0039849"
+   ]
   },
   {
    "iso": "2026-10-09",
@@ -1446,7 +1681,14 @@
    "head": "More October moves: Falcons extend Gervon Dexter, Eagles cut Andy Dalton",
    "plain": "Atlanta extended DL Gervon Dexter. Philadelphia released QB Andy Dalton, and right tackle Lane Johnson is retiring. New England put WR Romeo Doubs on injured reserve, and Pittsburgh added WR Marquez Valdes-Scantling to its practice squad. The terms were not in the report.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/"
+   "url": "https://www.profootballrumors.com/",
+   "gids": [
+    "00-0039070",
+    "00-0027973",
+    "00-0030561",
+    "00-0037816",
+    "00-0034272"
+   ]
   },
   {
    "date": "October",
@@ -1483,7 +1725,10 @@
      ],
      "dead": 4600000
     }
-   }
+   },
+   "gids": [
+    "00-0038112"
+   ]
   },
   {
    "date": "Sep 30",
@@ -1516,7 +1761,10 @@
       "2028 2nd-round pick"
      ]
     }
-   }
+   },
+   "gids": [
+    "00-0039167"
+   ]
   },
   {
    "date": "Sep 28",
@@ -1549,7 +1797,10 @@
      ],
      "dead": 5100000
     }
-   }
+   },
+   "gids": [
+    "00-0039923"
+   ]
   },
   {
    "date": "Sep 12",
@@ -1564,7 +1815,10 @@
    "plain": "That is $18.75M a year, third among tight ends behind George Kittle and Trey McBride. Incentives can push it to $92M. He got a $26.5M signing bonus.",
    "source": "CBS Sports",
    "url": "https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/",
-   "iso": "2026-09-12"
+   "iso": "2026-09-12",
+   "gids": [
+    "00-0038996"
+   ]
   }
  ],
  "deadline": "2026-11-10"

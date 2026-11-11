@@ -5,7 +5,8 @@ Every NFL contract and team salary cap in plain English, for everyday fans.
 ## Files
 - `src.html` is the page (also published as the PlainStats artifact). Edit this one.
 - `build.sh` wraps `src.html` into `index.html`, which Vercel serves. On a phone, edit `index.html` directly in Koder and make the same change in `src.html`.
-- `data/nfl.json` holds all 32 teams' cap figures and every player contract. `data/moves.json` is the NFL news feed (contract moves, injuries, games, coaching, league news) and the trade deadline date. A daily scheduled task refreshes both.
+- `data/nfl.json` holds all 32 teams' cap figures and every player contract. `data/moves.json` is the NFL news feed (contract moves, injuries, games, coaching, league news) and the trade deadline date. A daily scheduled task refreshes both. Every news item carries `gids`, one gsis id per name in `players` (`""` for coaches and people with no gsis id); `python3 -I tools/refresh_helpers.py news-gids` fills any that are missing (from the trade's `deal`, else the one roster or stats row with exactly that name) and prints the names it could not place, and `tools/refresh.sh` runs it every time.
+- Player pages (the app's player sheet, `fillLatest()` in src.html, and `/players/<name>`, `latest_html()` in tools/build_seo.py) open with a "Latest" box: up to two news items from the last 30 days that name him by gid, his line on the latest week's official injury report (data/injuries.json, only when he is on that week's report) and his last game (week, date, result and box-score line from the season game log and data/schedule.json; "Last played" when his team has played since). Change both together.
 - `data/season.json` holds standings (record, points for and against), head coaches, 2025 records, the rookie and comeback-candidate lists, and `prevRanks` (last week's power ranking, for the movement arrows). It feeds the Awards and Power rankings page (`#awards`, `#rankings`), which scores everything in the browser from `data/stats.json` plus this file, so a data refresh updates the page.
 - `api/contracts.js` reads the featured deal breakdowns from Airtable (optional).
 - `data/contracts.csv` is the starting data for the Airtable `Contracts` table.
@@ -80,6 +81,7 @@ Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads onl
 | `table_filter` | A table filter box (once the visitor pauses) | `table`, `search_term` |
 | `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
 | `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
+| `player_news_click` | A source link in the "Latest" box on a player sheet or `/players/<name>` page | `link_url`, `from_page` |
 | `app_open` | "See ... in the PlainStats app" on a static page | `link_url`, `from_page` |
 | `links_click` | A link on /links (the bio-link page) | `link_url`, `source` (`instagram`, `tiktok`, `direct`), `from_page` |
 | `share` (`method: end_slide_make`) | "Make end slide" in a share preview | `content_type` (`page`, `card`), `item_id` (the page path) |
