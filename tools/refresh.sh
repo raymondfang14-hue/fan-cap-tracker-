@@ -133,6 +133,8 @@ case "$MODE" in
   *) echo "unknown mode $MODE"; exit 2 ;;
 esac
 
+# News items get their gsis ids (gids) so player pages can show their news; names it cannot place are printed for the news sweep.
+step "news gsis ids" "data/moves.json" -- py tools/refresh_helpers.py news-gids
 # PlainScore is computed by the page itself; export it for the static player pages. On failure the last export is kept.
 step "PlainScore export" "data/plainscore.json" -- plainscore_export
 step "search pages" "players teams draft sitemap.xml tools/seo-nav.html data/pageslugs.json og-data index.html" -- search_pages

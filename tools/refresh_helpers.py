@@ -8,6 +8,8 @@
                                                                           prevRanks from the old snapshot when the week moved forward
   python3 -I tools/refresh_helpers.py plainscore                           window.__plainScores() from the built page -> data/plainscore.json
                                                                           (read by tools/build_seo.py; run build.sh first so index.html is current)
+  python3 -I tools/refresh_helpers.py news-gids                            fill missing gsis ids (`gids`, one per name in `players`) in
+                                                                          data/moves.json; prints the names it could not place
 """
 import csv, functools, http.server, json, os, sys, threading
 
@@ -70,6 +72,54 @@ def plainscore():
     print('plainscore: week', d['week'], '|', len(d['players']), 'players')
 
 
+def news_gids():
+    """Give every news item a `gids` list, one gsis id per name in `players` ("" for coaches, people with no gsis id, or a name
+    that cannot be placed). Player pages find their news by gid, never by name. A gid already written (by the news sweep) is
+    kept. A missing one is taken from the trade's own `deal` record, else from the one roster row (data/nfl.json) or this
+    season's stats row (data/history.json) with exactly that name, preferring a team the item names. Anything else is printed
+    for the news sweep to fill in by hand (e.g. "Riq Woolen" in a headline, "Tariq Woolen" on the roster)."""
+    dp = os.path.join(ROOT, 'data')
+    mp = os.path.join(dp, 'moves.json')
+    mv = json.load(open(mp))
+    nfl = json.load(open(os.path.join(dp, 'nfl.json')))
+    hist = json.load(open(os.path.join(dp, 'history.json')))
+    cur = str(hist.get('current'))
+    rows = {}
+    for r in nfl['players']:
+        if r[19]:
+            rows.setdefault(r[0], {})[r[19]] = r[1]
+    for p in hist['players']:
+        s = (p.get('s') or {}).get(cur)
+        if s:
+            rows.setdefault(p['n'], {}).setdefault(p['id'], s.get('t'))
+    filled, missing = 0, []
+    for m in mv['moves']:
+        names = m.get('players') or []
+        old = list(m.get('gids') or [])
+        gids = (old + [''] * len(names))[:len(names)]
+        deal = {x['name']: x.get('gid') for side in (m.get('deal') or {}).values() for x in (side.get('players') or [])}
+        for i, n in enumerate(names):
+            if gids[i]:
+                continue
+            g = deal.get(n) or ''
+            if not g:
+                cand = rows.get(n, {})
+                pref = [k for k, t in cand.items() if t in (m.get('teams') or [])]
+                pick = pref if pref else list(cand)
+                g = pick[0] if len(pick) == 1 else ''
+            if g:
+                gids[i] = g
+                filled += 1
+            else:
+                missing.append(f"{m.get('iso')} {m.get('kind')}: {n}")
+        if names and gids != old:
+            m['gids'] = gids
+    json.dump(mv, open(mp, 'w'), ensure_ascii=False, indent=1)
+    print('news gids: filled', filled, '| not placed', len(missing))
+    for x in missing:
+        print('  ' + x)
+
+
 def prev_ranks(old_path):
     sp = os.path.join(ROOT, 'data', 'season.json')
     season = json.load(open(sp))
@@ -98,6 +148,8 @@ if __name__ == '__main__':
         snapshot(sys.argv[2])
     elif cmd == 'plainscore':
         plainscore()
+    elif cmd == 'news-gids':
+        news_gids()
     elif cmd == 'prev-ranks':
         prev_ranks(sys.argv[2] if len(sys.argv) > 2 else None)
     else:

@@ -1354,6 +1354,15 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .lk-list .lk-new{color:var(--brand);font-weight:600;font-style:normal}
 #v-links .sec{margin:22px 0 10px}
 @media (prefers-reduced-motion:no-preference){.lk-list a{transition:background-color .15s}}
+/* "Latest" box on the player sheet (fillLatest): In the news, injury report, last game */
+#sh-latest:empty{display:none}
+.pnews{display:grid;gap:0;margin:4px 0 14px;padding:4px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.pnews h3{margin:10px 0 2px;font:600 1.05rem/1.2 var(--display)}
+.pnews>div{padding:10px 0;border-top:1px solid var(--line)}
+.pnews>h3+div{border-top:0}
+.pnews .k{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:2px}
+.pnews p{margin:0;font-size:.92rem;line-height:1.45}
+.pnews a{color:var(--brand);font-weight:600}
 </style>
 
 <header class="gn" id="gn">
@@ -2273,7 +2282,7 @@ const LEARN_NFL = [
 ];
 
 /* ===== state ===== */
-let D = null, TEAMS = [], TB = {}, PL = [], MOVES = [], DEADLINE = '2026-11-10';
+let D = null, TEAMS = [], TB = {}, PL = [], MOVES = [], MOVES_ASOF = '', DEADLINE = '2026-11-10';
 let favTeam = store.get('fav', null);
 const st = {
   lbMetric: 'space', lbDiv: 'All', tDiv: 'All', tTraits: [], tSort: 'space', newsKind: 'All', newsTopic: 'All', newsQ: '', newsTeam: 'all', newsLimit: 20, mktPos: 'QB',
@@ -2393,6 +2402,7 @@ function prepare(d, mv) {
   PL.forEach(p => { p.rank = p.hid ? 999 : byPos[p.pos].filter(v => v > p.apy).length + 1; p.posCount = byPos[p.pos].length; p.posTop = byPos[p.pos][0]; });
   MOVES = ((mv && mv.moves) || []).slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
   if (mv && mv.deadline) DEADLINE = mv.deadline;
+  MOVES_ASOF = (mv && mv.asOf) || (MOVES[0] && MOVES[0].iso) || '';
   const rk = k => [...TEAMS].sort((a, b) => b[k] - a[k]).forEach((t, n) => (t['r_' + k] = n + 1));
   ['space', 'dead', 'active'].forEach(rk);
   // group spend per team
@@ -4328,6 +4338,7 @@ function openPlayer(i) {
   const fgW = p.total ? p.fg / p.total * 100 : 0, ogW = p.total ? (p.gtd - p.fg) / p.total * 100 : 0;
   $('#sheet-body').innerHTML = `
     <div class="sh-top" style="${teamVars(p.team)}">${avatar(p)}<div style="min-width:0"><span class="eyebrow" style="color:inherit;opacity:.85">${esc(POS_WORD[p.pos] || p.pos)}${p.age ? ' · age ' + p.age : ''}</span><h3 id="sh-name">${esc(p.name)}</h3><p>${esc(t.city)} ${esc(t.name)} · ${p.hid ? 'contract being verified' : p.end ? 'free agent ' + p.end + (p.voidy ? ' (void years)' : '') : 'contract length being verified'}</p></div><div style="display:grid;gap:8px;justify-items:end">${crest(p.team, 40)}<button class="x" type="button" aria-label="Close" id="sh-x">×</button></div></div>
+    <div id="sh-latest"></div>
     <div class="seg shtabs" id="sh-tabs" role="group" aria-label="Player view"><button type="button" data-tab="field" aria-pressed="${st.shTab === 'field'}">On the field</button><button type="button" data-tab="contract" aria-pressed="${st.shTab === 'contract'}">Contract</button><button type="button" data-tab="stats" aria-pressed="${st.shTab === 'stats'}">Stats</button></div>
     <div id="sh-stats" ${st.shTab === 'stats' ? '' : 'hidden'}><p class="empty">Loading season stats…</p></div>
     <div id="sh-field" ${st.shTab === 'field' ? '' : 'hidden'}>${fieldHTML(p)}<div id="sh-inj"></div></div>
@@ -5789,6 +5800,7 @@ openPlayer = function (i) {
   if (p.gid) loadShard(p.gid).then(() => idle(() => { if (sbox && sbox.isConnected && $('#sh-stats') === sbox) fillStats(p); })).catch(() => {});   // this player's stats file is about 20 KB
   idle(() => { if ($('#sh-tabs') === tabs) fillSims(p); });
   fillInjury(p);
+  fillLatest(p);
   if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; const k = b.dataset.tab; requestAnimationFrame(() => { fillSims(p, k); if (k === 'stats') fillStats(p); }); });   // let the tab paint first, then fill it
   if (st.shTab === 'stats') fillStats(p);
 };
@@ -5832,6 +5844,64 @@ function fillInjury(p) {
     box.innerHTML = `<div class="injh"><h3>Injury report</h3><p class="note">Listed in ${rows.length} of ${D.thru} weeks${out ? `, ruled out ${out === 1 ? 'once' : out + ' times'}` : ''}. From the NFL's official reports, through Week ${D.thru}.</p><div class="tw"><table><thead><tr><th>Week</th><th>Team</th><th>Game status</th><th>Injury</th><th>Practice</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
   });
 }
+/* ----- "Latest" box at the top of the player sheet: In the news (data/moves.json, matched by `gids`, last 30 days), this week's
+   official injury report and the last game's line (game log from the player's data/hist shard, date and score from data/schedule.json).
+   The static /players pages carry the same box (tools/build_seo.py: latest_html), so change both together. ----- */
+const NEWS_DAYS = 30;
+const playerNews = p => { if (!p.gid) return []; const c = new Date((MOVES_ASOF || '2026-01-01') + 'T12:00:00'); c.setDate(c.getDate() - NEWS_DAYS); const cut = c.toISOString().slice(0, 10);
+  return MOVES.filter(m => (m.gids || []).includes(p.gid) && (m.iso || '') >= cut).slice(0, 2); };
+const plural = (n, w, ws) => `${n} ${n === 1 ? w : ws || w + 's'}`;
+function statWords(s) {   // the same plain-English lines as stat_lines() in tools/build_seo.py
+  const o = [], g = k => s[k], nf = n => (n || 0).toLocaleString('en-US');
+  if (g('att') != null && g('cmp') != null) o.push(`passing ${g('cmp')} of ${g('att')} for ${nf(g('pyd'))} yards${g('ptd') ? ', ' + plural(g('ptd'), 'touchdown') : ''}${g('int') ? ', ' + plural(g('int'), 'interception') : ''}`);
+  if (g('car')) o.push(`rushing ${plural(g('car'), 'carry', 'carries')} for ${nf(g('ryd'))} yards${g('rtd') ? ', ' + plural(g('rtd'), 'touchdown') : ''}`);
+  if (g('rec') != null && (g('rec') || g('tgt'))) o.push(`receiving ${plural(g('rec'), 'catch', 'catches')}${g('tgt') ? ' on ' + plural(g('tgt'), 'target') : ''} for ${nf(g('reyd'))} yards${g('retd') ? ', ' + plural(g('retd'), 'touchdown') : ''}`);
+  const d = [];
+  if (g('tk')) d.push(plural(g('tk'), 'tackle')); if (g('tfl')) d.push(plural(g('tfl'), 'tackle') + ' for loss'); if (g('dsk')) d.push(plural(g('dsk'), 'sack'));
+  if (g('qbh')) d.push(plural(g('qbh'), 'QB hit')); if (g('pd')) d.push(plural(g('pd'), 'pass', 'passes') + ' defended'); if (g('dint')) d.push(plural(g('dint'), 'interception')); if (g('ff')) d.push(plural(g('ff'), 'forced fumble'));
+  if (d.length) o.push('defense ' + d.join(', '));
+  if (g('fga')) o.push(`kicking ${g('fgm') || 0} of ${g('fga')} field goals${g('xpa') ? `, ${g('xpm') || 0} of ${g('xpa')} extra points` : ''}`);
+  if (g('pun')) o.push(`punting ${g('pun')} punts for ${nf(g('puy'))} yards`);
+  return o;
+}
+function lastGameLine(p) {
+  const r = p.gid && SHREC.get(p.gid), thru = (HIST && HIST.thru) || 99;
+  const w = ((r && r.w) || []).filter(x => x[0] <= thru); if (!w.length) return null;
+  const [wk, opp, tm, s] = w[w.length - 1], done = g => g[6] != null && g[7] != null;
+  const games = (GSCHED && GSCHED.games) || [], g = games.find(x => x[1] === wk && (x[4] === tm || x[5] === tm) && done(x));
+  const teamLast = Math.max(wk, ...games.filter(x => done(x) && x[1] <= thru && (x[4] === p.team || x[5] === p.team)).map(x => x[1]));
+  let label = (wk >= teamLast ? 'Last game' : 'Last played') + ', week ' + wk, head = `Against the ${TB[opp] ? TB[opp].name : opp}`;
+  if (g) {
+    const home = g[5] === tm, us = home ? g[7] : g[6], them = home ? g[6] : g[7];
+    label += ` (${new Date(g[2] + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+    head = `${us > them ? 'Won' : us < them ? 'Lost' : 'Tied'} ${us}-${them} ${home ? 'vs.' : 'at'} the ${TB[opp] ? TB[opp].name : opp}`;
+  }
+  if (tm !== p.team) head += ` (for the ${TB[tm] ? TB[tm].name : tm})`;
+  const l = statWords(s || {});
+  return [label, `${head}: ${l.length ? l.join('; ') : 'no box-score stats'}.`];
+}
+function injuryNow(p, D) {
+  const rows = (D && D.players && D.players[p.gid]) || [], r = rows[rows.length - 1];
+  if (!r || r[0] !== D.thru) return null;
+  const [wk, , s, inj, pr] = r, PR = { D: 'did not practice', L: 'limited in practice', F: 'full practice' };
+  let t = (INJ_ST[s] && INJ_ST[s][0]) || (PR[pr] ? PR[pr][0].toUpperCase() + PR[pr].slice(1) : 'Listed');
+  if (inj) t += ` (${inj === 'Not injury related' ? 'not injury related' : inj.toLowerCase()})`;
+  if (s && PR[pr]) t += ', ' + PR[pr];
+  return ['Injury report, week ' + wk, t + '.'];
+}
+function fillLatest(p) {
+  const box = $('#sh-latest'); if (!box || !p.gid) return;
+  const news = playerNews(p).map(m => [`In the news, ${m.date || m.iso}`, `<b>${esc(m.head)}.</b> ${esc(m.plain || '')}${m.url ? ` <a href="${esc(m.url)}" target="_blank" rel="noopener nofollow">${esc(m.source || 'Source')}</a>` : ''}`]);
+  const draw = (inj, lg) => {
+    if ($('#sh-latest') !== box) return;
+    const rows = news.concat([inj, lg].filter(Boolean).map(([k, v]) => [k, esc(v)]));
+    box.innerHTML = rows.length ? `<section class="pnews" aria-label="Latest on ${esc(p.name)}"><h3>Latest</h3>${rows.map(([k, v]) => `<div><span class="k">${esc(k)}</span><p>${v}</p></div>`).join('')}</section>` : '';
+  };
+  draw(null, null);
+  Promise.all([loadInjL().catch(() => null), loadShard(p.gid).catch(() => null), loadGames().catch(() => null)])
+    .then(([D]) => draw(injuryNow(p, D), lastGameLine(p)));
+}
+document.addEventListener('click', e => { const a = e.target.closest('.pnews a'); if (a) psTrack('player_news_click', { link_url: a.href, from_page: location.pathname }); });
 const _openProspectBase = openProspect;
 openProspect = function (i) { _openProspectBase(i); const p = DP[i]; if (p) sheetLink(dSlug(p)); };
 sheet.addEventListener('close', () => { if (/^[pdg]-/.test(curKey())) setURL(LASTV || 'home', true); });

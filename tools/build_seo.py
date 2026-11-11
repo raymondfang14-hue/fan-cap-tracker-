@@ -47,6 +47,21 @@ HIST = json.loads((DATA / 'history.json').read_text())
 DRAFT = json.loads((DATA / 'draft.json').read_text())
 ASSETS = json.loads((DATA / 'espn_assets.json').read_text())
 FA = json.loads((DATA / 'freeagency.json').read_text())
+
+
+def _load(fn, empty):
+    try:
+        return json.loads((DATA / fn).read_text())
+    except Exception:
+        return empty
+
+
+# "Latest" box on player pages: the news feed (moves.json, matched by `gids`), this week's official injury report
+# (injuries.json) and the last game's line (history.json game log + schedule.json for date, opponent and score).
+MOVES = _load('moves.json', {'moves': []})
+INJ = _load('injuries.json', {'players': {}})
+SCHED = _load('schedule.json', {'games': []})
+NEWS_DAYS = 30  # a news item shows on the player's page for this many days
 LEDGER = {}
 with open(DATA / 'ledger.csv', newline='') as fh:
     for row in csv.DictReader(fh):
@@ -139,7 +154,7 @@ GA = ("<script>(function(){if(!/(^|\\.)plainstatsnfl\\.com$/.test(location.hostn
       "function ev(n,p){if(window.gtag)gtag('event',n,p)}var at=location.pathname;"
       "document.addEventListener('submit',function(e){var f=e.target;if(f&&/beehiiv\\.com/.test(f.action||''))ev('sign_up',{method:'cap_sheet',from_page:at})},true);"
       "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';"
-      "if(a.closest('.doors'))ev('door_click',{link_url:h,from_page:at});else if(a.classList.contains('xq'))ev('explainer_open',{term:h.split('/').pop(),from_page:at});"
+      "if(a.closest('.doors'))ev('door_click',{link_url:h,from_page:at});else if(a.closest('.pnews'))ev('player_news_click',{link_url:h,from_page:at});else if(a.classList.contains('xq'))ev('explainer_open',{term:h.split('/').pop(),from_page:at});"
       "else if(a.classList.contains('cta'))ev(/[?&]share=1/.test(h)?'share_card_open':'app_open',{link_url:h,from_page:at})},true)})();</script>")
 
 
@@ -466,7 +481,7 @@ ul.pbars{list-style:none;padding:0 0 10px;margin:0;display:grid;gap:8px}ul.pbars
 ul.pbars .tr{height:10px;border-radius:5px;background:var(--ln);overflow:hidden}ul.pbars .tr i{display:block;height:100%;border-radius:5px}ul.pbars b{text-align:right;font-variant-numeric:tabular-nums}ul.pbars .v{color:var(--mu);font-size:.85rem;text-align:right;font-variant-numeric:tabular-nums}
 @media(max-width:480px){ul.pbars li{grid-template-columns:7rem minmax(0,1fr) 2rem}ul.pbars .v{grid-column:1/-1;text-align:left;margin-top:-6px}}
 a.xq{display:inline-grid;place-items:center;width:1.15em;height:1.15em;border-radius:50%;border:1px solid var(--ln);color:var(--mu);font-size:.72rem;font-weight:600;line-height:1;text-decoration:none;vertical-align:.1em}a.xq:hover{color:var(--lk);border-color:var(--lk)}
-.card.ex{padding:14px 16px}ul.doors.wide{grid-template-columns:1fr}
+.card.ex{padding:14px 16px}.pnews>div{padding:12px 0;border-bottom:1px solid var(--ln)}.pnews>div:last-child{border:0}.pnews h3{margin:0 0 2px;font-size:.85rem;font-weight:600;color:var(--mu)}.pnews p{margin:0}ul.doors.wide{grid-template-columns:1fr}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
 footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}
@@ -776,6 +791,92 @@ def player_meta(p, f, ps, intent, summary):
     return fit(f"{n} contract and {SEASON_YEAR} stats", []), clip(summary, 158), f"{poss(n)} contract explained"
 
 
+# ---------------------------------------------------------------- latest: news, injury report, last game
+NEWS_BY = {}
+for _m in MOVES.get('moves', []):
+    for _g in set(_m.get('gids') or []):
+        if _g:
+            NEWS_BY.setdefault(_g, []).append(_m)
+for _v in NEWS_BY.values():
+    _v.sort(key=lambda m: m.get('iso') or '', reverse=True)
+GAME_AT = {}  # (week, team) -> schedule row, finished games only
+for _g in SCHED.get('games', []):
+    if _g[6] is not None and _g[7] is not None:
+        GAME_AT[(_g[1], _g[4])] = GAME_AT[(_g[1], _g[5])] = _g
+INJ_STATUS = {'O': 'Out', 'D': 'Doubtful', 'Q': 'Questionable'}
+INJ_PRACTICE = {'D': 'did not practice', 'L': 'limited in practice', 'F': 'full practice'}
+
+
+def player_news(p, n=2):
+    """News items naming this player (by gsis id), newest first, from the last NEWS_DAYS days of the feed."""
+    if not p.gid:
+        return []
+    ref = dt.date.fromisoformat(MOVES.get('asOf') or ASOF)
+    cut = (ref - dt.timedelta(days=NEWS_DAYS)).isoformat()
+    return [m for m in NEWS_BY.get(p.gid, []) if (m.get('iso') or '') >= cut][:n]
+
+
+def injury_now(p):
+    """'Questionable (ankle), limited in practice' from the latest week's official report, or None if he is not on it."""
+    rows = (INJ.get('players') or {}).get(p.gid) or []
+    if not rows or rows[-1][0] != INJ.get('thru'):
+        return None
+    wk, tm, stt, inj, pr = rows[-1]
+    bits = [INJ_STATUS.get(stt) or ('Listed' if not pr else INJ_PRACTICE.get(pr, 'listed').capitalize())]
+    if inj and inj != 'Not injury related':
+        bits[0] += f' ({inj.lower()})'
+    elif inj:
+        bits[0] += ' (not injury related)'
+    if stt and pr in INJ_PRACTICE:
+        bits.append(INJ_PRACTICE[pr])
+    return wk, ', '.join(bits)
+
+
+def last_game(p):
+    """(label, text) for his newest game in the nflverse weekly stats this season, or None. "Last played" when his team has played since."""
+    w = [x for x in (p.hist or {}).get('w') or [] if x[0] <= (HIST.get('thru') or 99)]
+    if not w:
+        return None
+    wk, opp, tm, st = w[-1]
+    g = GAME_AT.get((wk, tm))
+    team_last = max((k[0] for k in GAME_AT if k[1] == p.team and k[0] <= (HIST.get('thru') or 99)), default=wk)
+    label = f'Last game, week {wk}' if wk >= team_last else f'Last played, week {wk}'
+    o = TEAMS.get(opp, {}).get('name', opp)
+    if g:
+        home = g[5] == tm
+        us, them = (g[7], g[6]) if home else (g[6], g[7])
+        res = 'Won' if us > them else 'Lost' if us < them else 'Tied'
+        d = dt.date.fromisoformat(g[2])
+        label += f' ({d.strftime("%b")} {d.day})'
+        head = f"{res} {us}-{them} {'vs.' if home else 'at'} the {o}"
+    else:
+        head = f'Against the {o}'
+    if tm != p.team:
+        head += f" (for the {TEAMS.get(tm, {}).get('name', tm)})"
+    lines = stat_lines(st)
+    body = '; '.join(f'{k.lower()} {v}' for k, v in lines) if lines else 'no box-score stats'
+    return label, f'{head}: {body}.'
+
+
+def latest_html(p):
+    """The 'Latest' box under the lede: In the news, this week's injury report, last game. Empty when there is nothing to say."""
+    rows = []
+    for m in player_news(p):
+        src = f' <a href="{esc(m["url"])}" rel="nofollow noopener">{esc(m.get("source") or "Source")}</a>' if m.get('url') else ''
+        rows.append(('In the news, ' + esc(m.get('date') or m.get('iso')), f'<b>{esc(m["head"])}.</b> {esc(m.get("plain") or "")}{src}'))
+    inj = injury_now(p)
+    if inj:
+        rows.append((f'Injury report, week {inj[0]}', esc(inj[1]) + '.'))
+    lg = last_game(p)
+    if lg:
+        rows.append((esc(lg[0]), esc(lg[1])))
+    if not rows:
+        return ''
+    body = ''.join(f'<div><h3>{k}</h3><p>{v}</p></div>' for k, v in rows)
+    return (f'<h2>Latest on {esc(p.name)}</h2><div class="card pnews">{body}</div>'
+            f'<p class="note">News from the PlainStats news feed, injury status from the NFL\'s official report, game stats from nflverse.</p>')
+
+
 # ---------------------------------------------------------------- player pages
 URLS = []  # (path, priority, changefreq)
 
@@ -834,7 +935,7 @@ def build_player(p):
     # Stats-first pages put the season (PlainScore, stats) above the contract; the rest lead with the contract.
     main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent == 'stats' else (deal_html + plainscore_html(p, ps) + stats_html)
     body = (f'<div class="id">{img_html}<div><h1>{esc(h1)}</h1></div></div>'
-            f'<p class="lede">{esc(summary)}</p>{main_html}'
+            f'<p class="lede">{esc(summary)}</p>{latest_html(p)}{main_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
