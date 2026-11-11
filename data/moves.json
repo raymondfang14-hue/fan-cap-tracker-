@@ -317,8 +317,8 @@
    "players": [
     "Andre Cisco"
    ],
-   "head": "Lions acquire S Andre Cisco from the Jets for a 2028 sixth-round pick",
-   "plain": "Detroit adds safety depth while Kerby Joseph works back from a knee injury. Cisco, 26, had barely played on defense since Week 3 and is in the final year of his contract.",
+   "head": "Lions acquire S Andre Cisco from the Jets for a sixth-round pick",
+   "plain": "Detroit adds safety depth while Kerby Joseph works back from a knee injury. Cisco, 26, had barely played on defense since Week 3 and is on a one-year deal. NFL.com and ESPN list the Jets' pick as a 2028 sixth-rounder, Pro Football Rumors as 2029, so the year is left off here.",
    "source": "NFL.com",
    "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-9",
    "deal": {
@@ -333,7 +333,7 @@
     },
     "NYJ": {
      "picks": [
-      "2028 sixth-round pick (from DET)"
+      "Sixth-round pick, year reported differently (from DET)"
      ]
     }
    }
@@ -385,6 +385,21 @@
      ]
     }
    }
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Injury",
+   "teams": [
+    "BUF"
+   ],
+   "players": [
+    "Josh Palmer"
+   ],
+   "head": "Bills place WR Josh Palmer on injured reserve with a hamstring injury",
+   "plain": "Palmer will miss at least four games. He is in the second year of the three-year deal he signed in 2025.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/bills-place-wr-josh-palmer-on-ir-2"
   },
   {
    "iso": "2026-11-07",
