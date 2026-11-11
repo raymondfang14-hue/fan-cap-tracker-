@@ -44,6 +44,8 @@ The trade deadline page (`/trade-deadline`, `renderTD()` in src.html) lists ever
 - *The /links page* (`renderLinks()` in src.html) lists recent posts from `data/links.json`, newest first, then fixed "Start here" links (`LK_START`). Add one entry per post at the top of `posts`: `{"date": "2026-11-11", "title": "Team tiers, Week 10", "path": "/team-tiers", "platform": "both"}` (`platform`: `instagram`, `tiktok` or `both`; `/links/instagram` hides TikTok-only posts and the other way round). Use the exact path printed on the post's end slide. A tap is the GA4 event `links_click`.
 - *Carousel end slide.* Every "Share this" and "Share" card preview has **Make end slide**: a 1080x1350 slide reading "See the full table" (or "See the full page" for a player, prospect or team card), the page's title and its exact address (`pathOf(curKey())`, e.g. `plainstatsnfl.com/team-tiers/offense-vs-defense`), and "Tap the link in our bio". Save it as the last slide of every carousel. Drawn by `endDraw()` / `window.psEndSlide` in the share-card script; `tools/check_pages.py` checks it is 1080x1350.
 
+The home page opens with "Your team" (`renderMine()` in src.html) under the search: the favorite team (localStorage `pc.fav`, set there or with "Make this my team" on a team page) with its next game and the model pick (`gPick`, injuries and weather included this week), this week's injury report for that game (data/gameday.json), cap room and dead money (data/nfl.json) and its three latest news items. With no favorite it is a one-line team picker. The games files load in the background and the block redraws when they arrive.
+
 The home search (`searchEverything()` in src.html) searches pages, teams, players, prospects, this and last week's games, news headlines and Cap 101 terms.
 
 ## Automatic nflverse refresh (GitHub Actions)
@@ -81,6 +83,8 @@ Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads onl
 | `table_filter` | A table filter box (once the visitor pauses) | `table`, `search_term` |
 | `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
 | `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
+| `my_team_set` | A team is picked (or cleared) in the "Your team" block on the home page | `team`, `from_page` |
+| `my_team_click` | A link or player in the "Your team" block | `link_url`, `team` |
 | `player_news_click` | A source link in the "Latest" box on a player sheet or `/players/<name>` page | `link_url`, `from_page` |
 | `app_open` | "See ... in the PlainStats app" on a static page | `link_url`, `from_page` |
 | `links_click` | A link on /links (the bio-link page) | `link_url`, `source` (`instagram`, `tiktok`, `direct`), `from_page` |
