@@ -20,3 +20,5 @@ data/history_old.json
 data/splits.json
 data/plainscore.json
 data/lastmod.json
+data/vs_pairs.json
+data/compare_pairs.json

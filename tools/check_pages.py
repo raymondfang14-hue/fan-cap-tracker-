@@ -21,6 +21,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Pages whose "Share" button must open a 1080x1350 image. The prospect is the first one in data/pageslugs.json so the check survives roster changes.
 CARD_VIEWS = ['/player/patrick-mahomes-kc', '/team/kc', '/prospect/' + next(iter(json.load(open(os.path.join(ROOT, 'data', 'pageslugs.json')))['d'])).split('-', 1)[1]]
 VIEWS += [v for v in CARD_VIEWS if v not in VIEWS]
+# One player comparison page (/players/<a>-vs-<b>, built by build_seo.py), picked the same way so the check survives pair changes.
+_vs = json.load(open(os.path.join(ROOT, 'data', 'pageslugs.json'))).get('v', {})
+VIEWS += ['/players/' + sorted(_vs.values())[0]] if _vs else []
 
 
 def serve():

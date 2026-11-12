@@ -1,0 +1,4 @@
+{
+  "note": "Hand-edited. Player comparison pages (/players/<a>-vs-<b>) for pairs people search on Google. Copy lines from the 'Player vs. player searches' table in the Monday Search Console issue. a and b are gsis ids; q is the search, for the record. tools/build_seo.py builds the page on its next run (both players need a /players page, 2+ games this season and the same position group).",
+  "pairs": []
+}

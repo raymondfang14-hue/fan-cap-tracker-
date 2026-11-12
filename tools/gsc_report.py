@@ -4,7 +4,9 @@ Compares the last 7 days that Search Console has data for (it runs about 3 days 
 a Markdown report: totals with the click rate, the top searches that show a player page (with their change, click rate and
 the page Google showed), searches seen often but rarely clicked (the ones titles and descriptions should answer), then per
 page the biggest gainers in impressions, pages showing up for the first time and the biggest drops, each with its click
-rate and its top search. It reads only our own site's Search Console numbers. Google leaves rare searches out of the
+rate and its top search. A "Player vs. player searches" section lists searches like "hurts vs mckee", says whether a comparison
+page (/players/<a>-vs-<b>) already exists and, when both names match a player, prints the line to add to data/compare_pairs.json
+so the next build gives the pair its own page. It reads only our own site's Search Console numbers. Google leaves rare searches out of the
 per-search numbers for privacy, so search totals come in below page totals.
 
 Run by .github/workflows/search-console-weekly.yml (Monday mornings), which posts the report as a GitHub issue.
@@ -21,7 +23,9 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sys
+import unicodedata
 import urllib.parse
 import urllib.request
 
@@ -75,6 +79,8 @@ def name_of(url):
         except (OSError, ValueError):
             NAMES = {}
     slug = urllib.parse.urlparse(url).path.rstrip('/').split('/')[-1].replace('.html', '')
+    if '-vs-' in slug:   # a comparison page: "Josh Allen vs. Patrick Mahomes"
+        return ' vs. '.join(NAMES.get(x) or x.replace('-', ' ').title() for x in slug.split('-vs-', 1))
     return NAMES.get(slug) or slug.replace('-', ' ').title()
 
 
@@ -123,6 +129,44 @@ def top_page_by_query(pairs):
     return best
 
 
+VS_RE = re.compile(r'\s+(?:vs\.?|versus|v\.?)\s+')
+
+
+def _norm(s):
+    s = unicodedata.normalize('NFKD', s)
+    return re.sub(r"[^a-z ]", '', ''.join(c for c in s if not unicodedata.combining(c)).lower().replace('-', ' ')).strip()
+
+
+def _players():
+    """Skill players from data/nfl.json: full name and last name (normalized) -> gsis ids."""
+    try:
+        rows = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'nfl.json')))['players']
+    except Exception:
+        return {}, {}
+    full, last = {}, {}
+    for r in rows:
+        if r[2] in ('QB', 'RB', 'FB', 'WR', 'TE') and r[19]:
+            n = _norm(r[0])
+            full.setdefault(n, set()).add(r[19])
+            last.setdefault(n.split()[-1] if n.split()[-1] not in ('jr', 'sr', 'ii', 'iii', 'iv') else n.split()[-2], set()).add(r[19])
+    return full, last
+
+
+def vs_match(q, full, last):
+    """(gid, gid) when both sides of an "a vs b" search name exactly one skill player each, else None."""
+    sides = VS_RE.split(_norm(q).replace('stats', '').replace('fantasy', '').strip())
+    if len(sides) != 2:
+        return None
+    out = []
+    for side in sides:
+        side = side.strip()
+        hit = full.get(side) or last.get(side)
+        if not hit or len(hit) != 1:
+            return None
+        out.append(next(iter(hit)))
+    return tuple(out) if out[0] != out[1] else None
+
+
 def report(now, prev, qnow, qprev, pairs, start, end, top):
     pages = set(now) | set(prev)
     diff = []
@@ -165,6 +209,24 @@ def report(now, prev, qnow, qprev, pairs, start, end, top):
              'title and description did not promise.',
              [kv for kv in ranked if kv[1]['imp'] >= MIN_IMP and ctr(kv[1]) < LOW_CTR][:15])
 
+    # "A vs B" searches: which already have a comparison page, and the line that would give the rest one
+    vs = [kv for kv in ranked if VS_RE.search(' ' + kv[0] + ' ')][:20]
+    out.extend(['### Player vs. player searches', '',
+                'Searches like "hurts vs mckee". A pair gets its own page (/players/<a>-vs-<b>) once its line is in '
+                '`data/compare_pairs.json` (`{"pairs": [...]}`) and the next build runs.', ''])
+    if not vs:
+        out.extend(['None this week.', ''])
+    else:
+        full, last = _players()
+        out.extend(['| Search | Impressions | Clicks | Page shown most | Line for data/compare_pairs.json |', '|---|---:|---:|---|---|'])
+        for q, a in vs:
+            u = page_of.get(q, (None,))[0]
+            has = bool(u and '-vs-' in u)
+            m = None if has else vs_match(q, full, last)
+            line = 'has a page' if has else ('`{"a": "%s", "b": "%s", "q": "%s"}`' % (m[0], m[1], q.replace('"', '')) if m else 'names did not match one player each: add by hand')
+            out.append(f"| {cell(q)} | {a['imp']:,} | {a['clicks']:,} | {page_link(u) if u else '–'} | {line} |")
+        out.append('')
+
     def table(title, rows):
         out.extend([f'### {title}', ''])
         if not rows:
@@ -201,7 +263,9 @@ def main():
         pairs = {('example one stats', u + 'example-one'): {'clicks': 7, 'imp': 140, 'pos': 8.1},
                  ('example one contract', u + 'example-one'): {'clicks': 2, 'imp': 90, 'pos': 6.5},
                  ('example two', u + 'example-two'): {'clicks': 0, 'imp': 45, 'pos': 26.8},
-                 ('example three injury', u + 'example-three'): {'clicks': 1, 'imp': 30, 'pos': 31.0}}
+                 ('example three injury', u + 'example-three'): {'clicks': 1, 'imp': 30, 'pos': 31.0},
+                 ('jalen hurts vs tanner mckee', u + 'tanner-mckee'): {'clicks': 0, 'imp': 25, 'pos': 9.0},
+                 ('mahomes vs allen', u + 'josh-allen-vs-patrick-mahomes'): {'clicks': 1, 'imp': 20, 'pos': 7.5}}
         qnow = {q: r for (q, _), r in pairs.items()}
         qprev = {'example one contract': {'clicks': 2, 'imp': 30, 'pos': 17.9}, 'example two': {'clicks': 0, 'imp': 70, 'pos': 24.2}}
     else:

@@ -83,6 +83,7 @@ Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads onl
 | `deadline_team` | Team filter on /trade-deadline | `team` |
 | `table_filter` | A table filter box (once the visitor pauses) | `table`, `search_term` |
 | `usage_week` | The week picker on /usage-risers | `week` |
+| `vs_page_open` | "Read the full ... comparison" under the app's Compare tool | `link_url`, `from_page` |
 | `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
 | `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
 | `my_team_set` | A team is picked (or cleared) in the "Your team" block on the home page | `team`, `from_page` |
@@ -112,6 +113,15 @@ Built by `python3 -I data/build_olwin.py <play_by_play_2026.csv.gz>` from nflver
 
 ## Weekly team tiers (#tiers, data/tiers.json)
 `/team-tiers` plots every team's offense EPA per play against defense EPA allowed per play (team logos, top-right = good at both), groups the 32 teams into five tiers by net EPA per play, and lists the splits (pass, run, hit rate) in a filterable table. `python3 -I data/build_tiers.py <play_by_play_2026.csv.gz>` writes `data/tiers.json` from nflverse play-by-play (CC BY 4.0) through the last week in which every game in `data/schedule.json` is final, plus the rank change from the week before. The weekly refresh (Tuesday) runs it in step 4e, right after `build_olwin.py`.
+
+## Player comparison pages (/players/<a>-vs-<b>)
+Static "Player A vs Player B" pages for the searches fans make, built by `tools/build_seo.py` (`build_vs_pages()`): the two players' season stats side by side (better number in bold), shares of team targets, carries and snaps (data/usage.json), PlainScore percentiles bar by bar, pay only when `contract_facts()` confirms it (with where the figure comes from), and an FAQ (who is better this season, who has more yards, the better fantasy option, who gets paid more) repeated in JSON-LD. The slug is the two player slugs in alphabetical order. Which pairs get a page:
+- **searched**: `data/compare_pairs.json` (hand-edited, `{"pairs": [{"a": gsis, "b": gsis, "q": "the search"}]}`). The Monday Search Console issue has a "Player vs. player searches" table with the line to paste for each "A vs B" search whose names match one player each.
+- **teammates**: two quarterbacks with 60+ attempts each, or two running backs splitting the carries (the second has 30+ and at least 40% of the first's).
+- **paid**: the six biggest confirmed deals at QB, RB and WR and four at TE, all pairs (a tie at the cutoff takes every tied deal, up to eight).
+- **class**: first-round quarterbacks from the same draft class (data/drafted.json).
+
+Both players need a `/players` page, 2+ games this season and the same position group. `data/vs_pairs.json` (generated, never hand-edit, not deployed) keeps every pair ever built so a page stays up after its rule stops picking it. Each player page links to its comparisons ("<name> compared"), the `/players` hub lists them all at the bottom, and each comparison links to `/compare?p=<gsis>,<gsis>`, which opens the app's Compare tool on that pair (`cmpFromQuery()` in src.html). The app's Compare tool links back to the static page when one exists (`cmpVsLink()`, from `data/pageslugs.json` key `v`). Social card: `og-data/pages.json`, slug `vs-<slug>`.
 
 ## Weekly usage risers (/usage-risers, data/usage.json)
 For fantasy players: whose share of his team's targets, carries and snaps jumped (or dropped) this week. `python3 -I data/build_usage.py <folder> <season> [last week]` writes `data/usage.json` from nflverse `stats_player_week_<season>.csv`, `snap_counts_<season>.csv` and `players.csv` (CC BY 4.0): every RB, WR, TE and FB with a target or carry, one row per game (targets, carries, PPR points, offensive snaps), plus each team's targets, carries and offensive snaps per game (targets and carries summed over every player, quarterbacks included; team snaps = the most any one player took, the offensive line's count). Snap counts are the written nflverse `snap_counts` exception and are matched by id (`pfr_id` -> `gsis_id` in players.csv), never by name; without them the script still runs with no snap share. Snap counts can arrive a day after the box scores: the page then says the week's snap counts are not out yet. The script checks its target share against nflverse's own `target_share` column and stops if they disagree. `tools/refresh.sh` runs it in the gameday and weekly modes right after the season stats, so a Monday-night run has the week ready for a Tuesday post.

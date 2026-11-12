@@ -24,7 +24,7 @@ Data rules (CLAUDE.md) are enforced here, not just in the page:
 
 Re-run after every data refresh (build.sh does it too), then commit the generated folders and sitemap.xml.
 """
-import csv, datetime as dt, hashlib, html, json, pathlib, re, shutil, unicodedata, urllib.parse
+import csv, datetime as dt, hashlib, html, itertools, json, pathlib, re, shutil, unicodedata, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / 'data'
@@ -938,6 +938,7 @@ def build_player(p):
             f'<p class="lede">{esc(summary)}</p>{latest_html(p)}{main_html}'
             f'{faq_html(faq)}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
+            f'{vs_links_html(p)}'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
             f'{player_doors(p, f, T)}{signup_html()}')
     person = {'@type': 'Person', 'name': p.name, 'jobTitle': f"{POSNAME.get(p.pos, p.pos).capitalize()}, NFL",
@@ -1197,7 +1198,14 @@ def build_hubs():
         ps = sorted(PAGE_BY_TEAM.get(t['id'], []), key=lambda p: p.name)
         if ps:
             blocks += f'<h2><a href="/teams/{t["slug"]}">{esc(t["full"])}</a></h2><ul class="list">' + ''.join(f'<li>{player_name_link(p)} <span class="note">{esc(p.pos)}</span></li>' for p in ps) + '</ul>'
-    body = f'<h1>NFL player contracts explained</h1><p class="lede">{len(PAGES)} players with a confirmed contract or {SEASON_YEAR} stats, grouped by team. Contracts still being verified are not shown until a named report confirms them.</p>{blocks}'
+    vs = ''
+    for g in ('QB', 'RB', 'WR', 'TE'):
+        L = sorted((x for x in VS_PAGES if VS_GROUP[x[1].pos] == g), key=lambda x: (x[1].name, x[2].name))
+        if L:
+            vs += f'<h3>{esc(VS_WORD[g].capitalize())}s</h3><ul class="list">' + ''.join(f'<li><a href="/players/{s}">{esc(a.name)} vs. {esc(b.name)}</a></li>' for s, a, b in L) + '</ul>'
+    if vs:
+        vs = f'<h2 id="comparisons">Player comparisons</h2><p>{len(VS_PAGES)} head-to-head pages with this season\'s numbers side by side.</p>{vs}'
+    body = f'<h1>NFL player contracts explained</h1><p class="lede">{len(PAGES)} players with a confirmed contract or {SEASON_YEAR} stats, grouped by team. Contracts still being verified are not shown until a named report confirms them. <a href="#comparisons">Player comparisons</a> are at the bottom.</p>{blocks}{vs}'
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, crumbs_ld([('PlainStats', '/'), ('Players', path)])]
     card = og_add('pages', 'players', m='brand', c=OG_BRAND, e='PlainStats', t='NFL player contracts', s='Explained in plain English', n=f'{len(PAGES):,}', l=f'players with a contract or {SEASON_YEAR} stats',
                   x='Browse every team')
@@ -1470,6 +1478,308 @@ APP_URLS += [(u, '0.5', 'weekly') for u in [
     '/rookie-pay/rules']]
 
 
+# ---------------------------------------------------------------- player comparison pages (/players/<a>-vs-<b>)
+# "Player A vs Player B" searches, answered with this season's numbers side by side. Which pairs get a page:
+#   searched   pairs listed by hand in data/compare_pairs.json (from the "A vs B" searches in the Monday Search Console report)
+#   teammates  two quarterbacks who have both started (60+ attempts each), or two running backs splitting the carries
+#              (the second has 30+ carries and at least 40% of the first's)
+#   paid       the six biggest confirmed deals at QB, RB and WR and the four at TE (all pairs), by reported yearly average;
+#              a tie at the cutoff takes every tied deal, up to eight players
+#   class      first-round quarterbacks from the same draft class
+# Both players need a /players page and 2+ games this season, at the same position group. data/vs_pairs.json (generated,
+# never hand-edit) keeps every pair ever built, so a page stays up after its rule stops picking it, as long as both players
+# still qualify. Contract figures follow the same rules as the player pages: only when contract_facts() confirms them.
+VS_FILE = DATA / 'vs_pairs.json'
+VS_SEARCHED = _load('compare_pairs.json', {'pairs': []})
+USAGE = _load('usage.json', {'players': [], 'teams': {}})
+DRAFTED = _load('drafted.json', {'cols': [], 'picks': []})
+VS_GROUP = {'QB': 'QB', 'RB': 'RB', 'FB': 'RB', 'WR': 'WR', 'TE': 'TE'}
+VS_WORD = {'QB': 'quarterback', 'RB': 'running back', 'WR': 'wide receiver', 'TE': 'tight end'}
+VS_PAGES = []      # (slug, a, b) built this run
+VS_BY_GID = {}     # gid -> [(slug, other player)] for the "more comparisons" links
+
+
+def _usage_shares():
+    """Season target, carry and snap share per gsis id, pooled over his games (data/usage.json, from nflverse)."""
+    T, out = USAGE.get('teams', {}), {}
+    for gid, _n, _pos, games in USAGE.get('players', []):
+        a = [0, 0, 0, 0, 0, 0]
+        for g in games:
+            w, t, tg, ca = g[0], g[1], g[2], g[3]
+            sn = g[5] if len(g) > 5 else None
+            tt = T.get(t, {}).get(str(w), [0, 0, 0])
+            a[0] += tg; a[1] += tt[0]; a[2] += ca; a[3] += tt[1]
+            if sn is not None and len(tt) > 2 and tt[2]:
+                a[4] += sn; a[5] += tt[2]
+        out[gid] = {'tgt': a[0] / a[1] if a[1] else None, 'car': a[2] / a[3] if a[3] else None, 'snap': min(1, a[4] / a[5]) if a[5] else None}
+    return out
+
+
+USHARE = _usage_shares()
+
+
+def vs_ok(p):
+    return hasattr(p, 'slug') and p.pos in VS_GROUP and p.gid and p.s26 and (p.s26.get('g') or 0) >= 2
+
+
+def vs_pairs():
+    """{(gid, gid): (reason, extra)} for this run: the rules above plus every pair built before (data/vs_pairs.json)."""
+    ok = [p for p in PAGES if vs_ok(p)]
+    by_gid = {p.gid: p for p in ok}
+    out = {}
+
+    def add(a, b, why, extra=''):
+        if a is not b and VS_GROUP[a.pos] == VS_GROUP[b.pos]:
+            out.setdefault(tuple(sorted((a.gid, b.gid))), (why, extra))
+
+    for row in VS_SEARCHED.get('pairs', []):
+        a, b = by_gid.get(row.get('a')), by_gid.get(row.get('b'))
+        if a and b:
+            add(a, b, 'searched')
+    team = {}
+    for p in ok:
+        team.setdefault((p.team, VS_GROUP[p.pos]), []).append(p)
+    for (t, g), L in sorted(team.items()):
+        if g not in ('QB', 'RB') or len(L) < 2:
+            continue
+        k = 'att' if g == 'QB' else 'car'
+        L = sorted(L, key=lambda p: -(p.s26.get(k) or 0))
+        top, two = L[0].s26.get(k) or 0, L[1].s26.get(k) or 0
+        if (g == 'QB' and two >= 60) or (g == 'RB' and two >= 30 and two >= .4 * top):
+            add(L[0], L[1], 'teammates', t)
+    for g, n in (('QB', 6), ('RB', 6), ('WR', 6), ('TE', 4)):
+        L = sorted([p for p in ok if VS_GROUP[p.pos] == g and p.prov == 'r' and contract_facts(p)['apy']],
+                   key=lambda p: (-contract_facts(p)['apy'], p.name))
+        cut = n
+        while cut < min(len(L), 8) and contract_facts(L[cut])['apy'] == contract_facts(L[n - 1])['apy']:
+            cut += 1   # a tie at the cutoff: take every tied deal (up to 8 players) rather than let the alphabet decide
+        L = L[:cut]
+        for a, b in itertools.combinations(L, 2):
+            add(a, b, 'paid')
+    cols = DRAFTED.get('cols', [])
+    classes = {}
+    for row in DRAFTED.get('picks', []):
+        d = dict(zip(cols, row))
+        if d.get('pos') == 'QB' and d.get('round') == 1 and d.get('gsis') in by_gid:
+            classes.setdefault(d['season'], []).append(by_gid[d['gsis']])
+    for yr, L in sorted(classes.items()):
+        for a, b in itertools.combinations(L, 2):
+            add(a, b, 'class', str(yr))
+    try:
+        old = json.loads(VS_FILE.read_text()).get('pairs', {})
+    except Exception:
+        old = {}
+    for key in old:
+        a, b = (by_gid.get(g) for g in key.split('|'))
+        if a and b:
+            add(a, b, 'kept')
+    return out, by_gid, old
+
+
+def vs_slug(a, b):
+    a, b = sorted((a, b), key=lambda p: p.slug)
+    return f'{a.slug}-vs-{b.slug}', a, b
+
+
+def _ratio(x, y):
+    return x / y if y else None
+
+
+# (label, value from the season dict and shares, format, higher is better (False = lower is better))
+def vs_rows(g):
+    i0 = lambda v: f'{v:,.0f}'
+    f1 = lambda v: f'{v:.1f}'
+    pc = lambda v: f'{v * 100:.0f}%'
+    G = lambda s: s.get('g') or 0
+    per = lambda k: (lambda s, u: _ratio(s.get(k) or 0, G(s)))
+    tot = lambda k: (lambda s, u: s.get(k) or 0)
+    fp = ('Fantasy points a game (PPR)', per('fp'), f1, True)
+    share = lambda k, lab: (lab, lambda s, u: u.get(k), pc, True)
+    if g == 'QB':
+        return [('Games', lambda s, u: G(s), i0, True),
+                ('Completion rate', lambda s, u: _ratio(s.get('cmp') or 0, s.get('att') or 0), pc, True),
+                ('Passing yards', tot('pyd'), i0, True), ('Passing yards a game', per('pyd'), f1, True),
+                ('Yards per attempt', lambda s, u: _ratio(s.get('pyd') or 0, s.get('att') or 0), f1, True),
+                ('Passing touchdowns', tot('ptd'), i0, True), ('Interceptions', tot('int'), i0, False),
+                ('Sacks taken', tot('sk'), i0, False), ('Rushing yards', tot('ryd'), i0, True),
+                ('Rushing touchdowns', tot('rtd'), i0, True), fp]
+    if g == 'RB':
+        return [('Games', lambda s, u: G(s), i0, True), ('Carries', tot('car'), i0, True), ('Rushing yards', tot('ryd'), i0, True),
+                ('Yards per carry', lambda s, u: _ratio(s.get('ryd') or 0, s.get('car') or 0), f1, True),
+                ('Rushing touchdowns', tot('rtd'), i0, True), ('Catches', tot('rec'), i0, True),
+                ('Receiving yards', tot('reyd'), i0, True), ('Receiving touchdowns', tot('retd'), i0, True),
+                ('Fumbles lost', tot('fl'), i0, False), share('car', 'Share of team carries'), share('tgt', 'Share of team targets'),
+                share('snap', 'Share of offensive snaps'), fp]
+    return [('Games', lambda s, u: G(s), i0, True), ('Targets', tot('tgt'), i0, True), ('Catches', tot('rec'), i0, True),
+            ('Catch rate', lambda s, u: _ratio(s.get('rec') or 0, s.get('tgt') or 0), pc, True),
+            ('Receiving yards', tot('reyd'), i0, True), ('Receiving yards a game', per('reyd'), f1, True),
+            ('Yards per catch', lambda s, u: _ratio(s.get('reyd') or 0, s.get('rec') or 0), f1, True),
+            ('Receiving touchdowns', tot('retd'), i0, True), share('tgt', 'Share of team targets'),
+            share('snap', 'Share of offensive snaps'), fp]
+
+
+def build_vs(a, b, slug, why, extra):
+    g = VS_GROUP[a.pos]
+    word = VS_WORD[g]
+    fa, fb = contract_facts(a), contract_facts(b)
+    pa, pb = plainscore(a, fa), plainscore(b, fb)
+    sa, sb = a.s26, b.s26
+    ua, ub = USHARE.get(a.gid, {}), USHARE.get(b.gid, {})
+    wk = HIST.get('thru')
+    la, lb = a.name.split(' ', 1)[-1], b.name.split(' ', 1)[-1]   # last names for tight spots
+    if la == lb:
+        la, lb = a.name, b.name
+    path = f'/players/{slug}'
+
+    # the side-by-side table: the better value in bold, ties plain
+    rows_html, wins = '', [0, 0]
+    for lab, fn, fmt, hi in vs_rows(g):
+        va, vb = fn(sa, ua), fn(sb, ub)
+        if va is None and vb is None:
+            continue
+        best = None
+        if va is not None and vb is not None and lab != 'Games' and round(va, 4) != round(vb, 4):
+            best = 0 if (va > vb) == hi else 1
+            wins[best] += 1
+        cell = lambda v, i: f'<td class="r">{"<b>" if best == i else ""}{fmt(v) if v is not None else "–"}{"</b>" if best == i else ""}</td>'
+        rows_html += f'<tr><td>{esc(lab)}</td>{cell(va, 0)}{cell(vb, 1)}</tr>'
+    if fa['apy'] or fb['apy']:
+        pay = lambda f: mon(f['apy']) if f['apy'] else 'Being verified'
+        rows_html += f'<tr><td>Pay per year</td><td class="r">{esc(pay(fa))}</td><td class="r">{esc(pay(fb))}</td></tr>'
+        if fa['end'] or fb['end']:
+            rows_html += f'<tr><td>Signed through</td><td class="r">{fa["end"] or "–"}</td><td class="r">{fb["end"] or "–"}</td></tr>'
+    else:
+        rows_html += '<tr><td>Contract</td><td class="r">Being verified</td><td class="r">Being verified</td></tr>'
+    TA, TB_ = TEAMS[a.team], TEAMS[b.team]
+    head = (f'<tr><th>{SEASON_YEAR}, through week {wk}</th><th class="r"><a href="/players/{a.slug}">{esc(a.name)}</a><br><span class="note">{esc(TA["name"])}</span></th>'
+            f'<th class="r"><a href="/players/{b.slug}">{esc(b.name)}</a><br><span class="note">{esc(TB_["name"])}</span></th></tr>')
+    table = f'<div class="card scroll"><table><thead>{head}</thead><tbody>{rows_html}</tbody></table></div>'
+    table += (f'<p class="note">Bold marks the better number. Season stats from nflverse box scores; shares of team targets, carries and snaps from nflverse box scores and snap counts. '
+              f'Contract figures only when a named report confirms them.</p>')
+
+    # PlainScore, bar by bar
+    ps_html = ''
+    if pa and pb and pa['grp'] == pb['grp']:
+        la_bars = {x[3]: x for x in pa['bars']}
+        lines = ''
+        for lab, v, val, k in pb['bars']:
+            if k in la_bars:
+                xa = la_bars[k]
+                lines += f'<tr><td>{esc(lab)}</td><td class="r">{xa[1]} <span class="note">({esc(xa[2])})</span></td><td class="r">{v} <span class="note">({esc(val)})</span></td></tr>'
+        ps_html = (f'<h2>PlainScore</h2><div class="card scroll"><table><thead><tr><th>Percentile among {pa["n"]} {esc(pa["grp"])}</th><th class="r">{esc(la)}</th><th class="r">{esc(lb)}</th></tr></thead>'
+                   f'<tbody><tr><td><b>PlainScore</b></td><td class="r"><b>{pa["s"]}</b></td><td class="r"><b>{pb["s"]}</b></td></tr>{lines}</tbody></table></div>'
+                   f'<p class="note">Each number is a percentile against every qualified {word} this season: 90 means better than 90% of them. <a href="/cap-101">How PlainScore works</a></p>')
+
+    # plain-English answers
+    why_s = {'teammates': f"They share the {TEAMS.get(extra, TA)['full']} {word} work this season.",
+             'paid': f"Both are on two of the biggest {word} contracts in the NFL.",
+             'class': f"Both were first-round quarterbacks in the {extra} draft.",
+             'searched': 'Fans search this comparison on Google.'}.get(why, '')
+    if pa and pb:
+        if pa['s'] == pb['s']:
+            better = f"{a.name} and {b.name} have the same PlainScore, {pa['s']}, through week {PSCORE['week']} of {SEASON_YEAR}."
+        else:
+            hi_, lo_, ph, pl_ = (a, b, pa, pb) if pa['s'] > pb['s'] else (b, a, pb, pa)
+            better = (f"By this season's play, {hi_.name}: his PlainScore is {ph['s']} to {poss(lo_.name)} {pl_['s']}, "
+                      f"so he ranks ahead of more of the {ph['n']} qualified {ph['grp']} through week {PSCORE['week']}.")
+    elif pa or pb:
+        x, px = (a, pa) if pa else (b, pb)
+        y = b if pa else a
+        better = (f"Only {x.name} has played enough this season for a PlainScore ({px['s']} out of 100). "
+                  f"{y.name} has not qualified yet, so compare the season numbers below.")
+    else:
+        better = "Neither has played enough this season for a PlainScore yet, so compare the season numbers below."
+    lead = (f"{a.name} leads in {wins[0]} of the {sum(wins)} stats below that can be compared, {b.name} in {wins[1]}."
+            if sum(wins) else '')
+    mk = {'QB': ('pyd', 'passing yards'), 'RB': ('ryd', 'rushing yards'), 'WR': ('reyd', 'receiving yards'), 'TE': ('reyd', 'receiving yards')}[g]
+    va, vb = sa.get(mk[0]) or 0, sb.get(mk[0]) or 0
+    more = (f"{a.name} has {va:,} {mk[1]} in {sa['g']} games ({va / sa['g']:.1f} a game); "
+            f"{b.name} has {vb:,} in {sb['g']} games ({vb / sb['g']:.1f} a game).")
+    fpa, fpb = (sa.get('fp') or 0) / sa['g'], (sb.get('fp') or 0) / sb['g']
+    fant = f"{a.name} has averaged {fpa:.1f} PPR fantasy points a game this season, {b.name} {fpb:.1f}."
+    if g != 'QB':
+        k, kw = ('car', 'carries') if g == 'RB' else ('tgt', 'targets')
+        if ua.get(k) is not None and ub.get(k) is not None:
+            fant += f" {a.name} has had {ua[k] * 100:.0f}% of his team's {kw}, {b.name} {ub[k] * 100:.0f}%."
+        if ua.get('snap') is not None and ub.get('snap') is not None:
+            fant += f" On the field: {ua['snap'] * 100:.0f}% of snaps for {la}, {ub['snap'] * 100:.0f}% for {lb}."
+    faq = [(f"Who is better, {a.name} or {b.name}?", better + ' This is a read of the season so far, not a forecast.'),
+           (f"Who has more {mk[1]} in {SEASON_YEAR}?", more),
+           (f"Who is the better fantasy option, {a.name} or {b.name}?", fant + ' Fantasy points use nflverse PPR scoring.')]
+    if fa['apy'] and fb['apy']:
+        hi_, lo_ = (a, b) if fa['apy'] >= fb['apy'] else (b, a)
+        fh, fl = contract_facts(hi_), contract_facts(lo_)
+        src = lambda p: {'r': 'a named report', 'f': 'calculated from the CBA rookie scale', 'm': 'the CBA league minimum', 'p': 'the CBA practice squad scale'}.get(p.prov, '')
+        faq.append((f"Who gets paid more, {a.name} or {b.name}?",
+                    f"{hi_.name} averages {mon(fh['apy'])} a year ({src(hi_)}), {lo_.name} {mon(fl['apy'])} ({src(lo_)})."))
+
+    lede = ' '.join(x for x in (better, why_s, lead) if x)
+    core = next(t for t in (f"{a.name} vs. {b.name}: {SEASON_YEAR} stats compared", f"{a.name} vs. {b.name}: {SEASON_YEAR} stats",
+                            f"{a.name} vs. {b.name} stats", f"{a.name} vs. {b.name}") if len(t) <= 60 or t == f"{a.name} vs. {b.name}")
+    title = core + ' | PlainStats' if len(core) + 13 <= 60 else core
+    desc = pack([f"{a.name} vs. {b.name} in {SEASON_YEAR}, side by side: {mk[1]}, touchdowns, fantasy points and PlainScore.", better, more])
+    h1 = f"{a.name} vs. {b.name}"
+
+    imgs = ''.join(f'<img src="{esc(u)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">'
+                   for p in (a, b) for u in [headshot(p.name, p.team)] if u)
+    others = []
+    for p in (a, b):
+        for s2, q in VS_BY_GID.get(p.gid, []):
+            if s2 != slug and s2 not in [o[0] for o in others]:
+                others.append((s2, f"{p.name} vs. {q.name}"))
+    more_html = ('<h2>More comparisons</h2><ul class="chips">' + ''.join(f'<li><a href="/players/{s2}">{esc(t)}</a></li>' for s2, t in others[:8]) + '</ul>') if others else ''
+    app = f'/compare?p={a.gid},{b.gid}'
+    body = (f'<div class="id">{imgs}<div><h1>{esc(h1)}</h1><p class="note">{esc(VS_WORD[g].capitalize())}s · {SEASON_YEAR} season through week {wk}</p></div></div>'
+            f'<p class="lede">{esc(lede)}</p>{table}{ps_html}{faq_html(faq)}'
+            f'<p><a class="cta" href="{esc(app)}">Compare them in the PlainStats app</a><a class="cta alt" href="/players/{a.slug}">{esc(a.name)}</a><a class="cta alt" href="/players/{b.slug}">{esc(b.name)}</a></p>'
+            f'{more_html}'
+            + doors_html([('Compare any players', '/compare', 'Pick two to four players and see them side by side'),
+                          ('Weekly usage risers', '/usage-risers', 'Whose share of the targets, carries and snaps jumped this week'),
+                          ('Season stats', '/stats', f'Every {SEASON_YEAR} stat leader, filter by team or position'),
+                          ('Player ratings', '/player-ratings', f'How {word}s rank on the field this season')])
+            + signup_html())
+    crumbs = [('PlainStats', '/'), ('Players', '/players'), (h1, path)]
+    graph = [{'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN,
+              'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'},
+              'about': [{'@type': 'Person', 'name': p.name, 'url': f'{SITE}/players/{p.slug}'} for p in (a, b)]},
+             faq_ld(faq), crumbs_ld(crumbs)]
+    n = f"{pa['s']} – {pb['s']}" if pa and pb else f"{fpa:.1f} – {fpb:.1f}"
+    card = og_add('pages', 'vs-' + slug, m='brand', c=OG_BRAND, e='Player vs. player', t=f"{la} vs. {lb}", s=f"{a.name} and {b.name}",
+                  n=n, l='PlainScore, out of 100' if pa and pb else 'PPR fantasy points a game', x=f"{SEASON_YEAR} season, side by side")
+    write(f'players/{slug}.html', shell(path, title, desc, body, graph, crumbs=crumbs, card=card))
+    URLS.append((path, '0.6', 'weekly'))
+    PAGEMAP.setdefault('v', {})['|'.join(sorted((a.gid, b.gid)))] = slug
+
+
+def vs_links_html(p):
+    L = sorted(VS_BY_GID.get(getattr(p, 'gid', None), []), key=lambda x: x[1].name)
+    if not L:
+        return ''
+    return (f'<h2>{esc(p.name)} compared</h2><ul class="chips">'
+            + ''.join(f'<li><a href="/players/{s}">{esc(p.name)} vs. {esc(q.name)}</a></li>' for s, q in L[:10]) + '</ul>')
+
+
+def build_vs_pages():
+    pairs, by_gid, old = vs_pairs()
+    built = []
+    for (ga, gb), (why, extra) in sorted(pairs.items()):
+        slug, a, b = vs_slug(by_gid[ga], by_gid[gb])
+        assert slug not in slug_seen, f'comparison slug {slug} clashes with a player page'
+        built.append((slug, a, b, why, extra))
+        VS_BY_GID.setdefault(a.gid, []).append((slug, b))
+        VS_BY_GID.setdefault(b.gid, []).append((slug, a))
+    for slug, a, b, why, extra in built:
+        build_vs(a, b, slug, why, extra)
+        VS_PAGES.append((slug, a, b))
+    keep = {'|'.join(sorted((a.gid, b.gid))): old.get('|'.join(sorted((a.gid, b.gid))), TODAY) for _s, a, b, _w, _e in built}
+    VS_FILE.write_text(json.dumps({'note': 'Generated by tools/build_seo.py: every player comparison page built, with the date it first was. Never edit by hand.',
+                                   'pairs': keep}, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
+    counts = {}
+    for _s, _a, _b, why, _e in built:
+        counts[why] = counts.get(why, 0) + 1
+    print(f'comparisons {len(built)} {counts}', end=' | ')
+
+
 def build_sitemap():
     """Each generated page carries the date its own text last changed (data/lastmod.json). The home page and the app pages
     (APP_URLS, one index.html filled with live data) use the data date, since their numbers change with every refresh."""
@@ -1500,6 +1810,7 @@ def build_og_data():
 def main():
     for d in ('players', 'teams', 'draft', 'learn'):
         shutil.rmtree(ROOT / d, ignore_errors=True)
+    build_vs_pages()   # first: player pages link to their comparisons (VS_BY_GID)
     for p in PAGES:
         build_player(p)
     for t in TEAMS.values():

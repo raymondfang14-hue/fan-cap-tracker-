@@ -4068,6 +4068,7 @@ function route() {
   }
   if (D) {
     if (v === 'team') renderTeam(curTeam);
+    if (v === 'tools' && st.tool === 'compare') cmpFromQuery();
     if (v === 'tools') showTool(st.tool);
     if (v === 'awards') renderAwards();
     if (v === 'tiers') renderTiers();
@@ -4952,14 +4953,32 @@ function renderCompare() {
     return;
   }
   const [a, b] = ps;
-  if (st.cmpMode === 'stats') { $('#cmp-out').innerHTML = cmpStatsHTML(a, b); return; }
+  if (st.cmpMode === 'stats') { $('#cmp-out').innerHTML = cmpStatsHTML(a, b); cmpVsLink(a, b); return; }
   const radar = radarSVG(a, b);
   const rowsDef = [['Per year', 'apy', mon], ['Total value', 'total', v => mon(v, 0)], ['Guaranteed', 'gtd', mon], ['Share guaranteed', 'gtdp', v => pct(v)], ['2026 cap hit', 'cap', mon], ['Dead if cut', 'dpost', mon], ['Age', 'age', v => v || '—'], ['Free agent in', 'end', v => v]];
   $('#cmp-out').innerHTML = `<div class="cmprow"><div class="l">${badge(a.team)}<b style="font-family:var(--body)">${esc(a.name)}</b></div><span></span><div class="rgt">${badge(b.team)}<b style="font-family:var(--body)">${esc(b.name)}</b></div></div>` +
     rowsDef.map(([l, k, f]) => { const va = a[k] || 0, vb = b[k] || 0, m = Math.max(va, vb, 1e-9); const bar = k !== 'age' && k !== 'end';
       return `<div class="cmprow"><div class="l"><b>${f(a[k])}</b>${bar ? `<i class="b" style="width:${(va / m * 60).toFixed(0)}%;background:var(--brand)"></i>` : ''}</div><span class="lab">${l}</span><div class="rgt">${bar ? `<i class="b" style="width:${(vb / m * 60).toFixed(0)}%;background:var(--c-def)"></i>` : ''}<b>${f(b[k])}</b></div></div>`; }).join('');
   $('#cmp-out').insertAdjacentHTML('afterbegin', `<div class="vs" style="align-items:center">${radar}<div class="fcs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${faceCard(a)}${faceCard(b)}</div></div>`);
+  cmpVsLink(a, b);
 }
+/* /compare?p=<gsis id>,<gsis id>[,...] opens the tool on those players (the static /players/<a>-vs-<b> pages link here), once per address */
+function cmpFromQuery() {
+  const q = new URLSearchParams(location.search).get('p'); if (!q || cmpFromQuery.done === location.search) return;
+  cmpFromQuery.done = location.search;
+  const ids = q.split(',').map(g => PL.find(p => p.gid === g)).filter(Boolean).map(p => p.i).slice(0, 4);
+  if (ids.length >= 2) { st.cmp = ids; st.cmpMode = 'stats'; }
+}
+/* Two players with a static comparison page (data/pageslugs.json "v", written by tools/build_seo.py): link to it under the tool */
+function cmpVsLink(a, b) {
+  const key = [a.gid, b.gid].sort().join('|');
+  loadPageMap().then(() => {
+    const s = PAGEMAP && PAGEMAP.v && PAGEMAP.v[key], o = $('#cmp-out'), now = st.cmp.map(i => PL[i] && PL[i].gid).filter(Boolean).sort().join('|');
+    if (!s || !o || now !== key || o.querySelector('.cmp-vs')) return;
+    o.insertAdjacentHTML('beforeend', `<p class="note cmp-vs"><a href="/players/${esc(s)}" data-vs="${esc(s)}">Read the full ${esc(a.name)} vs. ${esc(b.name)} comparison</a>: season stats, PlainScore and fantasy numbers side by side.</p>`);
+  });
+}
+document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-vs]'); if (a) psTrack('vs_page_open', { link_url: a.getAttribute('href'), from_page: location.pathname }); }, true);
 
 /* ===== learn ===== */
 const faq = (el, list) => (el.innerHTML = list.map(([t, b], i) => `<details${i < 2 ? ' open' : ''}><summary>${esc(t)}</summary><p>${esc(b)}</p></details>`).join(''));
