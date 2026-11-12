@@ -260,6 +260,7 @@ def report(now_all, prev_all, qnow, qprev, pairs, start, end, top):
     out.extend(['### Searches to win next', '',
                 f'Searches where the site already shows up at positions {WIN_LO} to {WIN_HI} with {MIN_IMP}+ impressions. Moving up is cheaper than '
                 'ranking for something new: check that the page and its title answer the search, then watch its position next week. '
+                'Position change: + means it moved up since last week. '
                 + (f'"Clicks within reach" assumes the top-3 click rate this site had this week ({pct(rate3)} on {t3["imp"]:,} impressions).'
                    if rate3 is not None else f'Too few top-3 impressions this week (under {TOP3_MIN_IMP}) to estimate clicks within reach, so they are ranked by impressions.'), ''])
     if not near:
