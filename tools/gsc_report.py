@@ -1,6 +1,10 @@
-"""Weekly Search Console report: which /players/<name> pages gained impressions, and which searches bring them.
+"""Weekly Search Console report: how every part of plainstatsnfl.com does in Google search, which searches to win next,
+and which /players/<name> pages gained impressions.
 
-Compares the last 7 days that Search Console has data for (it runs about 3 days behind) with the 7 days before and writes
+The report opens with the whole site by section (player pages, comparisons, teams, draft, explainers, app pages, home), then
+"Searches to win next": searches where the site already shows up at positions 4 to 20 with real impressions, each with the page
+Google showed and that page's title today, ranked by the clicks within reach if it reached the top 3 (estimated from this site's
+own click rate at the top 3 that week; left out when there is too little top-3 data to say). Then, as before, it compares the last 7 days that Search Console has data for (it runs about 3 days behind) with the 7 days before and writes
 a Markdown report: totals with the click rate, the top searches that show a player page (with their change, click rate and
 the page Google showed), searches seen often but rarely clicked (the ones titles and descriptions should answer), then per
 page the biggest gainers in impressions, pages showing up for the first time and the biggest drops, each with its click
@@ -46,13 +50,12 @@ def token():
 
 
 def query(tok, site, start, end, dims=('page',)):
-    """Clicks, impressions and position on /players/ pages for start..end (inclusive), keyed by the dims values
+    """Clicks, impressions and position across the whole site for start..end (inclusive), keyed by the dims values
     (one value: a string; several, e.g. ('query', 'page'): a tuple)."""
     url = API.format(site=urllib.parse.quote(site, safe=''))
     rows, at = {}, 0
     while True:
-        body = {'startDate': start.isoformat(), 'endDate': end.isoformat(), 'dimensions': list(dims), 'rowLimit': 25000, 'startRow': at,
-                'dimensionFilterGroups': [{'filters': [{'dimension': 'page', 'operator': 'contains', 'expression': '/players/'}]}]}
+        body = {'startDate': start.isoformat(), 'endDate': end.isoformat(), 'dimensions': list(dims), 'rowLimit': 25000, 'startRow': at}
         req = urllib.request.Request(url, data=json.dumps(body).encode(), method='POST',
                                      headers={'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json'})
         with urllib.request.urlopen(req, timeout=60) as r:
@@ -107,8 +110,54 @@ def cell(text):
 
 
 def page_link(u):
-    path = urllib.parse.urlparse(u).path
-    return f'[{name_of(u)}](https://plainstatsnfl.com{path})'
+    path = urllib.parse.urlparse(u).path or '/'
+    label = name_of(u) if path.startswith('/players/') and path != '/players/' else path
+    return f'[{label}](https://plainstatsnfl.com{path})'
+
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC = ('/players', '/teams', '/draft', '/learn')
+
+
+def section(u):
+    """Which part of the site a page belongs to."""
+    path = (urllib.parse.urlparse(u).path or '/').rstrip('/') or '/'
+    if path == '/':
+        return 'Home'
+    if path.startswith('/players/'):
+        return 'Player comparisons' if '-vs-' in path else 'Player pages'
+    for pre, name in (('/teams', 'Team pages'), ('/draft', 'Draft prospects'), ('/learn', 'Stat explainers'), ('/players', 'Player pages')):
+        if path == pre or path.startswith(pre + '/'):
+            return name
+    return 'App pages'
+
+
+SECTIONS = ['Player pages', 'Player comparisons', 'Team pages', 'Draft prospects', 'Stat explainers', 'App pages', 'Home']
+
+
+def is_player(u):
+    return section(u) == 'Player pages' and (urllib.parse.urlparse(u).path or '').rstrip('/') != '/players'
+
+
+def title_of(u):
+    """The page's <title> in this checkout (static pages only; app pages share index.html and get their title in the browser)."""
+    path = (urllib.parse.urlparse(u).path or '/').rstrip('/')
+    if not path.startswith(STATIC):
+        return 'app page'
+    for f in (path.lstrip('/') + '.html', path.lstrip('/') + '/index.html'):
+        try:
+            with open(os.path.join(ROOT, f), encoding='utf-8') as fh:
+                m = re.search(r'<title>(.*?)</title>', fh.read(4000), re.S)
+            if m:
+                return html_unescape(m.group(1))
+        except OSError:
+            pass
+    return 'page not in this build'
+
+
+def html_unescape(s):
+    import html
+    return html.unescape(s)
 
 
 def top_by_page(pairs):
@@ -167,7 +216,13 @@ def vs_match(q, full, last):
     return tuple(out) if out[0] != out[1] else None
 
 
-def report(now, prev, qnow, qprev, pairs, start, end, top):
+WIN_LO, WIN_HI = 4, 20     # "searches to win next": average position in this range ...
+TOP3_MIN_IMP = 50          # ... with clicks within reach estimated only when the top 3 had at least this many impressions
+
+
+def report(now_all, prev_all, qnow, qprev, pairs, start, end, top):
+    now = {u: r for u, r in now_all.items() if is_player(u)}
+    prev = {u: r for u, r in prev_all.items() if is_player(u)}
     pages = set(now) | set(prev)
     diff = []
     for u in pages:
@@ -179,14 +234,47 @@ def report(now, prev, qnow, qprev, pairs, start, end, top):
     tot = lambda rows: {'clicks': sum(x['clicks'] for x in rows.values()), 'imp': sum(x['imp'] for x in rows.values())}
     t, p = tot(now), tot(prev)
     search_of, page_of = top_by_page(pairs), top_page_by_query(pairs)
-    out = [f'## Player pages in Google search, {start:%b %-d} to {end:%b %-d}',
+    ta, pa = tot(now_all), tot(prev_all)
+    out = [f'## PlainStats in Google search, {start:%b %-d} to {end:%b %-d}',
            '', f'Compared with the 7 days before. Search Console data runs about {LAG} days behind.', '',
-           f'- Player pages with impressions: **{len(now)}** (was {len(prev)})',
-           f"- Impressions: **{t['imp']:,}** (was {p['imp']:,}, {t['imp'] - p['imp']:+,})",
-           f"- Clicks: **{t['clicks']:,}** (was {p['clicks']:,}, {t['clicks'] - p['clicks']:+,})",
-           f'- Click rate: **{pct(ctr(t))}** (was {pct(ctr(p))})',
-           f'- Searches that showed a player page: **{len(qnow):,}** (was {len(qprev):,})', '']
+           f"- Whole site: **{ta['imp']:,}** impressions (was {pa['imp']:,}, {ta['imp'] - pa['imp']:+,}), "
+           f"**{ta['clicks']:,}** clicks (was {pa['clicks']:,}, {ta['clicks'] - pa['clicks']:+,}), click rate **{pct(ctr(ta))}** (was {pct(ctr(pa))})",
+           f'- Searches that showed the site: **{len(qnow):,}** (was {len(qprev):,})', '',
+           '### By section', '', '| Section | Pages seen | Impressions | Change | Clicks | Change | Click rate |', '|---|---:|---:|---:|---:|---:|---:|']
+    for sec in SECTIONS:
+        a = {u: r for u, r in now_all.items() if section(u) == sec}
+        b = {u: r for u, r in prev_all.items() if section(u) == sec}
+        if not a and not b:
+            continue
+        x, y = tot(a), tot(b)
+        out.append(f"| {sec} | {len(a)} | {x['imp']:,} | {x['imp'] - y['imp']:+,} | {x['clicks']:,} | {x['clicks'] - y['clicks']:+,} | {pct(ctr(x))} (was {pct(ctr(y))}) |")
+    out.append('')
 
+    # Searches to win next: already on page one or two, not yet top 3, seen often enough to matter
+    top3 = [r for r in qnow.values() if r['pos'] and r['pos'] <= 3]
+    t3 = tot({i: r for i, r in enumerate(top3)})
+    rate3 = ctr(t3) if t3['imp'] >= TOP3_MIN_IMP else None
+    near = [(q, a) for q, a in qnow.items() if a['pos'] and WIN_LO <= a['pos'] <= WIN_HI and a['imp'] >= MIN_IMP]
+    reach = lambda a: max(0, round(a['imp'] * rate3 - a['clicks'])) if rate3 is not None else None
+    near.sort(key=lambda kv: (-(reach(kv[1]) or 0), -kv[1]['imp']))
+    out.extend(['### Searches to win next', '',
+                f'Searches where the site already shows up at positions {WIN_LO} to {WIN_HI} with {MIN_IMP}+ impressions. Moving up is cheaper than '
+                'ranking for something new: check that the page and its title answer the search, then watch its position next week. '
+                + (f'"Clicks within reach" assumes the top-3 click rate this site had this week ({pct(rate3)} on {t3["imp"]:,} impressions).'
+                   if rate3 is not None else f'Too few top-3 impressions this week (under {TOP3_MIN_IMP}) to estimate clicks within reach, so they are ranked by impressions.'), ''])
+    if not near:
+        out.extend(['None this week.', ''])
+    else:
+        out.extend(['| Search | Impressions | Avg. position | Change | Clicks | Within reach | Page shown most | Its title today |',
+                    '|---|---:|---:|---:|---:|---:|---|---|'])
+        for q, a in near[:top]:
+            b = qprev.get(q, ZERO)
+            u = page_of.get(q, (None,))[0]
+            mv = f"{b['pos'] - a['pos']:+.1f}" if b['pos'] else 'new'
+            r = reach(a)
+            out.append(f"| {cell(q)} | {a['imp']:,} | {pos(a)} | {mv} | {a['clicks']:,} | {'–' if r is None else f'+{r:,}'} | "
+                       f"{page_link(u) if u else '–'} | {cell(title_of(u)) if u else '–'} |")
+        out.append('')
     def searches(title, note, rows):
         out.extend([f'### {title}', '', note, ''])
         if not rows:
@@ -202,7 +290,7 @@ def report(now, prev, qnow, qprev, pairs, start, end, top):
         out.append('')
 
     ranked = sorted(qnow.items(), key=lambda kv: (-kv[1]['imp'], -kv[1]['clicks']))
-    searches('Top searches', 'The searches that showed a player page most often. Google leaves rare searches out, '
+    searches('Top searches', 'The searches that showed the site most often. Google leaves rare searches out, '
              'so these add up to less than the page totals.', ranked[:top])
     searches('Seen but rarely clicked',
              f'Searches with {MIN_IMP}+ impressions and a click rate under {LOW_CTR:.0%}: what people wanted that the '
@@ -240,6 +328,11 @@ def report(now, prev, qnow, qprev, pairs, start, end, top):
                        f"{pos(a)} (was {pos(b)}) | {cell(q[0]) + ' (' + format(q[1]['imp'], ',') + ')' if q else '–'} |")
         out.append('')
 
+    out.extend([f'## Player pages, {start:%b %-d} to {end:%b %-d}', '',
+                f'- Player pages with impressions: **{len(now)}** (was {len(prev)})',
+                f"- Impressions: **{t['imp']:,}** (was {p['imp']:,}, {t['imp'] - p['imp']:+,})",
+                f"- Clicks: **{t['clicks']:,}** (was {p['clicks']:,}, {t['clicks'] - p['clicks']:+,})",
+                f'- Click rate: **{pct(ctr(t))}** (was {pct(ctr(p))})', ''])
     table('Biggest gains', up)
     table('New in search this week', new)
     table('Biggest drops', down)
@@ -259,13 +352,19 @@ def main():
         u = 'https://plainstatsnfl.com/players/'
         prev = {u + 'example-one': {'clicks': 2, 'imp': 40, 'pos': 18.2}, u + 'example-two': {'clicks': 0, 'imp': 90, 'pos': 25.0}}
         now = {u + 'example-one': {'clicks': 9, 'imp': 310, 'pos': 9.4}, u + 'example-three': {'clicks': 1, 'imp': 55, 'pos': 30.1},
-               u + 'example-two': {'clicks': 0, 'imp': 60, 'pos': 27.3}}
+               u + 'example-two': {'clicks': 0, 'imp': 60, 'pos': 27.3},
+               'https://plainstatsnfl.com/teams/eagles': {'clicks': 4, 'imp': 120, 'pos': 11.0},
+               'https://plainstatsnfl.com/learn/epa': {'clicks': 6, 'imp': 80, 'pos': 2.4},
+               'https://plainstatsnfl.com/usage-risers': {'clicks': 2, 'imp': 35, 'pos': 6.2}}
         pairs = {('example one stats', u + 'example-one'): {'clicks': 7, 'imp': 140, 'pos': 8.1},
                  ('example one contract', u + 'example-one'): {'clicks': 2, 'imp': 90, 'pos': 6.5},
                  ('example two', u + 'example-two'): {'clicks': 0, 'imp': 45, 'pos': 26.8},
                  ('example three injury', u + 'example-three'): {'clicks': 1, 'imp': 30, 'pos': 31.0},
                  ('jalen hurts vs tanner mckee', u + 'tanner-mckee'): {'clicks': 0, 'imp': 25, 'pos': 9.0},
-                 ('mahomes vs allen', u + 'josh-allen-vs-patrick-mahomes'): {'clicks': 1, 'imp': 20, 'pos': 7.5}}
+                 ('mahomes vs allen', u + 'josh-allen-vs-patrick-mahomes'): {'clicks': 1, 'imp': 20, 'pos': 7.5},
+                 ('what is epa nfl', 'https://plainstatsnfl.com/learn/epa'): {'clicks': 6, 'imp': 80, 'pos': 2.4},
+                 ('eagles cap space', 'https://plainstatsnfl.com/teams/eagles'): {'clicks': 1, 'imp': 90, 'pos': 9.2},
+                 ('nfl target share week 9', 'https://plainstatsnfl.com/usage-risers'): {'clicks': 0, 'imp': 35, 'pos': 6.2}}
         qnow = {q: r for (q, _), r in pairs.items()}
         qprev = {'example one contract': {'clicks': 2, 'imp': 30, 'pos': 17.9}, 'example two': {'clicks': 0, 'imp': 70, 'pos': 24.2}}
     else:

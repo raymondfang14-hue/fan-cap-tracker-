@@ -1,5 +1,5 @@
-# Weekly Search Console check: which /players/<name> pages gained Google impressions this week,
-# the top searches behind them and their click rates.
+# Weekly Search Console check: the whole site by section, the searches to win next (positions 4 to 20, with each page's
+# title today), the top searches and their click rates, and which /players/<name> pages gained Google impressions.
 # Runs tools/gsc_report.py and posts the report as a GitHub issue labelled "search-console" (and in the run summary).
 #
 # One-time setup (see the top of tools/gsc_report.py):
@@ -53,5 +53,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create search-console --color 0E8A16 --description 'Weekly Search Console report' 2>/dev/null || true
-          gh issue create --title "Search Console: player pages, week of $(date -u +%Y-%m-%d)" \
+          gh issue create --title "Search Console: weekly report, week of $(date -u +%Y-%m-%d)" \
             --label search-console --body-file "$RUNNER_TEMP/gsc.md"
