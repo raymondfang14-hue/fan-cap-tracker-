@@ -1256,7 +1256,7 @@ button.irow{cursor:pointer}button.irow:hover{background:var(--brand-soft)}
 .ur-ctl{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
 .ur-ctl label{display:grid;gap:4px;font-size:.8rem;font-weight:600;color:var(--muted)}
 .ur-ctl select{padding:9px 10px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);font:inherit;font-weight:500}
-.ur-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.ur-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:18px}
 .ur-col h3{margin:0 0 4px;font:650 1.05rem/1.25 var(--display)}
 .ur-col>p{margin:0 0 8px;color:var(--muted);font-size:.84rem}
 .ur-list{display:grid}
@@ -1597,7 +1597,7 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 </section>
 <section class="view" id="v-usage" hidden aria-labelledby="h-usage">
   <div class="sechead">
-    <div><span class="eyebrow" id="ur-eyebrow">Target share and carry share, week by week</span><h1 class="title" id="h-usage">Weekly usage risers</h1></div>
+    <div><span class="eyebrow" id="ur-eyebrow">Target, carry and snap share, week by week</span><h1 class="title" id="h-usage">Weekly usage risers</h1></div>
   </div>
   <div id="ur-body" style="display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0"><p class="note">Loading usage…</p></div>
 </section>
@@ -3635,41 +3635,47 @@ function renderTiers() {
 }
 
 /* ===== weekly usage risers (data/usage.json, built by data/build_usage.py from nflverse weekly box scores) =====
-   Target share = his targets / his team's targets in that game; carry share the same with carries. "Before" is his share over his
-   earlier games this season, pooled (his targets over his teams' targets in those games). Risers need volume this week (5+ targets,
-   8+ carries); fallers need volume before (5+ targets or 8+ carries a game over 2+ earlier games) and a box-score line this week. */
+   Target share = his targets / his team's targets in that game; carry share the same with carries; snap share = his offensive snaps /
+   his team's offensive snaps (nflverse snap_counts). "Before" is his share over his earlier games this season, pooled (his targets over
+   his teams' targets in those games). A game counts when he has a box-score line or took a snap. Risers need volume this week (5+
+   targets, 8+ carries, half the snaps); fallers need it before (5+ targets or 8+ carries a game, or 60%+ of snaps, over 2+ earlier
+   games) and must have played this week. */
 let USAGE = null;
 const ur = { week: 0, sort: 'ds', dir: -1 };
-const UR_MIN = { t: 5, c: 8 };
+const UR_MIN = { t: 5, c: 8, s: .5, sb: .6 };
 const urPct = v => v == null ? '–' : Math.round(v * 100) + '%';
 const urPts = v => v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(Math.round(v * 100)) + ' pts';
 function urRows(d, W) {
   const T = d.teams, byG = new Map(PL.filter(p => p.gid).map(p => [p.gid, p])), out = [];
   for (const [gid, n, pos, G] of d.players) {
     const g = G.find(x => x[0] === W); if (!g) continue;
-    const [, t, tg, ca, ppr] = g, tt = (T[t] || {})[W] || [0, 0], pri = G.filter(x => x[0] < W);
-    let pt = 0, pc = 0, ptt = 0, ptc = 0;
-    pri.forEach(([w, tm, a, b]) => { const s = (T[tm] || {})[w] || [0, 0]; pt += a; pc += b; ptt += s[0]; ptc += s[1]; });
+    const [, t, tg, ca, ppr, sn0] = g, tt = (T[t] || {})[W] || [0, 0, 0], pri = G.filter(x => x[0] < W);
+    let pt = 0, pc = 0, ptt = 0, ptc = 0, ps = 0, pts = 0, nps = 0;
+    pri.forEach(([w, tm, a, b, , sn]) => { const s = (T[tm] || {})[w] || [0, 0, 0]; pt += a; pc += b; ptt += s[0]; ptc += s[1]; if (sn != null && s[2]) { ps += sn; pts += s[2]; nps++; } });
     const s = tt[0] ? tg / tt[0] : null, cs = tt[1] ? ca / tt[1] : null, sb = ptt ? pt / ptt : null, cb = ptc ? pc / ptc : null;
-    out.push({ gid, n, pos, t, tg, ca, ppr, tt: tt[0], tc: tt[1], s, cs, sb, cb, np: pri.length, ptg: pri.length ? pt / pri.length : 0, pca: pri.length ? pc / pri.length : 0,
-      ds: s != null ? s - (sb || 0) : null, dc: cs != null ? cs - (cb || 0) : null, pl: byG.get(gid) || null });
+    const ss = sn0 != null && tt[2] ? Math.min(1, sn0 / tt[2]) : null, ssb = pts ? Math.min(1, ps / pts) : null;
+    out.push({ gid, n, pos, t, tg, ca, ppr, sn: sn0, tt: tt[0], tc: tt[1], ts: tt[2], s, cs, ss, sb, cb, ssb, np: pri.length, nps, ptg: pri.length ? pt / pri.length : 0, pca: pri.length ? pc / pri.length : 0,
+      ds: s != null ? s - (sb || 0) : null, dc: cs != null ? cs - (cb || 0) : null, dss: ss != null ? ss - (ssb || 0) : null, pl: byG.get(gid) || null });
   }
   return out;
 }
 function urLists(rows) {
   const top = (f, k, dir) => rows.filter(f).sort((a, b) => (b[k] - a[k]) * dir).slice(0, 8);
   return {
-    tUp: top(r => r.tg >= UR_MIN.t && r.ds > 0, 'ds', 1), cUp: top(r => r.ca >= UR_MIN.c && r.dc > 0, 'dc', 1),
-    tDn: top(r => r.np >= 2 && r.ptg >= UR_MIN.t && r.ds < 0, 'ds', -1), cDn: top(r => r.np >= 2 && r.pca >= UR_MIN.c && r.dc < 0, 'dc', -1) };
+    tUp: top(r => r.tg >= UR_MIN.t && r.ds > 0, 'ds', 1), cUp: top(r => r.ca >= UR_MIN.c && r.dc > 0, 'dc', 1), sUp: top(r => r.ss >= UR_MIN.s && r.dss > 0, 'dss', 1),
+    tDn: top(r => r.np >= 2 && r.ptg >= UR_MIN.t && r.ds < 0, 'ds', -1), cDn: top(r => r.np >= 2 && r.pca >= UR_MIN.c && r.dc < 0, 'dc', -1),
+    sDn: top(r => r.nps >= 2 && r.ssb >= UR_MIN.sb && r.ss != null && r.dss < 0, 'dss', -1) };
 }
 function urItem(r, i, kind, up) {
-  const tm = TB[r.t], c = kind === 't', now = c ? r.s : r.cs, was = c ? r.sb : r.cb, d = c ? r.ds : r.dc;
-  const cnt = c ? `${r.tg} of ${r.tt} targets` : `${r.ca} of ${r.tc} carries`, tag = r.pl ? 'button' : 'div';
-  const before = r.np ? `${urPct(was)} in ${r.np} earlier ${r.np === 1 ? 'game' : 'games'}` : 'no earlier games';
+  const tm = TB[r.t], K = { t: ['s', 'sb', 'ds', 'np'], c: ['cs', 'cb', 'dc', 'np'], s: ['ss', 'ssb', 'dss', 'nps'] }[kind];
+  const now = r[K[0]], was = r[K[1]], d = r[K[2]], np = r[K[3]], tag = r.pl ? 'button' : 'div';
+  const cnt = kind === 't' ? `${r.tg} of ${r.tt} targets` : kind === 'c' ? `${r.ca} of ${r.tc} carries` : `${r.sn} of ${r.ts} snaps`;
+  const before = np ? `${urPct(was)} in ${np} earlier ${np === 1 ? 'game' : 'games'}` : 'no earlier games';
+  const also = kind === 's' ? [r.tg ? `${r.tg} tgt` : '', r.ca ? `${r.ca} car` : ''].filter(Boolean).join(', ') : r.ss != null ? `${urPct(r.ss)} of snaps` : '';
   const w = v => Math.max(0, Math.min(100, (v || 0) * 100)).toFixed(1) + '%';
   return `<${tag} ${r.pl ? `type="button" data-p="${r.pl.i}"` : ''} class="ur-row"><span class="ur-rk">${i + 1}</span>${tm ? crest(r.t, 22) : '<span></span>'}<span class="ur-who"><b>${esc(r.n)}</b><small>${esc(r.pos)} · ${esc(tm ? tm.name : r.t)} · ${cnt}</small></span><span class="ur-chg ${up ? 'up' : 'dn'}">${urPts(d)}</span>`
     + `<span class="ur-bar" aria-hidden="true"><i class="now" style="width:${w(now)}"></i><i class="was" style="width:${w(Math.min(now || 0, was || 0))}"></i></span>`
-    + `<span class="ur-sub">${urPct(now)} this week, ${before} · ${r.ppr} PPR pts</span></${tag}>`;
+    + `<span class="ur-sub">${urPct(now)} this week, ${before} · ${also ? also + ' · ' : ''}${r.ppr} PPR pts</span></${tag}>`;
 }
 function urCol(L, kind, up, title, sub) {
   return `<div class="ur-col"><h3>${title}</h3><p>${sub}</p>${L.length ? `<div class="hbars ur-list">${L.map((r, i) => urItem(r, i, kind, up)).join('')}</div>` : '<p class="note">No one qualifies this week.</p>'}</div>`;
@@ -3682,7 +3688,9 @@ function renderUsage() {
   if (!weeks.includes(ur.week)) ur.week = Math.max(2, d.done);
   const W = ur.week, so = W === d.thru && d.open.length ? ' (so far)' : '';
   const rows = urRows(d, W), L = urLists(rows);
-  $('#ur-eyebrow').textContent = `Week ${W}${so} · share of team targets and carries`;
+  $('#ur-eyebrow').textContent = `Week ${W}${so} · share of team targets, carries and snaps`;
+  const snapOut = (d.snaps || 0) < W, snapCol = (L, up) => snapOut ? `<div class="ur-col"><h3>Snap share</h3><p class="note">Snap counts for Week ${W} are not out yet. They usually arrive a day after the box scores.</p></div>`
+    : urCol(L, 's', up, 'Snap share', up ? `Played ${Math.round(UR_MIN.s * 100)}%+ of the offense's snaps this week` : `Played ${Math.round(UR_MIN.sb * 100)}%+ of the snaps before`);
   // the one-line takeaway, also the hook for the weekly post
   const big = [...L.tUp.slice(0, 1).map(r => [r, 't']), ...L.cUp.slice(0, 1).map(r => [r, 'c'])].sort((a, b) => (b[1] === 't' ? b[0].ds : b[0].dc) - (a[1] === 't' ? a[0].ds : a[0].dc))[0];
   const take = big ? (([r, k]) => `Biggest jump in Week ${W}: ${r.n} went from ${urPct(k === 't' ? r.sb : r.cb)} to ${urPct(k === 't' ? r.s : r.cs)} of the ${TB[r.t] ? TB[r.t].name : r.t}' ${k === 't' ? 'targets' : 'carries'}.`)(big) : '';
@@ -3691,26 +3699,27 @@ function renderUsage() {
   const openNote = so ? `<p class="note">${d.open.map(t => TB[t] ? TB[t].name : t).join(', ')} still ${d.open.length === 1 ? 'has' : 'have'} to play this week.</p>` : '';
   // full table
   const cols = [['n', 'Player'], ['pos', 'Pos'], ['t', 'Team'], ['tg', 'Tgt', 'Targets this week'], ['s', 'Tgt share', 'Share of the team\'s targets this week'], ['sb', 'Before', 'Target share in his earlier games this season'], ['ds', 'Change', 'Target share this week minus before, in percentage points'],
-    ['ca', 'Car', 'Carries this week'], ['cs', 'Car share', 'Share of the team\'s carries this week'], ['cb', 'Before', 'Carry share in his earlier games this season'], ['dc', 'Change', 'Carry share this week minus before, in percentage points'], ['ppr', 'PPR', 'Fantasy points this week, PPR scoring (nflverse)']];
+    ['ca', 'Car', 'Carries this week'], ['cs', 'Car share', 'Share of the team\'s carries this week'], ['cb', 'Before', 'Carry share in his earlier games this season'], ['dc', 'Change', 'Carry share this week minus before, in percentage points'],
+    ['ss', 'Snaps', 'Share of the offense\'s snaps this week'], ['ssb', 'Before', 'Snap share in his earlier games this season'], ['dss', 'Change', 'Snap share this week minus before, in percentage points'], ['ppr', 'PPR', 'Fantasy points this week, PPR scoring (nflverse)']];
   const val = (r, k) => k === 't' ? (TB[r.t] ? TB[r.t].name : r.t) : r[k];
-  const srt = [...rows].filter(r => r.tg || r.ca).sort((a, b) => { const p = val(a, ur.sort), q = val(b, ur.sort);
+  const srt = [...rows].filter(r => r.tg || r.ca || r.sn).sort((a, b) => { const p = val(a, ur.sort), q = val(b, ur.sort);
     if (typeof p === 'string') return p.localeCompare(q) * ur.dir; return ((p == null ? -9 : p) - (q == null ? -9 : q)) * ur.dir || b.tg + b.ca - a.tg - a.ca; });
   const th = ([k, lab, tip]) => `<th class="${['n', 'pos', 't'].includes(k) ? '' : 'r'}"${ur.sort === k ? ` aria-sort="${ur.dir > 0 ? 'ascending' : 'descending'}"` : ''}><button type="button" data-urs="${k}"${tip ? ` title="${esc(tip)}"` : ''}>${lab}</button></th>`;
   const cell = v => `<td class="r${v > 0.004 ? ' up' : v < -0.004 ? ' dn' : ''}">${urPts(v)}</td>`;
   const tbl = `<thead><tr>${cols.map(th).join('')}</tr></thead><tbody>` + srt.map(r => `<tr${r.pl ? ` data-p="${r.pl.i}"` : ''} data-s="${esc(r.n + ' ' + r.pos + ' ' + r.t + ' ' + (TB[r.t] ? TB[r.t].city + ' ' + TB[r.t].name : ''))}"><td><span class="pn">${TB[r.t] ? crest(r.t, 18) : ''}${esc(r.n)}</span></td><td>${esc(r.pos)}</td><td>${esc(TB[r.t] ? TB[r.t].name : r.t)}</td>`
-    + `<td class="r">${r.tg}</td><td class="r">${urPct(r.s)}</td><td class="r">${r.np ? urPct(r.sb) : '–'}</td>${cell(r.ds)}<td class="r">${r.ca}</td><td class="r">${urPct(r.cs)}</td><td class="r">${r.np ? urPct(r.cb) : '–'}</td>${cell(r.dc)}<td class="r">${r.ppr}</td></tr>`).join('') + '</tbody>';
+    + `<td class="r">${r.tg}</td><td class="r">${urPct(r.s)}</td><td class="r">${r.np ? urPct(r.sb) : '–'}</td>${cell(r.ds)}<td class="r">${r.ca}</td><td class="r">${urPct(r.cs)}</td><td class="r">${r.np ? urPct(r.cb) : '–'}</td>${cell(r.dc)}<td class="r">${urPct(r.ss)}</td><td class="r">${r.nps ? urPct(r.ssb) : '–'}</td>${r.ss != null ? cell(r.dss) : '<td class="r">–</td>'}<td class="r">${r.ppr}</td></tr>`).join('') + '</tbody>';
   const had = $('#ur-table') ? $('#ur-filter').value : (TFQ['ur-table'] || '');
-  const how = `Target share is a player's targets divided by all of his team's targets in that game; carry share is the same with carries (quarterback runs count in the team total). "Before" is his share over his earlier games this season, so a jump means a bigger role than he has had. Only games where he recorded a stat count. Source: nflverse weekly box scores (CC BY 4.0), through Week ${d.thru}.`;
+  const how = `Target share is a player's targets divided by all of his team's targets in that game; carry share is the same with carries (quarterback runs count in the team total); snap share is his share of the offense's snaps. "Before" is his share over his earlier games this season, so a jump means a bigger role than he has had. A game counts when he recorded a stat or took a snap. Source: nflverse weekly box scores and snap counts (CC BY 4.0), through Week ${d.thru}.`;
   box.innerHTML = `${ctl}
     <div class="panel" data-sp="risers">
       <div><span class="eyebrow">Week ${W}${so} · biggest gains in share of the team's work</span><h2 class="sec">Usage risers, Week ${W}</h2></div>
       ${take ? `<p class="tt-take">${esc(take)}</p>` : ''}
-      <div class="ur-cols">${urCol(L.tUp, 't', true, 'Target share', `Pass catchers with ${UR_MIN.t}+ targets this week`)}${urCol(L.cUp, 'c', true, 'Carry share', `Ball carriers with ${UR_MIN.c}+ carries this week`)}</div>
+      <div class="ur-cols">${urCol(L.tUp, 't', true, 'Target share', `Pass catchers with ${UR_MIN.t}+ targets this week`)}${urCol(L.cUp, 'c', true, 'Carry share', `Ball carriers with ${UR_MIN.c}+ carries this week`)}${snapCol(L.sUp, true)}</div>
       ${key}${openNote}
     </div>
     <div class="panel" data-sp="fallers">
       <div><span class="eyebrow">Week ${W}${so} · biggest drops from a steady role</span><h2 class="sec">Usage fallers, Week ${W}</h2></div>
-      <div class="ur-cols">${urCol(L.tDn, 't', false, 'Target share', `Had ${UR_MIN.t}+ targets a game before`)}${urCol(L.cDn, 'c', false, 'Carry share', `Had ${UR_MIN.c}+ carries a game before`)}</div>
+      <div class="ur-cols">${urCol(L.tDn, 't', false, 'Target share', `Had ${UR_MIN.t}+ targets a game before`)}${urCol(L.cDn, 'c', false, 'Carry share', `Had ${UR_MIN.c}+ carries a game before`)}${snapCol(L.sDn, false)}</div>
       ${key}${openNote}
     </div>
     <div class="panel" data-sp="table">
@@ -3917,7 +3926,7 @@ const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'
   ['links', '/links'], ['links-instagram', '/links/instagram'], ['links-tiktok', '/links/tiktok']];
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
-  teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', usage: 'NFL usage risers: target share and carry share', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
+  teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', usage: 'NFL usage risers: target, carry and snap share', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', deadline: 'NFL trade deadline tracker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup',
   links: 'Links from our posts', 'links-instagram': 'Links from our Instagram posts', 'links-tiktok': 'Links from our TikTok posts' };
@@ -3934,7 +3943,7 @@ const PDESC = {
   'news-league': 'NFL league news, rule changes and discipline, explained in plain English.',
   teams: 'NFL team ratings: how every team rates on offense and defense, its best units and its roster.',
   tiers: 'Weekly NFL team tiers: every team\'s offense against its defense by expected points added per play, updated after each week\'s games.',
-  usage: 'Weekly NFL usage risers and fallers for fantasy football: whose share of his team\'s targets and carries jumped or dropped this week, from the box scores.',
+  usage: 'Weekly NFL usage risers and fallers for fantasy football: whose share of his team\'s targets, carries and snaps jumped or dropped this week, from the box scores and snap counts.',
   cap: 'How much salary cap space every NFL team has, and where its money goes.',
   rankings: 'Weekly NFL power rankings from results and roster strength, with risers and fallers.',
   awards: 'NFL awards watch: MVP, Offensive and Defensive Player of the Year and rookie races, scored from this season\'s stats.',
@@ -4752,7 +4761,7 @@ function tdFilter() {
    The carousel end slide (share-card script, psEndSlide) names the same path, so a fan can match the post to its link. */
 const lk = { src: '', q: '', posts: null };
 const LK_START = [['/team-tiers', 'Weekly team tiers', 'Every offense against every defense, updated each Tuesday'],
-  ['/usage-risers', 'Weekly usage risers', 'Whose share of the targets and carries jumped this week, for fantasy'],
+  ['/usage-risers', 'Weekly usage risers', 'Whose share of the targets, carries and snaps jumped this week, for fantasy'],
   ['/scores', 'Scores and Pick\'em', 'This week\'s games, the model\'s picks and your record against it'],
   ['/power-rankings', 'Power rankings', 'All 32 teams from results and roster strength'],
   ['/player-ratings', 'Top players right now', 'Every position, rated from this season\'s play'],
@@ -6815,7 +6824,7 @@ function wireGames() {
 /* ===== search everything: pages, teams, players, prospects, this season's games, news and Cap 101 terms ===== */
 const SPAGES = [['scores', 'Scores and schedule', 'games week results score schedule kickoff picks pickem pick em contest beat the model'], ['standings', 'Standings', 'division record seeds wild card playoff picture'],
   ['projections', 'Playoff projections', 'odds super bowl chances model simulation elo predictions playoff picture bracket wild card bye'], ['ratings', 'Player ratings', 'play rating best players roles traits positions'],
-  ['stats', 'Season stats', 'passing rushing receiving yards touchdowns sacks leaders box score fantasy'], ['usage', 'Weekly usage risers', 'target share carry share usage opportunity fantasy waiver risers fallers workload'], ['contracts', 'Contracts', 'deals salary guaranteed cap hit every contract'],
+  ['stats', 'Season stats', 'passing rushing receiving yards touchdowns sacks leaders box score fantasy'], ['usage', 'Weekly usage risers', 'target share carry share snap share snap counts usage opportunity fantasy waiver risers fallers workload'], ['contracts', 'Contracts', 'deals salary guaranteed cap hit every contract'],
   ['value', 'Best and worst contracts', 'surplus value overpaid bargain'], ['rookies', 'Rookie contracts', 'draft pick fifth-year option extension'],
   ['freeagency', 'Free agency', 'free agents expiring next deal class 2027'], ['fa-tags', 'Tags and key dates', 'franchise tag calendar league year deadline'],
   ['teams', 'Team ratings', 'lineup depth chart unit ratings'], ['tiers', 'Weekly team tiers', 'offense defense epa per play tiers best teams logos'], ['cap', 'Cap room by team', 'salary cap space dead money spending'], ['rankings', 'Power rankings', 'best teams ranked'],
