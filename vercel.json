@@ -373,5 +373,16 @@
       "source": "/links/tiktok",
       "destination": "/"
     }
+  ],
+  "functions": {
+    "api/pickem.js": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/pickem",
+      "schedule": "0 13 * * 2"
+    }
   ]
 }
