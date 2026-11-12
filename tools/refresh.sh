@@ -3,8 +3,8 @@
 # Run by .github/workflows/nflverse-refresh.yml; also works by hand:   tools/refresh.sh <daily|gameday|weekly> [download folder]
 #
 #   daily    contracts rebuild (roster, draft picks, snap counts, depth charts), older seasons, scores, this week's injury report
-#   gameday  Sunday/Monday night: scores, season stats through the week being played, standings, game model, injury-adjusted picks
-#   weekly   Tuesday: season stats through the last finished week, splits and history, standings, game model, OL measures, team tiers
+#   gameday  Sunday/Monday night: scores, season stats and usage risers through the week being played, standings, game model, injury-adjusted picks
+#   weekly   Tuesday: season stats and usage risers through the last finished week, splits and history, standings, game model, OL measures, team tiers
 #
 # Every mode then rebuilds the search pages (build_seo.py), index.html (build.sh) and runs the checks. A step that fails is
 # restored from git and reported; the rest still run. The exit code is 1 if any step failed, so the workflow shows it.
@@ -123,6 +123,8 @@ case "$MODE" in
     # last week's power ranks, read from the page before the stats change, for the movement arrows
     step "power snapshot" "" -- py tools/refresh_helpers.py snapshot "$DL/old_snapshot.json"
     step "season stats and history" "$STATS_FILES" -- stats "$WK"
+    # weekly usage risers (/usage-risers): target and carry share by game, from the stats_player_week file stats() downloaded
+    step "usage risers" "data/usage.json" -- py data/build_usage.py "$DL" "$SEASON" "$WK"
     step "standings and game model" "$MODEL_FILES" -- standings_model
     if [ "$MODE" = weekly ]; then
       step "OL measures and team tiers" "data/olwin.json data/tiers.json" -- line_and_tiers

@@ -26,6 +26,7 @@ Every section, tab, team, player, prospect and game has its own clean URL. On pl
 | News | `/news`, `/news/<contracts\|injuries\|games\|coaching\|league>` | Cap lab | `/cap-lab` |
 | Team ratings | `/team-ratings` | Big board, mock draft | `/big-board`, `/mock-draft` |
 | Weekly team tiers | `/team-tiers` | Trade deadline tracker | `/trade-deadline` |
+| Weekly usage risers | `/usage-risers`, `/usage-risers/fallers`, `/usage-risers/all-players` | | |
 | Cap room | `/cap-room` | Rookie pay, draft guide | `/rookie-pay`, `/draft-guide` |
 | Power rankings, awards | `/power-rankings`, `/awards` | Roster builder, trade checker, compare | `/roster-builder`, `/trade-checker`, `/compare` |
 | Players: top players, roles, pay vs. play, rankings, traits, season stats | `/player-ratings`, `/player-ratings/roles`, `/player-ratings/pay-vs-play`, `/player-ratings/rankings`, `/player-ratings/traits`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
@@ -81,6 +82,7 @@ Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads onl
 | `trade_replay` | "Replay in the trade checker" on /trade-deadline | `from_page` |
 | `deadline_team` | Team filter on /trade-deadline | `team` |
 | `table_filter` | A table filter box (once the visitor pauses) | `table`, `search_term` |
+| `usage_week` | The week picker on /usage-risers | `week` |
 | `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
 | `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
 | `my_team_set` | A team is picked (or cleared) in the "Your team" block on the home page | `team`, `from_page` |
@@ -110,6 +112,13 @@ Built by `python3 -I data/build_olwin.py <play_by_play_2026.csv.gz>` from nflver
 
 ## Weekly team tiers (#tiers, data/tiers.json)
 `/team-tiers` plots every team's offense EPA per play against defense EPA allowed per play (team logos, top-right = good at both), groups the 32 teams into five tiers by net EPA per play, and lists the splits (pass, run, hit rate) in a filterable table. `python3 -I data/build_tiers.py <play_by_play_2026.csv.gz>` writes `data/tiers.json` from nflverse play-by-play (CC BY 4.0) through the last week in which every game in `data/schedule.json` is final, plus the rank change from the week before. The weekly refresh (Tuesday) runs it in step 4e, right after `build_olwin.py`.
+
+## Weekly usage risers (/usage-risers, data/usage.json)
+For fantasy players: whose share of his team's targets and carries jumped (or dropped) this week. `python3 -I data/build_usage.py <folder> <season> [last week]` writes `data/usage.json` from nflverse `stats_player_week_<season>.csv` (CC BY 4.0): every RB, WR, TE and FB with a target or carry, one row per game (targets, carries, PPR points), plus each team's targets and carries per game (every player on the team, quarterbacks included). The script checks its target share against nflverse's own `target_share` column and stops if they disagree. `tools/refresh.sh` runs it in the gameday and weekly modes right after the season stats, so a Monday-night run has the week ready for a Tuesday post.
+
+The page (`renderUsage()` in src.html) compares a week's share with the player's pooled share over his earlier games this season ("before"). Risers need 5+ targets or 8+ carries that week; fallers need that much a game over 2+ earlier games and a box-score line this week. Three pages: Risers (the weekly post: the biggest jump as a one-line takeaway, then the top 8 target and carry gainers), Fallers, and All players (filterable, sortable table). A week picker reaches back to Week 2; a week still being played is marked "so far" and names the teams yet to play. Only games where a player recorded a stat count. No snap counts or route data: share of targets and carries only.
+
+**Weekly post.** Tuesday after the weekly refresh: open `/usage-risers`, "Share this" on the Risers panel (and Fallers if it is a good week), "Make end slide", and add the post to `data/links.json` with path `/usage-risers`. Caption hook: the takeaway line at the top of the panel.
 
 ## Draft (#draft, data/draft.json)
 The Draft page covers the 2027 class: a big board, a full page for each prospect (grade, role, trait badges, 2026 college stats, NFL players in the same role, rookie contract, team fits), the projected first-round order with a model mock, and the rookie pay scale. `data/draft.json` is built by `python3 -I data/build_draft.py` from the prospect list in that script (WalterFootball and NFL Draft Buzz board ranks, cfbstats ids) the season totals in `data/draft_stats.txt` and the ESPN athlete ids in `data/draft_espn.txt` (prospect headshots; school logos use the ESPN team id at the end of each SCHOOLS row, the same ESPN CDN images the NFL cards use); the script's docstring explains the format. The page computes everything else at load: the consensus order, grades, roles, traits, team needs from the 2026 roster, the draft order from `data/season.json` with traded picks applied, and rookie pay grown with the projected 2027 cap from `data/freeagency.json`.

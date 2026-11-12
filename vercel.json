@@ -102,6 +102,18 @@
       "destination": "/"
     },
     {
+      "source": "/usage-risers",
+      "destination": "/"
+    },
+    {
+      "source": "/usage-risers/fallers",
+      "destination": "/"
+    },
+    {
+      "source": "/usage-risers/all-players",
+      "destination": "/"
+    },
+    {
       "source": "/cap-room",
       "destination": "/"
     },
