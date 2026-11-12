@@ -1,6 +1,61 @@
 {
- "asOf": "2026-11-11",
+ "asOf": "2026-11-12",
  "moves": [
+  {
+   "iso": "2026-11-11",
+   "date": "Nov 11",
+   "kind": "League",
+   "teams": [
+    "DEN",
+    "LAC"
+   ],
+   "players": [
+    "Daiyan Henley"
+   ],
+   "head": "Broncos call off their deadline-day trade for Chargers LB Daiyan Henley",
+   "plain": "Denver says the deal will not be finalized, so Henley stays with the Chargers and no picks change hands. The team gave no reason. Henley is in the last year of his rookie deal and can become a free agent in March.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/broncos-chargers-daiyan-henley-trade-nixed",
+   "gids": [
+    "00-0038553"
+   ]
+  },
+  {
+   "iso": "2026-11-11",
+   "date": "Nov 11",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Puka Nacua"
+   ],
+   "head": "Rams will not place WR Puka Nacua on injured reserve despite knee sprains and turf toe",
+   "plain": "Nacua has sprained MCL and PCL ligaments in his right knee plus turf toe. Sean McVay says he will miss an extended stretch, but the Rams are keeping him on the active roster rather than using injured reserve.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-will-not-place-puka-nacua-on-ir-week-13-davante-adams-return-in-play",
+   "gids": [
+    "00-0039075"
+   ]
+  },
+  {
+   "iso": "2026-11-11",
+   "date": "Nov 11",
+   "kind": "League",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Dick Hoak"
+   ],
+   "head": "Longtime Steelers running back and assistant coach Dick Hoak dies at 86",
+   "plain": "Hoak spent his whole career in Pittsburgh, first as a running back and then for decades as the running backs coach. He coached on four Super Bowl winners.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/longtime-steelers-rb-coach-dick-hoak-dies-at-86",
+   "gids": [
+    ""
+   ]
+  },
   {
    "iso": "2026-11-10",
    "date": "Nov 10",
@@ -153,42 +208,6 @@
    "date": "Nov 10",
    "kind": "Trade",
    "teams": [
-    "DEN",
-    "LAC"
-   ],
-   "players": [
-    "Daiyan Henley"
-   ],
-   "head": "Broncos acquire LB Daiyan Henley from the Chargers for a 2027 fourth-round pick and a 2028 fifth-round pick",
-   "plain": "Denver adds linebacker depth. Henley is in the last year of his rookie deal, and the Broncos owe only the rest of his 2026 salary. The 0-8 Chargers pick up two mid-round picks.",
-   "source": "Pro Football Talk",
-   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/chargers-trade-daiyan-henley-to-broncos-for-2027-fourth-2028-fifth-round-picks",
-   "deal": {
-    "DEN": {
-     "players": [
-      {
-       "name": "Daiyan Henley",
-       "gid": "00-0038553",
-       "from": "LAC"
-      }
-     ]
-    },
-    "LAC": {
-     "picks": [
-      "2027 fourth-round pick (from DEN)",
-      "2028 fifth-round pick (from DEN)"
-     ]
-    }
-   },
-   "gids": [
-    "00-0038553"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
-   "kind": "Trade",
-   "teams": [
     "BAL",
     "ATL"
    ],
@@ -311,6 +330,82 @@
    ]
   },
   {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Restructure",
+   "teams": [
+    "BUF"
+   ],
+   "players": [
+    "Dion Dawkins"
+   ],
+   "head": "Bills restructure LT Dion Dawkins' contract to fit the Amani Hooker trade",
+   "plain": "GM Brandon Beane said Buffalo reworked Dawkins' deal to make cap room for Hooker. No figures were reported, so his contract numbers here are unchanged.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/titans-to-trade-s-amani-hooker-to-bills",
+   "gids": [
+    "00-0033904"
+   ]
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "League",
+   "teams": [
+    "PHI",
+    "CIN"
+   ],
+   "players": [
+    "Arnold Ebiketie"
+   ],
+   "head": "Eagles-Bengals trade for LB Arnold Ebiketie called off",
+   "plain": "The deal for a 2027 sixth-round pick was agreed, then dropped the same night: it would have cost Cincinnati the 2027 third-round compensatory pick it is due. Ebiketie stays in Philadelphia.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-to-trade-arnold-ebiketie-to-bengals",
+   "gids": [
+    "00-0038116"
+   ]
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Release",
+   "teams": [
+    "ATL",
+    "BAL"
+   ],
+   "players": [
+    "Nick Folk",
+    "Jake Moody"
+   ],
+   "head": "Falcons release K Nick Folk and sign K Jake Moody off the Ravens' practice squad",
+   "plain": "Folk had made 13 of 18 field goals this season. Moody gets another chance as Atlanta's kicker.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/falcons-to-sign-jake-moody-off-ravens-practice-squad-release-nick-folk",
+   "gids": [
+    "00-0025565",
+    "00-0038562"
+   ]
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Injury",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Erik McCoy"
+   ],
+   "head": "Saints C Erik McCoy to miss time with a biceps injury",
+   "plain": "Kellen Moore expects McCoy back this season. Cesar Ruiz moves from guard to center while he is out.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-c-erik-mccoy-to-miss-time-with-biceps-injury",
+   "gids": [
+    "00-0035242"
+   ]
+  },
+  {
    "iso": "2026-11-09",
    "date": "Nov 9",
    "kind": "Trade",
@@ -420,24 +515,6 @@
   {
    "iso": "2026-11-09",
    "date": "Nov 9",
-   "kind": "Injury",
-   "teams": [
-    "LAR"
-   ],
-   "players": [
-    "Puka Nacua"
-   ],
-   "head": "Rams WR Puka Nacua likely headed to injured reserve with knee sprains and turf toe",
-   "plain": "An MRI showed sprained MCL and PCL ligaments in his right knee plus turf toe. Coach Sean McVay said injured reserve is likely, which would cost him at least four games. It does not look season-ending.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/rams-wr-puka-nacua-likely-to-be-placed-on-injured-reserve-with-turf-toe-sprained-mcl-and-pcl",
-   "gids": [
-    "00-0039075"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
    "kind": "Trade",
    "teams": [
     "JAX",
@@ -487,6 +564,80 @@
    "url": "https://www.profootballrumors.com/2026/11/bills-place-wr-josh-palmer-on-ir-2",
    "gids": [
     "00-0036988"
+   ]
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "League",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Brandon Aiyuk"
+   ],
+   "head": "NFL reinstates WR Brandon Aiyuk to the 49ers; release reported as likely",
+   "plain": "Aiyuk comes off the reserve/left squad list and passed his physical. San Francisco has until Nov. 23 to make a roster move, and a release was reported as likely. No release had been confirmed when this was written.",
+   "source": "AP via AJC",
+   "url": "https://www.ajc.com/news/2026/11/nfl-reinstates-receiver-brandon-aiyuk-to-the-49ers-after-he-left-the-team-last-year",
+   "gids": [
+    "00-0036261"
+   ]
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Injury",
+   "teams": [
+    "KC"
+   ],
+   "players": [
+    "Patrick Mahomes"
+   ],
+   "head": "Chiefs QB Patrick Mahomes day-to-day with an elbow injury",
+   "plain": "He hurt his throwing elbow in the 35-12 win over the Jets. An MRI showed no major damage, and he looks on track to start at Atlanta.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/patrick-mahomes-day-to-day-with-elbow-injury",
+   "gids": [
+    "00-0033873"
+   ]
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Injury",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Josh Jacobs"
+   ],
+   "head": "Packers RB Josh Jacobs to have finger surgery and miss time",
+   "plain": "Jacobs broke a finger and is expected to miss no more than about three games. Green Bay has its bye in Week 11.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/josh-jacobs-to-undergo-finger-surgery-will-miss-time",
+   "gids": [
+    "00-0035700"
+   ]
+  },
+  {
+   "iso": "2026-11-09",
+   "date": "Nov 9",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Sam Darnold",
+    "Drew Lock"
+   ],
+   "head": "Seahawks QB Sam Darnold out for Week 10 with a quad injury; Drew Lock to start",
+   "plain": "Seattle hopes Darnold is back after its Week 11 bye. Lock, who started the Week 9 win over Arizona, starts again against Las Vegas despite an oblique injury.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/seahawks-plan-to-start-qb-drew-lock-in-week-10",
+   "gids": [
+    "00-0034869",
+    "00-0035704"
    ]
   },
   {
@@ -1162,24 +1313,6 @@
   {
    "iso": "2026-10-29",
    "date": "Oct 29",
-   "kind": "Injury",
-   "teams": [
-    "LAC"
-   ],
-   "players": [
-    "Derwin James"
-   ],
-   "head": "Chargers safety Derwin James may go on injured reserve",
-   "plain": "James has missed games since Week 3 with a hamstring injury, and coach Jim Harbaugh said he had a setback. If he goes on IR he misses at least four more games. He has not been placed there yet.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir",
-   "gids": [
-    "00-0034790"
-   ]
-  },
-  {
-   "iso": "2026-10-29",
-   "date": "Oct 29",
    "kind": "Trade",
    "teams": [
     "TEN",
@@ -1220,24 +1353,6 @@
   {
    "iso": "2026-10-28",
    "date": "Oct 28",
-   "kind": "League",
-   "teams": [
-    "ARI"
-   ],
-   "players": [
-    "James Conner"
-   ],
-   "head": "Cardinals likely to trade RB James Conner if he is healthy by the deadline",
-   "plain": "Jason La Canfora reports Arizona would move Conner if he returns from injured reserve before Nov. 10. He has not practiced this season.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/cardinals-rb-james-conner-a-trade-candidate",
-   "gids": [
-    "00-0033553"
-   ]
-  },
-  {
-   "iso": "2026-10-28",
-   "date": "Oct 28",
    "kind": "Signing",
    "teams": [
     "TEN",
@@ -1252,42 +1367,6 @@
    "url": "https://www.profootballrumors.com/2026/10/titans-claim-dt-jonah-laulu-off-waivers",
    "gids": [
     "00-0039423"
-   ]
-  },
-  {
-   "iso": "2026-10-28",
-   "date": "Oct 28",
-   "kind": "Injury",
-   "teams": [
-    "HOU"
-   ],
-   "players": [
-    "Jaylin Noel"
-   ],
-   "head": "Texans place WR Jaylin Noel on injured reserve",
-   "plain": "Noel is out after toe surgery, according to the CBS Sports transactions log. He must miss at least four games.",
-   "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/transactions/",
-   "gids": [
-    "00-0040138"
-   ]
-  },
-  {
-   "iso": "2026-10-27",
-   "date": "Oct 27",
-   "kind": "Injury",
-   "teams": [
-    "GB"
-   ],
-   "players": [
-    "Sean Rhyan"
-   ],
-   "head": "Packers C Sean Rhyan out at least four weeks with a high ankle sprain",
-   "plain": "CBS Sports' Matt Zenitz reports the center could land on injured reserve. LB Zaire Franklin also has a leg fracture but is not on IR.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/packers-c-sean-rhyan-lb-zaire-franklin-to-miss-time",
-   "gids": [
-    "00-0037076"
    ]
   },
   {
@@ -1307,30 +1386,6 @@
    "url": "https://www.cbssports.com/nfl/transactions/",
    "gids": [
     "00-0039839"
-   ]
-  },
-  {
-   "iso": "2026-10-27",
-   "date": "Oct 27",
-   "kind": "Injury",
-   "teams": [
-    "CIN",
-    "BAL",
-    "NYG"
-   ],
-   "players": [
-    "Erick All",
-    "Olaivavega Ioane",
-    "Tyrone Tracy Jr."
-   ],
-   "head": "Bengals TE Erick All feared to have torn his ACL; Giants RB Tyrone Tracy Jr. headed to IR",
-   "plain": "Cincinnati tight end Erick All is believed to have torn his ACL in Sunday's win over the Ravens. Giants running back Tyrone Tracy Jr. will go on injured reserve with a hamstring injury, and Ravens rookie guard Olaivavega Ioane has an MCL sprain and will miss a little time.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-oct-27",
-   "gids": [
-    "00-0039814",
-    "00-0040866",
-    "00-0039384"
    ]
   },
   {
@@ -1800,24 +1855,6 @@
    },
    "gids": [
     "00-0039923"
-   ]
-  },
-  {
-   "date": "Sep 12",
-   "kind": "Extension",
-   "teams": [
-    "GB"
-   ],
-   "players": [
-    "Tucker Kraft"
-   ],
-   "head": "Packers extend TE Tucker Kraft, 4 years, $75M",
-   "plain": "That is $18.75M a year, third among tight ends behind George Kittle and Trey McBride. Incentives can push it to $92M. He got a $26.5M signing bonus.",
-   "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/news/tucker-kraft-agrees-to-contract-extension-packers/",
-   "iso": "2026-09-12",
-   "gids": [
-    "00-0038996"
    ]
   }
  ],
