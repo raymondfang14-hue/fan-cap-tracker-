@@ -60,8 +60,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 ## Shipping
 - Push changes to GitHub without asking first (standing instruction from the owner).
-- Secrets (`AIRTABLE_TOKEN`, `BEEHIIV_API_KEY`, `CRON_SECRET`) live only in Vercel env vars; never commit them.
-- Pick'em results by email (README, Games tab): `api/pickem.js` grades with `api/_pickem-grade.js`, which must follow the same rules as `pkGrade` / `pkTally` in src.html; change both together. Fans' emails and picks live only in the Airtable `Pickem` table and beehiiv.
+- Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
 
 ## Keeping the setup private
 - `.vercelignore` keeps notes, build scripts, `src.html`, `tools/` and raw sources (`data/*.py`, `*.csv`, `*.txt`, `cba.json`, `years_calc.json`) out of the public deployment. If the page starts loading a new `data/` file, make sure it is not matched there. Keep the GitHub repo private.

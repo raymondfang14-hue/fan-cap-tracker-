@@ -1391,13 +1391,6 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .mine-inj .st{flex-basis:100%;color:var(--muted);font-size:.84rem}.mine-inj .st.bad{color:var(--bad);font-weight:600}
 .mine-news li{display:grid;gap:2px;font-size:.9rem;line-height:1.35}
 .mine-news a{color:var(--fg)!important;text-decoration:none;font-weight:600}.mine-news a:hover{text-decoration:underline}
-/* Pick'em results by email (pkMailHTML) */
-.pk-mail{display:grid;gap:10px;margin-top:14px;padding:14px 16px;border-radius:var(--r);background:var(--surface-2)}
-.pk-mail .note{margin:2px 0 0}
-.pk-mail .row{display:flex;gap:8px;flex-wrap:wrap}
-.pk-mail input[type=email]{flex:1 1 200px;min-width:0;font:inherit;padding:10px 14px;border-radius:980px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
-.pk-mail .pk-mail-msg:empty{display:none}
-.pk-mail.on{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}.pk-mail.on p{margin:0;flex:1 1 240px;font-size:.9rem}
 </style>
 
 <header class="gn" id="gn">
@@ -6451,13 +6444,11 @@ function pkTally(filter) {
 const pkPct = (w, l) => w + l ? Math.round(w / (w + l) * 100) + '%' : '';
 function renderPk() {
   const box = $('#gm-pk'); if (!box || !GSCHED) return;
-  const keep = pkMailKeep();   // the panel redraws when scores or weather arrive: keep a half-typed email
   const S = pkLoad(), wk = gm.week, games = GSCHED.games.filter(g => g[1] === wk), open = games.filter(g => !pkLocked(g));
   const mine = games.filter(g => S.picks[g[0]]).length, T = pkTally(), W = pkTally(g => g[1] === wk);
   const head = `<div class="pk-head"><h2 id="gm-pk-h">Pick'em: you vs. the PlainStats model</h2><span>Week ${wk}: ${mine} picked${open.length ? ` · ${open.length} of ${games.length} games still open` : ' · picks closed'}</span></div>`;
   if (!Object.keys(S.picks).length) {
     box.innerHTML = head + `<div class="pk-foot"><p class="note">Pick the winner of each game below, then come back after the games to see your record next to the model's. Picks lock at kickoff. ${open.length ? '' : 'This week is closed, so try the next week.'}</p>${open.length * 2 > games.length || wk >= GSCHED.weeks ? '' : `<button type="button" class="pk-link" data-pkw="${wk + 1}">Go to week ${wk + 1} ›</button>`}</div>`;
-    pkMailMount(box, keep);
     return;
   }
   const lead = T.w + T.l && T.w !== T.mw ? (T.w > T.mw ? 'you' : 'model') : '';
@@ -6469,14 +6460,13 @@ function renderPk() {
       <div><span class="k">Week ${wk}</span><span class="v">${W.w}-${W.l}</span><span class="s">Model ${W.mw}-${W.ml}</span></div>
       <div><span class="k">When you went against the model</span><span class="v">${T.dw}-${T.dl}</span><span class="s">${T.dw + T.dl ? (T.dw > T.dl ? 'Your hunches are paying off' : T.dw < T.dl ? 'The model is winning these' : 'Even so far') : 'No upsets picked yet'}</span></div>
     </div>${weeks ? `<div class="pk-weeks" aria-label="Your record by week">${weeks}</div>` : ''}
-    <div class="pk-foot"><p class="note">${lead === 'you' ? 'You are ahead of the model. ' : lead === 'model' ? 'The model is ahead. ' : ''}Picks lock at kickoff. Each pick is graded against the model's pick when you made it. ${pkMail() ? 'Your picks are also saved with your email for the Tuesday Cap Sheet.' : 'Your picks stay on this phone or browser, with no account; clearing your browser data erases them.'}</p>
+    <div class="pk-foot"><p class="note">${lead === 'you' ? 'You are ahead of the model. ' : lead === 'model' ? 'The model is ahead. ' : ''}Picks lock at kickoff. Each pick is graded against the model's pick when you made it. Your picks stay on this phone or browser, with no account; clearing your browser data erases them.</p>
       ${T.n ? '<button type="button" class="pk-link" data-pkx="share">Share my record</button>' : ''}<button type="button" class="pk-link" data-pkx="clear">Clear my picks</button></div>`;
-  pkMailMount(box, keep);
 }
 function pkClick(e) {
   const w = e.target.closest('[data-pkw]'); if (w) { gm.week = +w.dataset.pkw; renderScores(); return; }
   const x = e.target.closest('[data-pkx]');
-  if (x && x.dataset.pkx === 'clear') { if (confirm('Clear every pick you have made this season? This cannot be undone.')) { psTrack('pickem_clear', { pick_count: Object.keys(pkLoad().picks).length }); store.set('pickem', { season: GSCHED.season, picks: {} }); pkSync(); renderScores(); } return; }
+  if (x && x.dataset.pkx === 'clear') { if (confirm('Clear every pick you have made this season? This cannot be undone.')) { psTrack('pickem_clear', { pick_count: Object.keys(pkLoad().picks).length }); store.set('pickem', { season: GSCHED.season, picks: {} }); renderScores(); } return; }
   if (x && x.dataset.pkx === 'share') { const T = pkTally(), url = shareUrl('scores', 'pickem');
     const text = `I'm ${T.w}-${T.l} picking NFL games this season. The PlainStats model is ${T.mw}-${T.ml} on the same games. Can you beat it?`;
     psTrack('share', { method: 'pickem', content_type: 'pickem', item_id: 'scores' });
@@ -6489,55 +6479,12 @@ function pkClick(e) {
     if (S.picks[id] && S.picks[id].t === b.dataset.pt) { delete S.picks[id]; psTrack('pickem_unpick', { week: g[1], game_id: id }); }
     else { const m = pkModel(id, g); S.picks[id] = { t: b.dataset.pt, m, at: Date.now() };
       psTrack('pickem_pick', { week: g[1], game_id: id, with_model: m ? String(m === b.dataset.pt) : 'no_pick', pick_count: Object.keys(S.picks).length }); }
-    store.set('pickem', S); pkSync();
+    store.set('pickem', S);
   }
   const slot = b.closest('[data-pks]'), html = pkSlot(g);
   if (slot) { if (html) slot.outerHTML = html; else slot.remove(); }
   renderPk();
 }
-/* ----- Pick'em results by email: the fan's record goes into The Cap Sheet every Tuesday (api/pickem.js). Opting in saves this
-   browser's picks with the email (Airtable) and subscribes it to The Cap Sheet (beehiiv, double opt-in); the browser keeps a key
-   (localStorage pc.pkMail = {email, key}) and re-sends its picks after every change. A Tuesday cron grades everyone and fills the
-   beehiiv custom fields pickem_week, pickem_season and pickem_model, which the Tuesday post merges in. ----- */
-let pkJoined = false;   // just opted in on this visit: remind them to confirm the Cap Sheet email
-const pkMail = () => { const m = store.get('pkMail', null); return m && m.email && m.key ? m : null; };
-function pkMailHTML() {
-  const m = pkMail();
-  if (m) return `<div class="pk-mail on"><p>Your record goes to <b>${esc(m.email)}</b> in The Cap Sheet every Tuesday.${pkJoined ? ' Check your inbox to confirm The Cap Sheet first.' : ''}</p><button type="button" class="pk-link" data-pkm="stop">Stop the emails</button></div>`;
-  return `<form class="pk-mail" id="pk-mail" novalidate><div><b>Get your record by email every Tuesday</b><p class="note">Your week and season against the model, in The Cap Sheet, our free Tuesday newsletter. We save your picks with your email to grade them. Unsubscribe any time. <a href="/privacy">Privacy</a></p></div>
-    <div class="row"><label class="sr" for="pk-mail-e">Email address</label><input id="pk-mail-e" name="email" type="email" required autocomplete="email" placeholder="you@email.com"><input name="website" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn" type="submit">Send me my record</button></div><p class="note pk-mail-msg" role="status" aria-live="polite"></p></form>`;
-}
-const pkMailKeep = () => { const i = $('#pk-mail-e'); return i ? { v: i.value, f: document.activeElement === i, s: i.selectionStart } : null; };
-function pkMailMount(box, keep) {
-  box.insertAdjacentHTML('beforeend', pkMailHTML());
-  const i = $('#pk-mail-e'); if (!i || !keep) return;
-  i.value = keep.v; if (keep.f) { i.focus(); try { i.setSelectionRange(keep.s, keep.s); } catch (e) {} }
-}
-function pkPost(body) {
-  return fetch('/api/pickem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    .then(r => r.json().catch(() => ({})).then(j => (r.ok ? j : Promise.reject(new Error(j.error || 'Could not save right now. Try again in a minute.')))));
-}
-let pkSyncT = 0;
-function pkSync() {   // after a pick changes: send this browser's picks (the server keeps started games as they were at kickoff)
-  const m = pkMail(); if (!m) return;
-  clearTimeout(pkSyncT);
-  pkSyncT = setTimeout(() => { const S = pkLoad(); pkPost({ action: 'sync', email: m.email, key: m.key, season: S.season, picks: S.picks }).catch(e => { if (/not linked/i.test(e.message)) store.set('pkMail', null); }); }, 1500);
-}
-document.addEventListener('submit', e => {
-  const f = e.target.closest && e.target.closest('#pk-mail'); if (!f) return; e.preventDefault();
-  const email = f.email.value.trim(), msg = f.querySelector('.pk-mail-msg'), btn = f.querySelector('button');
-  if (!/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'Type the email address to send your record to.'; f.email.focus(); return; }
-  const S = pkLoad(); btn.disabled = true; msg.textContent = 'Saving…';
-  pkPost({ action: 'join', email, season: S.season, picks: S.picks, website: f.website.value })
-    .then(j => { store.set('pkMail', { email: email.toLowerCase(), key: j.key }); psTrack('pickem_email_join', { pick_count: Object.keys(S.picks).length }); pkJoined = true; renderPk(); })
-    .catch(err => { msg.textContent = err.message; btn.disabled = false; });
-});
-document.addEventListener('click', e => {
-  const b = e.target.closest('[data-pkm="stop"]'); if (!b) return;
-  const m = pkMail(); if (!m || !confirm('Stop sending your Pick\'em record to ' + m.email + '? Your picks stay on this browser.')) return;
-  b.disabled = true;
-  pkPost({ action: 'stop', email: m.email, key: m.key }).catch(() => {}).then(() => { store.set('pkMail', null); psTrack('pickem_email_stop', {}); renderPk(); });
-});
 const IST = { Out: 'out', Doubtful: 'dbt', Questionable: 'qst' };
 function gdInjHTML(gid, t) {
   const G = GDAY && GDAY.games[gid], L = (G && G.inj[t]) || [];
