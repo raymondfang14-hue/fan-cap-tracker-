@@ -1,6 +1,81 @@
 {
- "asOf": "2026-11-12",
+ "asOf": "2026-11-13",
  "moves": [
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Extension",
+   "teams": [
+    "ATL"
+   ],
+   "players": [
+    "C.J. Henderson"
+   ],
+   "head": "Falcons give CB C.J. Henderson a two-year extension worth up to $20M",
+   "plain": "Atlanta announced a two-year extension for Henderson, who was headed for free agency after this season. The deal is worth up to $20M with almost $11M guaranteed. It keeps him signed through 2028 (calculated: the report gives no end year).",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/falcons-extend-cb-c-j-henderson",
+   "gids": [
+    "00-0036281"
+   ]
+  },
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Extension",
+   "teams": [
+    "ATL"
+   ],
+   "players": [
+    "Cameron Thomas"
+   ],
+   "head": "Falcons extend edge rusher Cameron Thomas for three years, up to $33M",
+   "plain": "Thomas signed a one-year deal worth just over $3M in March and earned a raise. The three-year extension has a maximum value of $33M and runs through 2029. Guarantees were not reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/falcons-to-extend-olb-cameron-thomas",
+   "gids": [
+    "00-0037815"
+   ]
+  },
+  {
+   "iso": "2026-11-12",
+   "date": "Nov 12",
+   "kind": "Game",
+   "teams": [
+    "WAS",
+    "NYG"
+   ],
+   "players": [
+    "Jayden Daniels",
+    "Stefon Diggs"
+   ],
+   "head": "Thursday night: Commanders beat Giants 24-21",
+   "plain": "Jayden Daniels hit Stefon Diggs for a 32-yard touchdown with 57 seconds left. Washington moves to 3-5-1 and the Giants fall to 5-3-1. Washington now holds the tiebreaker after the teams tied in October.",
+   "source": "ESPN",
+   "url": "https://www.espn.com/nfl/recap/_/gameId/401873052",
+   "gids": [
+    "00-0039910",
+    "00-0031588"
+   ]
+  },
+  {
+   "iso": "2026-11-12",
+   "date": "Nov 12",
+   "kind": "Release",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Marquise Brown"
+   ],
+   "head": "Eagles waive WR Marquise Brown",
+   "plain": "Both sides agreed a split would help. He signed a one-year deal with $5M guaranteed in March, so that money is already owed. As a vested veteran he goes through waivers first.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-wr-marquise-brown",
+   "gids": [
+    "00-0035662"
+   ]
+  },
   {
    "iso": "2026-11-11",
    "date": "Nov 11",
@@ -54,6 +129,24 @@
    "url": "https://www.profootballrumors.com/2026/11/longtime-steelers-rb-coach-dick-hoak-dies-at-86",
    "gids": [
     ""
+   ]
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "League",
+   "teams": [
+    "LV"
+   ],
+   "players": [
+    "Fernando Mendoza"
+   ],
+   "head": "Raiders name rookie Fernando Mendoza their starting QB",
+   "plain": "With Kirk Cousins traded back to Minnesota, the No. 1 overall pick takes over. His first start is Sunday against Seattle.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/raiders-name-fernando-mendoza-starting-qb",
+   "gids": [
+    "00-0041562"
    ]
   },
   {
@@ -1214,100 +1307,6 @@
    "url": "https://www.profootballrumors.com/2026/10/chiefs-cb-ljarius-sneed-headed-back-to-ir",
    "gids": [
     "00-0036374"
-   ]
-  },
-  {
-   "iso": "2026-10-30",
-   "date": "Oct 30",
-   "kind": "Injury",
-   "teams": [
-    "WAS"
-   ],
-   "players": [
-    "Daron Payne"
-   ],
-   "head": "Commanders DT Daron Payne likely headed to injured reserve",
-   "plain": "Payne hurt his foot in practice and will miss significant time. Washington is expected to put him on injured reserve, which means at least four games out.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/commanders-dt-daron-payne-to-miss-extensive-time",
-   "gids": [
-    "00-0034333"
-   ]
-  },
-  {
-   "iso": "2026-10-30",
-   "date": "Oct 30",
-   "kind": "Coaching",
-   "teams": [
-    "CAR"
-   ],
-   "players": [
-    "Ejiro Evero",
-    "Todd Wash"
-   ],
-   "head": "Panthers fire defensive coordinator Ejiro Evero",
-   "plain": "Carolina dropped to 3-4 after a loss at Green Bay and moved on from its defensive coordinator. Todd Wash is the interim replacement.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/panthers-fire-dc-ejiro-evero",
-   "gids": [
-    "",
-    ""
-   ]
-  },
-  {
-   "iso": "2026-10-29",
-   "date": "Oct 29",
-   "kind": "Game",
-   "teams": [
-    "GB",
-    "CAR"
-   ],
-   "players": [],
-   "head": "Packers beat Panthers 27-19 on Thursday night",
-   "plain": "Green Bay won at home and Carolina fell to 3-4. Packers WR Christian Watson left with a rib injury but came back.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-friday-oct-30"
-  },
-  {
-   "iso": "2026-10-29",
-   "date": "Oct 29",
-   "kind": "League",
-   "teams": [
-    "PHI"
-   ],
-   "players": [
-    "Landon Dickerson",
-    "Dallas Goedert",
-    "Riq Woolen"
-   ],
-   "head": "Eagles expected to listen to offers for Dickerson, Goedert and Woolen",
-   "plain": "At 2-5, Philadelphia is reported to be open to trades for the guard, tight end and cornerback before the Nov. 10 deadline. Nothing has been agreed.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/eagles-expected-to-field-offers-on-landon-dickerson-dallas-goedert-riq-woolen",
-   "gids": [
-    "00-0037002",
-    "00-0034351",
-    "00-0037079"
-   ]
-  },
-  {
-   "iso": "2026-10-29",
-   "date": "Oct 29",
-   "kind": "Coaching",
-   "teams": [
-    "NYJ"
-   ],
-   "players": [
-    "Aaron Glenn",
-    "Darren Mougey"
-   ],
-   "head": "Jets coach Aaron Glenn reported on the hot seat",
-   "plain": "ESPN's Jeremy Fowler reports Glenn's job is in question with the Jets at 2-5. General manager Darren Mougey is considered more likely to be kept. Nothing has been decided.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/jets-aaron-glenn-on-hot-seat-gm-darren-mougey-likelier-to-be-retained",
-   "gids": [
-    "",
-    ""
    ]
   },
   {
