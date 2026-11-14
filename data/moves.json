@@ -1,6 +1,80 @@
 {
- "asOf": "2026-11-13",
+ "asOf": "2026-11-14",
  "moves": [
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Extension",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Elijah Higgins"
+   ],
+   "head": "Cardinals extend TE Elijah Higgins for three years, up to $26.8M",
+   "plain": "Arizona added three years to Higgins' rookie deal, which ran out after this season. The extension can pay up to $26.8M and keeps him signed through 2029. Guarantees were not reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cardinals-extend-te-elijah-higgins",
+   "gids": [
+    "00-0039041"
+   ]
+  },
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Release",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Fred Johnson"
+   ],
+   "head": "Eagles waive backup T Fred Johnson",
+   "plain": "Johnson re-signed in March on a one-year deal and had played 24 snaps. He goes on waivers; if no team claims him, Philadelphia carries nearly $2M in dead money.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-t-fred-johnson",
+   "gids": [
+    "00-0034951"
+   ]
+  },
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Injury",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "Lamar Jackson"
+   ],
+   "head": "Ravens QB Lamar Jackson has surgery on a broken, dislocated thumb",
+   "plain": "Jackson was already on injured reserve. Coach Jesse Minter says injuries like this usually take six to 10 weeks, so he is aiming for a late-season return.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-friday-nov-13",
+   "gids": [
+    "00-0034796"
+   ]
+  },
+  {
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "League",
+   "teams": [
+    "MIN"
+   ],
+   "players": [
+    "Kirk Cousins",
+    "Kyler Murray"
+   ],
+   "head": "Kirk Cousins to start for the Vikings at Green Bay with Kyler Murray hurt",
+   "plain": "Three days after Minnesota traded to bring him back, Cousins starts Sunday because Murray has a hamstring injury.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/vikings-kirk-cousins-to-start-in-week-10",
+   "gids": [
+    "00-0029604",
+    "00-0035228"
+   ]
+  },
   {
    "iso": "2026-11-13",
    "date": "Nov 13",
@@ -40,6 +114,24 @@
   {
    "iso": "2026-11-12",
    "date": "Nov 12",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Puka Nacua"
+   ],
+   "head": "Rams change course and put WR Puka Nacua on injured reserve",
+   "plain": "A day after saying he would stay on the roster, the Rams put Nacua (knee sprains and turf toe) on injured reserve. He misses at least four games. Brennan Presley takes his roster spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-shift-course-plan-to-place-puka-nacua-on-ir",
+   "gids": [
+    "00-0039075"
+   ]
+  },
+  {
+   "iso": "2026-11-12",
+   "date": "Nov 12",
    "kind": "Game",
    "teams": [
     "WAS",
@@ -74,6 +166,44 @@
    "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-wr-marquise-brown",
    "gids": [
     "00-0035662"
+   ]
+  },
+  {
+   "iso": "2026-11-11",
+   "date": "Nov 11",
+   "kind": "League",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Carson Beck",
+    "Gardner Minshew"
+   ],
+   "head": "Cardinals name rookie QB Carson Beck their starter",
+   "plain": "With Minshew out after an elbow injury, the third-round pick gets his first NFL start, against the Rams.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-11",
+   "gids": [
+    "00-0041561",
+    "00-0035289"
+   ]
+  },
+  {
+   "iso": "2026-11-11",
+   "date": "Nov 11",
+   "kind": "League",
+   "teams": [
+    "CLE"
+   ],
+   "players": [
+    "Deshaun Watson"
+   ],
+   "head": "Browns start Deshaun Watson against the Texans",
+   "plain": "Cleveland picked Watson over Shedeur Sanders to start Sunday's game in Houston.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-11",
+   "gids": [
+    "00-0033537"
    ]
   },
   {
