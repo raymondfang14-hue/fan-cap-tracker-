@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <title>PlainStats</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Every NFL contract, team salary cap and player rating, explained in plain English for everyday fans.">
+<meta name="description" content="NFL analytics in plain English: player ratings, team rankings, stats and contracts. Who&#39;s good, who&#39;s paid and whether it&#39;s worth it.">
 <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1158,6 +1158,7 @@ tr.gm-div:hover{background:none}
 /* home: minimal hero search, popular pages, everything else */
 .hm-hero{display:grid;justify-items:center;text-align:center;gap:18px;padding-block:clamp(28px,8vw,84px) clamp(8px,2vw,20px)}
 .hm-h{font:700 clamp(2.1rem,6.4vw,4rem)/1.04 var(--display);letter-spacing:-.035em;text-wrap:balance;max-width:16ch}
+.hm-sub{margin:-6px 0 0;font-size:clamp(1rem,2.4vw,1.2rem);color:var(--muted);text-wrap:balance}
 .hm-search{width:min(100%,640px);text-align:left}
 .hm-search input{font-size:1.05rem}
 .hm-try{display:flex;flex-wrap:wrap;gap:6px 8px;justify-content:center;align-items:center;font-size:.86rem;color:var(--muted)}
@@ -1459,7 +1460,8 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 <section class="view" id="v-home" aria-labelledby="h-home">
   <h1 class="sr" id="h-home">PlainStats</h1>
   <div class="hm-hero">
-    <h2 class="hm-h">Every NFL contract and stat, explained.</h2>
+    <h2 class="hm-h">NFL analytics, explained in plain English.</h2>
+    <p class="hm-sub">Who's good, who's paid, and whether it's worth it.</p>
     <div class="search hm-search">
       <label class="sr" for="q-home">Search PlainStats</label>
       <span style="position:relative;display:block"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
@@ -2198,7 +2200,7 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 <section class="view" id="v-about" hidden aria-labelledby="h-about">
   <div><span class="eyebrow">About</span><h1 class="title" id="h-about">About PlainStats</h1></div>
   <div class="panel prose">
-    <p>PlainStats explains NFL contracts and the salary cap for everyday fans. Every deal shows what is really guaranteed, what the player counts against the cap each year, and what happens if his team cuts or trades him. Team pages, player ratings, the draft board and the front-office tools all build on the same numbers.</p>
+    <p>PlainStats is NFL analytics in plain English for everyday fans: who is playing well, how every team rates, and whether each player is worth what he is paid. Player ratings, PlainScore, team rankings, game projections and season stats sit next to every contract. Every deal shows what is really guaranteed, what the player counts against the cap each year, and what happens if his team cuts or trades him. Team pages, player ratings, the draft board and the front-office tools all build on the same numbers.</p>
     <p>Contract figures come from named news reports and team announcements, plus PlainStats' own calculations from the rookie pay scale and the collective bargaining agreement. Each player shows where his numbers come from, and a contract with no confirmed figure yet shows "Contract being verified" instead of a dollar amount. Player stats come from nflverse. Ratings, grades, estimates and award odds are PlainStats' own models built from public data. They are estimates, not official figures, and they update as new stats and reports arrive.</p>
     <p>Found a wrong number or have an idea? Use <button type="button" class="fixl" data-fix>Suggest a fix</button> or email <a href="mailto:info@plainstatsnfl.com">info@plainstatsnfl.com</a>. A contract figure changes once a named report confirms it.</p>
     <p>PlainStats is an independent fan site. It is not affiliated with or endorsed by the NFL, the NFLPA, the NBA or any team.</p>
@@ -4058,9 +4060,9 @@ function route() {
   $$('[data-nav]').forEach(a => a.dataset.nav === ng ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   const canon = /^links-/.test(h0) ? '/links' : pathOf(h0);   // the per-platform /links pages are one page
   if (PATHMODE) { const c = document.querySelector('link[rel=canonical]'); if (c) c.href = SITE_URL.replace(/\/$/, '') + canon; }
-  document.title = v === 'home' ? 'PlainStats: NFL contracts, salary cap and player stats' : v !== 'team' && PTITLE[h0] ? PTITLE[h0] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
+  document.title = v === 'home' ? 'PlainStats: NFL analytics, player stats and contracts' : v !== 'team' && PTITLE[h0] ? PTITLE[h0] + ' · PlainStats' : (({ news: 'News', teams: 'Teams', games: 'Scores, standings and projections', onfield: 'Players', contracts: 'Contracts', tools: 'Tools', analytics: 'Cap lab', awards: 'Awards', freeagency: 'Free agency', draft: 'Draft', learn: 'Cap 101', about: 'About' })[v] || 'PlainStats') + (v === 'team' ? '' : ' · PlainStats');
   { // description and link-preview tags follow the page (crawlers that skip JavaScript get the same from api/page.js)
-    const dsc = v === 'home' ? 'NFL contracts, stats and team analytics, explained in plain English.' : v !== 'team' ? PDESC[h0] : null;
+    const dsc = v === 'home' ? "NFL analytics in plain English: player ratings, team rankings, stats and contracts. Who's good, who's paid and whether it's worth it." : v !== 'team' ? PDESC[h0] : null;
     const setM = (sel, val) => { const m = document.querySelector(sel); if (m && val) m.setAttribute('content', val); };
     setM('meta[name=description]', dsc); setM('meta[property="og:description"]', dsc); setM('meta[name="twitter:description"]', dsc);
     setM('meta[property="og:title"]', document.title); setM('meta[name="twitter:title"]', document.title);

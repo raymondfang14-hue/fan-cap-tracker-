@@ -13,7 +13,7 @@ import vm from 'node:vm';
 
 const SITE = 'https://www.plainstatsnfl.com';
 const CACHE = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
-const DEFAULT_DESC = 'NFL contracts, stats and team analytics, explained in plain English.';
+const DEFAULT_DESC = "NFL analytics in plain English: player ratings, team rankings, stats and contracts. Who's good, who's paid and whether it's worth it.";
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const slugify = s => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
