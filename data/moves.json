@@ -1,6 +1,62 @@
 {
- "asOf": "2026-11-14",
+ "asOf": "2026-11-15",
  "moves": [
+  {
+   "iso": "2026-11-14",
+   "date": "Nov 14",
+   "kind": "Injury",
+   "teams": [
+    "NE"
+   ],
+   "players": [
+    "TreVeyon Henderson"
+   ],
+   "head": "Patriots put RB TreVeyon Henderson on injured reserve with an illness",
+   "plain": "Henderson had been in hospital with what he called unexplained neurological symptoms. He must miss at least four games, and there is no timetable for his return. New England activated FB Reggie Gilliam and G Greg Van Roten from IR the same day.",
+   "source": "Yahoo Sports",
+   "url": "https://sports.yahoo.com/articles/patriots-put-rb-treveyon-henderson-001252442.html",
+   "gids": [
+    "00-0040734"
+   ]
+  },
+  {
+   "iso": "2026-11-14",
+   "date": "Nov 14",
+   "kind": "Injury",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Peter Skoronski",
+    "Tommy Townsend"
+   ],
+   "head": "Titans put G Peter Skoronski and P Tommy Townsend on injured reserve",
+   "plain": "Skoronski, a starting guard, has a hamstring injury and will miss at least four games. Townsend hurt his knee and Achilles. Tennessee signed veteran punter Thomas Morstead and guard Chandler Zavala from the practice squad.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/titans-place-g-peter-skoronski-on-ir",
+   "gids": [
+    "00-0039034",
+    "00-0035889"
+   ]
+  },
+  {
+   "iso": "2026-11-14",
+   "date": "Nov 14",
+   "kind": "Injury",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Christen Miller"
+   ],
+   "head": "Saints put rookie DT Christen Miller on injured reserve; Travis Etienne returns",
+   "plain": "Miller has a knee injury and will miss at least four games. RB Travis Etienne came off IR after a hamstring injury, giving New Orleans its lead back for Sunday.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-plan-to-activate-travis-etienne",
+   "gids": [
+    "00-0041390"
+   ]
+  },
   {
    "iso": "2026-11-13",
    "date": "Nov 13",
@@ -710,8 +766,8 @@
    "players": [
     "Andre Cisco"
    ],
-   "head": "Lions acquire S Andre Cisco from the Jets for a sixth-round pick",
-   "plain": "Detroit adds safety depth while Kerby Joseph works back from a knee injury. Cisco, 26, had barely played on defense since Week 3 and is on a one-year deal. NFL.com and ESPN list the Jets' pick as a 2028 sixth-rounder, Pro Football Rumors as 2029, so the year is left off here. The Jets carry $500K in dead money and save $1.75M, per Pro Football Rumors.",
+   "head": "Lions acquire S Andre Cisco from the Jets for a 2029 sixth-round pick",
+   "plain": "Detroit adds safety depth while Kerby Joseph works back from a knee injury. Cisco, 26, had barely played on defense since Week 3 and is on a one-year deal. The pick was first reported as a 2028 sixth-rounder; on Nov 14 the teams changed it to a 2029 sixth at Detroit's request, per Pro Football Rumors. The Jets carry $500K in dead money and save $1.75M.",
    "source": "NFL.com",
    "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-9",
    "deal": {
@@ -726,7 +782,7 @@
     },
     "NYJ": {
      "picks": [
-      "Sixth-round pick, year reported differently (from DET)"
+      "2029 sixth-round pick (from DET)"
      ],
      "dead": 500000
     }
