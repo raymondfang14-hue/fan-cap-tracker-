@@ -15,6 +15,12 @@ import csv, json, os, sys
 from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STRICT = '--strict' in sys.argv   # any mismatch fails (the old behaviour; use it for hand runs)
+sys.argv = [a for a in sys.argv if a != '--strict']
+# Blocking vs warning: a few cards off on one stat (a lateral play, a stat correction) must not hold back a whole week of stats.
+# Blocking: a player with box scores but no card, a player listed twice, fewer games shown than box scores, or more than
+# max(MAX_WARN, 1% of cards) stat mismatches (the build itself is broken). Everything else prints WARN, exits 0 and the workflow opens an issue.
+MAX_WARN = 5
 NV = sys.argv[1]
 S = sys.argv[2] if len(sys.argv) > 2 else '2026'
 LAST = int(sys.argv[3]) if len(sys.argv) > 3 else json.load(open(os.path.join(ROOT, 'data/stats.json'))).get('thru', 99)
@@ -38,7 +44,7 @@ for r in csv.DictReader(open(os.path.join(NV, f'stats_player_week_{S}.csv'), enc
 D = json.load(open(os.path.join(ROOT, 'data/nfl.json')))['players']
 SD = json.load(open(os.path.join(ROOT, 'data/stats.json')))
 byG = {s['gid']: s for s in SD['players'] if s.get('gid')}
-problems = []
+problems, soft = [], []   # problems block; soft are warnings
 
 dup = [g for g, n in Counter(p[19] for p in D if p[19]).items() if n > 1]
 for g in dup: problems.append(f'listed twice: {[p[0] for p in D if p[19] == g]} ({g})')
@@ -55,9 +61,13 @@ for p in D:
     for grp in groups:
         for k, src in grp.items():
             want = sum(raw[g][c] for c in src); have = m.get(k, 0)
-            if abs(have - want) > 0.01: problems.append(f'{name} ({team}, {pos}): {k} shows {have:g}, box scores say {want:g}')
+            if abs(have - want) > 0.01: soft.append(f'{name} ({team}, {pos}): {k} shows {have:g}, box scores say {want:g}')
     if s.get('g', 0) < len(weeks[g]): problems.append(f"{name} ({team}): {s.get('g')} games shown, box scores in {len(weeks[g])} weeks")
 
+limit = max(MAX_WARN, int(0.01 * checked))
+if len(soft) > limit: problems += [f'{len(soft)} stat mismatches is over the limit of {limit}: the build is off, not a few odd box scores']
+if STRICT: problems, soft = problems + soft, []
 for line in problems[:200]: print('FAIL', line)
-print(f'{checked} player cards checked against nflverse box scores through week {LAST}, {len(problems)} problems')
+for line in soft[:200]: print('WARN', line)
+print(f'{checked} player cards checked against nflverse box scores through week {LAST}, {len(problems)} problems, {len(soft)} warnings')
 sys.exit(1 if problems else 0)

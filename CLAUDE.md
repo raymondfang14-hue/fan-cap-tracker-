@@ -55,7 +55,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 
 ## Checks
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
-- `python3 -I tools/check_stats.py <nflverse folder>` checks every player card's season stats (On the field tab) against the raw nflverse box scores, by gsis id, and flags players listed twice. Run it after rebuilding `data/stats.json`.
+- `python3 -I tools/check_stats.py <nflverse folder>` checks every player card's season stats (On the field tab) against the raw nflverse box scores, by gsis id, and flags players listed twice. Run it after rebuilding `data/stats.json`. Missing cards, duplicates, fewer games than box scores, or more than max(5, 1%) stat mismatches block the stats step; a few mismatches print `WARN`, publish anyway and open the "nflverse refresh needs attention" issue (closed by the next clean run). `--strict` fails on any mismatch.
 - `python3 -I tools/check_ledger.py` checks `data/ledger.csv` for missing sources, totals that don't add up and duplicates. After adding ledger rows, have the `ledger-checker` agent compare them with their source links.
 - `.mcp.json` adds Playwright (browser checks) and Vercel (deploy logs) for Claude Code sessions.
 

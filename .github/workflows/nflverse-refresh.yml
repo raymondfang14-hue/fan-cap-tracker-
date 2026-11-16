@@ -26,6 +26,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 # One refresh at a time; a run that starts while another is going waits for it.
 concurrency:
@@ -114,6 +115,28 @@ jobs:
           # Only needed if Vercel ever skips deployments for commits made by this workflow. Add the hook URL
           # (Vercel project settings > Git > Deploy Hooks, branch main) as the repository secret VERCEL_DEPLOY_HOOK.
           [ -n "$HOOK" ] && curl -sSf -X POST "$HOOK" > /dev/null && echo "deploy hook called" || echo "no deploy hook set"
+
+      # One issue, "nflverse refresh needs attention": opened or updated when a step failed or the stats check printed warnings,
+      # closed by the next run that is clean. Only runs that got as far as refresh.sh (a missing log means setup failed: the red run is the alert).
+      - name: Open, update or close the attention issue
+        if: always() && steps.refresh.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MODE: ${{ steps.mode.outputs.mode }}
+          CODE: ${{ steps.refresh.outputs.code }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="nflverse refresh needs attention"
+          LOG="$RUNNER_TEMP/refresh.log"
+          [ -f "$LOG" ] || exit 0
+          lines=$({ grep -E '^(FAIL|WARN|FAILED:) ' "$LOG"; sed -n '/^== summary/,$p' "$LOG" | sed '1d'; } | head -60)
+          num=$(gh issue list --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
+          if [ "$CODE" = 0 ] && ! grep -q '^WARN ' "$LOG"; then
+            [ -n "$num" ] && gh issue close "$num" --comment "Clean run ($MODE): $RUN_URL" || true
+            exit 0
+          fi
+          body=$(printf 'Run (%s): %s\n\nexit code %s\n\n```\n%s\n```\n\nFAIL lines block the stats; WARN lines were published anyway (tools/check_stats.py). This issue closes itself on the next clean run.' "$MODE" "$RUN_URL" "$CODE" "$lines")
+          if [ -n "$num" ]; then gh issue comment "$num" --body "$body"; else gh issue create --title "$TITLE" --body "$body"; fi
 
       - name: Fail the run if a step failed
         if: steps.refresh.outputs.code != '0'
