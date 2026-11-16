@@ -202,6 +202,9 @@ for k, p in P.items():
                  tsh=tg_ / max(1, TT[team]['targets']), ash=s['receiving_air_yards'] / max(1, TT[team]['receiving_air_yards']), radot=s['receiving_air_yards'] / tg_,
                  yac=(s['receiving_yards_after_catch'] / rc if rc else 0), rfd1=s['receiving_first_downs'],
                  xepa=s['receiving_epa'] / tg_, x20=s['receiving_20'])
+    elif s['receiving_yards'] or s['receptions'] or s['receiving_tds']:
+        # catches with no target on record (laterals, trick plays: a lineman can finish with -6 receiving yards); keep the totals so cards match the box score
+        m.update(rec=s['receptions'], ryds=s['receiving_yards'], rectd=s['receiving_tds'])
     if s['carries'] or s['targets']:
         m['fum'] = s['rushing_fumbles_lost'] + s['receiving_fumbles_lost']
         m['scr'] = s['rushing_yards'] + s['receiving_yards']
