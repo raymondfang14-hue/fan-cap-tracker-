@@ -1,5 +1,5 @@
 {
- "asOf": "2026-11-15",
+ "asOf": "2026-11-16",
  "moves": [
   {
    "iso": "2026-11-14",
@@ -315,6 +315,32 @@
    "url": "https://www.profootballrumors.com/2026/11/longtime-steelers-rb-coach-dick-hoak-dies-at-86",
    "gids": [
     ""
+   ]
+  },
+  {
+   "iso": "2026-11-10",
+   "date": "Nov 10",
+   "kind": "Restructure",
+   "teams": [
+    "LAR",
+    "KC",
+    "DEN"
+   ],
+   "players": [
+    "Kyren Williams",
+    "Kamren Curl",
+    "Talanoa Hufanga",
+    "Nick Bolton"
+   ],
+   "head": "Rams, Chiefs and Broncos restructure deals to free cap space",
+   "plain": "The Rams restructured RB Kyren Williams and S Kamren Curl to gain about $3M in cap space. The Chiefs restructured LB Nick Bolton to free $3.4M, and the Broncos cut S Talanoa Hufanga's 2026 cap charge by $3.9M. A restructure moves pay into later years; it does not add new money. The report does not give new contract totals, and the date is inferred from the deadline-week report.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/nfl-restructures-rams-dawkins-hufanga-bolton",
+   "gids": [
+    "00-0037840",
+    "00-0036349",
+    "00-0036564",
+    "00-0036621"
    ]
   },
   {
