@@ -467,7 +467,7 @@ h1{font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;margin:.2em 0 .4em}h2
 .card dl{margin:0}.card dl>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--ln)}.card dl>div:last-child{border:0}
 .card dt{color:var(--mu)}.card dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--ln)}td.r,th.r{text-align:right}
-.scroll{overflow-x:auto}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}.cta.alt{background:transparent;color:var(--br);border:1px solid var(--br);margin-left:8px}
+.scroll{overflow-x:auto}.nw{white-space:nowrap}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}.cta.alt{background:transparent;color:var(--br);border:1px solid var(--br);margin-left:8px}
 .faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
 ul.list{columns:2 220px;list-style:none;padding:0;margin:0}ul.list li{padding:3px 0;break-inside:avoid}
 ul.doors{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:10px;list-style:none;padding:0;margin:0}
@@ -657,6 +657,8 @@ def plainscore_html(p, ps):
     bars = ''.join(f'<li><span>{esc(l)}</span><span class="tr" aria-hidden="true"><i style="width:{v}%;background:{PS_COLOR(v)}"></i></span><b>{v}</b><span class="v">{esc(val)}</span></li>'
                    for l, v, val, _k in ps['bars'])
     play = f" Play rating {ps['play']}." if ps.get('play') is not None else ''
+    if ps.get('rk'):
+        play = f" That is {ordn(ps['rk'])} of {ps['n']}." + play
     return (f'<h2>PlainScore</h2><div class="card"><div class="psh"><b class="psn" style="--c:{PS_COLOR(ps["s"])}" aria-label="PlainScore {ps["s"]} out of 100">{ps["s"]}</b>'
             f'<p>{esc(plainscore_sentence(p, ps))}{play}</p></div><ul class="pbars" aria-label="Percentiles behind his PlainScore">{bars}</ul></div>'
             f'<p class="note">Each bar is a percentile against the same {ps["n"]} {esc(ps["grp"])}: 90 means better than 90% of them.'
@@ -858,12 +860,23 @@ def last_game(p):
     return label, f'{head}: {body}.'
 
 
+def back_since(p, m):
+    """A release item reads wrong once he is back: ' He has since returned...' when he has played for this team after that news day."""
+    if m.get('kind') != 'Release':
+        return ''
+    for wk, _opp, tm, _st in reversed((p.hist or {}).get('w') or []):
+        g = GAME_AT.get((wk, tm))
+        if tm == p.team and g and g[2] > (m.get('iso') or '9999'):
+            return f" Since then he has been back with the {TEAMS[p.team]['name']}: he was on their game-day roster in week {wk}."
+    return ''
+
+
 def latest_html(p):
     """The 'Latest' box under the lede: In the news, this week's injury report, last game. Empty when there is nothing to say."""
     rows = []
     for m in player_news(p):
         src = f' <a href="{esc(m["url"])}" rel="nofollow noopener">{esc(m.get("source") or "Source")}</a>' if m.get('url') else ''
-        rows.append(('In the news, ' + esc(m.get('date') or m.get('iso')), f'<b>{esc(m["head"])}.</b> {esc(m.get("plain") or "")}{src}'))
+        rows.append(('In the news, ' + esc(m.get('date') or m.get('iso')), f'<b>{esc(m["head"])}.</b> {esc(m.get("plain") or "")}{src}{esc(back_since(p, m))}'))
     inj = injury_now(p)
     if inj:
         rows.append((f'Injury report, week {inj[0]}', esc(inj[1]) + '.'))
@@ -875,6 +888,90 @@ def latest_html(p):
     body = ''.join(f'<div><h3>{k}</h3><p>{v}</p></div>' for k, v in rows)
     return (f'<h2>Latest on {esc(p.name)}</h2><div class="card pnews">{body}</div>'
             f'<p class="note">News from the PlainStats news feed, injury status from the NFL\'s official report, game stats from nflverse.</p>')
+
+
+# ---------------------------------------------------------------- game log (player pages)
+# One row per game this season from the nflverse weekly box scores (history.json 'w'), with his share of the team's targets,
+# carries and snaps from data/usage.json where it has them. Columns depend on the position; a column nobody filled is dropped.
+_USAGE_RAW = _load('usage.json', {'players': [], 'teams': {}})
+GAME_SHARE = {}  # gid -> {week: (target share, carry share, snap share)}
+for _gid, _n, _pos, _games in _USAGE_RAW.get('players', []):
+    for _g in _games:
+        _tt = _USAGE_RAW.get('teams', {}).get(_g[1], {}).get(str(_g[0]), [0, 0, 0])
+        _sn = _g[5] if len(_g) > 5 else None
+        GAME_SHARE.setdefault(_gid, {})[_g[0]] = (_g[2] / _tt[0] if _tt[0] else None, _g[3] / _tt[1] if _tt[1] else None,
+                                                  min(1, _sn / _tt[2]) if _sn is not None and len(_tt) > 2 and _tt[2] else None)
+_pct = lambda v: '–' if v is None else f'{round(v * 100)}%'
+_n0 = lambda st, k: st.get(k) or 0
+LOG_COLS = {
+    'pass': [('Cmp-Att', lambda st, sh: f"{_n0(st, 'cmp')}-{_n0(st, 'att')}" if st.get('att') else ''), ('Pass yds', lambda st, sh: st.get('pyd')), ('TD', lambda st, sh: st.get('ptd')),
+             ('Int', lambda st, sh: st.get('int')), ('Rush yds', lambda st, sh: st.get('ryd'))],
+    'run': [('Carries', lambda st, sh: st.get('car')), ('Rush yds', lambda st, sh: st.get('ryd')), ('Catches', lambda st, sh: st.get('rec')), ('Rec yds', lambda st, sh: st.get('reyd')),
+            ('TD', lambda st, sh: (_n0(st, 'rtd') + _n0(st, 'retd')) or None), ('Carry share', lambda st, sh: _pct(sh[1]) if sh and sh[1] is not None else ''),
+            ('Snap share', lambda st, sh: _pct(sh[2]) if sh and sh[2] is not None else '')],
+    'catch': [('Targets', lambda st, sh: st.get('tgt')), ('Catches', lambda st, sh: st.get('rec')), ('Rec yds', lambda st, sh: st.get('reyd')), ('TD', lambda st, sh: st.get('retd')),
+              ('Target share', lambda st, sh: _pct(sh[0]) if sh and sh[0] is not None else ''), ('Snap share', lambda st, sh: _pct(sh[2]) if sh and sh[2] is not None else '')],
+    'def': [('Tackles', lambda st, sh: st.get('tk')), ('For loss', lambda st, sh: st.get('tfl')), ('Sacks', lambda st, sh: st.get('dsk')), ('QB hits', lambda st, sh: st.get('qbh')),
+            ('Passes defended', lambda st, sh: st.get('pd')), ('Int', lambda st, sh: st.get('dint'))],
+    'kick': [('Field goals', lambda st, sh: f"{_n0(st, 'fgm')} of {st['fga']}" if st.get('fga') else ''), ('Extra points', lambda st, sh: f"{_n0(st, 'xpm')} of {st['xpa']}" if st.get('xpa') else '')],
+    'punt': [('Punts', lambda st, sh: st.get('pun')), ('Punt yds', lambda st, sh: st.get('puy'))],
+}
+LOG_GROUP = {'QB': 'pass', 'RB': 'run', 'FB': 'run', 'WR': 'catch', 'TE': 'catch', 'EDGE': 'def', 'IDL': 'def', 'LB': 'def', 'CB': 'def', 'S': 'def', 'K': 'kick', 'P': 'punt'}
+
+
+def game_result(wk, tm):
+    """('vs. the Giants' | 'at the Giants', 'W 24-17' | '') for a team's game in a week, from the schedule."""
+    g = GAME_AT.get((wk, tm))
+    if not g:
+        return None
+    home = g[5] == tm
+    opp = g[4] if home else g[5]
+    us, them = (g[7], g[6]) if home else (g[6], g[7])
+    return f"{'vs.' if home else 'at'} {TEAMS.get(opp, {}).get('name', opp)}", f"{'W' if us > them else 'L' if us < them else 'T'} {us}-{them}", g
+
+
+def game_path(g):
+    return f'/game/{SEASON_YEAR}-{g[1]:02d}-{g[4].lower()}-{g[5].lower()}'
+
+
+def usage_trend(p, weeks):
+    """One sentence on his share of the work in his last three games against the games before, or ''. Needs five games with a share."""
+    grp = LOG_GROUP.get(p.pos)
+    i, word = {'catch': (0, 'targets'), 'run': (1, 'carries')}.get(grp, (None, None))
+    sh = GAME_SHARE.get(p.gid, {})
+    vals = [sh[w][i] for w in weeks if i is not None and w in sh and sh[w][i] is not None]
+    if len(vals) < 5:
+        return ''
+    late, early = sum(vals[-3:]) / 3, sum(vals[:-3]) / len(vals[:-3])
+    d = round(late * 100) - round(early * 100)
+    how = 'about the same as' if abs(d) < 3 else f"{'up' if d > 0 else 'down'} from"
+    return (f"Over his last three games {p.name} has had {round(late * 100)}% of his team's {word}, {how} {round(early * 100)}% in his games before that.")
+
+
+def gamelog_html(p):
+    w = [x for x in (p.hist or {}).get('w') or [] if x[0] <= (HIST.get('thru') or 99)]
+    cols = LOG_COLS.get(LOG_GROUP.get(p.pos))
+    if not w or not cols:
+        return ''
+    sh = GAME_SHARE.get(p.gid, {})
+    cells = [[fn(st, sh.get(wk)) for _l, fn in cols] for wk, _o, _t, st in w]
+    keep = [j for j in range(len(cols)) if any(c[j] not in (None, '', 0) for c in cells)]
+    if not keep:
+        return ''
+    show = lambda v: '–' if v in (None, '') else (f'{v:,}' if isinstance(v, int) else f'{v:g}' if isinstance(v, float) else esc(v))
+    tr = ''
+    for (wk, opp, tm, _st), c in zip(w, cells):
+        r = game_result(wk, tm)
+        where = esc(r[0]) if r else esc(TEAMS.get(opp, {}).get('name', opp))
+        res = f'<a href="{game_path(r[2])}">{esc(r[1])}</a>' if r else '–'
+        tr += f'<tr><td>{wk}</td><td class="nw">{where}</td><td class="nw">{res}</td>' + ''.join(f'<td class="r">{show(c[j])}</td>' for j in keep) + '</tr>'
+    th = ''.join(f'<th class="r">{esc(cols[j][0])}</th>' for j in keep)
+    shares = any(cols[j][0].endswith('share') for j in keep)
+    trend = usage_trend(p, [x[0] for x in w])
+    return (f'<h2>{esc(p.name)} game log, {SEASON_YEAR}</h2><div class="card scroll"><table><thead><tr><th>Week</th><th>Opponent</th><th>Result</th>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
+            + (f'<p>{esc(trend)} <a href="/usage-risers">This week\'s usage risers</a></p>' if trend else '')
+            + f'<p class="note">Every game he has a box score for, through week {HIST.get("thru")}. Source: nflverse.'
+            + (' Shares are his part of the team\'s targets, carries or snaps in that game.' if shares else '') + '</p>')
 
 
 # ---------------------------------------------------------------- player pages
@@ -933,6 +1030,7 @@ def build_player(p):
     PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
     deal_html = facts_html(rows) + src_html
     # Stats-first pages put the season (PlainScore, stats) above the contract; the rest lead with the contract.
+    stats_html += gamelog_html(p)
     main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent == 'stats' else (deal_html + plainscore_html(p, ps) + stats_html)
     body = (f'<div class="id">{img_html}<div><h1>{esc(h1)}</h1></div></div>'
             f'<p class="lede">{esc(summary)}</p>{latest_html(p)}{main_html}'
@@ -948,7 +1046,11 @@ def build_player(p):
     graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}, 'about': {'@type': 'Person', 'name': p.name}},
              faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Players', '/players'), (p.name, path)])]
     crumbs = [('PlainStats', '/'), ('Players', '/players'), (p.name, path)]
-    thin = not has_deal
+    # Google is shown a page only when it says something another site does not: a PlainScore (he has played enough to be
+    # rated) or a contract a named report confirms. Rookie-scale, minimum-salary and unverified pages without a PlainScore
+    # still exist and are linked, but carry noindex and stay out of the sitemap.
+    reported = p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap'])
+    thin = not has_deal or not (ps or reported)
     card = og_add('players', p.slug, **player_card(p, f, T, has_deal))
     write(f'players{"/" + p.slug}.html', shell(path, title, desc, body, graph, robots='noindex,follow' if thin else None, image=img, crumbs=crumbs, card=card))
     if not thin:
@@ -984,6 +1086,118 @@ def record_line(t):
     return rec, s
 
 
+POS_ORDER = {k: i for i, k in enumerate(['QB', 'RB', 'FB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT', 'EDGE', 'IDL', 'LB', 'CB', 'S', 'K', 'P', 'LS'])}
+
+
+def contract_cell(p, f):
+    """Roster table: yearly pay only when contract_facts() confirms it, and where it comes from; otherwise what kind of deal, or being verified."""
+    if p.prov == 'r' and (f['apy'] or f['total']):
+        return f"{mon(f['apy'])} a year" if f['apy'] else f"{mon(f['total'])} total"
+    if p.prov == 'f' and f['apy']:
+        return f"Rookie deal, {mon(f['apy'])} a year"
+    if p.prov == 'm':
+        return 'League minimum'
+    if p.prov == 'p':
+        return 'Practice squad'
+    return 'Being verified'
+
+
+def team_roster_html(tid, nick):
+    """Every player on the team: position, age, PlainScore, one season number and his contract status."""
+    rows = []
+    for p in PLAYERS:
+        if p.team != tid:
+            continue
+        f = contract_facts(p)
+        ps = plainscore(p, f)
+        rows.append((POS_ORDER.get(p.pos, 99), -(ps['s'] if ps else -1), p.name, p, f, ps))
+    if not rows:
+        return ''
+    rows.sort(key=lambda r: r[:3])
+    tr = ''
+    for _o, _s, _n, p, f, ps in rows:
+        hs = headline_stat(p)
+        score = f'<b style="color:{PS_COLOR(ps["s"])}">{ps["s"]}</b>' if ps else '–'
+        tr += (f'<tr><td>{player_name_link(p) if hasattr(p, "slug") else esc(p.name)}</td><td>{esc(p.pos)}</td><td class="r">{esc(p.age) if p.age else "–"}</td>'
+               f'<td class="r">{score}</td><td>{esc(hs[0] + " " + hs[1]) if hs else "–"}</td><td>{esc(contract_cell(p, f))}</td></tr>')
+    rated = sum(1 for r in rows if r[5])
+    return (f'<h2>{esc(nick)} roster, {SEASON_YEAR}</h2><div class="card scroll"><table><thead><tr><th>Player</th><th>Pos</th><th class="r">Age</th><th class="r">PlainScore</th><th>{SEASON_YEAR}</th><th>Contract</th></tr></thead><tbody>{tr}</tbody></table></div>'
+            f'<p class="note">{len(rows)} players, {rated} with a PlainScore: a 0 to 100 rank of his play against everyone at his position with enough snaps, through week {PSCORE["week"]} (<a href="/cap-101">how it works</a>). '
+            'Yearly pay is shown only when a named report confirms it or it follows from the CBA rookie scale; the rest say what kind of deal it is or that it is being verified. Stats from nflverse.</p>')
+
+
+def team_form(t):
+    """(sentence, html) on where the team sits in the weekly tiers (data/tiers.json: EPA per play on offense and defense), or (None, '')."""
+    all_t = TIERS.get('teams') or {}
+    x = all_t.get(t['id'])
+    if not x:
+        return None, ''
+    off_r = sorted(all_t, key=lambda k: -all_t[k]['off']).index(t['id']) + 1
+    def_r = sorted(all_t, key=lambda k: all_t[k]['def']).index(t['id']) + 1
+    tier = next((n for i, n, _d in TIERS.get('tiers', []) if i == x['tier']), f"Tier {x['tier']}")
+    tdesc = next((d for i, _n, d in TIERS.get('tiers', []) if i == x['tier']), '')
+    n = len(all_t)
+    sent = (f"Through week {TIERS.get('thru')} the {t['name']} rank {ordn(x['rank'])} of {n} teams by net EPA per play, which puts them in {tier}"
+            f"{' (' + tdesc.lower() + ')' if tdesc else ''}. The offense ranks {ordn(off_r)} and the defense {ordn(def_r)}.")
+    facts = [('Net EPA per play', f"{x['net']:+.3f} ({ordn(x['rank'])})"), ('Offense EPA per play', f"{x['off']:+.3f} ({ordn(off_r)})"),
+             ('Defense EPA per play allowed', f"{x['def']:+.3f} ({ordn(def_r)} best)"),
+             ('Offense success rate', f"{x['offSr'] * 100:.1f}%"), ('Success rate allowed', f"{x['defSr'] * 100:.1f}%")]
+    html = (f'<h2>How good are the {esc(t["name"])} this season?</h2><p>{esc(sent)}</p>{facts_html(facts)}'
+            f'<p class="note">EPA (expected points added) per play measures how much each play helped the team score; for a defense, lower is better. '
+            f'<a href="/learn/epa">What is EPA?</a> · <a href="/learn/success-rate">What is success rate?</a> · <a href="/team-tiers">All 32 teams in this week\'s tiers</a>. From nflverse play-by-play.</p>')
+    return sent, html
+
+
+def kickoff(hhmm):
+    try:
+        h, m = map(int, hhmm.split(':'))
+    except ValueError:
+        return ''
+    return f"{(h - 1) % 12 + 1}:{m:02d} {'PM' if h >= 12 else 'AM'} ET"
+
+
+def team_schedule(t):
+    """(next-game sentence or None, html): every game this season with the result or the kickoff time."""
+    games = sorted((g for g in SCHED.get('games', []) if t['id'] in (g[4], g[5])), key=lambda g: g[1])
+    if not games:
+        return None, ''
+    tr, nxt = '', None
+    for g in games:
+        home = g[5] == t['id']
+        opp = TEAMS.get(g[4] if home else g[5], {})
+        d = dt.date.fromisoformat(g[2])
+        where = f"{'vs.' if home else 'at'} " + (f'<a href="/teams/{opp["slug"]}">{esc(opp["name"])}</a>' if opp else esc(g[4] if home else g[5]))
+        if g[6] is not None and g[7] is not None:
+            us, them = (g[7], g[6]) if home else (g[6], g[7])
+            res = f'<a href="{game_path(g)}">{"W" if us > them else "L" if us < them else "T"} {us}-{them}</a>'
+        else:
+            res = f'<a href="{game_path(g)}">{esc(kickoff(g[3]) or "To be played")}</a>'
+            if not nxt:
+                nxt = (f"The {t['name']} play {'the ' + opp.get('name', '') + ' at home' if home else 'at the ' + opp.get('name', '')} on {d.strftime('%A, %b')} {d.day} "
+                       f"(week {g[1]})" + (f", {kickoff(g[3])}" if kickoff(g[3]) else '') + '.')
+        tr += f'<tr><td>{g[1]}</td><td class="nw">{d.strftime("%b")} {d.day}</td><td class="nw">{where}</td><td class="nw">{res}</td></tr>'
+    html = (f'<h2>{esc(t["name"])} schedule and results, {SEASON_YEAR}</h2>' + (f'<p>{esc(nxt)}</p>' if nxt else '')
+            + f'<div class="card scroll"><table><thead><tr><th>Week</th><th>Date</th><th>Opponent</th><th>Result or kickoff</th></tr></thead><tbody>{tr}</tbody></table></div>'
+            '<p class="note">Each result opens the game page, with the PlainStats model\'s pick and the injury report. Kickoff times are Eastern. From the nflverse schedule.</p>')
+    return nxt, html
+
+
+def team_injuries_html(t):
+    """This week's official injury report for the team's players, or '' when nobody is listed."""
+    rows = []
+    for p in PLAYERS:
+        if p.team == t['id'] and p.gid:
+            inj = injury_now(p)
+            if inj:
+                rows.append((POS_ORDER.get(p.pos, 99), p, inj))
+    if not rows:
+        return ''
+    rows.sort(key=lambda r: (r[0], r[1].name))
+    li = ''.join(f'<li>{player_name_link(p) if hasattr(p, "slug") else esc(p.name)} <span class="note">{esc(p.pos)}</span>: {esc(inj[1])}</li>' for _o, p, inj in rows)
+    return (f'<h2>{esc(t["name"])} injury report, week {rows[0][2][0]}</h2><ul class="list">{li}</ul>'
+            '<p class="note">From the NFL\'s official injury report, through nflverse.</p>')
+
+
 def build_team(t):
     tid = t['id']
     slug = t['slug']
@@ -1013,13 +1227,21 @@ def build_team(t):
         (f'Who is the {nick} head coach?', f"{rec[1]['coach']} is the {nick} head coach, in the job since {rec[1]['since']}.") if rec and rec[1].get('coach') else None,
     ]
     faq = [x for x in faq if x]
+    form_sent, form_html = team_form(t)
+    next_sent, sched_html = team_schedule(t)
+    if rec:
+        faq.insert(0, (f"What is the {nick}' record?" if nick.endswith('s') else f"What is the {nick}'s record?",
+                       f"The {full} are {rec[0]} in {SEASON_YEAR}, with {rec[1]['pf']} points scored and {rec[1]['pa']} allowed."))
+    if next_sent:
+        faq.insert(1 if rec else 0, (f'Who do the {nick} play next?', next_sent))
+    if form_sent:
+        faq.append((f'How good are the {nick} this season?', form_sent))
     top_html = reported_table(top, f'{esc(nick)} contracts confirmed by named reports')
-    roster_html = ''
-    if roster:
-        roster_html = f'<h2>{esc(nick)} players on PlainStats</h2><ul class="list">' + ''.join(f'<li>{player_name_link(p)} <span class="note">{esc(p.pos)}</span></li>' for p in roster) + '</ul>'
+    roster_html = team_roster_html(tid, nick)
     facts = [(f'{SEASON_YEAR} cap space', space_txt), ('Dead money', mon(t['dead'])), ('League cap', mon(CAP)), ('Division', esc(t['div']))]
     if rec:
         facts.insert(0, ('Record', esc(rec[0])))
+        facts.insert(1, ('Points for and against', f"{rec[1]['pf']} to {rec[1]['pa']}"))
         if rec[1].get('coach'):
             facts.append(('Head coach', esc(rec[1]['coach'])))
     logo = f'<img src="{esc(t["logo"])}" alt="{esc(full)} logo" width="64" height="64" loading="lazy" decoding="async" onerror="this.remove()">' if t.get('logo') else ''
@@ -1028,7 +1250,7 @@ def build_team(t):
     desc = clip(summary, 158)
     body = (f'<div class="id">{logo}<h1>{esc(full)} cap space, contracts and roster</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}'
             f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li><li><a rel="nofollow" href="/team/{tid.lower()}?share=1">Share the {esc(nick)} as an image</a></li></ul>'
-            f'{top_html}{faq_html(faq)}{roster_html}'
+            f'{form_html}{sched_html}{team_injuries_html(t)}{roster_html}{top_html}{faq_html(faq)}'
             f'<p class="note">Team cap figures are PlainStats\' latest team totals as of {esc(ASOF)}. Player contracts are being re-sourced one by one from named reports, so team totals can change.</p>'
             f'{team_doors(t)}{signup_html()}')
     team_ld = {'@type': 'SportsTeam', 'name': full, 'sport': 'American football', 'url': SITE + path, 'memberOf': {'@type': 'SportsOrganization', 'name': 'National Football League'}}
@@ -1179,10 +1401,12 @@ def build_hubs():
     path = '/teams'
     title = 'NFL team cap space, contracts and dead money | PlainStats'
     desc = 'Cap space, dead money and contracts for all 32 NFL teams, explained in plain English.'
-    rows = ''.join(f'<tr><td><a href="/teams/{t["slug"]}">{esc(t["full"])}</a></td><td class="r">{mon(t["space"])}</td><td class="r">{mon(t["dead"])}</td><td><a href="/teams/{t["slug"]}/cap">cap</a> · <a href="/teams/{t["slug"]}/dead-money">dead money</a></td></tr>' for t in sorted(TEAMS.values(), key=lambda t: t['full']))
+    _rec = lambda t: (record_line(t) or ['–'])[0]
+    _tier = lambda t: (lambda x: f"{ordn(x['rank'])}, Tier {x['tier']}" if x else '–')((TIERS.get('teams') or {}).get(t['id']))
+    rows = ''.join(f'<tr><td><a href="/teams/{t["slug"]}">{esc(t["full"])}</a></td><td class="r">{esc(_rec(t))}</td><td class="r">{esc(_tier(t))}</td><td class="r">{mon(t["space"])}</td><td class="r">{mon(t["dead"])}</td><td><a href="/teams/{t["slug"]}/cap">cap</a> · <a href="/teams/{t["slug"]}/dead-money">dead money</a></td></tr>' for t in sorted(TEAMS.values(), key=lambda t: t['full']))
     faq = [('How much cap space does each NFL team have?', f"Each team's cap space is listed here as of {ASOF}. The {SEASON_YEAR} league cap is {mon(CAP)}."), ('Which NFL team has the most cap space?', f"The {by_space[0]['full']} have the most cap space at about {mon(by_space[0]['space'])}, as of {ASOF}.")]
-    body = (f'<h1>NFL teams: cap space and dead money</h1><p class="lede">All 32 teams, as of {esc(ASOF)}. Tap a team for its roster, cap space and dead money.</p>'
-            f'<div class="card scroll"><table><thead><tr><th>Team</th><th class="r">Cap space</th>{th_x("Dead money", "dead-money", "r")}<th>More</th></tr></thead><tbody>{rows}</tbody></table></div>{faq_html(faq)}')
+    body = (f'<h1>NFL teams: cap space and dead money</h1><p class="lede">All 32 teams, as of {esc(ASOF)}: record, rank by net EPA per play through week {TIERS.get("thru")}, cap space and dead money. Tap a team for its roster, schedule, injury report and contracts.</p>'
+            f'<div class="card scroll"><table><thead><tr><th>Team</th><th class="r">Record</th>{th_x("EPA rank", "epa", "r")}<th class="r">Cap space</th>{th_x("Dead money", "dead-money", "r")}<th>More</th></tr></thead><tbody>{rows}</tbody></table></div>{faq_html(faq)}')
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, faq_ld(faq), crumbs_ld([('PlainStats', '/'), ('Teams', path)])]
     card = og_add('pages', 'teams', m='brand', c=OG_BRAND, e='PlainStats', t='All 32 NFL teams', s='Cap space and dead money', n=mon(CAP, 0), l=f'{SEASON_YEAR} salary cap per team',
                   x='Explained in plain English')
