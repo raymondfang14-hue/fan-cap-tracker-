@@ -38,14 +38,41 @@ from rookie_scale import minsal, rookie_deal, PS, RS
 
 # ---------- inputs ----------
 ro = {}
+TEAM_WEEK = {}   # newest roster week each team has (a team on its bye has no row for that week)
 for r in csv.DictReader(open(NV + f'roster_{SEASON}.csv')):
     k = r['gsis_id']
     if k not in ro or int(r['week']) > int(ro[k]['week']): ro[k] = r
+    TEAM_WEEK[r['team']] = max(TEAM_WEEK.get(r['team'], 0), int(r['week']))
 ROST = [r for r in ro.values() if r['status'] in ('ACT', 'RES', 'DEV', 'INA', 'EXE')]
 # any roster row this season, whatever the status (cut or waived players keep their stats): same name and team first
 ANY = {}
 for r in ro.values(): ANY.setdefault((nn(r['full_name']), tfix(r['team'])), r)
 gid_any = lambda name, team: (ANY.get((nn(name), team)) or {}).get('gsis_id', '')
+
+# Off the roster: his newest roster row says cut or retired, or he was on the active roster or practice squad and his team
+# has posted a newer week without him. Such a player leaves his old team's list (the news feed keeps the release item).
+# Reserve lists are left alone: nflverse does not repeat every reserve row each week. A ledger deal signed after that
+# roster week keeps him (re-signed, roster file not caught up yet).
+try:
+    _wk_end = {}
+    for _g in json.load(open('data/schedule.json'))['games']:
+        _wk_end[_g[1]] = max(_wk_end.get(_g[1], ''), _g[2])
+except (OSError, ValueError, KeyError):
+    _wk_end = {}
+def off_roster(name, team, lg=None):
+    r = ANY.get((nn(name), team))
+    if not r: return None
+    wk = int(r['week'])
+    if r['status'] in ('CUT', 'RET'): why = 'cut' if r['status'] == 'CUT' else 'retired'
+    elif r['status'] in ('ACT', 'INA', 'DEV') and wk < TEAM_WEEK.get(r['team'], 0): why = 'not on the roster since'
+    else: return None
+    if lg and (lg.get('signed') or '') > _wk_end.get(wk, '9999'): return None
+    return f'{why} week {wk}'
+OFF = []
+# Rows taken off are parked in data/off_roster.json (build input) and come back, as they were, if the roster lists the
+# player on that team again (cut on Tuesday, back on the practice squad on Wednesday).
+try: PARKED = json.load(open('data/off_roster.json'))['rows']
+except (OSError, ValueError, KeyError): PARKED = []
 byKey = {}
 for r in ROST: byKey.setdefault((nn(r['full_name']), tfix(r['team'])), r)
 byName = {}
@@ -204,10 +231,22 @@ def minimum_row(row, cs):
 count = {'r': 0, 'f': 0, 'm': 0, 'p': 0, 'u': 0}
 out = []
 seen = set()
+_have = {(nn(p[0]), p[1]) for p in D['players']}
+_still, BACK = [], []
+for p in PARKED:
+    k = (nn(p[0]), p[1])
+    if k in _have: continue                                  # re-added by hand or by the ledger since
+    if byKey.get(k) and not off_roster(p[0], p[1], L.get(k)):
+        D['players'].append(p); _have.add(k); BACK.append(f'{p[0]} ({p[1]})')
+    else: _still.append(p)
+PARKED = _still
 for p in D['players']:
     row = list(p[:15]) + [None] * (15 - len(p[:15]))
     name, team = row[0], row[1]
     key = (nn(name), team)
+    _off = off_roster(name, team, L.get(key))
+    if _off:
+        OFF.append(f'{name} ({team}, {_off})'); PARKED.append(p); continue
     r = roster_row(name, team)
     if r: seen.add(r['gsis_id'])
     prov, sid, ver, sb = 'u', -1, '', None
@@ -257,6 +296,7 @@ for p in D['players']:
 have = {(nn(r[0]), r[1]) for r in out}
 for (k, team), lg in L.items():
     if (k, team) in have: continue
+    if off_roster(lg['name'], team, lg): continue
     r = byKey.get((k, team))
     row = blank(lg['name'], team, lg['pos'] or (pos_of(r) if r else ''), age_of(r) if r else None)
     ver, sb = '', None
@@ -323,4 +363,8 @@ D['prov'] = {'asOf': datetime.date.today().isoformat(), 'counts': count, 'added'
 json.dump(D, open('data/nfl.json', 'w'), separators=(',', ':'))
 json.dump({'asOf': D['prov']['asOf'], 'note': 'Year-by-year cap hits PlainStats calculates itself: rookie contracts from the rookie scale and CBA minimums (data/cba.json), plus exercised fifth-year options. Each row: [base salary, bonus counted, cap hit].', 'contracts': YC},
           open('data/years_calc.json', 'w'), separators=(',', ':'))
+json.dump({'note': 'Rows build_contracts.py took off because the nflverse roster no longer lists the player on that team. Build input; never shown.', 'rows': PARKED},
+          open('data/off_roster.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+if BACK: print('back on the roster, restored:', len(BACK), '-', '; '.join(BACK))
+if OFF: print('off the roster, removed:', len(OFF), '-', '; '.join(OFF))
 print('rows', len(out), 'duplicates merged', dups, 'with gsis id', sum(1 for x in out if x[19]), count, 'added', added, 'sources', len(SRC))
