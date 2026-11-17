@@ -1,0 +1,15 @@
+INSTAGRAM STORY LINK STICKER (paste this URL; sticker text: "Purdy's PlainScore"):
+https://plainstatsnfl.com/players/brock-purdy?utm_source=instagram&utm_medium=social&utm_campaign=purdy-plainscore&utm_content=story
+
+INSTAGRAM REEL / CAROUSEL (captions can't link: say "link in bio"; bio link plainstatsnfl.com/ig lists this post at the top):
+Short tracked link for comments or DMs: plainstatsnfl.com/ig/players/brock-purdy
+
+TIKTOK (pinned comment / bio): plainstatsnfl.com/tt/players/brock-purdy
+
+FACEBOOK: https://plainstatsnfl.com/players/brock-purdy?utm_source=facebook&utm_medium=social&utm_campaign=purdy-plainscore
+
+HOW TO POST
+- Carousel (feed): ig/01..05 PNGs in order, caption_instagram.txt.
+- Reel: reel/reel.mp4, add a trending sound in Instagram, caption_instagram.txt. Pick the cover frame as the reel cover.
+- Story: story/story.png. Add the Link sticker in the empty space under "See why ↓". Optionally follow with tt/02..04 as more story frames, each with the same link sticker.
+- TikTok: tt/01..05 as a photo post (or reel.mp4 as a video), caption_tiktok.txt, add a sound.

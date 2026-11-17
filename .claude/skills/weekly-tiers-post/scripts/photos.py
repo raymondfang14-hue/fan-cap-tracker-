@@ -3,6 +3,7 @@
   python3 -I photos.py search "Trevor Lawrence" [--min-width 1500] [--limit 25]
   python3 -I photos.py fetch  SLOT "File:Trevor Lawrence (52377887812).jpg" --dir WORK/photos [--width 1920]
   python3 -I photos.py add    SLOT <file or URL> --credit "Photographer / outlet" --dir WORK/photos   (non-Commons photo, social posts only)
+  python3 -I photos.py gallery <team-site gallery URL> "Brock Purdy" [--fetch --dir WORK/gallery]   (team game-day photos with credits)
   python3 -I photos.py logos  --dir WORK/logos        (all 32 ESPN team logos; needs a.espncdn.com allowed)
 
 `search` prints numbered candidates (title, size, license, artist). Only CC0, public domain, CC BY and CC BY-SA files are
@@ -118,6 +119,43 @@ def cmd_add(a):
     print(f'saved {a.slot}.jpg | credit: {a.credit}')
 
 
+def cmd_gallery(a):
+    """List (and with --fetch, download full size) one player's photos from an NFL team-site gallery page
+    (www.<team>.com/photos/..., images on static.clubs.nfl.com), with the photographer credit shown under each photo."""
+    import html as H
+    page = urllib.request.urlopen(urllib.request.Request(a.url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=60).read().decode('utf-8', 'replace')
+    last = a.player.split()[-1].lower()
+    found, seen = [], set()
+    # gallery slides: <img ... src=".../t_lazy/.../<team>/<id>.<ext>" ...> caption text, then the credit, then a <button>
+    for m in re.finditer(r'static\.clubs\.nfl\.com/image/upload/t_new_photo_album/t_lazy/[a-z_]+/([a-z0-9]+)/([a-z0-9]+)\.(jpg|png)', page):
+        team, pid, ext = m.groups()
+        if pid in seen:
+            continue
+        seen.add(pid)
+        chunk = page[m.end():m.end() + 4000]
+        chunk = chunk[chunk.find('>') + 1:]
+        chunk = chunk[:chunk.find('<button')] if '<button' in chunk else chunk[:600]
+        text = re.sub(r'\s+', ' ', H.unescape(re.sub(r'<[^>]+>', ' ', chunk))).strip()
+        if last not in text.lower():
+            continue
+        cm = re.search(r'(\S+(?: \S+)?/\S+)\s*$', text)
+        credit = cm.group(1) if cm else ''
+        caption = text[:len(text) - len(credit)].strip()
+        agency = bool(re.search(r'\b(AP|Getty|Imagn|USA TODAY|Reuters)\b', credit))
+        found.append((team, pid, ext, credit, caption, agency))
+    if not found:
+        sys.exit('no photos captioned with ' + a.player)
+    if a.fetch:
+        os.makedirs(a.dir, exist_ok=True)
+    for i, (team, pid, ext, credit, caption, agency) in enumerate(found, 1):
+        url = f'https://static.clubs.nfl.com/image/upload/{team}/{pid}.{ext}'
+        print(f'{i:>2}. {caption} | {credit or "(no credit found)"}{"  [AGENCY: skip]" if agency else ""}\n    {url}')
+        if a.fetch and not agency:
+            open(os.path.join(a.dir, f'g{i:02d}.{ext}'), 'wb').write(urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=90).read())
+    if a.fetch:
+        print(f'saved to {a.dir} as gNN.<ext>; look at each one, then: photos.py add SLOT <file> --credit "<credit>" --dir WORK/photos')
+
+
 def cmd_logos(a):
     assets = json.load(open('data/espn_assets.json'))['teams']
     os.makedirs(a.dir, exist_ok=True)
@@ -135,6 +173,8 @@ if __name__ == '__main__':
     f = sub.add_parser('fetch'); f.add_argument('slot'); f.add_argument('title'); f.add_argument('--dir', required=True); f.add_argument('--width', type=int, default=1920); f.set_defaults(f=cmd_fetch)
     d = sub.add_parser('add'); d.add_argument('slot'); d.add_argument('src', help='image file or URL'); d.add_argument('--credit', required=True, help='photographer / outlet')
     d.add_argument('--title', help='short photo title for the credit line'); d.add_argument('--dir', required=True); d.set_defaults(f=cmd_add)
+    g = sub.add_parser('gallery'); g.add_argument('url', help='team-site gallery page, e.g. https://www.49ers.com/photos/...'); g.add_argument('player')
+    g.add_argument('--fetch', action='store_true', help='download full-size originals (agency photos skipped)'); g.add_argument('--dir', default='gallery'); g.set_defaults(f=cmd_gallery)
     l = sub.add_parser('logos'); l.add_argument('--dir', required=True); l.set_defaults(f=cmd_logos)
     a = ap.parse_args()
     a.f(a)

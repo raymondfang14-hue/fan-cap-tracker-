@@ -89,7 +89,7 @@ Same look, different slides. Use for "post about <player>" or a PlainScore ranki
 - Slides: `cover` (hook, `team`, text pills like `{"text": "Purdy 98"}`, `sub`, `swipe`), `player` (one player: big PlainScore, rank among his group, the bars from `data/plainscore.json`), `players` (a ranked list by gsis id: logo, name, team, PlainScore; `star` outlines one row in the accent; `pos: true` shows "#1 RG" for mixed positions; `why` overrides the sub line), and `cta` with `title`, `text`, `source`. Set the top-level `url` to the player's page (`plainstatsnfl.com/players/<slug>`, from `data/pageslugs.json`) and `foot`.
 - Numbers: only from `data/plainscore.json` (export with `python3 -I tools/refresh_helpers.py plainscore` after `./build.sh` if stats changed) and `data/nfl.json`; never compute PlainScore another way. Match by gsis id. Pay appears only where plainscore.json has a `pay` bar (confirmed contract); a player without one shows "Contract being verified", so never hand-type a salary into `why` for him. Say "a year" (average per year), not cap hit. Name the report for the featured player's pay in the cta `source` (ledger.csv `source`).
 - Write sums or comparisons only from the shown figures and say what they are ("together they make less a year than Purdy": average per year).
-- `content.purdy-week10.json` in this folder is the worked example (cover, player, top-5 list, position list, cta, story).
+- `.claude/skills/player-post/content.example.json` is the worked example (the player-post skill has the full recipe) (cover, player, top-5 list, position list, cta, story).
 
 ## Stories, Reels and the link
 ```bash
