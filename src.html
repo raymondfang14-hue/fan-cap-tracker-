@@ -1374,7 +1374,7 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .pk-slot.done{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .pk-slot.done b{color:var(--fg);font-weight:600}
 @media (prefers-reduced-motion:no-preference){.pk-slot button{transition:background-color .15s,color .15s,border-color .15s}}
-/* Links from our posts (/links, /links/instagram, /links/tiktok): where the Instagram and TikTok bio links land. */
+/* Links from our posts (/links, /links/instagram, /links/tiktok, /links/facebook): where the Instagram, TikTok and Facebook bio links land. */
 .lk-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
 .lk-list a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:14px 16px;background:var(--surface);border-radius:var(--r-lg);color:var(--fg);text-decoration:none;min-width:0}
 .lk-list a:hover{background:var(--surface-2)}
@@ -3924,13 +3924,13 @@ const ROUTES = [['home', '/'], ['scores', '/scores'], ['standings', '/standings'
   ['contracts', '/contracts'], ['value', '/best-worst-contracts'], ['rookies', '/rookie-contracts'], ['freeagency', '/free-agency'], ['fa-tags', '/free-agency/key-dates'], ['analytics', '/cap-lab'],
   ['bigboard', '/big-board'], ['mock', '/mock-draft'], ['rookie-pay', '/rookie-pay'], ['draft-guide', '/draft-guide'],
   ['builder', '/roster-builder'], ['trade', '/trade-checker'], ['deadline', '/trade-deadline'], ['compare', '/compare'], ['learn', '/cap-101'], ['about', '/about'], ['search', '/search'], ['setup', '/setup'],
-  ['links', '/links'], ['links-instagram', '/links/instagram'], ['links-tiktok', '/links/tiktok']];
+  ['links', '/links'], ['links-instagram', '/links/instagram'], ['links-tiktok', '/links/tiktok'], ['links-facebook', '/links/facebook']];
 const ALIASES = { onfield: 'ratings', draft: 'bigboard', prospects: 'bigboard', tools: 'builder', build: 'builder', games: 'scores', schedule: 'scores', playoffs: 'projections', 'playoff-odds': 'projections', power: 'rankings', deals: 'contracts', players: 'contracts', 'ratings-teams': 'teams', overview: 'home', nba: 'learn', roles: 'ratings-roles', traits: 'ratings-traits', 'pay-vs-play': 'ratings-pay', 'positional-rankings': 'ratings-rank', cut: 'builder', decode: 'builder', decoder: 'builder', offseason: 'builder', lineups: 'teams', depth: 'teams' };
 const PTITLE = { scores: 'NFL scores and schedule', standings: 'NFL standings', projections: 'NFL playoff projections', news: 'NFL news', 'news-contracts': 'NFL contract news', 'news-injuries': 'NFL injury news', 'news-games': 'NFL game news', 'news-coaching': 'NFL coaching news', 'news-league': 'NFL league news',
   teams: 'NFL team ratings', tiers: 'Weekly NFL team tiers', usage: 'NFL usage risers: target, carry and snap share', cap: 'NFL cap space by team', rankings: 'NFL power rankings', awards: 'NFL awards watch', ratings: 'Top NFL players right now', 'ratings-roles': 'NFL player roles', 'ratings-pay': 'NFL pay vs. play', 'ratings-rank': 'NFL positional rankings', 'ratings-traits': 'NFL player trait badges', stats: 'NFL player stats', contracts: 'NFL contracts', value: 'Best and worst NFL contracts', rookies: 'NFL rookie contracts',
   freeagency: 'NFL free agency', 'fa-tags': 'NFL free agency key dates', analytics: 'Cap lab', bigboard: '2027 NFL draft big board', mock: '2027 NFL mock draft', 'rookie-pay': 'NFL rookie pay scale', 'draft-guide': 'How the draft board works',
   builder: 'NFL roster builder', trade: 'NFL trade checker', deadline: 'NFL trade deadline tracker', compare: 'Compare NFL players', learn: 'Salary cap 101', about: 'About', search: 'Search', setup: 'Setup',
-  links: 'Links from our posts', 'links-instagram': 'Links from our Instagram posts', 'links-tiktok': 'Links from our TikTok posts' };
+  links: 'Links from our posts', 'links-instagram': 'Links from our Instagram posts', 'links-tiktok': 'Links from our TikTok posts', 'links-facebook': 'Links from our Facebook posts' };
 // One plain-English description per page, for search results and link previews. api/page.js reads this block (ROUTES to SUBS) from
 // index.html to give crawlers each page's own title and description, so keep it plain data. Sub-pages get "<label>. " + their section's.
 const PDESC = {
@@ -3966,7 +3966,8 @@ const PDESC = {
   about: 'About PlainStats: where the data comes from and how it is checked.', search: 'Search NFL players, teams, prospects, games and news on PlainStats.', setup: 'PlainStats setup.',
   links: 'The PlainStats pages behind our Instagram and TikTok posts: tap through from a carousel to the full table.',
   'links-instagram': 'The PlainStats pages behind our Instagram posts: tap through from a carousel to the full table.',
-  'links-tiktok': 'The PlainStats pages behind our TikTok posts: tap through from a carousel to the full table.' };
+  'links-tiktok': 'The PlainStats pages behind our TikTok posts: tap through from a carousel to the full table.',
+  'links-facebook': 'The PlainStats pages behind our Facebook posts: tap through from a chart to the full table.' };
 /* Sub-pages: inside a section tab, each panel is its own page with its own address, so nothing sits below a long scroll.
    A panel carries data-sp="<page>"; anything in the box without data-sp shows on every page. Tight pairs (AFC and NFC odds,
    best and worst value) share one page. [box id, where the page bar goes ('top': first in the box, 'head': after its .sechead),
@@ -4757,9 +4758,10 @@ function tdFilter() {
   $('#td-count').textContent = tot ? (n === tot ? `${tot} trade${tot === 1 ? '' : 's'}` : `${n} of ${tot} trades`) : '';
 }
 /* ===== Links from our posts (/links): the Instagram and TikTok bio links land here =====
-   /ig and /tt (vercel.json redirects) send a visitor to /links/instagram or /links/tiktok with utm_ tags, so Google Analytics credits the
+   /ig, /tt and /fb (vercel.json redirects) send a visitor to /links/instagram, /links/tiktok or /links/facebook with utm_ tags, so Google Analytics credits the
    platform and Vercel Web Analytics (no cookies) counts each platform as its own path. Posts come from data/links.json, newest first:
-   {"date": "YYYY-MM-DD", "title": "what the post was about", "path": "/team-tiers", "platform": "instagram" | "tiktok" | "both"}.
+   {"date": "YYYY-MM-DD", "title": "what the post was about", "path": "/team-tiers", "platform": "instagram" | "tiktok" | "facebook" | "both"}.
+   /links/facebook lists every post (Instagram posts are shared to the Facebook Page too); a "facebook" post shows only there and on /links.
    The carousel end slide (share-card script, psEndSlide) names the same path, so a fan can match the post to its link. */
 const lk = { src: '', q: '', posts: null };
 const LK_START = [['/team-tiers', 'Weekly team tiers', 'Every offense against every defense, updated each Tuesday'],
@@ -4777,7 +4779,7 @@ function lkItem(path, title, sub, extra) {
 }
 function renderLinks() {
   if (!$('#lk-start')) return;
-  const name = { instagram: 'Instagram', tiktok: 'TikTok' }[lk.src];
+  const name = { instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook' }[lk.src];
   $('#lk-eyebrow').textContent = name ? `From PlainStats on ${name}` : 'Link in bio';
   $('#lk-start').innerHTML = LK_START.map(([p, t, d]) => lkItem(p, t, d)).join('');
   if (lk.posts === null) {
@@ -4785,7 +4787,7 @@ function renderLinks() {
     fetch('data/links.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : { posts: [] }).then(j => { lk.posts = Array.isArray(j.posts) ? j.posts : []; renderLinks(); }).catch(() => {});
   }
   const today = new Date(), shown = lk.posts
-    .filter(x => x && lkSafe(x.path) && x.title && (!lk.src || !x.platform || x.platform === 'both' || x.platform === lk.src))
+    .filter(x => x && lkSafe(x.path) && x.title && (!lk.src || lk.src === 'facebook' || !x.platform || x.platform === 'both' || x.platform === lk.src))
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 20);
   $('#lk-posts').innerHTML = shown.length ? '<h2 class="sec">Recent posts</h2><ul class="lk-list" id="lk-recent">' + shown.map(x => {
     const d = x.date ? new Date(x.date + 'T12:00:00') : null, ok = d && !isNaN(d);
@@ -6851,7 +6853,7 @@ const SPAGES = [['scores', 'Scores and schedule', 'games week results score sche
   ['awards', 'Awards watch', 'mvp opoy dpoy rookie of the year coach comeback'], ['analytics', 'Cap lab', 'heatmap cap health doppelganger analytics'],
   ['bigboard', 'Draft big board', '2027 prospects college rankings'], ['mock', 'Mock draft', 'draft order first round picks'], ['rookie-pay', 'Rookie pay scale', 'draft slot value'],
   ['draft-guide', 'How the draft board works', 'grades method'], ['builder', 'Roster builder', 'build lineup play gm'], ['trade', 'Trade checker', 'trade cap'], ['deadline', 'Trade deadline tracker', 'trades deadline deals picks cap'], ['compare', 'Compare players', 'side by side'],
-  ['news', 'News', 'latest moves trades signings injuries'], ['news-injuries', 'Injury news', 'injured out hurt'], ['learn', 'Cap 101', 'glossary explain terms'], ['about', 'About PlainStats', 'contact sources'], ['links', 'Links from our posts', 'instagram tiktok link in bio social posts carousel']];
+  ['news', 'News', 'latest moves trades signings injuries'], ['news-injuries', 'Injury news', 'injured out hurt'], ['learn', 'Cap 101', 'glossary explain terms'], ['about', 'About PlainStats', 'contact sources'], ['links', 'Links from our posts', 'instagram tiktok facebook link in bio social posts carousel']];
 const sNorm = x => String(x || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[.'’]/g, '');
 const sScore = (hay, q, toks) => { const h = sNorm(hay); if (h.startsWith(q)) return 3; if (h.includes(' ' + q) || h.includes(q)) return 2; return toks.every(t => h.includes(t)) ? 1 : 0; };
 function searchEverything(raw) {
