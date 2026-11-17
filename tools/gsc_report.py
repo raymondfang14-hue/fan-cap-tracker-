@@ -1,7 +1,7 @@
 """Weekly Search Console report: how every part of plainstatsnfl.com does in Google search, which searches to win next,
 and which /players/<name> pages gained impressions.
 
-The report opens with the whole site by section (player pages, comparisons, teams, draft, explainers, app pages, home), then
+The report opens with the whole site by section (player pages, comparisons, teams, draft, explainers, weekly pages, app pages, home), then
 "Searches to win next": searches where the site already shows up at positions 4 to 20 with real impressions, each with the page
 Google showed and that page's title today, ranked by the clicks within reach if it reached the top 3 (estimated from this site's
 own click rate at the top 3 that week; left out when there is too little top-3 data to say). Then, as before, it compares the last 7 days that Search Console has data for (it runs about 3 days behind) with the 7 days before and writes
@@ -117,7 +117,7 @@ def page_link(u):
 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC = ('/players', '/teams', '/draft', '/learn')
+STATIC = ('/players', '/teams', '/draft', '/learn', '/weekly')
 
 
 def section(u):
@@ -127,13 +127,13 @@ def section(u):
         return 'Home'
     if path.startswith('/players/'):
         return 'Player comparisons' if '-vs-' in path else 'Player pages'
-    for pre, name in (('/teams', 'Team pages'), ('/draft', 'Draft prospects'), ('/learn', 'Stat explainers'), ('/players', 'Player pages')):
+    for pre, name in (('/teams', 'Team pages'), ('/draft', 'Draft prospects'), ('/learn', 'Stat explainers'), ('/weekly', 'Weekly pages'), ('/players', 'Player pages')):
         if path == pre or path.startswith(pre + '/'):
             return name
     return 'App pages'
 
 
-SECTIONS = ['Player pages', 'Player comparisons', 'Team pages', 'Draft prospects', 'Stat explainers', 'App pages', 'Home']
+SECTIONS = ['Player pages', 'Player comparisons', 'Team pages', 'Draft prospects', 'Stat explainers', 'Weekly pages', 'App pages', 'Home']
 
 
 def is_player(u):
@@ -509,7 +509,7 @@ def index_report(maps, total, results, sampled, quota_hit, prev, today):
         out.extend([f'Google chose a different main address (canonical) for **{len(diff)}** pages, for example: '
                     + '; '.join(f'{urllib.parse.urlparse(u).path} → {c}' for u, c in diff[:5]) + '.', ''])
     # The pages that matter most and are not in Google: up to MISS_PER section, team pages and hubs first
-    order = ['Home', 'Team pages', 'Stat explainers', 'App pages', 'Player comparisons', 'Draft prospects', 'Player pages']
+    order = ['Home', 'Team pages', 'Weekly pages', 'Stat explainers', 'App pages', 'Player comparisons', 'Draft prospects', 'Player pages']
     keep, more = [], 0
     for sec in order:
         miss = sorted(u for u, r in results.items() if r['state'] != INDEXED and section(u) == sec)

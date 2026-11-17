@@ -24,6 +24,9 @@ VIEWS += [v for v in CARD_VIEWS if v not in VIEWS]
 # One player comparison page (/players/<a>-vs-<b>, built by build_seo.py), picked the same way so the check survives pair changes.
 _vs = json.load(open(os.path.join(ROOT, 'data', 'pageslugs.json'))).get('v', {})
 VIEWS += ['/players/' + sorted(_vs.values())[0]] if _vs else []
+# The static weekly hub and its newest usage page (built by build_seo.py from data/weekly/).
+_wk = sorted(f for f in os.listdir(os.path.join(ROOT, 'weekly')) if f.startswith('usage-risers-week-')) if os.path.isdir(os.path.join(ROOT, 'weekly')) else []
+VIEWS += ['/weekly'] + (['/weekly/' + max(_wk, key=lambda f: int(re.sub(r'\D', '', f)))[:-5]] if _wk else [])
 
 
 def serve():

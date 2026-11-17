@@ -3622,7 +3622,7 @@ function renderTiers() {
       <div class="panel" data-sp="tiers">
         <div><span class="eyebrow">Net EPA per play, offense minus defense</span><h2 class="sec">The tiers</h2></div>
         ${bands}
-        <p class="note">Arrows show places gained or lost since last week.</p>
+        <p class="note">Arrows show places gained or lost since last week. Earlier weeks are saved on the <a href="/weekly">weekly page</a>.</p>
       </div>
     <div class="panel" data-sp="table">
       <div class="sechead"><div><span class="eyebrow">Tap a column to sort · tap a row to open the team</span><h2 class="sec">All 32 teams</h2></div></div>
@@ -3730,7 +3730,7 @@ function renderUsage() {
       <div class="tw"><table class="t urgrid" id="ur-table">${tbl}</table></div>
       ${openNote}
     </div>
-    <p class="note">${how}</p>`;
+    <p class="note">${how} Every finished week is saved as a plain table on the <a href="/weekly">weekly page</a>.</p>`;
   const inp = $('#ur-filter'); if (had) inp.value = had;
   applyTF($('#ur-table'));
   applySub('v-usage');
@@ -5301,7 +5301,7 @@ function renderPowerRank() {
       return `<tr data-team="${t.id}" data-s="${esc(teamHay(t) + ' ' + p.tier.toLowerCase())}"><td class="r">${p.rank} ${mv(t)}</td><td><span class="pn">${crest(t.id, 20)}${esc(t.city)} ${esc(t.name)}</span></td><td class="r">${awRec(s)}</td><td class="r">${awPD(s.pd)}</td><td class="r"><span class="pscore" style="--pc:${pColor(p.raw)}">${p.score}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.off)}">${t.rt.off}</span></td><td class="r"><span class="uc" style="--pc:${rcol(t.rt.def)}">${t.rt.def}</span></td><td class="r">${p.proj.toFixed(1)}</td><td>${esc(p.tier)}</td><td><span class="outlook ${ol}">${esc(p.outlook)}</span></td></tr>`; }).join('') + '</tbody></table></div>';
   applyTF($('#pw-t'));
   $('#pw-note').textContent = `Projected wins assume the current power score holds for the rest of the ${SEASON.seasonGames || AW_GAMES}-game schedule; they ignore the schedule itself.${all.some(t => t.pw.move != null) ? ' Arrows show the change since last week.' : ' Arrows will show weekly movement once a second week of rankings is saved.'}`;
-  $('#pw-how-body').innerHTML = `<p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
+  $('#pw-how-body').innerHTML = `<p class="note">Rankings from earlier weeks are saved on the <a href="/weekly">weekly page</a>.</p><p class="note">The power score (0 to 100) blends four things, each measured as a percentile against the other 31 teams:</p>
     <ul class="note" style="display:grid;gap:4px;list-style:disc;padding-left:18px"><li><b>Results, 28%:</b> win rate this season, with ties counting half.</li><li><b>Scoring margin, 28%:</b> points scored minus points allowed per game.</li><li><b>Roster, 24%:</b> the PlainStats overall rating, built from starters' play ratings.</li><li><b>Efficiency, 20%:</b> offensive EPA, pass defense (EPA allowed per dropback), sacks and takeaways.</li></ul>
     <p class="note">Outlook compares where a team's results rank with where its roster and efficiency rank. A gap of six spots or more means the record is hiding something (Better than record) or flattering the team (Record flatters). Tiers are fixed by rank: 1 to 4 Contender, 5 to 10 Strong, 11 to 18 In the mix, 19 to 26 Shaky, 27 to 32 Rebuilding.</p>`;
 }
@@ -5331,6 +5331,25 @@ function analyzeSeason(se) {
   window.__pcSnapshot = () => ({ asOf: SEASON && SEASON.asOf, week: THRU,
     power: TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank).map(t => ({ id: t.id, rank: t.pw.rank, score: t.pw.score, rec: awRec(t.sr), proj: +t.pw.proj.toFixed(1) })),
     awards: Object.fromEntries(AW_DEFS.map(d => [d.id, (AW.rows[d.id] || []).slice(0, 5).map(r => ({ n: awName(r), team: r.t.id, score: +r.score.toFixed(1), odds: +(r.odds * 100).toFixed(1) }))])) });
+  window.__weeklyExport = weeklyExport;
+}
+/* Static weekly pages (/weekly/..., tools/build_seo.py): power rankings and the usage risers and fallers exactly as this page
+   computes them, so the static pages can never disagree with the app. Read by `tools/refresh_helpers.py weekly`, which keeps
+   one snapshot per finished week in data/weekly/. */
+async function weeklyExport() {
+  const u = USAGE || await getJSON('data/usage.json');
+  const r3 = v => v == null ? null : Math.round(v * 1000) / 1000;
+  const pick = r => ({ gid: r.gid, n: r.n, pos: r.pos, t: r.t, tg: r.tg, ca: r.ca, sn: r.sn, tt: r.tt, tc: r.tc, ts: r.ts, ppr: r.ppr, np: r.np, nps: r.nps,
+    s: r3(r.s), sb: r3(r.sb), ds: r3(r.ds), cs: r3(r.cs), cb: r3(r.cb), dc: r3(r.dc), ss: r3(r.ss), ssb: r3(r.ssb), dss: r3(r.dss) });
+  const usage = {};
+  for (let w = 2; w <= (u.done || 0); w++) {
+    const L = urLists(urRows(u, w));
+    usage[w] = Object.assign(Object.fromEntries(Object.entries(L).map(([k, a]) => [k, a.map(pick)])), { snaps: (u.snaps || 0) >= w });
+  }
+  const power = TEAMS.filter(t => t.pw).sort((a, b) => a.pw.rank - b.pw.rank).map(t => { const p = t.pw, s = t.sr;
+    return { id: t.id, rank: p.rank, score: p.score, rec: awRec(s), pd: +s.pd.toFixed(1), off: t.rt.off, def: t.rt.def, proj: +p.proj.toFixed(1),
+      tier: p.tier, outlook: p.outlook, move: p.move, best: p.best, rkRes: p.rk_ts, rkRos: p.rk_ros }; });
+  return { asOf: SEASON && SEASON.asOf, week: THRU, usageDone: u.done || 0, min: UR_MIN, power, usage };
 }
 st.aw = { tab: 'awards', id: 'mvp', limit: 10, div: 'All', ps: 'rank', pd: 1 };
 const awScroll = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
@@ -7076,6 +7095,7 @@ document.addEventListener('click', e => {
   const at = (location.pathname.replace(/\/$/, '') || '/');
   if (t.matches('.doors a')) psTrack('door_click', { link_url: t.getAttribute('href'), from_page: at });
   else if (t.matches('a.xq')) psTrack('explainer_open', { term: t.getAttribute('href').split('/').pop(), from_page: at });
+  else if (t.matches('a[href^="/weekly"]')) psTrack('weekly_open', { link_url: t.getAttribute('href'), from_page: at });
   else if (t.matches('a[data-replay]')) psTrack('trade_replay', { from_page: at });
   else if (t.matches('[data-card]')) psTrack('share_card_open', { item_id: t.dataset.card });
 }, true);
@@ -7623,6 +7643,6 @@ const ADS = {
   }
 })();
 </script>
-</body></html><nav aria-label="Browse PlainStats" style="max-width:1100px;margin:0 auto;padding:8px 20px 48px;color:var(--muted);font:.85rem/2 var(--body)"><strong style="color:var(--fg)">Browse:</strong> <a href="/teams">All teams</a> <a href="/players">Players</a> <a href="/draft">2027 Draft</a> <a href="/learn">Stat explainers</a><br><a href="/teams/cardinals">Arizona Cardinals</a> · <a href="/teams/falcons">Atlanta Falcons</a> · <a href="/teams/ravens">Baltimore Ravens</a> · <a href="/teams/bills">Buffalo Bills</a> · <a href="/teams/panthers">Carolina Panthers</a> · <a href="/teams/bears">Chicago Bears</a> · <a href="/teams/bengals">Cincinnati Bengals</a> · <a href="/teams/browns">Cleveland Browns</a> · <a href="/teams/cowboys">Dallas Cowboys</a> · <a href="/teams/broncos">Denver Broncos</a> · <a href="/teams/lions">Detroit Lions</a> · <a href="/teams/packers">Green Bay Packers</a> · <a href="/teams/texans">Houston Texans</a> · <a href="/teams/colts">Indianapolis Colts</a> · <a href="/teams/jaguars">Jacksonville Jaguars</a> · <a href="/teams/chiefs">Kansas City Chiefs</a> · <a href="/teams/raiders">Las Vegas Raiders</a> · <a href="/teams/chargers">Los Angeles Chargers</a> · <a href="/teams/rams">Los Angeles Rams</a> · <a href="/teams/dolphins">Miami Dolphins</a> · <a href="/teams/vikings">Minnesota Vikings</a> · <a href="/teams/patriots">New England Patriots</a> · <a href="/teams/saints">New Orleans Saints</a> · <a href="/teams/giants">New York Giants</a> · <a href="/teams/jets">New York Jets</a> · <a href="/teams/eagles">Philadelphia Eagles</a> · <a href="/teams/steelers">Pittsburgh Steelers</a> · <a href="/teams/49ers">San Francisco 49ers</a> · <a href="/teams/seahawks">Seattle Seahawks</a> · <a href="/teams/buccaneers">Tampa Bay Buccaneers</a> · <a href="/teams/titans">Tennessee Titans</a> · <a href="/teams/commanders">Washington Commanders</a> </nav>
+</body></html><nav aria-label="Browse PlainStats" style="max-width:1100px;margin:0 auto;padding:8px 20px 48px;color:var(--muted);font:.85rem/2 var(--body)"><strong style="color:var(--fg)">Browse:</strong> <a href="/teams">All teams</a> <a href="/players">Players</a> <a href="/draft">2027 Draft</a> <a href="/weekly">Weekly rankings</a> <a href="/learn">Stat explainers</a><br><a href="/teams/cardinals">Arizona Cardinals</a> · <a href="/teams/falcons">Atlanta Falcons</a> · <a href="/teams/ravens">Baltimore Ravens</a> · <a href="/teams/bills">Buffalo Bills</a> · <a href="/teams/panthers">Carolina Panthers</a> · <a href="/teams/bears">Chicago Bears</a> · <a href="/teams/bengals">Cincinnati Bengals</a> · <a href="/teams/browns">Cleveland Browns</a> · <a href="/teams/cowboys">Dallas Cowboys</a> · <a href="/teams/broncos">Denver Broncos</a> · <a href="/teams/lions">Detroit Lions</a> · <a href="/teams/packers">Green Bay Packers</a> · <a href="/teams/texans">Houston Texans</a> · <a href="/teams/colts">Indianapolis Colts</a> · <a href="/teams/jaguars">Jacksonville Jaguars</a> · <a href="/teams/chiefs">Kansas City Chiefs</a> · <a href="/teams/raiders">Las Vegas Raiders</a> · <a href="/teams/chargers">Los Angeles Chargers</a> · <a href="/teams/rams">Los Angeles Rams</a> · <a href="/teams/dolphins">Miami Dolphins</a> · <a href="/teams/vikings">Minnesota Vikings</a> · <a href="/teams/patriots">New England Patriots</a> · <a href="/teams/saints">New Orleans Saints</a> · <a href="/teams/giants">New York Giants</a> · <a href="/teams/jets">New York Jets</a> · <a href="/teams/eagles">Philadelphia Eagles</a> · <a href="/teams/steelers">Pittsburgh Steelers</a> · <a href="/teams/49ers">San Francisco 49ers</a> · <a href="/teams/seahawks">Seattle Seahawks</a> · <a href="/teams/buccaneers">Tampa Bay Buccaneers</a> · <a href="/teams/titans">Tennessee Titans</a> · <a href="/teams/commanders">Washington Commanders</a> </nav>
 
 </body></html>

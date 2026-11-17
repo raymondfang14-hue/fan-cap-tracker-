@@ -722,6 +722,7 @@
   <url><loc>https://www.plainstatsnfl.com/teams/texans/dead-money</loc><lastmod>2026-11-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/teams/titans/dead-money</loc><lastmod>2026-11-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/teams/vikings/dead-money</loc><lastmod>2026-11-17</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/awards</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/best-worst-contracts</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/cap-101</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -838,6 +839,9 @@
   <url><loc>https://www.plainstatsnfl.com/players/trey-mcbride-vs-tucker-kraft</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/rookie-contracts</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/roster-builder</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/power-rankings-week-10</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/team-tiers-week-10</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-10</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.plainstatsnfl.com/awards/how-it-works</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/best-worst-contracts/all</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/best-worst-contracts/teams</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
@@ -1355,6 +1359,14 @@
   <url><loc>https://www.plainstatsnfl.com/usage-risers/all-players</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/usage-risers/fallers</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.plainstatsnfl.com/draft-guide</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-2</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-3</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-4</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-5</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-6</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-7</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-8</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/weekly/usage-risers-week-9</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://www.plainstatsnfl.com/about</loc><lastmod>2026-11-17</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.plainstatsnfl.com/links</loc><lastmod>2026-11-17</lastmod><changefreq>weekly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.plainstatsnfl.com/privacy</loc><lastmod>2026-11-03</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>

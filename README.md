@@ -31,6 +31,7 @@ Every section, tab, team, player, prospect and game has its own clean URL. On pl
 | Power rankings, awards | `/power-rankings`, `/awards` | Roster builder, trade checker, compare | `/roster-builder`, `/trade-checker`, `/compare` |
 | Players: top players, roles, pay vs. play, rankings, traits, season stats | `/player-ratings`, `/player-ratings/roles`, `/player-ratings/pay-vs-play`, `/player-ratings/rankings`, `/player-ratings/traits`, `/stats` | Cap 101, about | `/cap-101`, `/about` |
 | A team | `/team/<code>` (e.g. `/team/kc`) | A game | `/game/<id>` (e.g. `/game/2026-07-ne-chi`) |
+| Weekly pages (static) | `/weekly`, `/weekly/usage-risers-week-<n>`, `/weekly/team-tiers-week-<n>`, `/weekly/power-rankings-week-<n>` | | |
 | Links from our posts | `/links`, `/links/instagram`, `/links/tiktok`, `/links/facebook` | Social short links | `/ig`, `/tt`, `/fb`, `/ig/<any path>`, `/tt/<any path>`, `/fb/<any path>` (redirects) |
 
 Inside each section tab, every panel is its own page with a row of page links under the tab (`SUBS` in src.html: box, page, label, route key, path; panels carry `data-sp`). The tab's address opens its first page; the rest live under it, e.g. `/contracts/all-players`, `/free-agency/by-team`, `/big-board/full`, `/projections/playoff-odds`, `/cap-lab/spending-heatmap`. Team pages work the same way: `/team/<code>/<lineup|stats|depth-chart|cap|spending|playing-well|news|roster>` (`TEAMSUBS`). Adding a sub-page: add it to `SUBS`, tag its panel with `data-sp`, and add the path to vercel.json `rewrites` and the sub-page list in tools/build_seo.py.
@@ -87,6 +88,7 @@ Google Analytics 4 (`ANALYTICS.ga4` in src.html, `GA` in build_seo.py) loads onl
 | `usage_week` | The week picker on /usage-risers | `week` |
 | `vs_page_open` | "Read the full ... comparison" under the app's Compare tool | `link_url`, `from_page` |
 | `explainer_open` | A column-header "?" link to /learn/... | `term`, `from_page` |
+| `weekly_open` | A link to `/weekly` or a weekly page (app notes on usage risers, team tiers and power rankings; static pages) | `link_url`, `from_page` |
 | `door_click` | A "Keep exploring" tile on a player or team page | `link_url`, `from_page` |
 | `my_team_set` | A team is picked (or cleared) in the "Your team" block on the home page | `team`, `from_page` |
 | `my_team_click` | A link or player in the "Your team" block | `link_url`, `team` |
@@ -119,6 +121,9 @@ Run `python3 -I data/build_contracts.py <folder with nflverse roster_2026.csv, d
 - Team cap space and dead money per team are still the older figures until enough contracts are re-sourced to add them up.
 ## Offensive line team measures (data/olwin.json)
 Built by `python3 -I data/build_olwin.py <play_by_play_2026.csv.gz>` from nflverse play-by-play: pass protection (dropbacks with no sack or QB hit) and run success (designed runs with positive expected points). PlainStats no longer uses ESPN win rates or PFF figures.
+
+## Static weekly pages (/weekly, data/weekly/)
+Plain-HTML copies of the three weekly views, one page per finished week, so Google reads the tables (the app draws them with script): `/weekly/usage-risers-week-<n>`, `/weekly/team-tiers-week-<n>`, `/weekly/power-rankings-week-<n>`, and the hub `/weekly`. Built by `build_weekly()` in `tools/build_seo.py` from snapshots in `data/weekly/` (build input, kept out of the deployment): `python3 -I tools/refresh_helpers.py weekly` (run `./build.sh` first) saves `usage-<w>.json` for every finished week and `power-<w>.json` from `window.__weeklyExport()` in the built page, so the numbers are the app's own, and copies `data/tiers.json` to `tiers-<w>.json`. Power rankings and tiers are saved only when every game of that week is final in `data/schedule.json`, and a saved week is never rewritten once the next week arrives; the data keeps no history for them, so their pages start at Week 10. Usage pages are rebuilt for every week each run. `tools/refresh.sh` runs the export after the PlainScore export. Each page has its table, a takeaway, an FAQ (visible and JSON-LD), links to the week before and after and to the live app view. No contract figures. Team pages link to the saved tiers week; the app's usage, tiers and power views link to `/weekly` (GA4 `weekly_open`).
 
 ## Weekly team tiers (#tiers, data/tiers.json)
 `/team-tiers` plots every team's offense EPA per play against defense EPA allowed per play (team logos, top-right = good at both), groups the 32 teams into five tiers by net EPA per play, and lists the splits (pass, run, hit rate) in a filterable table. `python3 -I data/build_tiers.py <play_by_play_2026.csv.gz>` writes `data/tiers.json` from nflverse play-by-play (CC BY 4.0) through the last week in which every game in `data/schedule.json` is final, plus the rank change from the week before. The weekly refresh (Tuesday) runs it in step 4e, right after `build_olwin.py`.

@@ -154,7 +154,7 @@ GA = ("<script>(function(){if(!/(^|\\.)plainstatsnfl\\.com$/.test(location.hostn
       "function ev(n,p){if(window.gtag)gtag('event',n,p)}var at=location.pathname;"
       "document.addEventListener('submit',function(e){var f=e.target;if(f&&/beehiiv\\.com/.test(f.action||''))ev('sign_up',{method:'cap_sheet',from_page:at})},true);"
       "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';"
-      "if(a.closest('.doors'))ev('door_click',{link_url:h,from_page:at});else if(a.closest('.pnews'))ev('player_news_click',{link_url:h,from_page:at});else if(a.classList.contains('xq'))ev('explainer_open',{term:h.split('/').pop(),from_page:at});"
+      "if(a.closest('.doors'))ev('door_click',{link_url:h,from_page:at});else if(a.closest('.pnews'))ev('player_news_click',{link_url:h,from_page:at});else if(a.classList.contains('xq'))ev('explainer_open',{term:h.split('/').pop(),from_page:at});else if(h=='/weekly'||h.indexOf('/weekly/')==0)ev('weekly_open',{link_url:h,from_page:at});"
       "else if(a.classList.contains('cta'))ev(/[?&]share=1/.test(h)?'share_card_open':'app_open',{link_url:h,from_page:at})},true)})();</script>")
 
 
@@ -482,6 +482,9 @@ ul.pbars .tr{height:10px;border-radius:5px;background:var(--ln);overflow:hidden}
 @media(max-width:480px){ul.pbars li{grid-template-columns:7rem minmax(0,1fr) 2rem}ul.pbars .v{grid-column:1/-1;text-align:left;margin-top:-6px}}
 a.xq{display:inline-grid;place-items:center;width:1.15em;height:1.15em;border-radius:50%;border:1px solid var(--ln);color:var(--mu);font-size:.72rem;font-weight:600;line-height:1;text-decoration:none;vertical-align:.1em}a.xq:hover{color:var(--lk);border-color:var(--lk)}
 .card.ex{padding:14px 16px}.pnews>div{padding:12px 0;border-bottom:1px solid var(--ln)}.pnews>div:last-child{border:0}.pnews h3{margin:0 0 2px;font-size:.85rem;font-weight:600;color:var(--mu)}.pnews p{margin:0}ul.doors.wide{grid-template-columns:1fr}
+td .sub{display:block;color:var(--mu);font-size:.8rem;font-weight:400}.up{color:#1a7f37}.dn{color:#c62828}
+@media(prefers-color-scheme:dark){.up{color:#4ac26b}.dn{color:#ff6b6b}}
+.wknav{display:flex;justify-content:space-between;gap:12px;margin:12px 0;font-size:.92rem}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:480px){h1{font-size:1.5rem}.id img{width:56px;height:56px}}
 footer{max-width:760px;margin:0 auto;padding:16px;color:var(--mu);font-size:.85rem;border-top:1px solid var(--ln)}footer a{color:var(--mu)}
@@ -1126,6 +1129,12 @@ def team_roster_html(tid, nick):
             'Yearly pay is shown only when a named report confirms it or it follows from the CBA rookie scale; the rest say what kind of deal it is or that it is being verified. Stats from nflverse.</p>')
 
 
+def wk_tiers_link():
+    """Link from a team page to the static weekly tiers page for the week data/tiers.json covers, once it is saved."""
+    w = TIERS.get('thru')
+    return f' · <a href="/weekly/team-tiers-week-{w}">Week {w} tiers, saved</a>' if w and (DATA / 'weekly' / f'tiers-{w}.json').exists() else ''
+
+
 def team_form(t):
     """(sentence, html) on where the team sits in the weekly tiers (data/tiers.json: EPA per play on offense and defense), or (None, '')."""
     all_t = TIERS.get('teams') or {}
@@ -1144,7 +1153,7 @@ def team_form(t):
              ('Offense success rate', f"{x['offSr'] * 100:.1f}%"), ('Success rate allowed', f"{x['defSr'] * 100:.1f}%")]
     html = (f'<h2>How good are the {esc(t["name"])} this season?</h2><p>{esc(sent)}</p>{facts_html(facts)}'
             f'<p class="note">EPA (expected points added) per play measures how much each play helped the team score; for a defense, lower is better. '
-            f'<a href="/learn/epa">What is EPA?</a> · <a href="/learn/success-rate">What is success rate?</a> · <a href="/team-tiers">All 32 teams in this week\'s tiers</a>. From nflverse play-by-play.</p>')
+            f'<a href="/learn/epa">What is EPA?</a> · <a href="/learn/success-rate">What is success rate?</a> · <a href="/team-tiers">All 32 teams in this week\'s tiers</a>{wk_tiers_link()}. From nflverse play-by-play.</p>')
     return sent, html
 
 
@@ -1648,11 +1657,311 @@ def build_learn():
     URLS.append((path, '0.7', 'weekly'))
 
 
+# ---------------------------------------------------------------- static weekly pages (/weekly/...)
+# One plain-HTML page per finished week for the three weekly app views, so the table is in the HTML Google reads (the app draws
+# them with script): /weekly/usage-risers-week-<n>, /weekly/team-tiers-week-<n>, /weekly/power-rankings-week-<n>, and the /weekly
+# hub. Built from the snapshots in data/weekly/ (tools/refresh_helpers.py weekly: usage and power rankings exported from the
+# built page itself, tiers copied from data/tiers.json), so the numbers match the app's. Power rankings and tiers keep no history
+# in the data, so their pages start with the first week saved. No contract figures on these pages.
+WEEKLY_DIR = DATA / 'weekly'
+WK_KINDS = [  # kind, file prefix, page name, app path
+    ('usage', 'usage-risers', 'Usage risers', '/usage-risers'),
+    ('tiers', 'team-tiers', 'Team tiers', '/team-tiers'),
+    ('power', 'power-rankings', 'Power rankings', '/power-rankings'),
+]
+PAGE_BY_GID = {}
+
+
+def weekly_snaps():
+    out = {k: {} for k, *_ in WK_KINDS}
+    for f in sorted(WEEKLY_DIR.glob('*.json')) if WEEKLY_DIR.exists() else []:
+        m = re.fullmatch(r'(usage|tiers|power)-(\d+)\.json', f.name)
+        if m:
+            out[m.group(1)][int(m.group(2))] = json.loads(f.read_text())
+    return out
+
+
+def wk_path(kind, w):
+    pre = next(x[1] for x in WK_KINDS if x[0] == kind)
+    return f'/weekly/{pre}-week-{w}'
+
+
+def wk_nav(kind, w, weeks):
+    prev = max([x for x in weeks if x < w], default=None)
+    nxt = min([x for x in weeks if x > w], default=None)
+    parts = [f'<a href="{wk_path(kind, prev)}">← Week {prev}</a>' if prev else '<span></span>',
+             f'<a href="/weekly">All weeks</a>',
+             f'<a href="{wk_path(kind, nxt)}">Week {nxt} →</a>' if nxt else '<span></span>']
+    return '<nav class="wknav" aria-label="Other weeks">' + ''.join(parts) + '</nav>'
+
+
+def wk_other(w, have, kind):
+    """Chips to the other two weekly pages for the same week, when they exist."""
+    items = [f'<li><a href="{wk_path(k, w)}">{esc(n)}, week {w}</a></li>' for k, _p, n, _a in WK_KINDS if k != kind and w in have[k]]
+    return f'<h2>Also from week {w}</h2><ul class="chips">{"".join(items)}<li><a href="/weekly">Every week</a></li></ul>' if items else ''
+
+
+def pct(v):
+    return '–' if v is None else f'{round(v * 100)}%'
+
+
+def pts(v):
+    if v is None:
+        return '–'
+    n = round(v * 100)
+    return f'+{n} pts' if n > 0 else f'−{-n} pts' if n < 0 else '0 pts'
+
+
+def tname(tid):
+    return TEAMS[tid]['name'] if tid in TEAMS else tid
+
+
+def tposs(tid):
+    n = tname(tid)
+    return n + ("'" if n.endswith('s') else "'s")
+
+
+def wk_player(r):
+    p = PAGE_BY_GID.get(r['gid'])
+    return f'<a href="/players/{p.slug}">{esc(r["n"])}</a>' if p else esc(r['n'])
+
+
+USAGE_KIND = {  # list key: (heading, now, before, change, games before, count words)
+    't': ('Target share', 's', 'sb', 'ds', 'np', lambda r: f"{r['tg']} of {r['tt']} targets"),
+    'c': ('Carry share', 'cs', 'cb', 'dc', 'np', lambda r: f"{r['ca']} of {r['tc']} carries"),
+    's': ('Snap share', 'ss', 'ssb', 'dss', 'nps', lambda r: f"{r['sn']} of {r['ts']} snaps"),
+}
+
+
+def usage_table(rows, k, up):
+    head, now, was, chg, npk, cnt = USAGE_KIND[k]
+    if not rows:
+        return '<p class="note">No one qualified this week.</p>'
+    body = ''.join(
+        f'<tr><td class="r">{i + 1}</td><td>{wk_player(r)}<span class="sub">{esc(r["pos"])} · {esc(tname(r["t"]))} · {cnt(r)}</span></td>'
+        f'<td class="r">{pct(r[now])}</td><td class="r">{pct(r[was]) if r[npk] else "–"}</td><td class="r {"up" if up else "dn"}">{pts(r[chg])}</td></tr>'
+        for i, r in enumerate(rows))
+    return (f'<div class="scroll"><table><thead><tr><th class="r">#</th><th>Player</th><th class="r">Week</th><th class="r">Before</th>'
+            f'<th class="r">Change</th></tr></thead><tbody>{body}</tbody></table></div>')
+
+
+def usage_take(d, w):
+    c = [(r, 't') for r in d['tUp'][:1]] + [(r, 'c') for r in d['cUp'][:1]]
+    if not c:
+        return ''
+    r, k = max(c, key=lambda x: x[0]['ds'] if x[1] == 't' else x[0]['dc'])
+    a, b = (r['sb'], r['s']) if k == 't' else (r['cb'], r['cs'])
+    what = f"of the {tposs(r['t'])} {'targets' if k == 't' else 'carries'}"
+    if not r['np'] or a is None:
+        return f"Biggest jump in week {w}: {r['n']} took {pct(b)} {what} in his first game this season."
+    return f"Biggest jump in week {w}: {r['n']} went from {pct(a)} to {pct(b)} {what}."
+
+
+def build_weekly_usage(w, d, have):
+    weeks = sorted(have['usage'])
+    path = wk_path('usage', w)
+    mn = d.get('min') or {'t': 5, 'c': 8, 's': .5, 'sb': .6}
+    take = usage_take(d, w)
+    title = f'Usage risers, week {w} {SEASON_YEAR}: target, carry and snap share | PlainStats'
+    lead = [r for r in (d['tUp'][:1] + d['cUp'][:1] + d['sUp'][:1])]
+    names = ', '.join(dict.fromkeys(r['n'] for r in lead))
+    desc = clip(f'{take} Week {w} target, carry and snap share risers and fallers' + (f', led by {names}' if names else '') + '.', 158)
+    sections = [('Risers', True, [('tUp', 't', f"Pass catchers with {mn['t']}+ targets this week"), ('cUp', 'c', f"Ball carriers with {mn['c']}+ carries this week"),
+                                  ('sUp', 's', f"Played {round(mn['s'] * 100)}%+ of the offense's snaps this week")]),
+                ('Fallers', False, [('tDn', 't', f"Had {mn['t']}+ targets a game over 2+ earlier games"), ('cDn', 'c', f"Had {mn['c']}+ carries a game over 2+ earlier games"),
+                                    ('sDn', 's', f"Played {round(mn['sb'] * 100)}%+ of the snaps over 2+ earlier games")])]
+    html = ''
+    for name, up, lists in sections:
+        html += f'<h2>{name}: {"biggest gains" if up else "biggest drops"} in share of the team\'s work</h2>'
+        for key, k, sub in lists:
+            html += f'<h3>{USAGE_KIND[k][0]} {"risers" if up else "fallers"}</h3><p class="note">{esc(sub)}.</p>'
+            if k == 's' and not d.get('snaps'):
+                html += f'<p class="note">Snap counts for week {w} were not out when this page was built.</p>'
+            else:
+                html += usage_table(d.get(key) or [], k, up)
+    faq = []
+    if d['tUp']:
+        r = d['tUp'][0]
+        faq.append((f'Who had the biggest target share jump in week {w}?', f"{r['n']} ({r['pos']}, {tname(r['t'])}): {pct(r['s'])} of his team's targets ({r['tg']} of {r['tt']}), up from {pct(r['sb'])} in his earlier games, a change of {pts(r['ds'])}."))
+    if d['cUp']:
+        r = d['cUp'][0]
+        faq.append((f'Who gained the most carries in week {w}?', f"{r['n']} ({r['pos']}, {tname(r['t'])}) took {pct(r['cs'])} of his team's carries ({r['ca']} of {r['tc']}), up from {pct(r['cb'])} before."))
+    if d['tDn']:
+        r = d['tDn'][0]
+        faq.append((f'Whose role shrank the most in week {w}?', f"{r['n']} ({r['pos']}, {tname(r['t'])}) fell to {pct(r['s'])} of the targets from {pct(r['sb'])} over his earlier games ({pts(r['ds'])})."))
+    faq.append(('What is target share?', "A player's targets divided by all of his team's targets in that game. Carry share is the same with carries (quarterback runs count in the team total), and snap share is his share of the offense's snaps. \"Before\" is his share over his earlier games this season, so a jump means a bigger role than he has had."))
+    body = (f'<h1>Usage risers and fallers, week {w}</h1><p class="lede">{esc(take or f"Who gained and lost a share of the work in week {w}.")}</p>'
+            f'<p>Whose share of his team\'s targets, carries and snaps jumped or dropped in week {w} of the {SEASON_YEAR} NFL season, compared with his earlier games. '
+            f'Change is in percentage points of the team\'s share. <a href="/usage-risers">Open the live usage risers</a> to sort every player or pick another week.</p>'
+            f'{wk_nav("usage", w, weeks)}{html}'
+            f'<p class="note">Source: nflverse weekly box scores and snap counts (CC BY 4.0), regular season. A game counts when the player recorded a stat or took an offensive snap. Fantasy points use PPR scoring.</p>'
+            f'{faq_html(faq)}{wk_other(w, have, "usage")}'
+            + doors_html([('Usage risers, live', '/usage-risers', 'Every running back, receiver and tight end, sortable'), ('Season stats', '/stats', f'Every {SEASON_YEAR} stat leader'),
+                          ('Player ratings', '/player-ratings', 'How players rank on the field this season'), ('Compare players', '/compare', 'Any two players side by side')])
+            + signup_html())
+    crumbs = [('PlainStats', '/'), ('Weekly', '/weekly'), (f'Usage risers, week {w}', path)]
+    graph = [{'@type': 'Article', 'headline': f'Usage risers and fallers, week {w}', 'description': desc, 'url': SITE + path, 'dateModified': LM_TOKEN,
+              'author': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}, 'publisher': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}},
+             faq_ld(faq), crumbs_ld(crumbs)]
+    top = (d['tUp'] or d['cUp'] or [None])[0]
+    card = og_add('pages', f'weekly-usage-{w}', m='brand', c=OG_BRAND, e=f'Week {w} · {SEASON_YEAR}', t=f'Usage risers, week {w}', s='Target, carry and snap share',
+                  n=pts(top['ds'] if top in d['tUp'] else top['dc']) if top else '', l=(f"{top['n']}, {tname(top['t'])}" if top else ''), x='PlainStats')
+    write(f'weekly/usage-risers-week-{w}.html', shell(path, title, desc, body, graph, crumbs=crumbs, card=card))
+    URLS.append((path, '0.6' if w == weeks[-1] else '0.4', 'weekly' if w == weeks[-1] else 'monthly'))
+
+
+def mv_html(m):
+    if m is None:
+        return '<span class="note">new</span>'
+    return f'<span class="up">▲{m}</span>' if m > 0 else f'<span class="dn">▼{-m}</span>' if m < 0 else '<span class="note">–</span>'
+
+
+def tier_move(m):
+    if m is None:
+        return 'new this week'
+    return 'same spot as last week' if m == 0 else f'{mv_html(m)} from last week'
+
+
+def build_weekly_tiers(w, d, have):
+    weeks = sorted(have['tiers'])
+    path = wk_path('tiers', w)
+    tt = {k: v for k, v in d['teams'].items() if k in TEAMS}
+    order = sorted(tt, key=lambda k: tt[k]['rank'])
+    off_r = {k: i + 1 for i, k in enumerate(sorted(tt, key=lambda k: -tt[k]['off']))}
+    def_r = {k: i + 1 for i, k in enumerate(sorted(tt, key=lambda k: tt[k]['def']))}
+    tiers = d.get('tiers') or []
+    t1 = [tname(k) for k in order if tt[k]['tier'] == 1]
+    best = order[0]
+    movers = sorted([k for k in order if tt[k].get('move')], key=lambda k: -tt[k]['move'])
+    up = movers[0] if movers and tt[movers[0]]['move'] > 0 else None
+    dn = movers[-1] if movers and tt[movers[-1]]['move'] < 0 else None
+    lede = (f"Through week {w} the {TEAMS[best]['full']} are the best team in the NFL by net EPA per play ({tt[best]['net']:+.3f}). "
+            f"Tier 1: {', '.join(t1)}." if t1 else '')
+    html = ''
+    for tid, tn, tdesc in tiers:
+        ks = [k for k in order if tt[k]['tier'] == tid]
+        if not ks:
+            continue
+        rows = ''.join(f'<tr><td class="r">{tt[k]["rank"]}</td><td>{team_link(k)}<span class="sub">{tier_move(tt[k].get("move"))}</span></td>'
+                       f'<td class="r">{tt[k]["net"]:+.3f}</td><td class="r">{tt[k]["off"]:+.3f}<span class="sub">{ordn(off_r[k])}</span></td>'
+                       f'<td class="r">{tt[k]["def"]:+.3f}<span class="sub">{ordn(def_r[k])}</span></td></tr>' for k in ks)
+        html += (f'<h2>{esc(tn)}: {esc(tdesc.lower() if tdesc else "")}</h2><div class="scroll"><table><thead><tr><th class="r">#</th><th>Team</th>'
+                 f'{th_x("Net EPA", "epa", "r")}<th class="r">Offense</th><th class="r">Defense</th></tr></thead><tbody>{rows}</tbody></table></div>')
+    faq = [(f'Who is the best team in the NFL after week {w}?', f"By net EPA per play (offense EPA minus defense EPA allowed), the {TEAMS[best]['full']} at {tt[best]['net']:+.3f}. "
+            f"The best offense belongs to the {TEAMS[min(off_r, key=off_r.get)]['full']} and the best defense to the {TEAMS[min(def_r, key=def_r.get)]['full']}.")]
+    if up:
+        faq.append((f'Which team rose the most in week {w}?', f"The {TEAMS[up]['full']}, up {tt[up]['move']} spots to {ordn(tt[up]['rank'])}."))
+    if dn:
+        faq.append((f'Which team fell the most in week {w}?', f"The {TEAMS[dn]['full']}, down {-tt[dn]['move']} spots to {ordn(tt[dn]['rank'])}."))
+    faq.append(('How are the team tiers built?', 'Every team is ranked by net EPA per play: how many points its offense adds per pass or run play, minus how many its defense allows. '
+                'The 32 teams are then grouped into five tiers. For a defense, a lower EPA allowed is better.'))
+    title = f'NFL team tiers after week {w}, {SEASON_YEAR}: offense vs. defense EPA | PlainStats'
+    desc = clip(f"{lede} All 32 teams ranked by offense and defense EPA per play, with the movers from last week.", 158)
+    body = (f'<h1>NFL team tiers after week {w}</h1><p class="lede">{esc(lede)}</p>'
+            f'<p>Every team ranked by EPA per play on offense and defense through week {w} of the {SEASON_YEAR} season, grouped into five tiers. '
+            f'<a href="/team-tiers">Open the live team tiers</a> for the chart of offense against defense.</p>{wk_nav("tiers", w, weeks)}{html}'
+            f'<p class="note">{esc(d.get("source") or "From nflverse play-by-play.")} <a href="/learn/epa">What is EPA?</a></p>'
+            f'{faq_html(faq)}{wk_other(w, have, "tiers")}'
+            + doors_html([('Team tiers, live', '/team-tiers', 'The offense vs. defense chart'), ('Power rankings', '/power-rankings', 'Results, roster and efficiency together'),
+                          ('Standings', '/standings', 'Every division race'), ('Playoff odds', '/projections/playoff-odds', 'Each team\'s chances, from the PlainStats model')])
+            + signup_html())
+    crumbs = [('PlainStats', '/'), ('Weekly', '/weekly'), (f'Team tiers, week {w}', path)]
+    graph = [{'@type': 'Article', 'headline': f'NFL team tiers after week {w}', 'description': desc, 'url': SITE + path, 'dateModified': LM_TOKEN,
+              'author': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}, 'publisher': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}},
+             faq_ld(faq), crumbs_ld(crumbs)]
+    card = og_add('pages', f'weekly-tiers-{w}', m='brand', c=OG_BRAND, e=f'Week {w} · {SEASON_YEAR}', t=f'NFL team tiers, week {w}', s='Offense vs. defense EPA per play',
+                  n=f"{tt[best]['net']:+.2f}", l=f"net EPA per play, {TEAMS[best]['name']}", x='PlainStats')
+    write(f'weekly/team-tiers-week-{w}.html', shell(path, title, desc, body, graph, crumbs=crumbs, card=card))
+    URLS.append((path, '0.6' if w == weeks[-1] else '0.4', 'weekly' if w == weeks[-1] else 'monthly'))
+
+
+def build_weekly_power(w, d, have):
+    weeks = sorted(have['power'])
+    path = wk_path('power', w)
+    T = [t for t in d['teams'] if t['id'] in TEAMS]
+    top = T[0]
+    movers = sorted([t for t in T if t.get('move')], key=lambda t: -t['move'])
+    up = movers[0] if movers and movers[0]['move'] > 0 else None
+    dn = movers[-1] if movers and movers[-1]['move'] < 0 else None
+    better = sorted([t for t in T if t['outlook'] == 'Better than record'], key=lambda t: t['rkRes'] - t['rkRos'], reverse=True)
+    flat = sorted([t for t in T if t['outlook'] == 'Record flatters'], key=lambda t: t['rkRos'] - t['rkRes'], reverse=True)
+    lede = (f"The {TEAMS[top['id']]['full']} ({top['rec']}) are No. 1 after week {w} with a power score of {top['score']}."
+            + (f" Biggest climb: the {TEAMS[up['id']]['full']}, up {up['move']} to {ordn(up['rank'])}." if up else ''))
+    rows = ''.join(f'<tr><td class="r">{t["rank"]}</td><td>{team_link(t["id"])}<span class="sub">{esc(t["rec"])} · {esc(t["tier"])}'
+                   + (f' · best unit: {esc(t["best"])}' if t.get('best') else '') + '</span></td>'
+                   f'<td class="r">{t["score"]}</td><td class="r">{mv_html(t.get("move"))}</td><td>{esc(t["outlook"])}</td></tr>' for t in T)
+    table = ('<div class="scroll"><table><thead><tr><th class="r">#</th><th>Team</th><th class="r">Score</th><th class="r">Move</th><th>Outlook</th></tr></thead>'
+             f'<tbody>{rows}</tbody></table></div>')
+    gap = lambda L, words: ('<ul>' + ''.join(f'<li>{team_link(t["id"])} ({esc(t["rec"])}): record ranks {ordn(t["rkRes"])}, roster and efficiency {ordn(t["rkRos"])}.</li>' for t in L[:4]) + '</ul>') if L else f'<p class="note">No team stands out as {words} this week.</p>'
+    faq = [(f'Who is No. 1 in the NFL power rankings after week {w}?', f"The {TEAMS[top['id']]['full']} ({top['rec']}), with a power score of {top['score']} out of 100. "
+            f"Next are the {TEAMS[T[1]['id']]['name']} and the {TEAMS[T[2]['id']]['name']}.")]
+    if up:
+        faq.append((f'Which team moved up the most in week {w}?', f"The {TEAMS[up['id']]['full']}, up {up['move']} spots to {ordn(up['rank'])}."))
+    if dn:
+        faq.append((f'Which team dropped the most in week {w}?', f"The {TEAMS[dn['id']]['full']}, down {-dn['move']} spots to {ordn(dn['rank'])}."))
+    faq.append(('How are the PlainStats power rankings made?', 'Each team gets a score from 0 to 100: 28% win percentage, 28% scoring margin, 24% roster strength '
+                '(the PlainStats player ratings) and 20% efficiency (offense and defense EPA per play, sacks and turnovers), each as a rank among the 32 teams. No opinions or votes go in.'))
+    title = f'NFL power rankings, week {w} {SEASON_YEAR}: all 32 teams by the numbers | PlainStats'
+    desc = clip(lede + ' All 32 teams ranked on results, roster and efficiency, with each team\'s move from last week.', 158)
+    body = (f'<h1>NFL power rankings, week {w}</h1><p class="lede">{esc(lede)}</p>'
+            f'<p>All 32 teams after week {w} of the {SEASON_YEAR} season, ranked on record, scoring margin, roster strength and efficiency. '
+            f'<a href="/power-rankings">Open the live power rankings</a> to sort by offense, defense or projected wins.</p>{wk_nav("power", w, weeks)}'
+            f'<h2>All 32 teams</h2>{table}'
+            f'<h2>Better than their record</h2><p>Teams whose roster and efficiency rank well above their results so far.</p>{gap(better, "better than its record")}'
+            f'<h2>Record flatters them</h2><p>Teams whose results are ahead of what their roster and efficiency suggest.</p>{gap(flat, "flattered by its record")}'
+            f'<p class="note">Records and scores from nflverse; player ratings and EPA from PlainStats, built on nflverse data. Through week {w}.</p>'
+            f'{faq_html(faq)}{wk_other(w, have, "power")}'
+            + doors_html([('Power rankings, live', '/power-rankings', 'Sort by offense, defense or projected wins'), ('Team tiers', '/team-tiers', 'Offense vs. defense EPA'),
+                          ('Awards race', '/awards', 'MVP and the other awards, by the numbers'), ('Playoff odds', '/projections/playoff-odds', 'Each team\'s chances')])
+            + signup_html())
+    crumbs = [('PlainStats', '/'), ('Weekly', '/weekly'), (f'Power rankings, week {w}', path)]
+    graph = [{'@type': 'Article', 'headline': f'NFL power rankings, week {w}', 'description': desc, 'url': SITE + path, 'dateModified': LM_TOKEN,
+              'author': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}, 'publisher': {'@type': 'Organization', 'name': 'PlainStats', 'url': SITE + '/'}},
+             faq_ld(faq), crumbs_ld(crumbs)]
+    card = og_add('pages', f'weekly-power-{w}', m='brand', c=OG_BRAND, e=f'Week {w} · {SEASON_YEAR}', t=f'NFL power rankings, week {w}', s='All 32 teams by the numbers',
+                  n=str(top['score']), l=f"power score, {TEAMS[top['id']]['name']} ({top['rec']})", x='PlainStats')
+    write(f'weekly/power-rankings-week-{w}.html', shell(path, title, desc, body, graph, crumbs=crumbs, card=card))
+    URLS.append((path, '0.6' if w == weeks[-1] else '0.4', 'weekly' if w == weeks[-1] else 'monthly'))
+
+
+def build_weekly():
+    for p in PAGES:
+        if p.gid:
+            PAGE_BY_GID.setdefault(p.gid, p)
+    have = weekly_snaps()
+    for w, d in have['usage'].items():
+        build_weekly_usage(w, d, have)
+    for w, d in have['tiers'].items():
+        build_weekly_tiers(w, d, have)
+    for w, d in have['power'].items():
+        build_weekly_power(w, d, have)
+    weeks = sorted(set().union(*[set(v) for v in have.values()]), reverse=True)
+    if not weeks:
+        return
+    path = '/weekly'
+    title = f'NFL weekly rankings, team tiers and usage risers, {SEASON_YEAR} | PlainStats'
+    desc = f'Every week of the {SEASON_YEAR} NFL season: power rankings, team tiers by EPA and the players whose target, carry and snap share jumped. Plain tables, updated each Tuesday.'
+    items = ''
+    for w in weeks:
+        links = [f'<li><a href="{wk_path(k, w)}"><b>{esc(n)}</b><span>Week {w}</span></a></li>' for k, _p, n, _a in WK_KINDS if w in have[k]]
+        items += f'<h2>Week {w}</h2><ul class="doors">{"".join(links)}</ul>'
+    body = (f'<h1>Weekly rankings and usage</h1><p class="lede">Three tables each week of the {SEASON_YEAR} season, kept for every week so you can look back: '
+            f'power rankings, team tiers by EPA per play, and the players whose share of the work jumped or dropped.</p>'
+            f'<p>New weeks are added each Tuesday once every game of the week is final. For this week\'s numbers as they change, open the live '
+            f'<a href="/power-rankings">power rankings</a>, <a href="/team-tiers">team tiers</a> and <a href="/usage-risers">usage risers</a>.</p>{items}{signup_html()}')
+    crumbs = [('PlainStats', '/'), ('Weekly', path)]
+    graph = [{'@type': 'CollectionPage', 'name': 'Weekly rankings and usage', 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN}, crumbs_ld(crumbs)]
+    card = og_add('pages', 'weekly', m='brand', c=OG_BRAND, e=f'{SEASON_YEAR} season', t='Weekly rankings and usage', s='Power rankings, team tiers, usage risers',
+                  n=str(weeks[0]), l='latest week', x='Updated each Tuesday')
+    write('weekly/index.html', shell(path, title, desc, body, graph, crumbs=crumbs, card=card))
+    URLS.append((path, '0.7', 'weekly'))
+
+
 def build_nav():
     teams = ''.join(f'<a href="/teams/{t["slug"]}">{esc(t["full"])}</a> ' for t in sorted(TEAMS.values(), key=lambda t: t['full']))
     (ROOT / 'tools' / 'seo-nav.html').write_text(
         '<nav aria-label="Browse PlainStats" style="max-width:1100px;margin:0 auto;padding:8px 20px 48px;color:var(--muted);font:.85rem/2 var(--body)">'
-        '<strong style="color:var(--fg)">Browse:</strong> <a href="/teams">All teams</a> <a href="/players">Players</a> <a href="/draft">2027 Draft</a> <a href="/learn">Stat explainers</a><br>' + teams.replace('</a> <a', '</a> · <a') + '</nav>\n', encoding='utf-8')
+        '<strong style="color:var(--fg)">Browse:</strong> <a href="/teams">All teams</a> <a href="/players">Players</a> <a href="/draft">2027 Draft</a> <a href="/weekly">Weekly rankings</a> <a href="/learn">Stat explainers</a><br>' + teams.replace('</a> <a', '</a> · <a') + '</nav>\n', encoding='utf-8')
 
 # App pages (one URL per section of the single-page app; vercel.json sends them to index.html)
 APP_URLS = [('/scores', '0.9', 'daily'), ('/standings', '0.9', 'weekly'), ('/projections', '0.8', 'weekly'), ('/news', '0.8', 'daily'),
@@ -2032,7 +2341,7 @@ def build_og_data():
 
 
 def main():
-    for d in ('players', 'teams', 'draft', 'learn'):
+    for d in ('players', 'teams', 'draft', 'learn', 'weekly'):
         shutil.rmtree(ROOT / d, ignore_errors=True)
     build_vs_pages()   # first: player pages link to their comparisons (VS_BY_GID)
     for p in PAGES:
@@ -2043,6 +2352,7 @@ def main():
         build_prospect(pr)
     build_hubs()
     build_learn()
+    build_weekly()
     build_sitemap()
     build_nav()
     build_og_data()

@@ -8,6 +8,9 @@
                                                                           prevRanks from the old snapshot when the week moved forward
   python3 -I tools/refresh_helpers.py plainscore                           window.__plainScores() from the built page -> data/plainscore.json
                                                                           (read by tools/build_seo.py; run build.sh first so index.html is current)
+  python3 -I tools/refresh_helpers.py weekly                               power rankings and usage lists from the built page (window.__weeklyExport)
+                                                                          plus data/tiers.json -> data/weekly/ (one snapshot per finished week,
+                                                                          read by tools/build_seo.py for the /weekly pages; run build.sh first)
   python3 -I tools/refresh_helpers.py news-gids                            fill missing gsis ids (`gids`, one per name in `players`) in
                                                                           data/moves.json; prints the names it could not place
 """
@@ -70,6 +73,36 @@ def plainscore():
     out = os.path.join(ROOT, 'data', 'plainscore.json')
     json.dump(d, open(out, 'w'), separators=(',', ':'))
     print('plainscore: week', d['week'], '|', len(d['players']), 'players')
+
+
+def week_final(week):
+    """Every regular-season game of that week has a score in data/schedule.json."""
+    games = [g for g in json.load(open(os.path.join(ROOT, 'data', 'schedule.json')))['games'] if g[1] == week]
+    return bool(games) and all(g[6] is not None and g[7] is not None for g in games)
+
+
+def weekly():
+    """Snapshots for the static weekly pages, one file per kind and finished week in data/weekly/:
+         usage-<w>.json   risers and fallers for every finished week (rewritten each run, so a stat correction reaches old weeks)
+         power-<w>.json   power rankings, written only while the page's stats week is fully final; earlier weeks are never touched
+         tiers-<w>.json   a copy of data/tiers.json (already built through the last fully final week)
+       Power rankings and tiers have no history in the data, so their weekly pages start from the first week saved here."""
+    d = from_page('() => window.__weeklyExport && window.__pcSnapshot && window.__pcSnapshot().power.length === 32', '() => window.__weeklyExport()')
+    out = os.path.join(ROOT, 'data', 'weekly')
+    os.makedirs(out, exist_ok=True)
+    dump = lambda name, obj: json.dump(obj, open(os.path.join(out, name), 'w'), separators=(',', ':'))
+    for w, lists in (d.get('usage') or {}).items():
+        dump(f'usage-{int(w)}.json', {'week': int(w), 'asOf': d.get('asOf'), 'min': d.get('min'), **lists})
+    wk = d.get('week') or 0
+    if wk and len(d.get('power') or []) == 32 and week_final(wk):
+        dump(f'power-{wk}.json', {'week': wk, 'asOf': d.get('asOf'), 'teams': d['power']})
+        print('weekly: power rankings week', wk)
+    else:
+        print('weekly: power rankings not saved (week', wk, 'not final)')
+    tiers = json.load(open(os.path.join(ROOT, 'data', 'tiers.json')))
+    if tiers.get('thru') and week_final(tiers['thru']):
+        dump(f"tiers-{tiers['thru']}.json", tiers)
+    print('weekly: usage weeks', sorted(int(w) for w in d.get('usage') or {}), '| tiers week', tiers.get('thru'))
 
 
 def news_gids():
@@ -148,6 +181,8 @@ if __name__ == '__main__':
         snapshot(sys.argv[2])
     elif cmd == 'plainscore':
         plainscore()
+    elif cmd == 'weekly':
+        weekly()
     elif cmd == 'news-gids':
         news_gids()
     elif cmd == 'prev-ranks':

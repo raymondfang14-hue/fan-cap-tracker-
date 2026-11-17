@@ -100,6 +100,7 @@ line_and_tiers() {
 }
 
 plainscore_export() { sh build.sh && py tools/refresh_helpers.py plainscore; }
+weekly_export() { sh build.sh && py tools/refresh_helpers.py weekly; }
 
 search_pages() { py tools/build_seo.py && sh build.sh && py -c "import xml.dom.minidom as m;m.parse('sitemap.xml')"; }
 
@@ -142,7 +143,9 @@ esac
 step "news gsis ids" "data/moves.json" -- py tools/refresh_helpers.py news-gids
 # PlainScore is computed by the page itself; export it for the static player pages. On failure the last export is kept.
 step "PlainScore export" "data/plainscore.json" -- plainscore_export
-step "search pages" "players teams draft sitemap.xml tools/seo-nav.html data/pageslugs.json og-data index.html" -- search_pages
+# Snapshots for the static /weekly pages (power rankings and usage lists from the page itself, tiers from data/tiers.json).
+step "weekly page snapshots" "data/weekly" -- weekly_export
+step "search pages" "players teams draft weekly sitemap.xml tools/seo-nav.html data/pageslugs.json og-data index.html" -- search_pages
 # A broken page must never be pushed: these two are hard failures (exit 3, the workflow commits nothing).
 HARD=0
 step "inline scripts parse" "" -- scripts_parse || HARD=1
