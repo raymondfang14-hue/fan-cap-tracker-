@@ -39,7 +39,7 @@ One reason per team, in `content.json` (`why`). Rules:
 - Movers slide: two risers, two fallers with reasons; everyone else with a rank move of 3 or more goes in the "also up / also down" line (ties at the same move size: list them all).
 - Say what the numbers say, not what a record says: contrast record vs ranking where it is true ("5-3 flatters them: 25th net EPA").
 
-## 4. Photos (full-bleed, license-free, Wikimedia Commons)
+## 4. Photos (full-bleed; Wikimedia Commons first)
 Need 8: cover, tier 1 to 5, movers, closing. Use a different player on each slide and pick the tier's lead team where a good photo exists.
 ```bash
 python3 -I .claude/skills/weekly-tiers-post/scripts/photos.py search "Patrick Mahomes"
@@ -49,6 +49,15 @@ python3 -I .claude/skills/weekly-tiers-post/scripts/photos.py fetch t1 "File:Pat
 - The Commons API is rate limited (HTTP 429). Fetches retry patiently and can take minutes each. Search once per player, pick, then run the fetches in the background (`run_in_background`) and keep working.
 - **Look at every downloaded photo before using it** (Read the image): right team uniform (searches mix in college photos: Bo Nix in an Oregon jersey, Brock Purdy at Iowa State; skip those), face clearly visible, in-game or game-day. Prefer portrait (2:3) photos with the face in the top half: stat rows cover the lower two thirds of each slide. If the only clear face is a pregame/warm-up shot, use it and tell the user.
 - Check the team the photo shows, not just the player's name: players in the PlainStats rosters may be photographed in an older jersey.
+
+### Photos from other sources (owner's decision, Nov 17 2026)
+The owner allows NFL player photos from most sources for **social posts only**, accepting the risk while the account is small. Prefer a Commons photo when a good one exists; otherwise:
+- Add the photo with `photos.py add SLOT <file or URL> --credit "Photographer / outlet"` (a file the user uploaded, or a URL on a host the environment allows). Always fill in the credit with the photographer or outlet; it prints on every slide like a Commons credit. Unknown source: ask the user, do not leave it blank.
+- Avoid photo-agency images: Getty Images, AP, Imagn / USA Today Sports, Reuters, and anything with an agency watermark or caption. Those agencies run automated takedowns and claims against small accounts too, and each Instagram takedown is a strike on the account. Team and league site photos, fan photos and social posts with a named photographer are the lower-risk choices.
+- Never put these photos on plainstatsnfl.com (pages, og cards, repo): the site's photo rules are unchanged. Keep them in the scratchpad.
+- Real photos only, cropped, zoomed and recoloured as needed. Never edit a player into a uniform, team or scene he was not in (no swapped helmets or jerseys, no AI composites), and no trading-card scans.
+- If a photographer or agency asks for a photo to come down, tell the user to remove the post right away.
+- Captions: "Photos: <credits>" instead of "Photos: Wikimedia Commons" when any slide uses one of these.
 
 ## 5. Build
 Write `$WORK/content.json` (copy `content.example.json` from this folder: the Week 8 example. Its reasons were written for the raw numbers before the schedule adjustment, so keep the structure and rewrite every reason from a fresh facts sheet; `render_post.py` warns when a tier's teams or lengths no longer match) and render:

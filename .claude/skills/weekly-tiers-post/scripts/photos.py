@@ -2,6 +2,7 @@
 
   python3 -I photos.py search "Trevor Lawrence" [--min-width 1500] [--limit 25]
   python3 -I photos.py fetch  SLOT "File:Trevor Lawrence (52377887812).jpg" --dir WORK/photos [--width 1920]
+  python3 -I photos.py add    SLOT <file or URL> --credit "Photographer / outlet" --dir WORK/photos   (non-Commons photo, social posts only)
   python3 -I photos.py logos  --dir WORK/logos        (all 32 ESPN team logos; needs a.espncdn.com allowed)
 
 `search` prints numbered candidates (title, size, license, artist). Only CC0, public domain, CC BY and CC BY-SA files are
@@ -98,6 +99,25 @@ def cmd_fetch(a):
     print(f"saved {a.slot}.jpg ({len(b) // 1024} KB) {x['title']} | {x['lic']} | {x['page']}")
 
 
+def cmd_add(a):
+    """Add a photo that is not from Commons (a file the user uploaded, or a URL), with a hand-written credit."""
+    os.makedirs(a.dir, exist_ok=True)
+    dst = os.path.join(a.dir, a.slot + '.jpg')
+    if re.match(r'https?://', a.src):
+        b = urllib.request.urlopen(urllib.request.Request(a.src, headers={'User-Agent': UA}), timeout=60).read()
+        open(dst + '.tmp', 'wb').write(b); src = dst + '.tmp'
+    else:
+        src = a.src
+    from PIL import Image
+    Image.open(src).convert('RGB').save(dst, quality=93)
+    if src.endswith('.tmp'): os.remove(src)
+    meta_path = os.path.join(a.dir, 'photos.json')
+    meta = json.load(open(meta_path)) if os.path.exists(meta_path) else {}
+    meta[a.slot] = {'title': 'File:' + (a.title or a.slot), 'artist': a.credit, 'lic': 'used with credit', 'page': a.src}
+    json.dump(meta, open(meta_path, 'w'), indent=1)
+    print(f'saved {a.slot}.jpg | credit: {a.credit}')
+
+
 def cmd_logos(a):
     assets = json.load(open('data/espn_assets.json'))['teams']
     os.makedirs(a.dir, exist_ok=True)
@@ -113,6 +133,8 @@ if __name__ == '__main__':
     sub = ap.add_subparsers(dest='cmd', required=True)
     s = sub.add_parser('search'); s.add_argument('query'); s.add_argument('--min-width', type=int, default=1500); s.add_argument('--limit', type=int, default=25); s.set_defaults(f=cmd_search)
     f = sub.add_parser('fetch'); f.add_argument('slot'); f.add_argument('title'); f.add_argument('--dir', required=True); f.add_argument('--width', type=int, default=1920); f.set_defaults(f=cmd_fetch)
+    d = sub.add_parser('add'); d.add_argument('slot'); d.add_argument('src', help='image file or URL'); d.add_argument('--credit', required=True, help='photographer / outlet')
+    d.add_argument('--title', help='short photo title for the credit line'); d.add_argument('--dir', required=True); d.set_defaults(f=cmd_add)
     l = sub.add_parser('logos'); l.add_argument('--dir', required=True); l.set_defaults(f=cmd_logos)
     a = ap.parse_args()
     a.f(a)

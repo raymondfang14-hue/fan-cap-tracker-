@@ -165,6 +165,8 @@ def main():
             warn.append(f'no credit for photo {slot} in photos.json'); return ''
         t = re.sub(r'^File:', '', m['title']); t = re.sub(r'\.\w+$', '', t); t = re.sub(r'\s*\(\d{6,}\)', '', t)[:44]
         who = re.sub(r'\s+', ' ', m['artist'] or 'Wikimedia Commons')[:34]
+        if m['lic'] == 'used with credit':   # photos.py add: non-Commons photo, social posts only
+            return f'Photo: {who}'
         return f'"{t}" by {who}, {m["lic"]}' if m['lic'].startswith('CC BY') else f'Photo: {who} · {m["lic"]}'
 
     def sgn(x):
