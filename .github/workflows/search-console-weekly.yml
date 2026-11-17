@@ -1,4 +1,4 @@
-# Weekly Search Console check: the whole site by section, the searches to win next (positions 4 to 20, with each page's
+# Weekly Search Console check: the whole site by section, how many sitemap pages Google has indexed (URL Inspection API), the searches to win next (positions 4 to 20, with each page's
 # title today), the top searches and their click rates, and which /players/<name> pages gained Google impressions.
 # Runs tools/gsc_report.py and posts the report as a GitHub issue labelled "search-console" (and in the run summary).
 #
@@ -22,7 +22,7 @@ permissions:
 jobs:
   report:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20                 # the indexed-pages check inspects every sitemap address, about 3 minutes
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,13 +37,16 @@ jobs:
         env:
           GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
           GSC_SITE: ${{ secrets.GSC_SITE }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ -z "$GSC_SERVICE_ACCOUNT" ]; then
             echo "GSC_SERVICE_ACCOUNT is not set; see the top of this workflow." | tee -a "$GITHUB_STEP_SUMMARY"
             echo "ready=0" >> "$GITHUB_OUTPUT"; exit 0
           fi
           pip install --quiet google-auth requests
-          python3 -I tools/gsc_report.py --out "$RUNNER_TEMP/gsc.md"
+          # Last week's issue, for the change in indexed pages (empty the first time)
+          gh issue list --label search-console --state all --limit 1 --json body --jq '.[0].body // ""' > "$RUNNER_TEMP/prev.md" 2>/dev/null || true
+          python3 -I tools/gsc_report.py --prev "$RUNNER_TEMP/prev.md" --out "$RUNNER_TEMP/gsc.md"
           cat "$RUNNER_TEMP/gsc.md" >> "$GITHUB_STEP_SUMMARY"
           echo "ready=1" >> "$GITHUB_OUTPUT"
 

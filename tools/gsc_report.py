@@ -30,6 +30,7 @@ import os
 import re
 import sys
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -220,7 +221,7 @@ WIN_LO, WIN_HI = 4, 20     # "searches to win next": average position in this ra
 TOP3_MIN_IMP = 50          # ... with clicks within reach estimated only when the top 3 had at least this many impressions
 
 
-def report(now_all, prev_all, qnow, qprev, pairs, start, end, top):
+def report(now_all, prev_all, qnow, qprev, pairs, start, end, top, index_md=''):
     now = {u: r for u, r in now_all.items() if is_player(u)}
     prev = {u: r for u, r in prev_all.items() if is_player(u)}
     pages = set(now) | set(prev)
@@ -249,6 +250,8 @@ def report(now_all, prev_all, qnow, qprev, pairs, start, end, top):
         x, y = tot(a), tot(b)
         out.append(f"| {sec} | {len(a)} | {x['imp']:,} | {x['imp'] - y['imp']:+,} | {x['clicks']:,} | {x['clicks'] - y['clicks']:+,} | {pct(ctr(x))} (was {pct(ctr(y))}) |")
     out.append('')
+    if index_md:
+        out.append(index_md)
 
     # Searches to win next: already on page one or two, not yet top 3, seen often enough to matter
     top3 = [r for r in qnow.values() if r['pos'] and r['pos'] <= 3]
@@ -340,11 +343,206 @@ def report(now_all, prev_all, qnow, qprev, pairs, start, end, top):
     return '\n'.join(out)
 
 
+# ---------------------------------------------------------------- indexed pages
+# Search Console's Sitemaps API gives what Google read from sitemap.xml; the URL Inspection API gives, per address, whether it is
+# indexed and, if not, why (the same words as the Page indexing screen). Inspection is limited to 2,000 addresses a day and 600 a
+# minute per property, so the report inspects at most INSPECT_CAP sitemap addresses (all of them while the sitemap is smaller;
+# otherwise every non-player page plus an even spread of player pages, and the player counts are marked as a sample).
+SITEMAPS_API = 'https://searchconsole.googleapis.com/webmasters/v3/sites/{site}/sitemaps'
+INSPECT_API = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect'
+INSPECT_CAP = 1500
+INSPECT_PER_SEC = 8           # stays under the 600-a-minute limit
+INDEXED = 'Submitted and indexed'
+STATE_COLS = [(INDEXED, 'Indexed'), ('Crawled - currently not indexed', 'Crawled, not indexed'),
+              ('Discovered - currently not indexed', 'Discovered, not indexed'), ('URL is unknown to Google', 'Unknown to Google')]
+SUMMARY_TAG = 'index-summary'
+MISS_PER = 10
+
+
+def _get(tok, url):
+    req = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + tok})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.load(r)
+
+
+def sitemaps(tok, site):
+    """[{path, submitted, indexed, lastDownloaded, errors, warnings}] for every sitemap Google has for the property."""
+    out = []
+    for s in _get(tok, SITEMAPS_API.format(site=urllib.parse.quote(site, safe=''))).get('sitemap', []):
+        web = [c for c in s.get('contents', []) if c.get('type') == 'web'] or s.get('contents', [])
+        out.append({'path': s.get('path'), 'submitted': sum(int(c.get('submitted') or 0) for c in web),
+                    'indexed': sum(int(c.get('indexed') or 0) for c in web), 'last': s.get('lastDownloaded'),
+                    'errors': int(s.get('errors') or 0), 'warnings': int(s.get('warnings') or 0)})
+    return out
+
+
+def sitemap_urls():
+    with open(os.path.join(ROOT, 'sitemap.xml')) as f:
+        return re.findall(r'<loc>([^<]+)</loc>', f.read())
+
+
+def pick(urls, cap=INSPECT_CAP):
+    """The addresses to inspect: all of them when they fit, else every non-player page and an even spread of player pages."""
+    if len(urls) <= cap:
+        return urls, False
+    other = [u for u in urls if section(u) != 'Player pages']
+    players = [u for u in urls if section(u) == 'Player pages']
+    room = max(0, cap - len(other))
+    step = len(players) / room if room else 0
+    return other[:cap] + [players[int(i * step)] for i in range(room)], True
+
+
+def inspect_all(tok, site, urls):
+    """{url: {'state': coverageState, 'verdict', 'crawled': lastCrawlTime, 'canon': googleCanonical}}. Stops early, keeping what
+    it has, if Google says the day's quota is used up."""
+    import threading
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+    lock, nxt, stop, got = threading.Lock(), [time.monotonic()], threading.Event(), {}
+
+    def one(u):
+        if stop.is_set():
+            return
+        for attempt in range(4):
+            with lock:                       # spread calls INSPECT_PER_SEC a second
+                wait = nxt[0] - time.monotonic()
+                nxt[0] = max(nxt[0], time.monotonic()) + 1 / INSPECT_PER_SEC
+            if wait > 0:
+                time.sleep(wait)
+            body = json.dumps({'inspectionUrl': u, 'siteUrl': site}).encode()
+            req = urllib.request.Request(INSPECT_API, data=body, method='POST',
+                                         headers={'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json'})
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    res = json.load(r).get('inspectionResult', {}).get('indexStatusResult', {})
+                got[u] = {'state': res.get('coverageState') or 'No answer', 'verdict': res.get('verdict'),
+                          'crawled': res.get('lastCrawlTime'), 'canon': res.get('googleCanonical'), 'mine': res.get('userCanonical')}
+                return
+            except urllib.error.HTTPError as e:
+                msg = e.read().decode('utf-8', 'replace')
+                low = msg.lower()
+                if e.code == 429 and ('per day' in low or 'daily' in low):
+                    stop.set()
+                    return
+                if e.code in (429, 500, 503) and attempt < 3:
+                    time.sleep(5 * (attempt + 1))
+                    continue
+                got[u] = {'state': f'Inspection failed ({e.code})', 'verdict': None, 'crawled': None, 'canon': None, 'mine': None}
+                return
+            except (urllib.error.URLError, TimeoutError):
+                if attempt < 3:
+                    time.sleep(5 * (attempt + 1))
+                    continue
+                got[u] = {'state': 'Inspection failed (network)', 'verdict': None, 'crawled': None, 'canon': None, 'mine': None}
+                return
+
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        list(ex.map(one, urls))
+    return got, stop.is_set()
+
+
+def read_prev(path):
+    """Last week's summary, from the hidden line this report writes at the end of its index section."""
+    if not path:
+        return None
+    try:
+        with open(path) as f:
+            m = re.search(r'<!-- %s (\{.*?\}) -->' % SUMMARY_TAG, f.read())
+        return json.loads(m.group(1)) if m else None
+    except (OSError, ValueError):
+        return None
+
+
+def index_report(maps, total, results, sampled, quota_hit, prev, today):
+    """Markdown for the "Indexed pages" section. total = {section: addresses in sitemap.xml}; results from inspect_all()."""
+    out = ['### Indexed pages', '',
+           'Whether Google keeps the pages we ask it to (every address in sitemap.xml), from the URL Inspection API: the same words as '
+           'Search Console > Indexing > Pages. "Crawled, not indexed" means Google read the page and turned it down; "Discovered" means it '
+           'knows the address but has not read it yet. Pages with `noindex` are left out of the sitemap on purpose and are not counted here.', '']
+    by = {}
+    for u, r in results.items():
+        by.setdefault(section(u), []).append(r)
+    known = {s for s, _ in STATE_COLS}
+    summary = {'date': today.isoformat(), 'sections': {}}
+    head = '| Section | In sitemap | Inspected | ' + ' | '.join(lbl for _, lbl in STATE_COLS) + ' | Other | Indexed share | Change |'
+    out.extend([head, '|---|' + '---:|' * (len(STATE_COLS) + 5)])
+    allr = []
+    for sec in SECTIONS + ['All']:
+        rows = [r for rs in by.values() for r in rs] if sec == 'All' else by.get(sec, [])
+        n = sum(total.values()) if sec == 'All' else total.get(sec, 0)
+        if not n and not rows:
+            continue
+        cnt = {s: sum(1 for r in rows if r['state'] == s) for s, _ in STATE_COLS}
+        other = sum(1 for r in rows if r['state'] not in known)
+        share = cnt[INDEXED] / len(rows) if rows else None
+        summary['sections'][sec] = {'n': n, 'inspected': len(rows), 'indexed': cnt[INDEXED], 'share': round(share, 4) if share is not None else None}
+        p = (prev or {}).get('sections', {}).get(sec)
+        chg = (f"{cnt[INDEXED] - p['indexed']:+,} ({round((share - p['share']) * 100, 1) + 0.0:+.1f} pts)"
+               if p and p.get('share') is not None and share is not None else '–')
+        name = f'**{sec}**' if sec == 'All' else sec
+        out.append(f"| {name} | {n:,} | {len(rows):,} | " + ' | '.join(f'{cnt[s]:,}' for s, _ in STATE_COLS) + f" | {other:,} | {pct(share)} | {chg} |")
+        if sec == 'All':
+            allr = rows
+    out.append('')
+    notes = []
+    denied = sum(1 for r in results.values() if r['state'] == 'Inspection failed (403)')
+    if denied and denied >= len(results) / 2:
+        notes.append(f'Google refused {denied:,} inspections (403): give the service account Full permission in Search Console > '
+                     'Settings > Users and permissions (Restricted may not be enough for URL Inspection).')
+    if prev:
+        notes.append(f"Change is against the report of {prev.get('date', 'last week')}: indexed pages, and in brackets the indexed share.")
+    if sampled:
+        notes.append(f'The sitemap has more addresses than the {INSPECT_CAP:,} the report inspects (Google allows 2,000 a day), so player pages are an even sample and their counts are of the sample.')
+    if quota_hit:
+        notes.append("Google's daily inspection quota ran out part way (someone may have used URL Inspection today), so some addresses were not inspected.")
+    if notes:
+        out.extend([' '.join(notes), ''])
+    others = {}
+    for r in allr:
+        if r['state'] not in known:
+            others[r['state']] = others.get(r['state'], 0) + 1
+    if others:
+        out.extend(['Other states: ' + '; '.join(f'{s} ({n})' for s, n in sorted(others.items(), key=lambda kv: -kv[1])) + '.', ''])
+    # Google picked another address as the main copy: usually www vs. bare domain or a trailing slash, worth knowing
+    diff = [(u, r['canon']) for u, r in results.items() if r.get('canon') and r['canon'].rstrip('/') != u.rstrip('/')]
+    if diff:
+        out.extend([f'Google chose a different main address (canonical) for **{len(diff)}** pages, for example: '
+                    + '; '.join(f'{urllib.parse.urlparse(u).path} → {c}' for u, c in diff[:5]) + '.', ''])
+    # The pages that matter most and are not in Google: up to MISS_PER section, team pages and hubs first
+    order = ['Home', 'Team pages', 'Stat explainers', 'App pages', 'Player comparisons', 'Draft prospects', 'Player pages']
+    keep, more = [], 0
+    for sec in order:
+        miss = sorted(u for u, r in results.items() if r['state'] != INDEXED and section(u) == sec)
+        keep += miss[:MISS_PER]
+        more += max(0, len(miss) - MISS_PER)
+    if keep:
+        out.extend([f'#### Not indexed, up to {MISS_PER} a section', '', '| Page | Section | State | Last crawled |', '|---|---|---|---|'])
+        for u in keep:
+            r = results[u]
+            out.append(f"| {page_link(u)} | {section(u)} | {cell(r['state'])} | {(r['crawled'] or '–')[:10]} |")
+        if more:
+            out.append(f'| … and {more:,} more (counts in the table above) | | | |')
+        out.append('')
+    if maps is None:
+        out.extend(['The Sitemaps API did not answer this week.', ''])
+    elif maps:
+        out.extend(['Sitemaps Google has read: ' + '; '.join(
+            f"`{m['path']}` ({m['submitted']:,} submitted, last read {(m['last'] or 'never')[:10]}"
+            + (f", {m['errors']} errors" if m['errors'] else '') + (f", {m['warnings']} warnings" if m['warnings'] else '') + ')'
+            for m in maps) + '.', ''])
+    else:
+        out.extend(['Google has no sitemap on file for this property: submit `sitemap.xml` under Indexing > Sitemaps.', ''])
+    out.extend([f'<!-- {SUMMARY_TAG} {json.dumps(summary, separators=(",", ":"))} -->', ''])
+    return '\n'.join(out)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out')
     ap.add_argument('--top', type=int, default=25)
     ap.add_argument('--demo', action='store_true')
+    ap.add_argument('--prev', help="last week's report (Markdown), for the change in indexed pages")
+    ap.add_argument('--no-index', action='store_true', help='skip the indexed-pages section (it uses up to %d URL inspections)' % INSPECT_CAP)
     a = ap.parse_args()
     end = dt.date.today() - dt.timedelta(days=LAG)
     start, pend = end - dt.timedelta(days=6), end - dt.timedelta(days=7)
@@ -368,13 +566,33 @@ def main():
                  ('nfl target share week 9', 'https://plainstatsnfl.com/usage-risers'): {'clicks': 0, 'imp': 35, 'pos': 6.2}}
         qnow = {q: r for (q, _), r in pairs.items()}
         qprev = {'example one contract': {'clicks': 2, 'imp': 30, 'pos': 17.9}, 'example two': {'clicks': 0, 'imp': 70, 'pos': 24.2}}
+        urls, sampled = pick(sitemap_urls())
+        states = [INDEXED] * 6 + ['Crawled - currently not indexed'] * 2 + ['Discovered - currently not indexed', 'URL is unknown to Google']
+        results = {u: {'state': states[i % len(states)] if i % 97 else 'Duplicate, Google chose different canonical than user',
+                       'verdict': None, 'crawled': '2026-11-12T08:00:00Z', 'canon': None, 'mine': None} for i, u in enumerate(urls)}
+        maps, quota_hit = [{'path': 'https://www.plainstatsnfl.com/sitemap.xml', 'submitted': len(urls), 'indexed': 0,
+                            'last': '2026-11-15T10:00:00Z', 'errors': 0, 'warnings': 0}], False
     else:
         site = os.environ.get('GSC_SITE') or 'sc-domain:plainstatsnfl.com'
         tok = token()
         now, prev = query(tok, site, start, end), query(tok, site, pstart, pend)
         qnow, qprev = query(tok, site, start, end, ('query',)), query(tok, site, pstart, pend, ('query',))
         pairs = query(tok, site, start, end, ('query', 'page'))
-    md = report(now, prev, qnow, qprev, pairs, start, end, a.top)
+        if not a.no_index:
+            urls, sampled = pick(sitemap_urls())
+            try:
+                maps = sitemaps(tok, site)
+            except (urllib.error.URLError, ValueError) as e:
+                print(f'Sitemaps API failed: {e}', file=sys.stderr)
+                maps = None
+            results, quota_hit = inspect_all(tok, site, urls)
+    index_md = ''
+    if a.demo or not a.no_index:
+        total = {}
+        for u in sitemap_urls():
+            total[section(u)] = total.get(section(u), 0) + 1
+        index_md = index_report(maps, total, results, sampled, quota_hit, read_prev(a.prev), dt.date.today())
+    md = report(now, prev, qnow, qprev, pairs, start, end, a.top, index_md)
     if a.out:
         with open(a.out, 'w') as f:
             f.write(md + '\n')
