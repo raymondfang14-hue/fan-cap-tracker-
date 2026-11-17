@@ -1,0 +1,144 @@
+{
+ "url": "plainstatsnfl.com/players/brock-purdy",
+ "foot": "PlainScore \u00b7 2026 thru Week 10",
+ "cover": {
+  "photo": "cover",
+  "team": "SF",
+  "label": "Week 10 QB rankings \u00b7 PlainScore, not hype",
+  "line1": "The NFL's best QB so far isn't Burrow or Lawrence.",
+  "line2": "It's Brock Purdy.",
+  "sub": "And he's paid less than both.",
+  "pills": [
+   {
+    "text": "Purdy 98"
+   },
+   {
+    "text": "Burrow 95"
+   },
+   {
+    "text": "Lawrence 92"
+   }
+  ],
+  "swipe": "Swipe for the numbers \u2192"
+ },
+ "slides": [
+  {
+   "type": "player",
+   "photo": "p1",
+   "gid": "00-0037834",
+   "tag": "#1 QB",
+   "title": "Best in the league.",
+   "hook": "98th percentile in EPA per play and in yards per dropback."
+  },
+  {
+   "type": "players",
+   "photo": "p2",
+   "slug": "top5",
+   "tag": "Top 5 QBs",
+   "title": "The top 3 earn $53M-$55M.",
+   "hook": "Purdy is #1 and the cheapest of the three. Mahomes, at $63.1M, is #4.",
+   "star": "00-0037834",
+   "gids": [
+    "00-0037834",
+    "00-0036442",
+    "00-0036971",
+    "00-0033873",
+    "00-0039163"
+   ],
+   "why": {
+    "00-0037834": "+0.32 EPA per play \u00b7 $53.0M a year",
+    "00-0036442": "+0.25 EPA per play \u00b7 $55.0M a year",
+    "00-0036971": "+0.30 EPA per play \u00b7 $55.0M a year",
+    "00-0033873": "+0.15 EPA per play \u00b7 $63.1M a year",
+    "00-0039163": "+0.15 EPA per play \u00b7 $9.1M a year"
+   }
+  },
+  {
+   "type": "players",
+   "photo": "p3",
+   "slug": "oline",
+   "tag": "His protection",
+   "title": "He has help up front.",
+   "hook": "Five 49ers linemen rank top 3 at their spot. Together they make less a year than Purdy.",
+   "pos": true,
+   "gids": [
+    "00-0032701",
+    "00-0039351",
+    "00-0036256",
+    "00-0027857",
+    "00-0040245"
+   ]
+  },
+  {
+   "type": "cta",
+   "photo": "cta",
+   "title": "Every QB.<br>Every week.",
+   "text": "Purdy's full page: game log, contract and how he compares. Plus PlainScores for every player and all 32 teams.",
+   "source": "PlainScore: play-rating percentile among qualified players at his position, 2026 through Week 10, from nflverse play-by-play (CC BY 4.0). Pay is average per year, shown only when a named report or the CBA rookie scale confirms it (Purdy: CBS Sports)."
+  }
+ ],
+ "story": {
+  "photo": "cover",
+  "kicker": "PlainScore \u00b7 Week 10 QBs",
+  "title": "The NFL's best QB so far?",
+  "line2": "Brock Purdy. 98.",
+  "text": "Not Burrow (95). Not Lawrence (92). And he's paid less than both.",
+  "sticker": "See why"
+ },
+ "crop": {
+  "cover": {
+   "ig": [
+    "auto 150%",
+    "24% 70%"
+   ],
+   "tt": [
+    "auto 125%",
+    "26% 66%"
+   ],
+   "story": [
+    "auto 125%",
+    "26% 66%"
+   ]
+  },
+  "p1": {
+   "ig": [
+    "auto 140%",
+    "60% 72%"
+   ],
+   "tt": [
+    "auto 120%",
+    "60% 66%"
+   ]
+  },
+  "p2": {
+   "ig": [
+    "cover",
+    "50% 40%"
+   ],
+   "tt": [
+    "cover",
+    "50% 40%"
+   ]
+  },
+  "p3": {
+   "ig": [
+    "auto 140%",
+    "80% 72%"
+   ],
+   "tt": [
+    "auto 120%",
+    "80% 66%"
+   ]
+  },
+  "cta": {
+   "ig": [
+    "cover",
+    "50% 15%"
+   ],
+   "tt": [
+    "cover",
+    "50% 15%"
+   ]
+  }
+ }
+}
