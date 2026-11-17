@@ -68,6 +68,9 @@ async def main(args):
             page.on('pageerror', lambda e, s=size, c=scheme: problems.append(f'{s}/{c}: JS error: {e}'))
             page.on('response', lambda r, s=size, c=scheme: r.status >= 400 and '/data/' in r.url
                     and problems.append(f'{s}/{c}: {r.status} loading {r.url}'))
+            if not args.url:  # local check: only this repo's files. Outside hosts (weather, ESPN images, analytics, fonts)
+                # are not what is being checked, and on the GitHub runner they can stall a page (Nov 17: /scores hung).
+                await page.route(lambda u: not u.startswith(base), lambda route: route.abort())
             return page
 
         async def run_mode(w, h, size, scheme):
@@ -78,18 +81,24 @@ async def main(args):
                     problems.append(f'{size}/{scheme} {v} and the views after it: not checked (two views already hung)')
                     break
                 # page.evaluate has no timeout of its own, so a page stuck in a script would hang the whole check
-                # (and the workflow) without saying where. Cap each view, name it, and carry on in a fresh page.
-                try:
-                    await asyncio.wait_for(check_view(page, v, size, scheme), VIEW_LIMIT)
-                except asyncio.TimeoutError:
-                    problems.append(f'{size}/{scheme} {v}: page did not finish within {VIEW_LIMIT}s (hung)')
-                    print(f'HUNG {size}/{scheme} {v}', flush=True)
-                    hung += 1
+                # (and the workflow) without saying where. Cap each view and name it. A view that hangs once is tried
+                # again in a fresh page (WARN, published anyway); hanging twice is a problem.
+                for attempt in (1, 2):
                     try:
-                        await asyncio.wait_for(page.close(), 10)
-                    except Exception:
-                        pass
-                    page = await new_page(w, h, size, scheme)
+                        await asyncio.wait_for(check_view(page, v, size, scheme), VIEW_LIMIT)
+                        if attempt == 2:
+                            print(f'WARN {size}/{scheme} {v}: hung once, passed on the second try', flush=True)
+                        break
+                    except asyncio.TimeoutError:
+                        print(f'HUNG {size}/{scheme} {v} (try {attempt})', flush=True)
+                        try:
+                            await asyncio.wait_for(page.close(), 10)
+                        except Exception:
+                            pass
+                        page = await new_page(w, h, size, scheme)
+                else:
+                    problems.append(f'{size}/{scheme} {v}: page did not finish within {VIEW_LIMIT}s, twice (hung)')
+                    hung += 1
             await page.close()
 
         async def check_view(page, v, size, scheme):
