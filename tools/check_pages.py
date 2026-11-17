@@ -53,6 +53,9 @@ def serve():
     return f'http://127.0.0.1:{s.server_address[1]}'
 
 
+VIEW_LIMIT = 90   # seconds per view; a normal view takes a few, a share-card view up to ~35
+
+
 async def main(args):
     from playwright.async_api import async_playwright
     base = (args.url or serve()).rstrip('/')
@@ -60,53 +63,76 @@ async def main(args):
     async with async_playwright() as p:
         browser = await p.chromium.launch(executable_path=os.environ.get('PW_CHROMIUM') or None)   # PW_CHROMIUM: a browser already on the machine
         # The four modes (phone/desktop x light/dark) run at the same time, each in its own page: same checks, about a quarter of the time.
-        async def run_mode(w, h, size, scheme):
+        async def new_page(w, h, size, scheme):
             page = await browser.new_page(viewport={'width': w, 'height': h}, color_scheme=scheme)
             page.on('pageerror', lambda e, s=size, c=scheme: problems.append(f'{s}/{c}: JS error: {e}'))
             page.on('response', lambda r, s=size, c=scheme: r.status >= 400 and '/data/' in r.url
                     and problems.append(f'{s}/{c}: {r.status} loading {r.url}'))
+            return page
+
+        async def run_mode(w, h, size, scheme):
+            page = await new_page(w, h, size, scheme)
+            hung = 0
             for v in VIEWS:
-                await page.goto(base + v, wait_until='load')
-                try:  # some pages keep polling (scores, weather), so networkidle can never come
-                    await page.wait_for_load_state('networkidle', timeout=5000)
-                except Exception:
-                    pass
-                await page.wait_for_timeout(600)
-                wide = await page.evaluate('document.documentElement.scrollWidth - innerWidth')
-                if wide > 1:
-                    problems.append(f'{size}/{scheme} {v}: page scrolls sideways by {wide}px')
-                if v in SHARE_VIEWS:
-                    try:  # the buttons appear after the data loads and a short debounce, so wait for one instead of guessing
-                        await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
-                    except Exception:
-                        problems.append(f'{size}/{scheme} {v}: no visible "Share this" button on any chart or table')
-                if v in CARD_VIEWS:
-                    try:  # the button needs the data, then drawing the card needs the photo to load or time out
-                        await page.wait_for_function("[...document.querySelectorAll('[data-card]')].some(b => b.offsetParent)", timeout=6000)
-                        await page.evaluate("[...document.querySelectorAll('[data-card]')].find(b => b.offsetParent).click()")
-                        await page.wait_for_function("document.querySelector('.ps-dlg[open] img') && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=15000)
-                        wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
-                        if wh != [1080, 1350]:
-                            problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
-                    except Exception:
-                        problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
-                    try:  # the carousel end slide from the same preview: same size, names the page
-                        await page.evaluate("document.querySelector('.ps-dlg[open] [data-a=end]').click()")
-                        await page.wait_for_function("document.querySelector('#ps-dlg-t').textContent === 'Carousel end slide' && document.querySelector('.ps-dlg[open] img').complete && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=8000)
-                        wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
-                        if wh != [1080, 1350]:
-                            problems.append(f'{size}/{scheme} {v}: end slide is {wh[0]}x{wh[1]}, expected 1080x1350')
-                    except Exception:
-                        problems.append(f'{size}/{scheme} {v}: "Make end slide" did not make a slide')
-                if v == '/stats':  # the Season stats table must fill with player rows
+                if hung >= 2:  # two hangs in one mode: stop that mode rather than spend the job's time limit on it
+                    problems.append(f'{size}/{scheme} {v} and the views after it: not checked (two views already hung)')
+                    break
+                # page.evaluate has no timeout of its own, so a page stuck in a script would hang the whole check
+                # (and the workflow) without saying where. Cap each view, name it, and carry on in a fresh page.
+                try:
+                    await asyncio.wait_for(check_view(page, v, size, scheme), VIEW_LIMIT)
+                except asyncio.TimeoutError:
+                    problems.append(f'{size}/{scheme} {v}: page did not finish within {VIEW_LIMIT}s (hung)')
+                    print(f'HUNG {size}/{scheme} {v}', flush=True)
+                    hung += 1
                     try:
-                        await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)
+                        await asyncio.wait_for(page.close(), 10)
                     except Exception:
-                        problems.append(f'{size}/{scheme} #stats: the Season stats table has no rows')
-                if args.shots:
-                    os.makedirs(args.shots, exist_ok=True)
-                    await page.screenshot(path=os.path.join(args.shots, f"{v.strip('/#').replace('/', '_') or 'home'}-{size}-{scheme}.png"))
+                        pass
+                    page = await new_page(w, h, size, scheme)
             await page.close()
+
+        async def check_view(page, v, size, scheme):
+            await page.goto(base + v, wait_until='load')
+            try:  # some pages keep polling (scores, weather), so networkidle can never come
+                await page.wait_for_load_state('networkidle', timeout=5000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(600)
+            wide = await page.evaluate('document.documentElement.scrollWidth - innerWidth')
+            if wide > 1:
+                problems.append(f'{size}/{scheme} {v}: page scrolls sideways by {wide}px')
+            if v in SHARE_VIEWS:
+                try:  # the buttons appear after the data loads and a short debounce, so wait for one instead of guessing
+                    await page.wait_for_function("[...document.querySelectorAll('.ps-share')].some(b => b.offsetParent)", timeout=6000)
+                except Exception:
+                    problems.append(f'{size}/{scheme} {v}: no visible "Share this" button on any chart or table')
+            if v in CARD_VIEWS:
+                try:  # the button needs the data, then drawing the card needs the photo to load or time out
+                    await page.wait_for_function("[...document.querySelectorAll('[data-card]')].some(b => b.offsetParent)", timeout=6000)
+                    await page.evaluate("[...document.querySelectorAll('[data-card]')].find(b => b.offsetParent).click()")
+                    await page.wait_for_function("document.querySelector('.ps-dlg[open] img') && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=15000)
+                    wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
+                    if wh != [1080, 1350]:
+                        problems.append(f'{size}/{scheme} {v}: share card is {wh[0]}x{wh[1]}, expected 1080x1350')
+                except Exception:
+                    problems.append(f'{size}/{scheme} {v}: the Share button did not make a card')
+                try:  # the carousel end slide from the same preview: same size, names the page
+                    await page.evaluate("document.querySelector('.ps-dlg[open] [data-a=end]').click()")
+                    await page.wait_for_function("document.querySelector('#ps-dlg-t').textContent === 'Carousel end slide' && document.querySelector('.ps-dlg[open] img').complete && document.querySelector('.ps-dlg[open] img').naturalWidth > 0", timeout=8000)
+                    wh = await page.evaluate("[document.querySelector('.ps-dlg img').naturalWidth, document.querySelector('.ps-dlg img').naturalHeight]")
+                    if wh != [1080, 1350]:
+                        problems.append(f'{size}/{scheme} {v}: end slide is {wh[0]}x{wh[1]}, expected 1080x1350')
+                except Exception:
+                    problems.append(f'{size}/{scheme} {v}: "Make end slide" did not make a slide')
+            if v == '/stats':  # the Season stats table must fill with player rows
+                try:
+                    await page.wait_for_function("document.querySelectorAll('#hs-table tbody tr').length > 5", timeout=6000)
+                except Exception:
+                    problems.append(f'{size}/{scheme} #stats: the Season stats table has no rows')
+            if args.shots:
+                os.makedirs(args.shots, exist_ok=True)
+                await page.screenshot(path=os.path.join(args.shots, f"{v.strip('/#').replace('/', '_') or 'home'}-{size}-{scheme}.png"))
         await asyncio.gather(*(run_mode(w, h, size, scheme) for w, h, size in SIZES for scheme in ('light', 'dark')))
         await browser.close()
     for line in problems:
