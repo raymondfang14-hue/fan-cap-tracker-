@@ -1,0 +1,50 @@
+# IndexNow: tells Bing (and through it DuckDuckGo and Yahoo) which pages changed, so they re-read them within days
+# instead of waiting for their own crawl. The work is tools/indexnow.py; the key file is the <32 hex>.txt at the repo root.
+#
+# Runs after every finished nflverse refresh (its pushes use the workflow token, which does not start a push workflow,
+# hence workflow_run) and after any other push to main that changes sitemap.xml. Run it by hand with "all" once to send
+# every sitemap address.
+name: IndexNow
+
+on:
+  workflow_run:
+    workflows: ['nflverse refresh']
+    types: [completed]
+  push:
+    branches: [main]
+    paths: ['sitemap.xml']
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'recent (lastmod in the last 2 days) or all'
+        required: true
+        default: recent
+        type: choice
+        options: [recent, all]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Send changed pages
+        env:
+          SCOPE: ${{ inputs.scope }}
+        run: |
+          # Give Vercel time to deploy the push before Bing fetches the pages.
+          sleep 90
+          if [ "$SCOPE" = all ]; then python3 -I tools/indexnow.py --all; else python3 -I tools/indexnow.py; fi
