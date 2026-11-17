@@ -51,6 +51,11 @@
       "permanent": false
     },
     {
+      "source": "/fb",
+      "destination": "/links/facebook?utm_source=facebook&utm_medium=social&utm_campaign=bio",
+      "permanent": false
+    },
+    {
       "source": "/ig/:path*",
       "destination": "/:path*?utm_source=instagram&utm_medium=social&utm_campaign=post",
       "permanent": false
@@ -58,6 +63,11 @@
     {
       "source": "/tt/:path*",
       "destination": "/:path*?utm_source=tiktok&utm_medium=social&utm_campaign=post",
+      "permanent": false
+    },
+    {
+      "source": "/fb/:path*",
+      "destination": "/:path*?utm_source=facebook&utm_medium=social&utm_campaign=post",
       "permanent": false
     }
   ],
@@ -383,6 +393,10 @@
     },
     {
       "source": "/links/tiktok",
+      "destination": "/"
+    },
+    {
+      "source": "/links/facebook",
       "destination": "/"
     }
   ]
