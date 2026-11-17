@@ -1,6 +1,300 @@
 {
- "asOf": "2026-11-16",
+ "asOf": "2026-11-17",
  "moves": [
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Game",
+   "teams": [
+    "LAC",
+    "BAL"
+   ],
+   "players": [
+    "Jacoby Brissett",
+    "Zay Flowers"
+   ],
+   "head": "Monday night: Chargers beat Ravens 23-20 for their first win",
+   "plain": "The Chargers won for the first time this season and are 1-8. Baltimore has lost five straight and is 4-6. Jacoby Brissett threw for 340 yards in his Ravens debut, but Zay Flowers lost a fumble with about two minutes left.",
+   "source": "Pro Football Talk",
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/monday-night-football-chargers-run-past-ravens-23-20-for-first-win-of-2026",
+   "gids": [
+    "00-0033119",
+    "00-0039064"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Aidan Hutchinson",
+    "Jack Campbell"
+   ],
+   "head": "Lions DE Aidan Hutchinson tears his ACL and is out for the season",
+   "plain": "Follow-up tests confirmed the tear, which happened while he celebrated a sack in Munich. He is expected back for the start of 2027. LB Jack Campbell also has a neck injury the team is still assessing.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/follow-up-tests-confirm-torn-acl-for-lions-aidan-hutchinson",
+   "gids": [
+    "00-0037236",
+    "00-0039018"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "NE"
+   ],
+   "players": [
+    "Drake Maye"
+   ],
+   "head": "Patriots fear QB Drake Maye fractured his ankle",
+   "plain": "Maye was hurt on the first drive of the 35-10 loss to Detroit in Munich and could miss the rest of the season. More tests are coming. New England has its bye next and about $5.5M in cap space if it looks for a quarterback.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-network-patriots-qb-drake-maye-could-miss-rest-of-2026-season",
+   "gids": [
+    "00-0039851"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "MIN"
+   ],
+   "players": [
+    "Jordan Addison"
+   ],
+   "head": "Vikings WR Jordan Addison needs thumb surgery",
+   "plain": "Addison hurt the thumb in practice and is expected to miss a few weeks; a short injured reserve stint is possible. His fifth-year option was exercised, so his 2027 pay is already guaranteed.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/vikings-wr-jordan-addison-to-miss-time",
+   "gids": [
+    "00-0038994"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Coleman Shelton",
+    "Dylan McMahon"
+   ],
+   "head": "Rams lose both centers: Coleman Shelton out 4-6 weeks, Dylan McMahon to IR",
+   "plain": "Starter Shelton has a hamstring strain. Backup McMahon partly tore a patellar tendon and goes on injured reserve, so the Rams need a third option in the middle of the line.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-c-coleman-shelton-to-miss-4-6-weeks-with-hamstring-strain",
+   "gids": [
+    "00-0034114",
+    "00-0039830"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Jordan Burch",
+    "Andrew Wingard"
+   ],
+   "head": "Cardinals lose DE Jordan Burch for the season",
+   "plain": "Burch hurt his MCL in the 34-6 loss to the Rams. S Andrew Wingard has a wrist and hand injury and will miss an extended stretch.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-16",
+   "gids": [
+    "00-0040137",
+    "00-0035378"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "DAL"
+   ],
+   "players": [
+    "Tyler Booker",
+    "DaRon Bland"
+   ],
+   "head": "Cowboys G Tyler Booker has a high ankle sprain; CB DaRon Bland also hurt",
+   "plain": "Both were hurt in the 46-40 loss to the 49ers. Booker is expected to miss a few weeks, with T.J. Bass filling in. Bland has no timeline yet.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cowboys-g-tyler-booker-cb-daron-bland-dealing-with-ankle-injuries",
+   "gids": [
+    "00-0040007",
+    "00-0037275"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Zeek Biggers"
+   ],
+   "head": "Dolphins DL Zeek Biggers needs season-ending knee surgery",
+   "plain": "Biggers tore the lateral meniscus in his knee. It adds to a long injury list for a 1-8 team that already lost Zach Sieler for the year.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/dolphins-dl-zeek-biggers-to-undergo-season-ending-knee-surgery",
+   "gids": [
+    "00-0040248"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Release",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Zane Gonzalez"
+   ],
+   "head": "Dolphins waive K Zane Gonzalez after a two-point loss",
+   "plain": "Gonzalez missed two of three field goals and an extra point in the 24-22 loss to the Colts. Miami is looking for its third kicker of the season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/dolphins-waive-k-zane-gonzalez",
+   "gids": [
+    "00-0033862"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Coaching",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "Aaron Glenn"
+   ],
+   "head": "Jets coach Aaron Glenn hands defensive play-calling to Brian Duker",
+   "plain": "Glenn gave the calls to his defensive coordinator in the 31-12 loss to Buffalo. Reports say his job is in question. Geno Smith's ankle injury is not serious and he stays the starter.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jets-aaron-glenn-ceded-play-calling-duties-in-week-10-latest-on-hcs-job-security",
+   "gids": [
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-15",
+   "date": "Nov 15",
+   "kind": "Game",
+   "teams": [
+    "CIN",
+    "PIT"
+   ],
+   "players": [
+    "Joe Burrow",
+    "Ja'Marr Chase"
+   ],
+   "head": "Sunday night: Bengals rout Steelers 38-18",
+   "plain": "Joe Burrow threw for over 400 yards and four touchdowns, and Ja'Marr Chase caught 11 passes for 231 yards. Cincinnati is 7-2, tied for the AFC's best record.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-week-10-sunday-aftermath-bengals-equal-afc-s-best-kirk-cousins-returns-mendoza-debuts",
+   "gids": [
+    "00-0036442",
+    "00-0036900"
+   ]
+  },
+  {
+   "iso": "2026-11-15",
+   "date": "Nov 15",
+   "kind": "Game",
+   "teams": [
+    "MIN",
+    "GB",
+    "SEA",
+    "LV",
+    "SF",
+    "DAL"
+   ],
+   "players": [
+    "Kirk Cousins",
+    "Fernando Mendoza"
+   ],
+   "head": "Week 10: Cousins wins his Vikings return, 49ers outlast Cowboys 46-40",
+   "plain": "Kirk Cousins led Minnesota to a 30-10 win at Green Bay days after the trade. Fernando Mendoza lost his first start 21-13 to Seattle. San Francisco won a 46-40 shootout in Dallas, and Detroit beat New England 35-10 in Munich.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-week-10-sunday-aftermath-bengals-equal-afc-s-best-kirk-cousins-returns-mendoza-debuts",
+   "gids": [
+    "00-0029604",
+    "00-0041562"
+   ]
+  },
+  {
+   "iso": "2026-11-15",
+   "date": "Nov 15",
+   "kind": "Game",
+   "teams": [
+    "LAR",
+    "ARI"
+   ],
+   "players": [
+    "Carson Beck"
+   ],
+   "head": "Rams rout Cardinals 34-6 in Carson Beck's first start",
+   "plain": "The rookie went 11 of 18 for 108 yards with two interceptions and a lost fumble, and was sacked five times. Arizona falls to 3-7.",
+   "source": "Yahoo Sports",
+   "url": "https://sports.yahoo.com/nfl/los-angeles-rams-arizona-cardinals-20261115022/",
+   "gids": [
+    "00-0041561"
+   ]
+  },
+  {
+   "iso": "2026-11-15",
+   "date": "Nov 15",
+   "kind": "Injury",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Josh Jacobs"
+   ],
+   "head": "Packers RB Josh Jacobs has finger surgery, out 2-3 weeks",
+   "plain": "Jacobs broke a finger on his right hand. Green Bay did not put him on injured reserve and brought RB Chris Brooks back from IR.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/packers-josh-jacobs-undergoes-finger-surgery-rb-chris-brooks-activated",
+   "gids": [
+    "00-0035700"
+   ]
+  },
+  {
+   "iso": "2026-11-15",
+   "date": "Nov 15",
+   "kind": "Injury",
+   "teams": [
+    "TB"
+   ],
+   "players": [
+    "Baker Mayfield",
+    "Easton Stick"
+   ],
+   "head": "Bucs QB Baker Mayfield's status for Detroit is in doubt",
+   "plain": "Mayfield has a foot and ankle injury from the loss to the Bears. It is not seen as long-term and he is not going on injured reserve. Tampa Bay signed Easton Stick to the active roster as cover.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/bucs-qb-baker-mayfields-week-11-availability-in-doubt",
+   "gids": [
+    "00-0034855",
+    "00-0035282"
+   ]
+  },
   {
    "iso": "2026-11-14",
    "date": "Nov 14",
@@ -1020,26 +1314,6 @@
   {
    "iso": "2026-11-05",
    "date": "Nov 5",
-   "kind": "Injury",
-   "teams": [
-    "BAL"
-   ],
-   "players": [
-    "Lamar Jackson",
-    "Tyler Huntley"
-   ],
-   "head": "Ravens place QBs Lamar Jackson and Tyler Huntley on injured reserve",
-   "plain": "Both Baltimore quarterbacks are on IR. Huntley's turf toe ends his season. The Ravens activated rookie QB Austin Reed and have undrafted rookie Joe Fagnano as the Week 9 starter, so they went looking for help at the position.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-place-lamar-jackson-tyler-huntley-on-ir",
-   "gids": [
-    "00-0034796",
-    "00-0035993"
-   ]
-  },
-  {
-   "iso": "2026-11-05",
-   "date": "Nov 5",
    "kind": "Trade",
    "teams": [
     "BAL",
@@ -1074,80 +1348,6 @@
    },
    "gids": [
     "00-0033119"
-   ]
-  },
-  {
-   "iso": "2026-11-04",
-   "date": "Nov 4",
-   "kind": "League",
-   "teams": [],
-   "players": [
-    "Arthur Maulet"
-   ],
-   "head": "CB Arthur Maulet retires at 33",
-   "plain": "Maulet played nine NFL seasons for six teams. No contract figures were reported.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/cb-arthur-maulet-retiring-at-33",
-   "gids": [
-    ""
-   ]
-  },
-  {
-   "iso": "2026-11-04",
-   "date": "Nov 4",
-   "kind": "Injury",
-   "teams": [
-    "BAL"
-   ],
-   "players": [
-    "Tyler Huntley"
-   ],
-   "head": "Ravens QB Tyler Huntley out for the season with turf toe",
-   "plain": "Huntley will have surgery and is expected to go on injured reserve. With Lamar Jackson also out, Joe Fagnano is set to make his first career start in Week 9 and Baltimore could look for a veteran QB before the Nov. 10 trade deadline.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-tyler-huntley-to-miss-rest-of-season-with-turf-toe-injury",
-   "gids": [
-    "00-0035993"
-   ]
-  },
-  {
-   "iso": "2026-11-04",
-   "date": "Nov 4",
-   "kind": "Injury",
-   "teams": [
-    "CLE"
-   ],
-   "players": [
-    "Deshaun Watson"
-   ],
-   "head": "Browns QB Deshaun Watson in concussion protocol",
-   "plain": "Watson took a helmet-to-helmet hit in Week 8. He must clear the protocol by Saturday to play Week 9; otherwise Shedeur Sanders starts.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/browns-qb-deshaun-watson-placed-in-concussion-protocol",
-   "gids": [
-    "00-0033537"
-   ]
-  },
-  {
-   "iso": "2026-11-04",
-   "date": "Nov 4",
-   "kind": "Injury",
-   "teams": [
-    "WAS"
-   ],
-   "players": [
-    "Daron Payne",
-    "Javon Kinlaw",
-    "Jeremy McNichols"
-   ],
-   "head": "Commanders put DT Daron Payne, DL Javon Kinlaw and RB Jeremy McNichols on IR",
-   "plain": "All three are done for the year: Payne with a fractured foot, Kinlaw after MCL surgery. Washington also claimed RB Robert Henry Jr. off waivers from Seattle.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/commanders-make-series-of-moves",
-   "gids": [
-    "00-0034333",
-    "00-0036260",
-    "00-0033955"
    ]
   },
   {
@@ -1223,302 +1423,6 @@
    "gids": [
     "00-0034161",
     "00-0039373"
-   ]
-  },
-  {
-   "iso": "2026-11-02",
-   "date": "Nov 2",
-   "kind": "League",
-   "teams": [
-    "ATL"
-   ],
-   "players": [
-    "James Pearce Jr."
-   ],
-   "head": "Falcons DE James Pearce Jr. finishes eight-game suspension",
-   "plain": "Pearce is eligible to be activated after serving his suspension under the personal conduct policy. The Falcons also waived EDGE Jared Ivey and Drake Jackson.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-2-26",
-   "gids": [
-    "00-0040578"
-   ]
-  },
-  {
-   "iso": "2026-11-02",
-   "date": "Nov 2",
-   "kind": "Coaching",
-   "teams": [
-    "CAR"
-   ],
-   "players": [
-    "DeAngelo Hall"
-   ],
-   "head": "Panthers hire DeAngelo Hall as cornerbacks coach",
-   "plain": "The former Pro Bowl cornerback returns to Carolina's staff after the team fired defensive coordinator Ejiro Evero. Todd Wash is the interim coordinator.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/deangelo-hall-returns-to-panthers-coaching-staff",
-   "gids": [
-    ""
-   ]
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "Game",
-   "teams": [
-    "BUF",
-    "BAL",
-    "CIN",
-    "TEN",
-    "ARI",
-    "DAL",
-    "DET",
-    "MIN"
-   ],
-   "players": [],
-   "head": "Week 8 early games: Bills rout Ravens 36-10, Bengals top Titans 43-36 in OT",
-   "plain": "Cardinals beat Cowboys 33-30 in overtime and Lions edged Vikings 19-15. Jahmyr Gibbs ran for 153 yards and Joe Burrow threw five touchdowns.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "Game",
-   "teams": [
-    "JAX",
-    "IND",
-    "LV",
-    "NYJ",
-    "PIT",
-    "CLE",
-    "TB",
-    "ATL"
-   ],
-   "players": [],
-   "head": "Week 8: Jaguars 42-7 over Colts, Raiders 38-33 over Jets, Steelers 27-6 over Browns",
-   "plain": "Buccaneers shut out the Falcons 16-0 in the rain, with Bucky Irving running for 170 yards. The Jets fell to 2-6.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "Game",
-   "teams": [
-    "LAR",
-    "LAC",
-    "DEN",
-    "KC",
-    "NE",
-    "MIA",
-    "WAS",
-    "PHI"
-   ],
-   "players": [],
-   "head": "Week 8 late games: Broncos top Chiefs 28-24, Commanders beat Eagles 27-10",
-   "plain": "Rams beat Chargers 24-9 (Chargers 0-7), Patriots beat Dolphins 24-19. Philadelphia has lost six straight.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/2026-nfl-season-week-8-what-we-learned-from-sunday-s-games"
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "Injury",
-   "teams": [
-    "DET"
-   ],
-   "players": [
-    "Jack Campbell"
-   ],
-   "head": "Lions LB Jack Campbell hospitalized with a neck injury",
-   "plain": "Campbell was carted off in the fourth quarter against the Vikings and stayed in a local hospital overnight for monitoring. The Lions will give more updates.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/lions-lb-jack-campbell-hospitalized-with-neck-injury",
-   "gids": [
-    "00-0039018"
-   ]
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "Injury",
-   "teams": [
-    "BAL"
-   ],
-   "players": [
-    "Lamar Jackson"
-   ],
-   "head": "Ravens QB Lamar Jackson to have thumb surgery, goes on injured reserve",
-   "plain": "Jackson hurt his thumb on the first snap of the Week 8 loss in Buffalo. He will miss at least four games and it is unclear if he returns this season. Baltimore is down to rookie Joe Fagnano as its only healthy QB.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/ravens-qb-lamar-jackson-to-undergo-thumb-surgery-land-on-ir",
-   "gids": [
-    "00-0034796"
-   ]
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "League",
-   "teams": [
-    "PHI"
-   ],
-   "players": [
-    "Saquon Barkley"
-   ],
-   "head": "Eagles will not trade RB Saquon Barkley before the deadline",
-   "plain": "ESPN reports Philadelphia is keeping Barkley, who is under contract through 2028. The trade deadline is Nov 10.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/eagles-will-not-trade-rb-saquon-barkley-prior-to-deadline",
-   "gids": [
-    "00-0034844"
-   ]
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "League",
-   "teams": [
-    "JAX",
-    "PIT",
-    "KC"
-   ],
-   "players": [
-    "Brian Thomas Jr."
-   ],
-   "head": "Steelers and Chiefs linked to Jaguars WR Brian Thomas Jr.",
-   "plain": "Jacksonville is reportedly open to moving Thomas but may wait until closer to the Nov 10 deadline.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/steelers-chiefs-to-pursue-jaguars-wr-brian-thomas-jr",
-   "gids": [
-    "00-0039893"
-   ]
-  },
-  {
-   "iso": "2026-11-01",
-   "date": "Nov 1",
-   "kind": "League",
-   "teams": [
-    "LV"
-   ],
-   "players": [
-    "Kirk Cousins"
-   ],
-   "head": "Raiders want Kirk Cousins to keep starting as long as possible",
-   "plain": "Per ESPN, Las Vegas is not ruling out a QB change but does not blame Cousins for the slump. Rookie Fernando Mendoza would be next. Las Vegas named rookie Fernando Mendoza its starter after the trade.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/raiders-not-ruling-out-qb-change",
-   "gids": [
-    "00-0029604"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "League",
-   "teams": [
-    "IND"
-   ],
-   "players": [
-    "Jonathan Taylor"
-   ],
-   "head": "Colts open to trading RB Jonathan Taylor",
-   "plain": "Indianapolis is not actively shopping him but would listen. The Giants and Vikings are seen as the front-runners.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/colts-willing-to-trade-rb-jonathan-taylor",
-   "gids": [
-    "00-0036223"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "League",
-   "teams": [
-    "GB"
-   ],
-   "players": [
-    "Josh Jacobs"
-   ],
-   "head": "NFL reviewing new abuse allegations against Packers RB Josh Jacobs",
-   "plain": "The league says it will review the new allegations as part of its open investigation.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/nfl-reviewing-new-josh-jacobs-abuse-allegations",
-   "gids": [
-    "00-0035700"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "Injury",
-   "teams": [
-    "LAC"
-   ],
-   "players": [
-    "Derwin James"
-   ],
-   "head": "Chargers place S Derwin James on injured reserve",
-   "plain": "James has a hamstring injury and can return no earlier than Week 12.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chargers-could-place-s-derwin-james-on-ir",
-   "gids": [
-    "00-0034790"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "Injury",
-   "teams": [
-    "DEN"
-   ],
-   "players": [
-    "RJ Harvey"
-   ],
-   "head": "Broncos place RB RJ Harvey on injured reserve",
-   "plain": "Harvey has a knee injury. Denver added S Taylor Rapp from the practice squad.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/broncos-to-place-rb-rj-harvey-on-ir",
-   "gids": [
-    "00-0040730"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "Injury",
-   "teams": [
-    "NYJ"
-   ],
-   "players": [
-    "T'Vondre Sweat"
-   ],
-   "head": "Jets place DT T'Vondre Sweat on injured reserve",
-   "plain": "Sweat has a knee injury and will miss at least four games. New York signed DT Payton Page from the practice squad.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/jets-placing-dt-tvondre-sweat-on-ir",
-   "gids": [
-    "00-0039886"
-   ]
-  },
-  {
-   "iso": "2026-10-31",
-   "date": "Oct 31",
-   "kind": "Injury",
-   "teams": [
-    "KC"
-   ],
-   "players": [
-    "L'Jarius Sneed"
-   ],
-   "head": "Chiefs CB L'Jarius Sneed headed back to injured reserve",
-   "plain": "Sneed has a knee issue. CB Melvin Smith takes his roster spot.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/chiefs-cb-ljarius-sneed-headed-back-to-ir",
-   "gids": [
-    "00-0036374"
    ]
   },
   {
