@@ -84,5 +84,61 @@
   "line2": "Brock Purdy. 98.",
   "text": "Not Burrow (95). Not Lawrence (92). And he's paid less than both.",
   "sticker": "See why"
+ },
+ "crop": {
+  "cover": {
+   "ig": [
+    "auto 118%",
+    "50% 0%"
+   ],
+   "tt": [
+    "auto 100%",
+    "50% 0%"
+   ],
+   "story": [
+    "auto 100%",
+    "50% 0%"
+   ]
+  },
+  "p1": {
+   "ig": [
+    "auto 100%",
+    "50% 0%"
+   ],
+   "tt": [
+    "auto 100%",
+    "50% 0%"
+   ]
+  },
+  "p2": {
+   "ig": [
+    "auto 100%",
+    "46% 0%"
+   ],
+   "tt": [
+    "auto 100%",
+    "50% 0%"
+   ]
+  },
+  "p3": {
+   "ig": [
+    "auto 100%",
+    "50% 0%"
+   ],
+   "tt": [
+    "auto 100%",
+    "48% 0%"
+   ]
+  },
+  "cta": {
+   "ig": [
+    "auto 100%",
+    "50% 0%"
+   ],
+   "tt": [
+    "auto 100%",
+    "50% 0%"
+   ]
+  }
  }
 }
