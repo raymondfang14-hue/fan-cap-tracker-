@@ -85,7 +85,7 @@ def main(a):
     print(report)
     if a.out:
         open(a.out, 'w').write(report + '\n')
-    return 1 if errs == len(res) else 0
+    return 0   # post the report even when every page failed: it says why (usually no PSI_API_KEY)
 
 
 if __name__ == '__main__':

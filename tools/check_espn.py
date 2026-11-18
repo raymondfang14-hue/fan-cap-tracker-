@@ -63,37 +63,40 @@ def walk(o):
 
 
 def aid(x):
-    """ESPN athlete id from an athlete object or a $ref link."""
+    """ESPN athlete id from an athlete object (its id, or the id inside its $ref, profile link or headshot link) or a $ref."""
     if isinstance(x, dict):
         if x.get('id'):
             return str(x['id'])
-        x = x.get('$ref', '')
-    m = re.search(r'/athletes/(\d+)', x or '')
-    return m.group(1) if m else ''
+        x = json.dumps(x)   # the injury list gives no id field, only links: .../player/_/id/<id>/..., .../full/<id>.png
+    m = re.search(r'/athletes/(\d+)|/id/(\d+)|/players/full/(\d+)\.png', x or '')
+    return next(g for g in m.groups() if g) if m else ''
 
 
-def espn_injuries():
-    """{espn athlete id: (team, name, status)} from ESPN's league injury list."""
+def espn_injuries(by_name):
+    """{espn athlete id: (team, name, status)} from ESPN's league injury list. by_name: team display name -> our code."""
     data, out = get(SITE + '/injuries'), {}
     for grp in data.get('injuries', []):
-        team = FIX.get(grp.get('abbreviation', ''), grp.get('abbreviation', ''))
+        team = FIX.get(grp.get('abbreviation', ''), grp.get('abbreviation', '')) or by_name.get(grp.get('displayName', ''), '')
         for rec in walk(grp):
             ath = rec.get('athlete')
             if not isinstance(ath, dict) or 'status' not in rec:
                 continue
             t = ((ath.get('team') or {}).get('abbreviation')) or team
             st = rec['status'] if isinstance(rec['status'], str) else (rec['status'] or {}).get('name', '')
-            out[aid(ath)] = (FIX.get(t, t), ath.get('displayName', ''), st)
+            i = aid(ath)
+            if i:
+                out[i] = (FIX.get(t, t), ath.get('displayName', ''), st)
     return out
 
 
 def espn_teams():
     data = get(SITE + '/teams')
-    out = {}
+    out, names = {}, {}
     for t in walk(data):
         if t.get('abbreviation') and t.get('id') and t.get('displayName'):
-            out[FIX.get(t['abbreviation'], t['abbreviation'])] = str(t['id'])
-    return out
+            code = FIX.get(t['abbreviation'], t['abbreviation'])
+            out[code] = str(t['id']); names[t['displayName']] = code
+    return out, names
 
 
 def espn_depth(team_id, season):
@@ -130,7 +133,12 @@ def main(a):
                     ours[r[5]] = (team, r[0], r[2] or '', r[4] or '')
     week_teams = {t for g in gday.get('games', {}).values() for t in (g.get('inj') or {})}
     try:
-        inj = espn_injuries(); ok += 1
+        teams, by_name = espn_teams()
+    except Exception as ex:
+        teams, by_name = {}, {}
+        lines += [f'ESPN team list could not be read ({ex}).', '']
+    try:
+        inj = espn_injuries(by_name); ok += 1
         diff = []
         for e, (team, name, st) in inj.items():
             g = e2g.get(e)
@@ -154,7 +162,9 @@ def main(a):
 
     # Depth charts
     try:
-        teams = espn_teams(); ok += 1
+        if not teams:
+            raise RuntimeError('no team list')
+        ok += 1
         diff, skipped = [], []
         for team in sorted(depth.get('teams', {})):
             if team not in teams:
