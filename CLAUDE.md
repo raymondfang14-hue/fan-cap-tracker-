@@ -62,6 +62,11 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - `python3 -I tools/check_ledger.py` checks `data/ledger.csv` for missing sources, totals that don't add up and duplicates. After adding ledger rows, have the `ledger-checker` agent compare them with their source links.
 - `.mcp.json` adds Playwright (browser checks) and Vercel (deploy logs) for Claude Code sessions.
 
+## Feature pause (Nov 16 to Nov 30, 2026)
+- No new app features until Dec 1, 2026 (Growth Playbook, "Site audit, Nov 16", move 8: eight features shipped after Nov 9 and visitors still fell 29%; the limit is how many people arrive). That means no new views, tools, routes or panels in `src.html`, and no new interactive sections.
+- Still allowed: bug fixes, accuracy fixes, the daily/gameday/weekly refreshes and news sweeps, the static search pages in `tools/build_seo.py` (titles, answers, weekly pages, thinning), the Search Console report, and anything that helps people find the site (share cards, short links, posts).
+- If the owner asks for a new app feature in this window, remind them of the pause in one line and build it only if they confirm.
+
 ## Shipping
 - Push changes to GitHub without asking first (standing instruction from the owner).
 - Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
