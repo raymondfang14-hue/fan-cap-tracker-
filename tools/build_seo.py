@@ -372,29 +372,45 @@ def player_summary(p, f):
     return out
 
 
-def player_faq(p, f):
+def pay_questions(p, f):
+    """The pay questions people search ("how much does X make", "how long is X's contract", guarantees), answered from
+    confirmed figures only. Pages that lead with the contract print these as headings right under the title."""
     T = TEAMS[p.team]
     n = p.name
     q = []
     unver = 'PlainStats shows contract figures only after a named report confirms them, and this one is still being verified.'
-    calc = ' PlainStats calculated this from the CBA rookie scale.' if p.prov == 'f' else ''
+    calc = {'f': ' PlainStats calculated this from the draft slot and the CBA rookie scale.',
+            'm': ' PlainStats calculated this from the CBA league-minimum salary.', 'p': ' This is practice squad pay set by the CBA.'}.get(p.prov, '')
+    kind = 'rookie contract' if p.prov == 'f' else 'contract'
     if f['total'] or f['apy']:
-        a = f"{n} has a {mon(f['total'])} contract" if f['total'] else f"{n} earns about {mon(f['apy'])} a year"
-        if f['apy'] and f['total']:
-            a += f", which averages {mon(f['apy'])} a year"
-        a += '.' + calc
-        q.append((f'How much does {n} make?', a))
+        deal = (f"{f['years']}-year, {mon(f['total'])} {kind}" if f['years'] and f['total'] else
+                f"{mon(f['total'])} {kind}" if f['total'] else None)
+        if p.prov == 'p' and f['apy']:
+            a, calc = f"{n} is on the {T['full']} practice squad, where the CBA sets his {SEASON_YEAR} pay at {mon(f['apy'])}.", ''
+        elif f['apy'] and f['total'] and f['apy'] == f['total'] and not f['years']:
+            a = f"{n} makes {mon(f['apy'])} in {SEASON_YEAR}, on a one-year {kind} with the {T['full']}."
+        elif f['apy'] and deal:
+            a = f"{n} makes {mon(f['apy'])} a year on average, on {article(deal)} {deal} with the {T['full']}."
+        elif f['apy']:
+            a = f"{n} makes {mon(f['apy'])} a year on average with the {T['full']}."
+        else:
+            a = f"{n} has {article(deal)} {deal} with the {T['full']}."
+        q.append((f'How much does {n} make?', a + calc))
+    elif f['cap']:
+        q.append((f'How much does {n} make?', f"{n} counts {mon(f['cap'])} against the {T['name']}' {SEASON_YEAR} cap. The total value of his {kind} is being verified."))
     elif f['base']:
         q.append((f'How much does {n} make?', f"{n} went undrafted, so his {SEASON_YEAR} base salary is the CBA league minimum of at least {mon(f['base'])}. The length, signing bonus and guarantees of his deal are being verified."))
     else:
         q.append((f'How much does {n} make?', f"{unver}"))
     if f['end'] or f['years']:
-        a = f"{poss(n)} contract"
+        a = f"{poss(n)} {kind}"
         if f['years']:
             a += f" is {f['years']} year{'' if f['years'] == 1 else 's'}"
-            a += f" and runs through {f['end']}." if f['end'] else '.'
+            a += f" and runs through the {f['end']} season." if f['end'] else '.'
         else:
             a += f" runs through the {f['end']} season."
+        if f['end'] and p.prov not in ('f', 'p'):  # rookie deals can grow a fifth-year option; practice squad deals are not free agency
+            a += f" Unless it is extended, {int(f['end']) + 1} is the first year he could become a free agent."
         q.append((f"How long is {poss(n)} contract?", a))
     if f['gtd'] is not None and f['total']:
         a = f"{mon(f['gtd'])} of the {mon(f['total'])} is guaranteed."
@@ -403,6 +419,13 @@ def player_faq(p, f):
         if p.prov == 'f':
             a += ' These are PlainStats calculations.'
         q.append((f"How much of {poss(n)} contract is guaranteed?", a))
+    return q
+
+
+def player_faq(p, f):
+    T = TEAMS[p.team]
+    n = p.name
+    q = pay_questions(p, f)
     if f['cap']:
         q.append((f"What is {poss(n)} {SEASON_YEAR} cap hit?", f"{n} counts {mon(f['cap'])} against the {T['name']}' {SEASON_YEAR} cap."))
     q.append((f'What team does {n} play for?', f"{n} plays {POSNAME.get(p.pos, p.pos)} for the {T['full']}."))
@@ -468,7 +491,7 @@ h1{font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;margin:.2em 0 .4em}h2
 .card dt{color:var(--mu)}.card dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--ln)}td.r,th.r{text-align:right}
 .scroll{overflow-x:auto}.nw{white-space:nowrap}.note{color:var(--mu);font-size:.85rem}.cta{display:inline-block;background:var(--br);color:#fff;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:600;margin:8px 0}.cta.alt{background:transparent;color:var(--br);border:1px solid var(--br);margin-left:8px}
-.faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
+.pay h2{font-size:1.08rem;margin:1em 0 .2em}.pay p{margin:0 0 .6em;font-size:1.05rem}.faq h3{margin-top:1.1em}.faq p{margin:.2em 0}.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}.chips a{display:block;background:var(--sf);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:.9rem}
 ul.list{columns:2 220px;list-style:none;padding:0;margin:0}ul.list li{padding:3px 0;break-inside:avoid}
 ul.doors{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:10px;list-style:none;padding:0;margin:0}
 ul.doors a{display:block;height:100%;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:12px 14px;text-decoration:none;color:var(--fg)}
@@ -677,15 +700,15 @@ def plainscore_html(p, ps):
 #   stats     qualified this season (has a PlainScore) and not on a big reported deal ("fernando mendoza stats"),
 #             or has played but has no confirmed contract
 # Contract figures still come only from contract_facts(), so an unconfirmed deal never reaches a title.
-BIG_DEAL = 5_000_000  # a reported deal at or above this a year stays contract-first even when he is playing well
 
 
 def page_intent(p, f, ps):
-    reported = p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap'])
-    if ps and not (reported and (f['apy'] or 0) >= BIG_DEAL):
-        return 'stats'
-    if reported:
+    # A contract a named report confirms always leads: nearly every search that shows these pages is "<name> contract"
+    # or a pay question ("how much does <name> make"), and the confirmed deal is what other sites are slower to explain.
+    if p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap']):
         return 'contract'
+    if ps:
+        return 'stats'
     if p.prov == 'f' and (f['total'] or f['apy'] or f['cap']):
         return 'rookie'
     if f['base'] and not (f['total'] or f['apy'] or f['cap']):
@@ -986,6 +1009,7 @@ def build_player(p):
     f = contract_facts(p)
     summary = player_summary(p, f)
     faq = player_faq(p, f)
+    pay_q = pay_questions(p, f)
     ps = plainscore(p, f)
     if ps:
         faq.insert(1, (f"What is {poss(p.name)} PlainScore?", plainscore_sentence(p, ps) + ' PlainScore ranks his play rating against everyone at his position with enough snaps.'))
@@ -1035,9 +1059,19 @@ def build_player(p):
     # Stats-first pages put the season (PlainScore, stats) above the contract; the rest lead with the contract.
     stats_html += gamelog_html(p)
     main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent == 'stats' else (deal_html + plainscore_html(p, ps) + stats_html)
+    # Pages that lead with a confirmed contract open with the pay questions people search, each a heading with a
+    # one-sentence answer, in place of the summary (which says the same). They are left out of the "Quick answers" at
+    # the bottom so the numbers are not repeated, and stay in the FAQ JSON-LD because they are on the page.
+    pay_first = intent in ('contract', 'rookie', 'salary') and has_deal
+    if pay_first:
+        top_html = '<section class="pay">' + ''.join(f'<h2>{esc(q)}</h2><p>{esc(a)}</p>' for q, a in pay_q) + '</section>'
+        shown = {q for q, _ in pay_q}
+        rest = [x for x in faq if x[0] not in shown]
+    else:
+        top_html, rest = f'<p class="lede">{esc(summary)}</p>', faq
     body = (f'<div class="id">{img_html}<div><h1>{esc(h1)}</h1></div></div>'
-            f'<p class="lede">{esc(summary)}</p>{latest_html(p)}{main_html}'
-            f'{faq_html(faq)}'
+            f'{top_html}{latest_html(p)}{main_html}'
+            f'{faq_html(rest) if rest else ""}'
             f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
             f'{vs_links_html(p)}'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
