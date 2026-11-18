@@ -26,15 +26,20 @@ SPOTS = {'qb': ('O', 'QB'), 'rb': ('O', 'RB'), 'te': ('O', 'TE'), 'lt': ('O', 'L
 SERIOUS = ('out', 'doubtful', 'injured reserve', 'ir', 'suspension', 'pup', 'physically unable to perform')
 
 
+DEADLINE = time.time() + 8 * 60   # the whole check stops asking ESPN after 8 minutes and reports what it has
+
+
 def get(url):
-    for attempt in range(3):
+    for attempt in range(2):
+        if time.time() > DEADLINE:
+            raise TimeoutError('time limit reached')
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=40) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=20) as r:
                 return json.load(r)
         except Exception:
-            if attempt == 2:
+            if attempt == 1:
                 raise
-            time.sleep(2 * (attempt + 1))
+            time.sleep(2)
 
 
 def espn_ids(path):
@@ -138,7 +143,10 @@ def main(a):
             if st.lower() in ('out', 'doubtful') and g not in {e2g.get(e) for e in inj}:
                 diff.append((team, name, 'not on ESPN list', st))
         found['injuries'] = diff
-        lines += [f'### Injuries: {len(diff)} differences', '']
+        wk = [e for e, v in inj.items() if v[0] in week_teams]
+        lines += [f'### Injuries: {len(diff)} differences', '',
+                  f'ESPN lists {len(inj)} injured players, {len(wk)} on teams playing this week ({sum(1 for e in wk if e2g.get(e))} matched to a gsis id); '
+                  f'our report has {len(ours)}.', '']
         lines += (['| Team | Player | ESPN | Ours |', '| --- | --- | --- | --- |'] +
                   [f'| {t} | {n} | {s} | {o} |' for t, n, s, o in sorted(diff)] if diff else ['None.']) + ['']
     except Exception as ex:
@@ -147,14 +155,14 @@ def main(a):
     # Depth charts
     try:
         teams = espn_teams(); ok += 1
-        diff = []
+        diff, skipped = [], []
         for team in sorted(depth.get('teams', {})):
             if team not in teams:
                 continue
             try:
                 ed = espn_depth(teams[team], season)
             except Exception as ex:
-                diff.append((team, '-', f'not read ({ex})', '', 0)); continue
+                skipped.append(f'{team} ({ex})'); continue
             ourt = depth['teams'][team]
             for key, (side, pos) in SPOTS.items():
                 es, os_ = ed.get(key), (ourt.get(side) or {}).get(pos)
@@ -170,11 +178,14 @@ def main(a):
             time.sleep(0.3)
         found['depth'] = diff
         qb = [d for d in diff if d[4] == 1]
-        lines += [f'### Depth charts: {len(diff)} differences ({len(qb)} at quarterback)', '',
+        read = sum(1 for t in depth.get('teams', {}) if t in teams) - len(skipped)
+        lines += [f'### Depth charts: {len(diff)} differences ({len(qb)} at quarterback), {read} of 32 teams compared', '',
                   'Listed starters that differ. Teams list depth charts differently, so a few line and receiver differences are normal; a '
                   'different QB1 usually means an injury or benching.', '']
         lines += (['| Team | Spot | ESPN starter | Our starter |', '| --- | --- | --- | --- |'] +
                   [f'| {t} | {p} | {e} | {o} |' for t, p, e, o, _ in sorted(diff, key=lambda d: (d[4], d[0]))] if diff else ['None.']) + ['']
+        if skipped:
+            lines += [f'Not read from ESPN: {len(skipped)} teams: ' + '; '.join(skipped[:8]) + ('...' if len(skipped) > 8 else ''), '']
     except Exception as ex:
         lines += [f'### Depth charts: ESPN could not be read ({ex})', '']
 
