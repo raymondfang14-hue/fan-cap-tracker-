@@ -1,0 +1,48 @@
+# Weekly PageSpeed Insights (Lighthouse) report: speed, accessibility, best practices and SEO scores plus Core Web Vitals for
+# the pages people land on most (tools/psi_report.py). Posts the report as a GitHub issue labelled "pagespeed", with the
+# change from last week.
+#
+# One-time setup: Google Cloud console > APIs & Services > enable "PageSpeed Insights API" > Credentials > Create API key
+# (restrict it to that API). Then GitHub repo > Settings > Secrets and variables > Actions > New secret PSI_API_KEY.
+# Without the key Google refuses most requests (429), and the report says so.
+#
+# Wednesday 10:23 AM PT (UTC-8 in winter), so the Claude daily checks the next morning can read it.
+name: PageSpeed weekly
+
+on:
+  schedule:
+    - cron: '23 18 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run PageSpeed Insights
+        env:
+          PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list --label pagespeed --state all --limit 1 --json body --jq '.[0].body // ""' > "$RUNNER_TEMP/prev.md" 2>/dev/null || true
+          python3 -I tools/psi_report.py --prev "$RUNNER_TEMP/prev.md" --out "$RUNNER_TEMP/psi.md"
+          cat "$RUNNER_TEMP/psi.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post it as an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create pagespeed --color FBCA04 --description 'Weekly PageSpeed Insights report' 2>/dev/null || true
+          gh issue create --title "PageSpeed: weekly report, week of $(date -u +%Y-%m-%d)" --label pagespeed --body-file "$RUNNER_TEMP/psi.md"

@@ -1,0 +1,55 @@
+# Daily data cross-check: compares our nflverse injury report and depth charts with ESPN's public API (tools/check_espn.py),
+# and the NFL.com transaction wire with data/moves.json and data/nfl.json (tools/nfl_transactions.py). Report only: nothing
+# on the site changes. The findings go in one GitHub issue, "Data cross-check" (label crosscheck), whose body is replaced
+# on every run, so it always shows today's list. The Claude daily refresh and daily checks tasks read it.
+#
+# Runs at 9:05 AM PT, after the 8:10 AM nflverse refresh, before the 9:38 AM Claude daily checks. Times are UTC.
+name: Data cross-check
+
+on:
+  schedule:
+    - cron: '5 17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: ESPN injuries and depth charts
+        run: |
+          curl -sSL --retry 3 -o "$RUNNER_TEMP/players.csv" \
+            https://github.com/nflverse/nflverse-data/releases/download/players/players.csv
+          python3 -I tools/check_espn.py "$RUNNER_TEMP/players.csv" --out "$RUNNER_TEMP/espn.md" \
+            || echo "ESPN could not be read on this run." > "$RUNNER_TEMP/espn.md"
+
+      - name: NFL.com transaction wire
+        run: |
+          python3 -I tools/nfl_transactions.py > "$RUNNER_TEMP/tx.md" \
+            || echo "The NFL.com transaction wire could not be read on this run." > "$RUNNER_TEMP/tx.md"
+
+      - name: Update the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          { echo "Updated $(date -u +%Y-%m-%d) by the Data cross-check workflow ($RUN_URL). Report only; nothing on the site changed."
+            echo; cat "$RUNNER_TEMP/espn.md"; echo; cat "$RUNNER_TEMP/tx.md"; } > "$RUNNER_TEMP/body.md"
+          cat "$RUNNER_TEMP/body.md" >> "$GITHUB_STEP_SUMMARY"
+          gh label create crosscheck --color 1D76DB --description 'Daily data cross-check' 2>/dev/null || true
+          num=$(gh issue list --label crosscheck --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$num" ]; then gh issue edit "$num" --body-file "$RUNNER_TEMP/body.md"
+          else gh issue create --title "Data cross-check" --label crosscheck --body-file "$RUNNER_TEMP/body.md"; fi

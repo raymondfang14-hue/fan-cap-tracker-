@@ -16,6 +16,8 @@ You run the PlainStats news sweep. Every item you add must come from a named rep
 
 ## Steps
 1. **Find news since the last sweep.** Read `asOf` and the newest `iso` in `data/moves.json`, then search named outlets for news after it: signings, extensions, restructures, trades, releases, IR and major injuries. Skip anything already in `moves.json` (same player, same kind, same date or report).
+   - Start with `python3 -I tools/nfl_transactions.py` (the NFL.com transaction wire, an official named source for the fact of a move). Its "Not in data/moves.json yet" list is trades and releases with no news item: find a named report for each. The wire never gives contract figures.
+   - Also read the open GitHub issue "Data cross-check" if you can (ESPN depth charts and injuries against ours): a different QB1 or a starter ESPN lists as Out is often news. Confirm it in a named report before writing anything.
 2. **Write each `moves.json` item** at the top of `moves`, newest first, in the existing shape: `iso`, `date` ("Nov 18"), `kind`, `teams`, `players`, `head` (one plain sentence), `plain` (2 to 4 plain sentences for an everyday fan: what happened and what it means for the team), `source`, `url`, `gids`. Update `asOf`.
    - `gids`: one per name in `players` (`""` for coaches). Then run `python3 -I tools/refresh_helpers.py news-gids` and fill by hand any it lists (nicknames: "Riq" is Tariq Woolen).
    - **Trades** also need a `deal` field (README, "trade deadline page"): for each team, the players it gets (`name`, `gid`, `from`) and the picks it gets, worded as the report states them. Add `dead` only when a named report gives the old team's dead money. Never guess a pick's year or round; leave it out and say so in `plain`.
