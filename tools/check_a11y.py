@@ -14,6 +14,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AXE_VERSION = '4.10.2'
 CACHE = os.path.join(os.path.expanduser('~'), '.cache', 'plainstats', f'axe-core-{AXE_VERSION}')
 LEVELS = ['minor', 'moderate', 'serious', 'critical']
+# Findings checked by hand and found fine, as (rule, start of the element's selector). Say why for each one.
+#   color-contrast on the player/prospect sheet header (.sh-top): white text on the team color (KC red is 4.7:1), checked in a
+#   screenshot on Nov 18, 2026. On phones the sheet sits in a pop-up layer and axe reads the page behind it (#f5f5f7) instead.
+KNOWN_OK = [('color-contrast', '.sh-top')]
 MODES = [(390, 844, 'phone', 'light'), (390, 844, 'phone', 'dark'), (1280, 900, 'desktop', 'light'), (1280, 900, 'desktop', 'dark')]
 
 
@@ -66,12 +70,16 @@ async def main(args):
                     await page.add_script_tag(content=axe)
                     res = await page.evaluate("""() => axe.run(document, {resultTypes: ['violations']})
                         .then(r => r.violations.map(x => ({id: x.id, impact: x.impact, help: x.help, url: x.helpUrl,
-                            nodes: x.nodes.length, sample: x.nodes.slice(0, 3).map(n => n.target.join(' '))})))""")
+                            nodes: x.nodes.length, sample: x.nodes.map(n => n.target.join(' '))})))""")
                 except Exception as e:
                     found.append({'id': 'check-failed', 'impact': 'critical', 'help': str(e).splitlines()[0], 'url': '',
                                   'nodes': 0, 'sample': [], 'view': v, 'mode': f'{size}/{scheme}'})
                     continue
                 for r in res:
+                    r['sample'] = [t for t in r['sample'] if not any(r['id'] == k and t.startswith(sel) for k, sel in KNOWN_OK)]
+                    r['nodes'] = len(r['sample'])
+                    if not r['sample']:
+                        continue   # every element is a known false alarm
                     if LEVELS.index(r['impact'] or 'minor') >= floor:
                         found.append(dict(r, view=v, mode=f'{size}/{scheme}'))
             await page.close()
@@ -91,7 +99,7 @@ async def main(args):
         print(f"          {len(r['views'])} views, {r['nodes']} elements, modes: {', '.join(sorted(r['modes']))}")
         print(f"          views: {', '.join(sorted(r['views'])[:8])}{' ...' if len(r['views']) > 8 else ''}")
         if r['sample']:
-            print(f"          e.g. {' | '.join(r['sample'])}")
+            print(f"          e.g. {' | '.join(r['sample'][:3])}")
         if r['url']:
             print(f"          {r['url']}")
     print(f'{len(views)} views x {len(MODES)} modes checked, {len(rules)} rules failing at {args.impact} or above')

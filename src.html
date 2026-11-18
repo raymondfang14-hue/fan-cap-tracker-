@@ -214,7 +214,7 @@ table.t tbody tr:hover{background:var(--brand-soft)}
 .mv{display:grid;grid-template-columns:5.2rem minmax(0,1fr);gap:4px 14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 .mv .when{font:600 .78rem/1.3 var(--mono);color:var(--muted)}
 .mv .body{display:grid;gap:6px;min-width:0}
-.mv h3{font:700 1.08rem/1.25 var(--body);text-wrap:balance}
+.mv h2{font:700 1.08rem/1.25 var(--body);text-wrap:balance}
 .mv p{color:var(--muted);font-size:.92rem;max-width:72ch}
 .mv .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.8rem}
 .kind{display:inline-block;padding:3px 7px;border-radius:3px;font:700 .66rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
@@ -905,7 +905,7 @@ select,input[type="text"],input[type="search"],input[type="number"]{border:1px s
 .countdown span{color:var(--bg);opacity:.72}
 .countdown .big{opacity:1}
 .mv{border:0;border-radius:var(--r-lg);padding:16px 18px}
-.mv h3{font-family:var(--display);letter-spacing:-.012em}
+.mv h2{font-family:var(--display);letter-spacing:-.012em}
 .faq{border:0;border-radius:var(--r-lg)}
 .fc{border:0;border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .fc:hover{box-shadow:var(--shadow)}
@@ -990,7 +990,7 @@ dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{background:v
 footer{border-top:0;background:var(--bg);padding-block:8px 40px;font-size:.76rem;color:var(--muted)}
 footer .wrap{gap:14px}
 .ft-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,132px),1fr));gap:22px 18px;padding-block:24px;border-block:1px solid var(--line)}
-.ft-cols h3{font:600 .76rem/1.2 var(--body);color:var(--fg);margin-bottom:10px}
+.ft-cols h2{font:600 .76rem/1.2 var(--body);color:var(--fg);margin-bottom:10px}
 .ft-cols ul{display:grid;gap:7px}
 footer a{color:var(--muted);text-decoration:none}
 footer a:hover{color:var(--fg);text-decoration:underline}
@@ -1040,6 +1040,8 @@ dialog .disc{margin:6px 22px 18px;max-width:none}
 .bigrow .k,.stiles .k,.rtile .k,.pace .k,.haw .k,.fc-nums small,.bigplay small,.tt-row>small{font-size:.74rem!important;font-weight:500!important}
 table.t th{font-size:.76rem!important;font-weight:600!important}
 .kind,.outlook,.rookie,.srcb,.role{font-size:.72rem!important;font-weight:600!important;border-radius:6px}
+/* Outlook text is small, so it needs 4.5:1 on its tint: pull the color toward the text color (darker in light mode, lighter in dark). */
+.outlook.up{color:color-mix(in srgb,var(--good) 72%,var(--fg))}.outlook.dn{color:color-mix(in srgb,var(--bad) 72%,var(--fg))}
 /* A word-valued tile shrinks to fit its tile instead of breaking mid-word ("Quarterback s"). */
 .kpi.fit{container-type:inline-size}
 .kpi.fit .v{font-size:clamp(1.15rem,12.5cqi,1.9rem);white-space:nowrap}
@@ -1319,7 +1321,7 @@ button.ur-row:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .td-deal{display:grid;gap:10px;padding:16px 18px;background:var(--surface);border-radius:var(--r-lg);min-width:0}
 .td-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.8rem;color:var(--muted)}
 .td-head .when{font:600 .78rem/1.3 var(--mono)}
-.td-deal h3{margin:0;font:650 1.1rem/1.25 var(--display);letter-spacing:-.012em;text-wrap:balance}
+.td-deal h2{margin:0;font:650 1.1rem/1.25 var(--display);letter-spacing:-.012em;text-wrap:balance}
 .td-deal>p{margin:0;color:var(--muted);font-size:.92rem;max-width:72ch}
 .td-sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
 .td-side{display:grid;gap:4px;align-content:start;padding:12px 14px;border-radius:var(--r);background:var(--bg);min-width:0}
@@ -2215,7 +2217,7 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 
 <aside class="ad gut wrap ad-foot" data-ad="footer" aria-label="Advertisement"></aside>
 <footer class="gut"><div class="wrap">
-  <nav class="ft-cols" aria-label="Site map"><div><h3>Teams</h3><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h3>Games</h3><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h3>Players</h3><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/usage-risers">Weekly usage risers</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>Contracts</h3><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h3>Draft</h3><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h3>Tools</h3><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h3>News</h3><ul><li><a href="/news">All news</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h3>Learn</h3><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
+  <nav class="ft-cols" aria-label="Site map"><div><h2>Teams</h2><ul><li><a href="/team-ratings">All 32 teams</a></li><li><a href="/team-tiers">Weekly team tiers</a></li><li><a href="/power-rankings">Power rankings</a></li><li><a href="/cap-room">Cap room by team</a></li></ul></div><div><h2>Games</h2><ul><li><a href="/scores">Scores and schedule</a></li><li><a href="/standings">Standings</a></li><li><a href="/projections">Playoff projections</a></li></ul></div><div><h2>Players</h2><ul><li><a href="/player-ratings">Player ratings</a></li><li><a href="/stats">Season stats</a></li><li><a href="/usage-risers">Weekly usage risers</a></li><li><a href="/awards">Awards watch</a></li><li><a href="/search">Search every player</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h2>Contracts</h2><ul><li><a href="/contracts">All contracts</a></li><li><a href="/best-worst-contracts">Best and worst deals</a></li><li><a href="/rookie-contracts">Rookie deals</a></li><li><a href="/free-agency">Free agency</a></li><li><a href="/cap-lab">Cap lab analytics</a></li></ul></div><div><h2>Draft</h2><ul><li><a href="/big-board">Big board</a></li><li><a href="/mock-draft">Mock draft</a></li><li><a href="/rookie-pay">Rookie pay</a></li></ul></div><div><h2>Tools</h2><ul><li><a href="/roster-builder">Roster builder</a></li><li><a href="/trade-checker">Trade checker</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/compare">Compare players</a></li></ul></div><div><h2>News</h2><ul><li><a href="/news">All news</a></li><li><a href="/trade-deadline">Trade deadline</a></li><li><a href="/news/contracts">Contract moves</a></li><li><a href="/news/injuries">Injuries</a></li><li><a href="/news/games">Game results</a></li><li><a href="/news/coaching">Coaching changes</a></li><li><a href="/news/league">League and discipline</a></li></ul></div><div><h2>Learn</h2><ul><li><a href="/cap-101">Cap 101</a></li><li><a href="/about">About PlainStats</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></nav>
   <p id="foot-asof">Contract figures come from news reports, team announcements, the rookie pay scale and the CBA, and can change. PlainStats is not affiliated with the NFL, the NBA or any team.</p>
   <details class="ft-src"><summary>Sources</summary><ul id="foot-src">
     <li><a href="https://operations.nfl.com/calendar-events/nfl-free-agency/types-of-free-agents" target="_blank" rel="noopener">NFL Football Operations: minimum salaries and tenders</a></li>
@@ -3252,7 +3254,7 @@ function renderOFScatter(qs) {
   const last = n => n.replace(/,? (Jr|Sr|II|III|IV)\.?$/, '').split(' ').slice(-1)[0];
   const dots = pts.map(p => `<circle cx="${X(p.apy).toFixed(1)}" cy="${Y(p.play).toFixed(1)}" r="${big ? 7 : 6}" class="dot ${vClass(p.vlab)}" data-p="${p.i}" data-tip="fp|${p.i}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${mon(p.apy)} a year, play rating ${p.play}"></circle>`).join('');
   const labels = [...lab].map(p => { const lft = X(p.apy) > Wd - 90; return `<text x="${(X(p.apy) + (lft ? -8 : 8)).toFixed(1)}" y="${(Y(p.play) + 4).toFixed(1)}" text-anchor="${lft ? 'end' : 'start'}" class="lb">${esc(last(p.name))}</text>`; }).join('');
-  el.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" class="pvps${big ? ' big' : ''}" role="img" aria-label="Pay versus play rating for qualified ${SG_NAME[of.g].toLowerCase()}s">
+  el.innerHTML = `<svg viewBox="0 0 ${Wd} ${H}" class="pvps${big ? ' big' : ''}" role="group" aria-label="Pay versus play rating for qualified ${SG_NAME[of.g].toLowerCase()}s">
     ${ticks}
     <line x1="${X(medPay)}" x2="${X(medPay)}" y1="${T}" y2="${H - B}" class="mid"></line><line x1="${L}" x2="${Wd - R}" y1="${Y(69.5)}" y2="${Y(69.5)}" class="mid"></line>
     <text x="${(L + X(medPay)) / 2}" y="${T + 12}" text-anchor="middle" class="q">Bargains</text><text x="${(X(medPay) + Wd - R) / 2}" y="${T + 12}" text-anchor="middle" class="q">Earning it</text>
@@ -3559,7 +3561,7 @@ function renderPower() {
   g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Strong both ways</text><text class="q" x="${l + 6}" y="${tp + 14}">Defense first</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Offense first</text><text class="q" x="${l + 6}" y="${H - b - 8}">Behind on both</text>`;
   g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Offense rating →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Defense rating →</text>`;
   g += list.map(t => `<g data-team="${t.id}" data-tip="tm|${t.id}" transform="translate(${(x(t.rt.off) - 11).toFixed(1)} ${(y(t.rt.def) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: offense ${t.rt.off}, defense ${t.rt.def}">${crest(t.id, 22)}</g>`).join('');
-  $('#t-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Offense rating against defense rating for each team">${g}</svg>`;
+  $('#t-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="group" aria-label="Offense rating against defense rating for each team">${g}</svg>`;
   // best unit at each spot
   $('#t-best').innerHTML = ['ovr', 'off', 'def'].concat(UNITS.map(u => u[0])).map(k => { const t = [...TEAMS].sort((a, b) => b.u[k] - a.u[k])[0];
     return `<button type="button" data-team="${t.id}"><span>${esc(RNAME[k])}</span>${crest(t.id, 20)}<b>${esc(t.city)} ${esc(t.name)}</b><span class="pscore" style="--pc:${rcol(t.rt[k])}">${t.rt[k]}</span></button>`; }).join('');
@@ -3615,7 +3617,7 @@ function renderTiers() {
   box.innerHTML = `
       <div class="panel" data-sp="chart">
         <div><span class="eyebrow">Tap a logo to open the team</span><h2 class="sec">Offense vs. defense</h2></div>
-        <div id="tr-scatter" data-w="${W}"><svg class="tchart${W < 600 ? ' sm' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg></div>
+        <div id="tr-scatter" data-w="${W}"><svg class="tchart${W < 600 ? ' sm' : ''}" viewBox="0 0 ${W} ${H}" role="group" aria-label="Offense EPA per play against defense EPA allowed per play for each team">${g}</svg></div>
         <p class="note">Dashed lines mark the league average. The further up and to the right, the better the team is at both.</p>
       </div>
       <div class="panel" data-sp="tiers">
@@ -4201,7 +4203,7 @@ function moveHTML(m) {
   const teams = (m.teams || []).filter(id => TB[id]).map(id => `<button type="button" class="tlink" data-team="${id}">${badge(id)}${esc(TB[id].name)}</button>`).join('');
   return `<article class="mv"><span class="when">${esc(m.date)}</span><div class="body">
     <div class="meta"><span class="kind ${esc(m.kind)}">${esc(m.kind)}</span>${teams}</div>
-    <h3>${esc(m.head)}</h3><p>${esc(m.plain)}</p>
+    <h2>${esc(m.head)}</h2><p>${esc(m.plain)}</p>
     ${safeUrl(m.url) ? `<div class="meta"><a href="${safeUrl(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a></div>` : ''}</div></article>`;
 }
 function renderHomeFeed() { if (!$('#home-feed')) return; $('#home-feed').innerHTML = MOVES.filter(m => CONTRACT_KINDS.includes(m.kind)).slice(0, 3).map(moveHTML).join('') || '<p class="empty">No moves yet.</p>'; }
@@ -4745,7 +4747,7 @@ function tdDealHTML(m) {
   const hay = [m.head, m.plain, ...(m.players || []), ...sides.flatMap(s => [s.id, TB[s.id].city, TB[s.id].name, ...s.picks])].join(' ').toLowerCase();
   return `<article class="td-deal" data-s="${esc(hay)}" data-teams="${esc(sides.map(s => s.id).join(' '))}">
     <div class="td-head"><span class="when">${esc(m.date || m.iso || '')}</span><span class="kind Trade">Trade</span>${w ? `<span>Week ${w.week} · ${w.left} of 18 weekly paychecks left</span>` : ''}</div>
-    <h3>${esc(m.head)}</h3><p>${esc(m.plain || '')}</p>
+    <h2>${esc(m.head)}</h2><p>${esc(m.plain || '')}</p>
     <div class="td-sides">${sides.map(side).join('')}</div>
     <div class="td-foot">${href ? `<a class="btn ghost" href="${esc(href)}" data-replay>Open in trade checker</a>` : ''}${safeUrl(m.url) ? `<a href="${safeUrl(m.url)}" target="_blank" rel="noopener">Source: ${esc(m.source || 'report')}</a>` : ''}</div>
   </article>`;
@@ -5284,7 +5286,7 @@ function renderPowerRank() {
   g += `<text class="q" x="${W2 - r - 6}" y="${tp + 14}" text-anchor="end">Winning with talent</text><text class="q" x="${l + 6}" y="${tp + 14}">Beating the odds</text><text class="q" x="${W2 - r - 6}" y="${H - b - 8}" text-anchor="end">Under-delivering</text><text class="q" x="${l + 6}" y="${H - b - 8}">Struggling</text>`;
   g += `<text class="ax" x="${(l + W2 - r) / 2}" y="${H - 6}" text-anchor="middle">Roster and efficiency →</text><text class="ax" transform="translate(12 ${(tp + H - b) / 2}) rotate(-90)" text-anchor="middle">Results →</text>`;
   g += all.map(t => `<g data-team="${t.id}" transform="translate(${(x(t.pw.ros) - 11).toFixed(1)} ${(y(t.pw.ts) - 12.5).toFixed(1)})" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t.city + ' ' + t.name)}: ranked ${t.pw.rank}">${crest(t.id, 22)}</g>`).join('');
-  $('#pw-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="img" aria-label="Results against roster strength for each team">${g}</svg>`;
+  $('#pw-scatter').innerHTML = `<svg class="pvps${W2 >= 600 ? ' big' : ''}" viewBox="0 0 ${W2} ${H}" role="group" aria-label="Results against roster strength for each team">${g}</svg>`;
   // gaps
   const gapRow = t => `<button type="button" class="haw" data-team="${t.id}" style="grid-template-columns:minmax(0,1fr) auto"><span class="n">${crest(t.id, 20)}<span>${esc(t.city)} ${esc(t.name)} · ${awRec(t.sr)}</span></span><span class="o">Record ${ord(t.pw.rk_ts)} · roster ${ord(t.pw.rk_ros)}</span></button>`;
   const rise = [...all].sort((a, b) => b.pw.gap - a.pw.gap).slice(0, 4), fall = [...all].sort((a, b) => a.pw.gap - b.pw.gap).slice(0, 4);
