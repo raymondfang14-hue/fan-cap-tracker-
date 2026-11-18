@@ -60,6 +60,14 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - `python3 -I tools/check_pages.py` opens every view at phone and desktop size, light and dark, and fails on JS errors, failed data loads or sideways scroll. Run it before pushing page changes (`--shots DIR` saves screenshots).
 - `python3 -I tools/check_stats.py <nflverse folder>` checks every player card's season stats (On the field tab) against the raw nflverse box scores, by gsis id, and flags players listed twice. Run it after rebuilding `data/stats.json`. Missing cards, duplicates, fewer games than box scores, or more than max(5, 1%) stat mismatches block the stats step; a few mismatches print `WARN`, publish anyway and open the "nflverse refresh needs attention" issue (closed by the next clean run). `--strict` fails on any mismatch.
 - `python3 -I tools/check_ledger.py` checks `data/ledger.csv` for missing sources, totals that don't add up and duplicates. After adding ledger rows, have the `ledger-checker` agent compare them with their source links.
+- `python3 -I tools/check_a11y.py` runs axe-core (fetched once from npm into `~/.cache/plainstats/`) on the same views as `check_pages.py`, phone and desktop, light and dark, and lists failing rules (`--impact`, `--views`, `--url`, `--json`). Report only for now; it is not in CI.
+- Agents in `.claude/agents/` (each reports back; the main session builds, checks and commits):
+  - `news-sweep`: the news sweep in one pass (`moves.json` with gids and trade `deal`, ledger rows, Airtable card, `DEALS` mirror). Follow it with `ledger-checker` on the new rows.
+  - `ledger-checker`: compares new ledger rows with their source links.
+  - `stats-checker`: explains `check_stats.py` FAIL/WARN lines (build bug, duplicate, missing card, stat correction or by design). Use when the "nflverse refresh needs attention" issue opens.
+  - `search-console-analyst`: turns the Monday `search-console` issue into a ranked to-do list for the static pages and adds searched pairs to `data/compare_pairs.json`.
+  - `seo-page-reviewer`: checks the generated search pages (thin or near-duplicate pages, sitemap vs noindex, titles, FAQ vs JSON-LD, data rules, links) after `build_seo.py`, before committing.
+  - `accessibility-checker`: runs `check_a11y.py` plus keyboard, reduced-motion and zoom checks, and gives fixes that follow the redesign-layer tokens.
 - `.mcp.json` adds Playwright (browser checks) and Vercel (deploy logs) for Claude Code sessions.
 
 ## Feature pause (Nov 16 to Nov 30, 2026)
