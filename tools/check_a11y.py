@@ -56,7 +56,12 @@ async def main(args):
                 await page.route(lambda u: not u.startswith(base), lambda route: route.abort())
             for v in views:
                 try:
-                    await page.goto(base + v, wait_until='networkidle', timeout=60000)
+                    # same wait as check_pages.py: load, then networkidle only briefly (/scores keeps polling, so it never goes idle)
+                    await page.goto(base + v, wait_until='load', timeout=60000)
+                    try:
+                        await page.wait_for_load_state('networkidle', timeout=5000)
+                    except Exception:
+                        pass
                     await page.wait_for_timeout(800)
                     await page.add_script_tag(content=axe)
                     res = await page.evaluate("""() => axe.run(document, {resultTypes: ['violations']})
