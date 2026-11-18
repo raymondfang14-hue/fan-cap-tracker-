@@ -1,6 +1,175 @@
 {
- "asOf": "2026-11-17",
+ "asOf": "2026-11-18",
  "moves": [
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Mason McCormick"
+   ],
+   "head": "Steelers G Mason McCormick dislocates his ankle",
+   "plain": "McCormick dislocated his ankle in Sunday's loss to Cincinnati. There is no fracture and he does not need surgery, and he could be back for the playoffs. Pittsburgh needs a new starter at guard.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-18",
+   "gids": [
+    "00-0039358"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "HOU"
+   ],
+   "players": [
+    "Azeez Al-Shaair",
+    "Henry To'oTo'o"
+   ],
+   "head": "Texans put LB Azeez Al-Shaair on injured reserve; he needs groin surgery",
+   "plain": "Al-Shaair will miss at least four games and his return is unclear. Henry To'oTo'o takes over the defensive play calls. Al-Shaair signed a three-year, $54M extension in April.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/texans-place-lb-azeez-al-shaair-on-ir",
+   "gids": [
+    "00-0035166",
+    "00-0038599"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Wan'Dale Robinson",
+    "Xavier Restrepo"
+   ],
+   "head": "Titans put WR Wan'Dale Robinson on injured reserve",
+   "plain": "Robinson, signed to a four-year, $70M deal in March, is out at least four games with an ankle injury. Xavier Restrepo was promoted from the practice squad to take his spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/titans-place-wr-wandale-robinson-on-ir",
+   "gids": [
+    "00-0038117",
+    "00-0040522"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Jordan Phillips",
+    "Daniel Carlson"
+   ],
+   "head": "Dolphins DT Jordan Phillips is out for the season with a torn biceps",
+   "plain": "Phillips went on injured reserve, another blow to a Miami line that already lost Zeek Biggers. The Dolphins also signed kicker Daniel Carlson to the practice squad after waiving Zane Gonzalez.",
+   "source": "ESPN",
+   "url": "https://www.espn.com/nfl/story/_/id/50513896/source-dolphins-jordan-phillips-miss-rest-season",
+   "gids": [
+    "00-0040175",
+    "00-0034161"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Gardner Minshew",
+    "Carson Beck"
+   ],
+   "head": "Cardinals QB Gardner Minshew's season is over after elbow surgery",
+   "plain": "Minshew tore the UCL in his throwing elbow and will have surgery; he is expected to be ready for 2027. Rookie Carson Beck stays the starter.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-17",
+   "gids": [
+    "00-0035289",
+    "00-0041561"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Jaylon Carlies"
+   ],
+   "head": "Colts put LB Jaylon Carlies on injured reserve with a neck injury",
+   "plain": "Carlies can return in Week 16 at the earliest. WR Quez Watkins was signed from the practice squad to fill the roster spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-place-lb-jaylon-carlies-on-ir",
+   "gids": [
+    "00-0039377"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Coaching",
+   "teams": [
+    "DAL"
+   ],
+   "players": [
+    "Christian Parker"
+   ],
+   "head": "Jerry Jones says the Cowboys are discussing defensive coordinator Christian Parker's future",
+   "plain": "Dallas is 4-6 and last in the league in yards allowed. Jones would not say more, and no change has been made yet. Mike Pettine, who joined the staff last month, could take over the calls.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jerry-jones-cowboys-discussing-dc-christian-parkers-future",
+   "gids": [
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "Injury",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Kerby Joseph"
+   ],
+   "head": "Lions expect S Kerby Joseph to make his season debut against Tampa Bay",
+   "plain": "Joseph has been out all season with a knee condition. Dan Campbell says he should play in Week 11, a lift for a defense that just lost Aidan Hutchinson.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/lions-expect-s-kerby-joseph-to-play-in-week-11",
+   "gids": [
+    "00-0037667"
+   ]
+  },
+  {
+   "iso": "2026-11-17",
+   "date": "Nov 17",
+   "kind": "League",
+   "teams": [
+    "LV",
+    "CLE",
+    "NE",
+    "LAC"
+   ],
+   "players": [],
+   "head": "NFL flexes Raiders at Browns into Sunday night in Week 12",
+   "plain": "Las Vegas at Cleveland moves to Sunday Night Football on Nov 29. New England at the Chargers moves to the late afternoon window, and Tennessee at Jacksonville moves to 1 p.m.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-17",
+   "gids": []
+  },
   {
    "iso": "2026-11-16",
    "date": "Nov 16",
@@ -190,6 +359,26 @@
    "url": "https://www.profootballrumors.com/2026/11/jets-aaron-glenn-ceded-play-calling-duties-in-week-10-latest-on-hcs-job-security",
    "gids": [
     ""
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
+   "kind": "Injury",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Micah Parsons",
+    "Kevin Zeitler"
+   ],
+   "head": "Packers say Micah Parsons is not certain to return in Week 12",
+   "plain": "Parsons is coming back from ACL and meniscus surgery and must be activated by Nov 25 or he cannot play this season. Guard Kevin Zeitler (triceps) avoided injured reserve and could start in Week 12.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/packers-micah-parsons-not-certain-for-week-12-latest-on-kevin-zeitler",
+   "gids": [
+    "00-0036932",
+    "00-0029592"
    ]
   },
   {
@@ -1145,170 +1334,6 @@
    },
    "gids": [
     "00-0034675"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
-   "kind": "Injury",
-   "teams": [
-    "BUF"
-   ],
-   "players": [
-    "Josh Palmer"
-   ],
-   "head": "Bills place WR Josh Palmer on injured reserve with a hamstring injury",
-   "plain": "Palmer will miss at least four games. He is in the second year of the three-year deal he signed in 2025.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/bills-place-wr-josh-palmer-on-ir-2",
-   "gids": [
-    "00-0036988"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
-   "kind": "League",
-   "teams": [
-    "SF"
-   ],
-   "players": [
-    "Brandon Aiyuk"
-   ],
-   "head": "NFL reinstates WR Brandon Aiyuk to the 49ers; release reported as likely",
-   "plain": "Aiyuk comes off the reserve/left squad list and passed his physical. San Francisco has until Nov. 23 to make a roster move, and a release was reported as likely. No release had been confirmed when this was written.",
-   "source": "AP via AJC",
-   "url": "https://www.ajc.com/news/2026/11/nfl-reinstates-receiver-brandon-aiyuk-to-the-49ers-after-he-left-the-team-last-year",
-   "gids": [
-    "00-0036261"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
-   "kind": "Injury",
-   "teams": [
-    "KC"
-   ],
-   "players": [
-    "Patrick Mahomes"
-   ],
-   "head": "Chiefs QB Patrick Mahomes day-to-day with an elbow injury",
-   "plain": "He hurt his throwing elbow in the 35-12 win over the Jets. An MRI showed no major damage, and he looks on track to start at Atlanta.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/patrick-mahomes-day-to-day-with-elbow-injury",
-   "gids": [
-    "00-0033873"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
-   "kind": "Injury",
-   "teams": [
-    "GB"
-   ],
-   "players": [
-    "Josh Jacobs"
-   ],
-   "head": "Packers RB Josh Jacobs to have finger surgery and miss time",
-   "plain": "Jacobs broke a finger and is expected to miss no more than about three games. Green Bay has its bye in Week 11.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/josh-jacobs-to-undergo-finger-surgery-will-miss-time",
-   "gids": [
-    "00-0035700"
-   ]
-  },
-  {
-   "iso": "2026-11-09",
-   "date": "Nov 9",
-   "kind": "Injury",
-   "teams": [
-    "SEA"
-   ],
-   "players": [
-    "Sam Darnold",
-    "Drew Lock"
-   ],
-   "head": "Seahawks QB Sam Darnold out for Week 10 with a quad injury; Drew Lock to start",
-   "plain": "Seattle hopes Darnold is back after its Week 11 bye. Lock, who started the Week 9 win over Arizona, starts again against Las Vegas despite an oblique injury.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/seahawks-plan-to-start-qb-drew-lock-in-week-10",
-   "gids": [
-    "00-0034869",
-    "00-0035704"
-   ]
-  },
-  {
-   "iso": "2026-11-07",
-   "date": "Nov 7",
-   "kind": "Injury",
-   "teams": [
-    "SF"
-   ],
-   "players": [
-    "Christian Kirk"
-   ],
-   "head": "49ers place WR Christian Kirk on injured reserve with a knee injury",
-   "plain": "Kirk has a meniscus injury in his knee and must miss at least four games. San Francisco activated WR Demarcus Robinson to fill the spot.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/49ers-lose-wr-christian-kirk-to-ir-activate-wr-demarcus-robinson",
-   "gids": [
-    "00-0034775"
-   ]
-  },
-  {
-   "iso": "2026-11-07",
-   "date": "Nov 7",
-   "kind": "Injury",
-   "teams": [
-    "LAR"
-   ],
-   "players": [
-    "Myles Garrett"
-   ],
-   "head": "Rams activate DE Myles Garrett from injured reserve",
-   "plain": "Garrett was hurt in Week 1 and had arthroscopic knee surgery. He is set to return after missing everything since his Rams debut.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir",
-   "gids": [
-    "00-0033868"
-   ]
-  },
-  {
-   "iso": "2026-11-07",
-   "date": "Nov 7",
-   "kind": "Injury",
-   "teams": [
-    "LAR"
-   ],
-   "players": [
-    "Jaylen Watson"
-   ],
-   "head": "Rams place CB Jaylen Watson on injured reserve for shoulder surgery",
-   "plain": "Watson will have season-ending shoulder surgery, so the Rams put him on IR to open a roster spot for Garrett.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir",
-   "gids": [
-    "00-0037195"
-   ]
-  },
-  {
-   "iso": "2026-11-06",
-   "date": "Nov 6",
-   "kind": "Injury",
-   "teams": [
-    "SEA"
-   ],
-   "players": [
-    "Quenton Nelson"
-   ],
-   "head": "Seahawks LG Quenton Nelson to have knee surgery, miss multiple games",
-   "plain": "Nelson, acquired from the Colts last month, needs knee cartilage surgery and is expected to miss a few weeks. He was not placed on injured reserve.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/seahawks-lg-quenton-nelson-to-undergo-surgery",
-   "gids": [
-    "00-0034342"
    ]
   },
   {
