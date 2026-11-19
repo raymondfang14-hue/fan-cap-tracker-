@@ -969,7 +969,9 @@ dialog#fix::backdrop,dialog#sheet::backdrop,dialog#picker::backdrop{background:v
 .ex.full .gl{grid-row:span 3;width:52px;height:52px}
 @media (max-width:899px){.ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ex,.ex.w3{grid-column:span 1}.ex.full{grid-template-columns:1fr}.ex.full .gl{grid-row:auto;width:36px;height:36px}}
 @media (max-width:560px){.ex-grid{grid-template-columns:minmax(0,1fr)}.ex,.ex.w3,.ex.full{grid-column:auto}}
-@media (prefers-reduced-motion:reduce){.ex,.tile,.kpi,.fc{transition:none}.ex:hover,.tile:hover,a.kpi:hover,.fc:hover{transform:none}.gn-fly,.gn-sheet,.gn-scrim{animation:none}}
+@media (prefers-reduced-motion:reduce){.ex,.tile,.kpi,.fc{transition:none}.ex:hover,.tile:hover,a.kpi:hover,.fc:hover{transform:none}.gn-fly,.gn-sheet,.gn-scrim{animation:none}.gn-bar,.gn-top{transition:none}}
+/* Bar rows: a visible keyboard focus ring (the soft tint alone is about 1.1:1) */
+.hb:focus-visible,.gb:focus-visible,.ob:focus-visible,.pkrow:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
 
 /* ---------- ads ---------- */
 .ad{display:none}

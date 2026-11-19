@@ -727,6 +727,11 @@ def fit(head, parts, n=60):
     return t + ' | PlainStats' if len(t) + 13 <= n else t
 
 
+def brand(core, n=65):
+    """core + ' | PlainStats' when that still fits in n characters, else core alone (titles over about 65 get cut in search results)."""
+    return core + ' | PlainStats' if len(core) + 13 <= n else core
+
+
 def pack(sentences, n=158):
     """Whole sentences, in order, while they fit in n characters; the first is clipped only if it alone is too long."""
     out = ''
@@ -1289,7 +1294,7 @@ def build_team(t):
             facts.append(('Head coach', esc(rec[1]['coach'])))
     logo = f'<img src="{esc(t["logo"])}" alt="{esc(full)} logo" width="64" height="64" loading="lazy" decoding="async" onerror="this.remove()">' if t.get('logo') else ''
     path = f'/teams/{slug}'
-    title = f"{full}: cap space, contracts and roster | PlainStats"
+    title = brand(f"{full}: cap space, contracts and roster")
     desc = clip(summary, 158)
     body = (f'<div class="id">{logo}<h1>{esc(full)} cap space, contracts and roster</h1></div><p class="lede">{esc(summary)}</p>{facts_html(facts)}'
             f'<ul class="chips"><li><a href="/teams/{slug}/cap">How much cap space do the {esc(nick)} have?</a></li><li><a href="/teams/{slug}/dead-money">{esc(nick)} dead money</a></li><li><a href="/team/{tid.lower()}">Open the {esc(nick)} page in the app</a></li><li><a rel="nofollow" href="/team/{tid.lower()}?share=1">Share the {esc(nick)} as an image</a></li></ul>'
@@ -1308,7 +1313,7 @@ def build_team(t):
 
     # --- cap space page
     path = f'/teams/{slug}/cap'
-    title = f"How much cap space do the {nick} have? {space_txt} in {SEASON_YEAR} | PlainStats"
+    title = brand(f"How much cap space do the {nick} have? {space_txt} in {SEASON_YEAR}")
     answer = f"The {full} have about {space_txt} of cap space for the {SEASON_YEAR} season, {rank_txt} most among the 32 NFL teams, as of {ASOF}."
     desc = clip(answer + f" The league cap is {mon(CAP)}. See what is eating it.", 158)
     faq = [
@@ -1332,7 +1337,7 @@ def build_team(t):
 
     # --- dead money page
     path = f'/teams/{slug}/dead-money'
-    title = f"{nick} dead money: {mon(t['dead'])} on the {SEASON_YEAR} cap | PlainStats"
+    title = brand(f"{nick} dead money: {mon(t['dead'])} on the {SEASON_YEAR} cap")
     answer = f"The {full} have about {mon(t['dead'])} in dead money in {SEASON_YEAR}, {ordn(t['r_dead'])} most in the NFL, as of {ASOF}."
     desc = clip(answer + ' Dead money is cap space used by players a team cut or traded.', 158)
     dead_rows = ''.join(f'<tr><td>{esc(n)}</td><td class="r">{mon(v)}</td></tr>' for n, v in (t.get('topDead') or []))
@@ -1397,7 +1402,7 @@ def build_prospect(pr):
         ranks.append(f"No. {pr['b']} on the NFL Draft Buzz big board")
     lead = f"{cls} {role}".strip()
     summary = f"{pr['name']} is {article(lead)} {lead} at {school} in the 2027 NFL Draft class" + (f", ranked {' and '.join(ranks)}." if ranks else '.')
-    title = f"{pr['name']} 2027 NFL Draft profile: stats and big board rank | PlainStats"
+    title = brand(f"{pr['name']} 2027 NFL Draft profile: stats and big board rank")
     desc = clip(summary + ' College stats, size and where he fits.', 158)
     faq = []
     if ranks:
@@ -1442,7 +1447,7 @@ def build_prospect(pr):
 def build_hubs():
     # teams hub
     path = '/teams'
-    title = 'NFL team cap space, contracts and dead money | PlainStats'
+    title = brand('NFL team cap space, contracts and dead money')
     desc = 'Cap space, dead money and contracts for all 32 NFL teams, explained in plain English.'
     _rec = lambda t: (record_line(t) or ['–'])[0]
     _tier = lambda t: (lambda x: f"{ordn(x['rank'])}, Tier {x['tier']}" if x else '–')((TIERS.get('teams') or {}).get(t['id']))
@@ -1458,7 +1463,7 @@ def build_hubs():
 
     # players hub
     path = '/players'
-    title = 'NFL player stats and contracts, explained in plain English | PlainStats'
+    title = brand('NFL player stats and contracts, explained in plain English')
     desc = f'{SEASON_YEAR} stats and contracts for NFL players, explained in plain English, by team, with head-to-head player comparisons.'
     blocks = ''
     for t in sorted(TEAMS.values(), key=lambda t: t['full']):
@@ -1481,7 +1486,7 @@ def build_hubs():
 
     # draft hub
     path = '/draft'
-    title = '2027 NFL Draft prospects: big board, stats and profiles | PlainStats'
+    title = brand('2027 NFL Draft prospects: big board, stats and profiles')
     desc = f"{len(PROS)} 2027 NFL Draft prospects with college stats, size and big board ranks from WalterFootball and NFL Draft Buzz."
     order = sorted(PROS, key=lambda p: (p.get('a') or 999, p.get('b') or 999, p['name']))
     rows = ''.join(f'<tr><td><a href="/draft/{p["slug"]}">{esc(p["name"])}</a></td><td>{esc(p["grp"])}</td><td>{esc(SCHOOLS.get(p["sch"], [p["sch"]])[0])}</td><td class="r">{p.get("w") or "–"}</td><td class="r">{p.get("b") or "–"}</td></tr>' for p in order)
@@ -1546,7 +1551,7 @@ def learn_content():
 
     pages['epa'] = dict(
         q='What is EPA in football?',
-        title='What is EPA in football? Expected points added, explained | PlainStats',
+        title=brand('What is EPA in football? Expected points added, explained'),
         answer='EPA, or expected points added, measures how much a single play changed a team\'s chances of scoring. Every down, distance and spot on the field is worth a certain number of points on average; EPA is the value after the play minus the value before it.',
         how=[
             'Start with expected points: from years of NFL games, a model knows how many points a team usually ends up with from, say, first and 10 at its own 25. A first and 10 near the other team\'s goal line is worth much more.',
@@ -1567,7 +1572,7 @@ def learn_content():
 
     pages['success-rate'] = dict(
         q='What is success rate in football?',
-        title='What is success rate in football? Explained in plain English | PlainStats',
+        title=brand('What is success rate in football? Explained in plain English'),
         answer='Success rate is the share of plays that add expected points, that is, plays with positive EPA. It tells you how often an offense stays on schedule, not how big its best plays were.',
         how=[
             'Every play gets an EPA value. A play counts as a success when its EPA is above zero: it left the offense in a better spot to score than before.',
@@ -1587,7 +1592,7 @@ def learn_content():
 
     pages['cap-hit'] = dict(
         q='What is a cap hit in the NFL?',
-        title='What is a cap hit in the NFL? Explained in plain English | PlainStats',
+        title=brand('What is a cap hit in the NFL? Explained in plain English'),
         answer=f'A cap hit is how much one player counts against his team\'s salary cap this season. Every team\'s cap hits, plus its dead money, have to fit under the {SEASON_YEAR} cap of {mon(CAP)}.',
         how=[
             'A cap hit adds up the player\'s base salary for the season, a share of his signing bonus, and any roster, workout or likely incentive bonuses for that year.',
@@ -1607,7 +1612,7 @@ def learn_content():
 
     pages['dead-money'] = dict(
         q='What is dead money in the NFL?',
-        title='What is dead money in the NFL? Explained in plain English | PlainStats',
+        title=brand('What is dead money in the NFL? Explained in plain English'),
         answer='Dead money is salary cap space taken up by players who are no longer on the team. It is mostly signing bonus that had not been counted against the cap yet when the player was cut or traded, plus any salary the team still has to pay.',
         how=[
             'A signing bonus is paid up front but counted against the cap a slice at a time over the contract. If the player leaves early, the slices not yet counted do not disappear: they land on the old team\'s cap all at once. That is dead money.',
@@ -1629,7 +1634,7 @@ def learn_content():
 
     pages['guaranteed-money'] = dict(
         q='What is guaranteed money in an NFL contract?',
-        title='What is guaranteed money in an NFL contract? Explained | PlainStats',
+        title=brand('What is guaranteed money in an NFL contract? Explained'),
         answer='Guaranteed money is the part of an NFL contract the player gets even if he is cut. Most NFL contracts are not fully guaranteed, so the guaranteed figure is usually a better guide to a deal\'s real size than the headline total.',
         how=[
             'Fully guaranteed at signing: money locked in the day he signs. It is paid even if he is cut for skill, gets hurt or the team changes its mind. The signing bonus is part of it.',
@@ -1678,7 +1683,7 @@ def build_learn():
         URLS.append((path, '0.7', 'weekly'))
 
     path = '/learn'
-    title = 'NFL stats and contract terms explained in plain English | PlainStats'
+    title = brand('NFL stats and contract terms explained in plain English')
     desc = 'Short, plain-English explainers for EPA, success rate, cap hit, dead money and guaranteed money, with this season\'s numbers.'
     items = ''.join(f'<li><a href="/learn/{s}"><b>{esc(pages[s]["q"])}</b><span>{esc(clip(pages[s]["answer"], 120))}</span></a></li>' for s, _, _ in LEARN)
     body = (f'<h1>Stat explainers</h1><p class="lede">The numbers in PlainStats tables, one short page each. Tap the small ? next to a column name anywhere on the site to land here.</p>'
@@ -1796,7 +1801,7 @@ def build_weekly_usage(w, d, have):
     path = wk_path('usage', w)
     mn = d.get('min') or {'t': 5, 'c': 8, 's': .5, 'sb': .6}
     take = usage_take(d, w)
-    title = f'Usage risers, week {w} {SEASON_YEAR}: target, carry and snap share | PlainStats'
+    title = brand(f'Usage risers, week {w} {SEASON_YEAR}: target, carry and snap share')
     lead = [r for r in (d['tUp'][:1] + d['cUp'][:1] + d['sUp'][:1])]
     names = ', '.join(dict.fromkeys(r['n'] for r in lead))
     desc = clip(f'{take} Week {w} target, carry and snap share risers and fallers' + (f', led by {names}' if names else '') + '.', 158)
@@ -1889,7 +1894,7 @@ def build_weekly_tiers(w, d, have):
         faq.append((f'Which team fell the most in week {w}?', f"The {TEAMS[dn]['full']}, down {-tt[dn]['move']} spots to {ordn(tt[dn]['rank'])}."))
     faq.append(('How are the team tiers built?', 'Every team is ranked by net EPA per play: how many points its offense adds per pass or run play, minus how many its defense allows. '
                 'The 32 teams are then grouped into five tiers. For a defense, a lower EPA allowed is better.'))
-    title = f'NFL team tiers after week {w}, {SEASON_YEAR}: offense vs. defense EPA | PlainStats'
+    title = brand(f'NFL team tiers after week {w}, {SEASON_YEAR}: offense vs. defense EPA')
     desc = clip(f"{lede} All 32 teams ranked by offense and defense EPA per play, with the movers from last week.", 158)
     body = (f'<h1>NFL team tiers after week {w}</h1><p class="lede">{esc(lede)}</p>'
             f'<p>Every team ranked by EPA per play on offense and defense through week {w} of the {SEASON_YEAR} season, grouped into five tiers. '
@@ -1935,7 +1940,7 @@ def build_weekly_power(w, d, have):
         faq.append((f'Which team dropped the most in week {w}?', f"The {TEAMS[dn['id']]['full']}, down {-dn['move']} spots to {ordn(dn['rank'])}."))
     faq.append(('How are the PlainStats power rankings made?', 'Each team gets a score from 0 to 100: 28% win percentage, 28% scoring margin, 24% roster strength '
                 '(the PlainStats player ratings) and 20% efficiency (offense and defense EPA per play, sacks and turnovers), each as a rank among the 32 teams. No opinions or votes go in.'))
-    title = f'NFL power rankings, week {w} {SEASON_YEAR}: all 32 teams by the numbers | PlainStats'
+    title = brand(f'NFL power rankings, week {w} {SEASON_YEAR}: all 32 teams by the numbers')
     desc = clip(lede + ' All 32 teams ranked on results, roster and efficiency, with each team\'s move from last week.', 158)
     body = (f'<h1>NFL power rankings, week {w}</h1><p class="lede">{esc(lede)}</p>'
             f'<p>All 32 teams after week {w} of the {SEASON_YEAR} season, ranked on record, scoring margin, roster strength and efficiency. '
@@ -1973,8 +1978,8 @@ def build_weekly():
     if not weeks:
         return
     path = '/weekly'
-    title = f'NFL weekly rankings, team tiers and usage risers, {SEASON_YEAR} | PlainStats'
-    desc = f'Every week of the {SEASON_YEAR} NFL season: power rankings, team tiers by EPA and the players whose target, carry and snap share jumped. Plain tables, updated each Tuesday.'
+    title = brand(f'NFL weekly rankings, team tiers and usage risers, {SEASON_YEAR}')
+    desc = f'Every week of the {SEASON_YEAR} NFL season: power rankings, team tiers by EPA and the players whose target, carry and snap share jumped. Updated each Tuesday.'
     items = ''
     for w in weeks:
         links = [f'<li><a href="{wk_path(k, w)}"><b>{esc(n)}</b><span>Week {w}</span></a></li>' for k, _p, n, _a in WK_KINDS if w in have[k]]
