@@ -23,7 +23,6 @@ UA = 'Mozilla/5.0 (compatible; PlainStats data check)'
 # ESPN depth chart position keys -> data/depth.json side and position
 SPOTS = {'qb': ('O', 'QB'), 'rb': ('O', 'RB'), 'te': ('O', 'TE'), 'lt': ('O', 'LT'), 'lg': ('O', 'LG'), 'c': ('O', 'C'),
          'rg': ('O', 'RG'), 'rt': ('O', 'RT'), 'pk': ('S', 'K'), 'k': ('S', 'K'), 'p': ('S', 'P')}
-SERIOUS = ('out', 'doubtful', 'injured reserve', 'ir', 'suspension', 'pup', 'physically unable to perform')
 
 
 DEADLINE = time.time() + 8 * 60   # the whole check stops asking ESPN after 8 minutes and reports what it has
@@ -132,6 +131,9 @@ def main(a):
                 if len(r) > 5 and r[5]:
                     ours[r[5]] = (team, r[0], r[2] or '', r[4] or '')
     week_teams = {t for g in gday.get('games', {}).values() for t in (g.get('inj') or {})}
+    # Only teams whose official report already gives game statuses (Out, Doubtful...). Before that (practice reports only, or
+    # no report yet) ESPN's list is its own estimate and every difference is just timing.
+    final = {t for g in gday.get('games', {}).values() for t, rows in (g.get('inj') or {}).items() if any(len(r) > 2 and r[2] for r in rows)}
     try:
         teams, by_name = espn_teams()
     except Exception as ex:
@@ -142,19 +144,21 @@ def main(a):
         diff = []
         for e, (team, name, st) in inj.items():
             g = e2g.get(e)
-            if team not in week_teams or not g:
+            if team not in final or not g:
                 continue
             o = ours.get(g)
-            if st.lower() in SERIOUS and (not o or not o[2]):
+            # Injured reserve, PUP and suspensions are not on the weekly injury report at all, so only game statuses compare
+            if st.lower() in ('out', 'doubtful') and (not o or not o[2]):
                 diff.append((team, names.get(g, (name,))[0], st, (o[3] or 'listed, no game status') if o else 'not on our report'))
         for g, (team, name, st, prac) in ours.items():
-            if st.lower() in ('out', 'doubtful') and g not in {e2g.get(e) for e in inj}:
+            if team in final and st.lower() in ('out', 'doubtful') and g not in {e2g.get(e) for e in inj}:
                 diff.append((team, name, 'not on ESPN list', st))
         found['injuries'] = diff
         wk = [e for e, v in inj.items() if v[0] in week_teams]
         lines += [f'### Injuries: {len(diff)} differences', '',
                   f'ESPN lists {len(inj)} injured players, {len(wk)} on teams playing this week ({sum(1 for e in wk if e2g.get(e))} matched to a gsis id); '
-                  f'our report has {len(ours)}.', '']
+                  f'our report has {len(ours)}. Compared: Out and Doubtful, for the {len(final)} teams whose official report has game statuses '
+                  f'({", ".join(sorted(final)) or "none yet"}). Injured reserve is never on the weekly report, so it is not compared.', '']
         lines += (['| Team | Player | ESPN | Ours |', '| --- | --- | --- | --- |'] +
                   [f'| {t} | {n} | {s} | {o} |' for t, n, s, o in sorted(diff)] if diff else ['None.']) + ['']
     except Exception as ex:
