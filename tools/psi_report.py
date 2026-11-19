@@ -59,7 +59,12 @@ def main(a):
     for p in PAGES:
         for s in ('mobile', 'desktop') if p == '/' else ('mobile',):
             res[f'{s} {p}'] = summarize(run(a.base.rstrip('/') + p, s, key))
+            if not key and '429' in res[f'{s} {p}'].get('error', ''):
+                break   # without a key Google refuses the rest too; say so instead of waiting minutes per page
             time.sleep(1 if key else 8)
+        else:
+            continue
+        break
     ch = lambda k, c: '' if not prev.get(k, {}).get('cats') else f" ({res[k]['cats'][c] - prev[k]['cats'][c]:+d})"
     out = ['## PageSpeed Insights, plainstatsnfl.com', '',
            'Lighthouse lab scores out of 100 (change from last week in brackets). Mobile is a mid-range phone on slow 4G.', '',
