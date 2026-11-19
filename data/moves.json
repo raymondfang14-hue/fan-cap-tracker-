@@ -1,6 +1,195 @@
 {
- "asOf": "2026-11-18",
+ "asOf": "2026-11-19",
  "moves": [
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Coaching",
+   "teams": [
+    "DAL"
+   ],
+   "players": [
+    "Mike Pettine",
+    "Christian Parker"
+   ],
+   "head": "Cowboys hand defensive play-calling to senior assistant Mike Pettine",
+   "plain": "Christian Parker keeps the defensive coordinator title, but Mike Pettine, brought out of retirement in October, will now call the defensive plays, ESPN reports. The change comes a day after Jerry Jones said the team was discussing Parker's future. Dallas is 4-6 and its defense ranks 30th in points allowed and last in yards allowed after giving up 46 points to the 49ers in Week 10.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/mike-pettine-to-take-over-as-cowboys-defensive-play-caller",
+   "gids": [
+    "",
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Sam Darnold",
+    "Drew Lock"
+   ],
+   "head": "Seahawks expect QB Sam Darnold back after their Week 11 bye",
+   "plain": "Darnold has missed the last two games with quad and rib injuries, but Seattle never put him on injured reserve. Coach Mike Macdonald expects him to start when the team returns from the bye, on the road against the 49ers. Drew Lock started while he was out.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/seahawks-optimistic-sam-darnold-will-return-after-bye",
+   "gids": [
+    "00-0034869",
+    "00-0035704"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "KC"
+   ],
+   "players": [
+    "Jared Wiley",
+    "Omarr Norman-Lott"
+   ],
+   "head": "Chiefs put TE Jared Wiley on injured reserve and activate DT Omarr Norman-Lott",
+   "plain": "Wiley goes on injured reserve, so he misses at least four games. The transaction list does not say what the injury is. Kansas City also brought defensive tackle Omarr Norman-Lott back from the physically unable to perform list.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-18-26",
+   "gids": [
+    "00-0039824",
+    "00-0040748"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Michael Pittman Jr.",
+    "Roman Wilson",
+    "Gennings Dunker"
+   ],
+   "head": "Steelers open the return window for WRs Michael Pittman Jr. and Roman Wilson and OL Gennings Dunker",
+   "plain": "All three can now practice again after time on injured reserve: Pittman hurt his foot three games into the season, Wilson went down in Week 5 and rookie Dunker sprained his MCL in late September. Pittsburgh has 21 days to add each of them back to the active roster. The two receivers may need some practice time before they play.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/steelers-designate-wrs-michael-pittman-roman-wilson-to-return-from-ir",
+   "gids": [
+    "00-0036252",
+    "00-0039739",
+    "00-0041396"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "JAX"
+   ],
+   "players": [
+    "Robert Hainsey"
+   ],
+   "head": "Jaguars C Robert Hainsey is week to week with a knee sprain",
+   "plain": "Coach Liam Coen said Hainsey will miss Sunday's game against the Giants. Jacksonville needs a fill-in at center while he is out.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-18",
+   "gids": [
+    "00-0036985"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "HOU",
+    "IND"
+   ],
+   "players": [
+    "Danielle Hunter",
+    "Marvin Harrison Jr.",
+    "Woody Marks",
+    "Brevin Jordan",
+    "David Montgomery",
+    "Bernhard Raimann",
+    "Jalen Travis",
+    "Charvarius Ward"
+   ],
+   "head": "Texans get RB David Montgomery back but rule out Danielle Hunter and Marvin Harrison Jr. for Thursday vs the Colts",
+   "plain": "Hunter and Harrison (both hamstrings), running back Woody Marks (concussion) and tight end Brevin Jordan will miss Thursday's game. Montgomery is set to play for the first time since Week 5 after a groin injury and should take back the starting job while Marks sits. The Colts are without tackle Bernhard Raimann (concussion), lineman Jalen Travis (knee) and cornerback Charvarius Ward (knee).",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/texans-getting-rb-david-montgomery-back-in-week-11-rule-out-marvin-harrison-danielle-hunter",
+   "gids": [
+    "00-0031565",
+    "00-0039849",
+    "00-0040583",
+    "00-0036556",
+    "00-0035685",
+    "00-0037757",
+    "00-0040163",
+    "00-0034573"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "MIN"
+   ],
+   "players": [
+    "Bo Richter",
+    "Jordan Addison"
+   ],
+   "head": "Vikings put OLB Bo Richter on injured reserve; WR Jordan Addison avoids it",
+   "plain": "Richter goes on injured reserve with a foot injury, so he misses at least four games. Coach Kevin O'Connell said Addison's thumb surgery on Monday went well and he will not go on injured reserve.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-18",
+   "gids": [
+    "00-0039718",
+    "00-0038994"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Coaching",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Joe Milton III"
+   ],
+   "head": "Eagles QB Joe Milton III will start Sunday against the Steelers",
+   "plain": "Coach Nick Sirianni named Milton the starter. He made his first career start in Week 9 against the Giants, going 18 of 34 for 169 yards and running for 64 more. The report does not say why he is starting.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-18",
+   "gids": [
+    "00-0039398"
+   ]
+  },
+  {
+   "iso": "2026-11-18",
+   "date": "Nov 18",
+   "kind": "Injury",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "David Onyemata"
+   ],
+   "head": "Jets open the return window for DT David Onyemata",
+   "plain": "Onyemata has been on injured reserve since core muscle surgery in late September, and he can now practice again. New York has 21 days to put him back on the active roster; it is not clear if he plays Sunday against the Chargers. The 2-8 Jets have lost seven of eight games since he got hurt.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/jets-designate-dt-david-onyemata-for-return",
+   "gids": [
+    "00-0033051"
+   ]
+  },
   {
    "iso": "2026-11-18",
    "date": "Nov 18",
