@@ -12,7 +12,9 @@
 import vm from 'node:vm';
 
 const SITE = 'https://www.plainstatsnfl.com';
-const CACHE = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
+// A day at the edge: every function response counts toward Vercel's Fast Origin Transfer (10 GB on Hobby; the account was
+// paused on Nov 20, 2026 after bots used it up), and the page only changes with the daily refresh.
+const CACHE = 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800';
 const DEFAULT_DESC = "NFL analytics in plain English: player ratings, team rankings, stats and contracts. Who's good, who's paid and whether it's worth it.";
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -121,8 +123,8 @@ async function handler(request) {
     const C = await load(origin);
     const pm = pageMeta(path, C);
     if (!pm) {
-      const r = await fetch(origin + '/404', { headers: { 'User-Agent': 'PlainStats page function' } });
-      return new Response(r.ok ? await r.text() : 'Not found', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': CACHE } });
+      // a short body: vercel.json only sends app paths here now, so this is a mistyped address, not worth a full page
+      return new Response('<!doctype html><title>Not found · PlainStats</title><p>Page not found. <a href="/">PlainStats home</a></p>', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': CACHE } });
     }
     return new Response(withHead(C.html, pm), { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': CACHE } });
   } catch (e) {

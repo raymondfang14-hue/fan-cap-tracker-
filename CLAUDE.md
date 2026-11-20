@@ -82,6 +82,7 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - If the owner asks for a new app feature in this window, remind them of the pause in one line and build it only if they confirm.
 
 ## Shipping
+- Cloudflare Pages backup host (Vercel Hobby paused Nov 20, 2026 for Fast Origin Transfer): build command `python3 tools/build_cf.py`, output `dist`. It copies only public files (`.vercelignore` is the exclude list for both hosts) and writes `_redirects` / `_headers` from `vercel.json`, so keep editing `vercel.json`. The `api/` functions don't run there; the page falls back. Function output is what Fast Origin Transfer meters: keep the bot rewrite in `vercel.json` limited to app paths and named search/preview bots, and keep function caches long.
 - Push changes to GitHub without asking first (standing instruction from the owner).
 - Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
 

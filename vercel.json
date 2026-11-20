@@ -73,12 +73,12 @@
   ],
   "rewrites": [
     {
-      "source": "/:path((?!api/|data/|assets/|og-data/|_vercel/).*)",
+      "source": "/:path((?:scores|standings|projections|news|team-ratings|team-tiers|usage-risers|cap-room|power-rankings|awards|player-ratings|stats|contracts|best-worst-contracts|rookie-contracts|free-agency|cap-lab|big-board|mock-draft|rookie-pay|draft-guide|roster-builder|trade-checker|trade-deadline|compare|cap-101|about|search|setup|team|player|prospect|game|links)(?:/[a-z0-9-]+)*)",
       "has": [
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*([Bb]ot|[Cc]rawler|[Ss]pider|facebookexternalhit|WhatsApp|Embedly|Slurp|Pinterest|vkShare|Iframely|Quora Link Preview).*"
+          "value": ".*(Googlebot|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|YandexBot|Slurp|Twitterbot|facebookexternalhit|LinkedInBot|Slackbot|Discordbot|TelegramBot|WhatsApp|redditbot|Embedly|Pinterest|Iframely|vkShare|Quora Link Preview|SkypeUriPreview|Mastodon|Bluesky).*"
         }
       ],
       "destination": "/api/page?p=/:path"
