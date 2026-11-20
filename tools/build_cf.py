@@ -26,7 +26,7 @@ import shutil
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'dist')
 EXTRA = ['.git', '.vercel', '.vercelignore', 'node_modules', 'dist', 'api', 'vercel.json', 'package.json',
-         'package-lock.json', '.wrangler', 'functions', 'wrangler.toml']
+         'package-lock.json', '.wrangler', 'functions', 'wrangler.toml', 'wrangler.jsonc', 'cf', '.og-cache']
 
 
 def patterns():

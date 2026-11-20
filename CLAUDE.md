@@ -1,6 +1,6 @@
 # PlainStats
 
-Simple, analytical NFL contracts and stats site for everyday fans. Live at plainstatsnfl.com (Vercel, deployed from this repo's main branch). Static single page plus two Vercel functions; data is JSON in `data/`. See README.md for the full data pipeline.
+Simple, analytical NFL contracts and stats site for everyday fans. Live at plainstatsnfl.com (Cloudflare Workers, deployed from this repo's main branch by GitHub Actions; see Shipping). Static single page plus API functions; data is JSON in `data/`. See README.md for the full data pipeline.
 
 ## Editing the page
 - Edit `src.html`, never `index.html`. `build.sh` wraps `src.html` into `index.html`; a hook runs it after every `src.html` edit and blocks direct `index.html` edits.
@@ -82,9 +82,9 @@ Simple, analytical NFL contracts and stats site for everyday fans. Live at plain
 - If the owner asks for a new app feature in this window, remind them of the pause in one line and build it only if they confirm.
 
 ## Shipping
-- Cloudflare Pages backup host (Vercel Hobby paused Nov 20, 2026 for Fast Origin Transfer): build command `python3 tools/build_cf.py`, output `dist`. It copies only public files (`.vercelignore` is the exclude list for both hosts) and writes `_redirects` / `_headers` from `vercel.json`, so keep editing `vercel.json`. The `api/` functions don't run there; the page falls back. Function output is what Fast Origin Transfer meters: keep the bot rewrite in `vercel.json` limited to app paths and named search/preview bots, and keep function caches long.
+- The site is served by Cloudflare Workers (Vercel Hobby paused Nov 20, 2026 for Fast Origin Transfer; nothing points at Vercel now). `.github/workflows/cloudflare-deploy.yml` deploys on every push to main and after each nflverse refresh run: `tools/build_cf.py` copies only public files into `dist/` (`.vercelignore` is the exclude list for both hosts) and writes `_redirects` / `_headers` from `vercel.json`, so keep editing `vercel.json`; `tools/render_og.mjs` draws every social card into `dist/og/<kind>/<slug>.png` (the free plan's CPU limit can't draw them per request; unchanged cards come from actions/cache); then `wrangler deploy` (`wrangler.jsonc`, domains included). `cf/worker.js` runs only for `/api/*`: `/api/og` serves the drawn card, `/api/contracts` reads Airtable (Worker secret `AIRTABLE_TOKEN`) with the same filter as `api/contracts.js`. `api/page.js` (bot titles) and `/api/espn-csv` are not ported; the page falls back. On Vercel, function output is what Fast Origin Transfer meters: keep the bot rewrite limited to app paths and named search/preview bots, and keep function caches long.
 - Push changes to GitHub without asking first (standing instruction from the owner).
-- Secrets (`AIRTABLE_TOKEN`) live only in Vercel env vars; never commit them.
+- Secrets (`AIRTABLE_TOKEN`) live only in the Cloudflare Worker secrets (and Vercel env vars); `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` are GitHub Actions secrets. Never commit them.
 
 ## Keeping the setup private
 - `.vercelignore` keeps notes, build scripts, `src.html`, `tools/` and raw sources (`data/*.py`, `*.csv`, `*.txt`, `cba.json`, `years_calc.json`) out of the public deployment. If the page starts loading a new `data/` file, make sure it is not matched there. Keep the GitHub repo private.

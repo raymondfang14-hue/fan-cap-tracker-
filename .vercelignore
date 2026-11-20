@@ -24,3 +24,7 @@ data/lastmod.json
 data/vs_pairs.json
 data/compare_pairs.json
 data/weekly
+cf
+wrangler.jsonc
+.og-cache
+dist
