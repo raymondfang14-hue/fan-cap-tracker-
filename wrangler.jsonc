@@ -5,6 +5,11 @@
   "compatibility_date": "2025-06-01",
   "workers_dev": true,
   "preview_urls": false,
+  // plainstatsnfl.com redirects to www with a zone Redirect Rule; both need to be on the Worker so Cloudflare answers them
+  "routes": [
+    { "pattern": "www.plainstatsnfl.com", "custom_domain": true },
+    { "pattern": "plainstatsnfl.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",
