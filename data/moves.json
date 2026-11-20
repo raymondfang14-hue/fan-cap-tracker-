@@ -1,6 +1,147 @@
 {
- "asOf": "2026-11-19",
+ "asOf": "2026-11-20",
  "moves": [
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "Extension",
+   "teams": [
+    "DEN"
+   ],
+   "players": [
+    "Riley Moss"
+   ],
+   "head": "Broncos extend CB Riley Moss for four years and $67M",
+   "plain": "Denver added four years to Moss's rookie deal, which was due to run out after this season, at $16.75M a year. He is now signed through 2030. Moss, a 2023 third-round pick, led the NFL with 19 pass breakups last season and is still a starter this year. Guarantees and the signing bonus were not reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/broncos-riley-moss-agree-to-extension",
+   "gids": [
+    "00-0038552"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "League",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Puka Nacua"
+   ],
+   "head": "NFL suspends Rams WR Puka Nacua for three games",
+   "plain": "The suspension under the personal conduct policy came out of a settlement between the league and the players' union, ESPN reports. It follows a lawsuit filed in March that accused Nacua of biting a woman. He is already on injured reserve with a knee injury, so he serves it while he is out, is eligible to return in Week 14 and gives up about $960K in game checks.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-wr-puka-nacua-suspended-for-3-games",
+   "gids": [
+    "00-0039075"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "League",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "Marlon Humphrey",
+    "Chidobe Awuzie",
+    "T.J. Tampa"
+   ],
+   "head": "Ravens send CB Marlon Humphrey home and bench him for Sunday at Carolina",
+   "plain": "Baltimore will deactivate Humphrey for the Week 11 game after remarks about the city on his podcast drew wide criticism; he has apologized. Coach Jesse Minter said the benching is for one game only. Chidobe Awuzie and T.J. Tampa will play more at corner as the 4-6 Ravens try to end a five-game losing streak.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/ravens-bench-cb-marlon-humphrey-for-week-11",
+   "gids": [
+    "00-0033281",
+    "00-0033548",
+    "00-0039234"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "Release",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Justin Reid",
+    "Jordan Howden"
+   ],
+   "head": "Saints agree to release S Justin Reid at his request",
+   "plain": "Reid asked to be let go earlier this week, NewOrleans.Football reports, and he will not play Sunday against the Bears. The move was not yet on the league's transaction report Thursday, and because the trade deadline has passed he goes on waivers first. Jordan Howden, who has taken some of Reid's snaps in recent weeks, is set to start.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-s-justin-reid-agree-to-part-ways",
+   "gids": [
+    "00-0034361",
+    "00-0038588"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "League",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Calvin Ridley"
+   ],
+   "head": "Titans WR Calvin Ridley charged with misdemeanor assault",
+   "plain": "The charge comes from a Nov 7 incident at Nashville International Airport, where he is accused of grabbing his keys from a valet worker and cutting the man's hand. He is due in court Dec 7. The Titans declined to comment while the police investigation goes on, and Ridley could also face league discipline under the personal conduct policy.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/titans-wr-calvin-ridley-facing-misdemeanor-assault-charge",
+   "gids": [
+    "00-0034837"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "Coaching",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Sean Mannion",
+    "Nick Sirianni"
+   ],
+   "head": "Eagles coach Nick Sirianni backs offensive coordinator Sean Mannion",
+   "plain": "Sirianni weighed staff changes over the bye, but Mannion said Thursday that the two are in lockstep, The Athletic reports. Philadelphia is 2-7 and last in the league in total offense, with Jalen Hurts out for the season and several other starters missing games.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-nick-sirianni-gives-vote-of-confidence-to-oc-sean-mannion",
+   "gids": [
+    "",
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
+   "kind": "Game",
+   "teams": [
+    "IND",
+    "HOU"
+   ],
+   "players": [
+    "C.J. Stroud",
+    "David Montgomery",
+    "Will Anderson Jr.",
+    "Daniel Jones"
+   ],
+   "head": "Thursday night: Texans beat Colts 26-3",
+   "plain": "Houston scored the last 26 points after a Colts field goal on the opening drive. C.J. Stroud threw three touchdown passes, David Montgomery ran for 107 yards and Will Anderson Jr. sacked Daniel Jones for a safety. The Texans are 4-6 and the Colts fall to 3-8.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/colts-texans-on-thursday-night-football-what-we-learned-from-houston-s-26-3-win",
+   "gids": [
+    "00-0039163",
+    "00-0035685",
+    "00-0039108",
+    "00-0035710"
+   ]
+  },
   {
    "iso": "2026-11-18",
    "date": "Nov 18",
