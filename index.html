@@ -1428,6 +1428,14 @@ a.xq:hover,a.xq:focus-visible{color:var(--brand);border-color:var(--brand)}
 .mine-news li{display:grid;gap:2px;font-size:.9rem;line-height:1.35}
 .mine-news a{color:var(--fg)!important;text-decoration:none;font-weight:600}.mine-news a:hover{text-decoration:underline}
 tr[data-p]:focus-visible,tr[data-team]:focus-visible,td[data-team]:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+/* Large text (200% on a 390px phone): long names wrap instead of being cut off with an ellipsis, and fixed-width columns may shrink so the page never scrolls sideways. */
+.drow b,.drow small,.pp-team .nm b,.pp-team .nm small,.gteam .nm b,.ur-who b,.ob .nm span,.rlrow .nm small,.ubar>span:first-child,.hsr .nm,.gseed b,.pk-slot button,.lstp li button,.lstp li b{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.pp-team .nm{grid-template-columns:minmax(0,1fr)}
+.gseed b{display:block;min-width:0}
+.gb{grid-template-columns:minmax(0,6.6rem) minmax(0,1fr) minmax(0,5.6rem)}
+.gb>:first-child{min-width:0;overflow-wrap:anywhere}
+.gb .diff{white-space:normal}
+.cmprow .l,.cmprow .rgt{min-width:0}.cmprow .l>b,.cmprow .rgt>b{white-space:normal;overflow-wrap:anywhere;min-width:0}
 </style>
 
 <header class="gn" id="gn">
@@ -4868,8 +4876,8 @@ function radarSVG(a, b) {
   [0.25, 0.5, 0.75, 1].forEach(r => { g += `<polygon points="${P_DEFS.map((_, i) => pt(i, r).join(',')).join(' ')}" fill="none" stroke="var(--line)"></polygon>`; });
   P_DEFS.forEach((d, i) => { const [x, y] = pt(i, 1), [lx, ly] = pt(i, 1.2); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"></line><text x="${lx}" y="${ly + 3}" text-anchor="${lx < cx - 5 ? 'end' : lx > cx + 5 ? 'start' : 'middle'}">${d[1]}</text>`; });
   const poly = (p, c) => `<polygon points="${P_DEFS.map((d, i) => pt(i, Math.max(.03, p[d[0]])).join(',')).join(' ')}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="2"></polygon>`;
-  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="0 0 280 256" style="max-width:340px" role="img" aria-label="Percentile radar comparing ${esc(a.name)} and ${esc(b.name)}">${g}${poly(a, 'var(--brand)')}${poly(b, 'var(--c-def)')}</svg>
-    <ul class="legend" style="grid-template-columns:repeat(2,max-content)"><li><i class="swatch" style="background:var(--brand)"></i><span>${esc(a.name)}</span></li><li><i class="swatch" style="background:var(--c-def)"></i><span>${esc(b.name)}</span></li></ul>
+  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="-16 0 356 256" style="max-width:432px" role="img" aria-label="Percentile radar comparing ${esc(a.name)} and ${esc(b.name)}">${g}${poly(a, 'var(--brand)')}${poly(b, 'var(--c-def)')}</svg>
+    <ul class="legend" style="grid-template-columns:repeat(2,minmax(0,max-content))"><li><i class="swatch" style="background:var(--brand)"></i><span>${esc(a.name)}</span></li><li><i class="swatch" style="background:var(--c-def)"></i><span>${esc(b.name)}</span></li></ul>
     <span class="note">Percentiles at each player's own position.</span></div>`;
 }
 function cmpStatsHTML(a, b) {
@@ -4907,8 +4915,8 @@ function radarMulti(ps) {
   [0.25, 0.5, 0.75, 1].forEach(r => { g += `<polygon points="${P_DEFS.map((_, i) => pt(i, r).join(',')).join(' ')}" fill="none" stroke="var(--line)"></polygon>`; });
   P_DEFS.forEach((d, i) => { const [x, y] = pt(i, 1), [lx, ly] = pt(i, 1.2); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"></line><text x="${lx}" y="${ly + 3}" text-anchor="${lx < cx - 5 ? 'end' : lx > cx + 5 ? 'start' : 'middle'}">${d[1]}</text>`; });
   const poly = (p, c) => `<polygon points="${P_DEFS.map((d, i) => pt(i, Math.max(.03, p[d[0]])).join(',')).join(' ')}" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="2"></polygon>`;
-  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="0 0 280 256" style="max-width:340px" role="img" aria-label="Percentile radar comparing ${esc(ps.map(p => p.name).join(', '))}">${g}${ps.map((p, i) => poly(p, CMP_COLS[i])).join('')}</svg>
-    <ul class="legend" style="grid-template-columns:repeat(2,max-content)">${ps.map((p, i) => `<li><i class="swatch" style="background:${CMP_COLS[i]}"></i><span>${esc(p.name)}</span></li>`).join('')}</ul>
+  return `<div style="display:grid;gap:6px;justify-items:center"><svg class="radar chart" viewBox="-16 0 356 256" style="max-width:432px" role="img" aria-label="Percentile radar comparing ${esc(ps.map(p => p.name).join(', '))}">${g}${ps.map((p, i) => poly(p, CMP_COLS[i])).join('')}</svg>
+    <ul class="legend" style="grid-template-columns:repeat(2,minmax(0,max-content))">${ps.map((p, i) => `<li><i class="swatch" style="background:${CMP_COLS[i]}"></i><span>${esc(p.name)}</span></li>`).join('')}</ul>
     <span class="note">Percentiles at each player's own position.</span></div>`;
 }
 /* three or four players: one column per player, label on the left */
@@ -6179,6 +6187,8 @@ document.addEventListener('click', e => { const a = e.target.closest('.pnews a')
 const _openProspectBase = openProspect;
 openProspect = function (i) { _openProspectBase(i); const p = DP[i]; if (p) sheetLink(dSlug(p)); };
 sheet.addEventListener('close', () => { if (/^[pdg]-/.test(curKey())) setURL(LASTV || 'home', true); });
+/* A sheet opened straight from its URL has no opener to hand focus back to: land on the view's heading instead of <body>. */
+sheet.addEventListener('close', () => setTimeout(() => { const a = document.activeElement; if (a && a !== document.body && a !== sheet && !sheet.contains(a)) return; const v = document.querySelector('section.view:not([hidden])'); const h = v && (v.querySelector('h1') || v.querySelector('h2')); const t = h || document.querySelector('main'); if (!t) return; if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }, 0));
 document.addEventListener('click', e => {
   const b = e.target.closest('.cplink'); if (!b) return; e.stopPropagation();
   const url = shareUrl(b.dataset.link, 'copylink');
