@@ -116,13 +116,20 @@ def main():
             continue
         src, dst = to_cf(r['source']), r['destination'].replace(':path*', ':splat')
         lines.append(f"{src} {dst} {301 if r.get('permanent') else 302}")
+    # App paths (the rewrites to "/") need no rule here: run_worker_first sends them to cf/worker.js, which serves index.html
+    # with the page's own head. Cloudflare allows only 100 dynamic rules (with :placeholders or *), so only fixed paths get
+    # a trailing-slash redirect (trailingSlash: false on Vercel sent /scores/ to /scores); /team/kc/ and the like reach the
+    # Worker anyway, which answers them with the right canonical.
     for r in v.get('rewrites', []):
-        if r.get('has') or r['destination'].startswith('/api/'):  # the bot meta function: on Cloudflare, cf/worker.js does it
+        if r.get('has') or r['destination'] == '/' or r['destination'].startswith('/api/'):
             continue
         lines.append(f"{to_cf(r['source'])} {r['destination']} 200")
-    # trailingSlash: false on Vercel sent /scores/ to /scores; do the same (before the rewrites, so it matches first)
-    slash = [f"{to_cf(r['source'])}/ {to_cf(r['source'])} 301" for r in v.get('rewrites', []) if not r.get('has') and r['destination'] == '/']
+    slash = [f"{r['source']}/ {r['source']} 301" for r in v.get('rewrites', [])
+             if not r.get('has') and r['destination'] == '/' and ':' not in r['source']]
     lines[1:1] = list(dict.fromkeys(slash))
+    dynamic = [l for l in lines[1:] if ':' in l.split()[0] or '*' in l.split()[0]]
+    if len(dynamic) > 100:
+        raise SystemExit(f'{len(dynamic)} dynamic _redirects rules; Cloudflare allows 100')
     with open(os.path.join(OUT, '_redirects'), 'w') as f:
         f.write('\n'.join(lines) + '\n')
 
