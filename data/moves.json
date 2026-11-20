@@ -2188,6 +2188,24 @@
   },
   {
    "iso": "2026-10-09",
+   "date": "Oct 9",
+   "kind": "Restructure",
+   "teams": [
+    "HOU"
+   ],
+   "players": [
+    "Davis Mills"
+   ],
+   "head": "Texans restructure backup QB Davis Mills' contract to free $2.7M in cap space",
+   "plain": "Houston cut Mills' salary to the $1.2M minimum and turned $3.7M into a signing bonus spread over five years, adding four void years, KPRC2's Aaron Wilson reports. That drops his 2026 cap hit from $8.1M to $5.4M. It is an accounting move for a team short on cap room; Mills is still set to be a free agent after this season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/texans-restructure-qb-davis-mills-contract",
+   "gids": [
+    "00-0036898"
+   ]
+  },
+  {
+   "iso": "2026-10-09",
    "date": "October",
    "kind": "Signing",
    "teams": [
