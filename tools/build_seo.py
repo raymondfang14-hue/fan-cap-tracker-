@@ -1400,7 +1400,8 @@ def build_prospect(pr):
         ranks.append(f"No. {pr['b']} on the NFL Draft Buzz big board")
     lead = f"{cls} {role}".strip()
     summary = f"{pr['name']} is {article(lead)} {lead} at {school} in the 2027 NFL Draft class" + (f", ranked {' and '.join(ranks)}." if ranks else '.')
-    title = brand(f"{pr['name']} 2027 NFL Draft profile: stats and big board rank")
+    core = f"{pr['name']} 2027 NFL Draft profile: stats and big board rank"
+    title = brand(core if len(core) <= 65 else f"{pr['name']} 2027 NFL Draft profile and stats")
     desc = clip(summary + ' College stats, size and where he fits.', 158)
     faq = []
     if ranks:
