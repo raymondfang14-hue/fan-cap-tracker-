@@ -8,7 +8,15 @@
 //                     Worker secret AIRTABLE_TOKEN (Cloudflare dashboard: plainstats > Settings > Variables and Secrets).
 //                     Cached 5 minutes at the edge. Without the secret it answers 503 and the page shows the built-in DEALS.
 //   other /api/*      404 JSON (the page falls back: /api/espn-csv -> data/espn_assets.json)
+//   app paths         /scores, /team-tiers, /team/kc, /player/<slug>-<team>, /game/<id>, ... (the rewrites to "/" in vercel.json):
+//                     index.html with its own title, description, canonical and social card tags, the job api/page.js did for
+//                     bots on Vercel. Everyone gets it here (crawlers, link previews, people), so the raw HTML never says
+//                     canonical "/" on a page that isn't home. An app-shaped path pageMeta() doesn't know (a mistyped team) gets
+//                     the 404 page for bots and the app as before for people. wrangler.jsonc's run_worker_first sends only these
+//                     paths here; every other file is served without running this script.
 import contracts from '../api/contracts.js';
+import { pageMeta, SITE } from '../api/_page-meta.js';
+import C from './_meta.json'; // written by tools/build_cf_meta.mjs at deploy
 
 const KINDS = new Set(['players', 'teams', 'draft', 'pages']);
 const OG_CACHE = 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800';
@@ -57,12 +65,49 @@ async function deals(request, env, ctx) {
   }
 }
 
+const APPS = C.apps.map(r => new RegExp(r));
+const BOT = C.botUA ? new RegExp(C.botUA) : null;
+
+// Set an attribute on the first matching element only (index.html has each tag once).
+const attr = (name, value) => ({ element(el) { el.setAttribute(name, value); } });
+
+async function appPage(request, env, url) {
+  let path = url.pathname.replace(/\/+$/, '') || '/';
+  if (!/^\/[a-z0-9/-]*$/.test(path)) path = '/x-invalid';
+  const pm = pageMeta(path, C);
+  const isBot = BOT && BOT.test(request.headers.get('user-agent') || '');
+  if (!pm && isBot) {
+    const r = await env.ASSETS.fetch(new URL('/404', url.origin));
+    return new Response(r.body, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  }
+  const app = await env.ASSETS.fetch(new URL('/', url.origin));
+  const headers = new Headers(app.headers);
+  headers.delete('ETag'); // the body differs per path
+  headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  if (!pm) return new Response(app.body, { status: app.status, headers });
+  const img = pm.img || `${SITE}/og-image.png`;
+  let rw = new HTMLRewriter()
+    .on('title', { element(el) { el.setInnerContent(pm.title); } })
+    .on('meta[name="description"]', attr('content', pm.desc))
+    .on('link[rel="canonical"]', attr('href', pm.canon))
+    .on('meta[property="og:title"]', attr('content', pm.title))
+    .on('meta[property="og:description"]', attr('content', pm.desc))
+    .on('meta[property="og:url"]', attr('content', pm.canon))
+    .on('meta[property="og:image"]', attr('content', img))
+    .on('meta[name="twitter:title"]', attr('content', pm.title))
+    .on('meta[name="twitter:description"]', attr('content', pm.desc))
+    .on('meta[name="twitter:image"]', attr('content', img));
+  if (pm.img) rw = rw.on('meta[property="og:image:alt"]', attr('content', pm.title));
+  return rw.transform(new Response(app.body, { status: 200, headers }));
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/og') return og(url, env);
     if (url.pathname === '/api/contracts') return deals(request, env, ctx);
     if (url.pathname.startsWith('/api/')) return json({ error: 'Not found' }, 404);
+    if ((request.method === 'GET' || request.method === 'HEAD') && APPS.some(re => re.test(url.pathname))) return appPage(request, env, url);
     return env.ASSETS.fetch(request);
   }
 };
