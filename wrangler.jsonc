@@ -1,0 +1,11 @@
+// Cloudflare Workers static site (Vercel Hobby paused Nov 20, 2026). Build command: python3 tools/build_cf.py
+// dist/ holds only the public files plus _redirects and _headers generated from vercel.json (see tools/build_cf.py).
+{
+  "name": "plainstats",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
