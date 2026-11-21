@@ -1,6 +1,104 @@
 {
- "asOf": "2026-11-20",
+ "asOf": "2026-11-21",
  "moves": [
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Release",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Daniel Jones",
+    "Anthony Richardson"
+   ],
+   "head": "Colts waive QB Daniel Jones and turn to Anthony Richardson",
+   "plain": "Coach Shane Steichen announced the move Friday and said Jones did not ask to be released; Jones leads the NFL with 13 interceptions this season. He is on waivers until Monday afternoon, and a team that claims him would owe the rest of his 2026 base salary (about $2.14M) and a $10.51M injury guarantee for 2027 from the two-year, $88M deal he signed in March, so a claim is unlikely. Anthony Richardson is expected to start, and the report did not give the Colts' dead money.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-release-qb-daniel-jones",
+   "gids": [
+    "00-0035710",
+    "00-0039164"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Injury",
+   "teams": [
+    "NE"
+   ],
+   "players": [
+    "Drake Maye",
+    "Tommy DeVito",
+    "A.J. Brown"
+   ],
+   "head": "Patriots QB Drake Maye has a fractured fibula and is likely out for the rest of the regular season",
+   "plain": "Maye's right leg injury is a broken fibula, ESPN's Mike Reiss and Adam Schefter report; he does not need surgery, so he could come back if New England is still in the playoff race. Tommy DeVito starts after the bye, ending Maye's run of 43 straight starts. WR A.J. Brown is also expected to miss multiple weeks with a hamstring injury, with the 5-5 Patriots one game out of the AFC's last wild-card spot.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/patriots-qb-drake-maye-suffers-fractured-fibula-wr-a-j-brown-out-multiple-weeks",
+   "gids": [
+    "00-0039851",
+    "00-0038476",
+    "00-0035676"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Puka Nacua"
+   ],
+   "head": "Rams WR Puka Nacua had MCL surgery and is likely done for 2026",
+   "plain": "Coach Sean McVay said Friday that Nacua had knee surgery on Tuesday and will be out multiple months, ESPN's Sarah Barshop reports, which all but ends his season. An NFL spokesperson told The Athletic the league did not know about the surgery when it suspended him for three games a day earlier. Nacua is a pending free agent, and the 6-4 Rams are waiting on Davante Adams to return.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-wr-puka-nacua-undergoes-mcl-surgery-2026-return-in-doubt",
+   "gids": [
+    "00-0039075"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Injury",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Laremy Tunsil"
+   ],
+   "head": "Commanders LT Laremy Tunsil not expected to play in the 2026 regular season",
+   "plain": "Tunsil tore his triceps in August and has been on injured reserve since just after final cuts. The Washington Post's Tashan Reed reports he is not expected back for the rest of the regular season, though a playoff return is possible. Brandon Coleman keeps playing left tackle for the 3-5-1 Commanders.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/commanders-lt-laremy-tunsil-not-expected-to-play-in-2026",
+   "gids": [
+    "00-0032380"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Injury",
+   "teams": [
+    "MIN"
+   ],
+   "players": [
+    "Kyler Murray",
+    "Jordan Addison"
+   ],
+   "head": "Vikings rule out QB Kyler Murray and WR Jordan Addison against the 49ers",
+   "plain": "Murray (hamstring) and Addison (thumb) will both miss Sunday's game against San Francisco in Mexico City. TE T.J. Hockenson is off the injury report after a wrist problem. The report did not say who will start at quarterback.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-friday-nov-20",
+   "gids": [
+    "00-0035228",
+    "00-0038994"
+   ]
+  },
   {
    "iso": "2026-11-19",
    "date": "Nov 19",
