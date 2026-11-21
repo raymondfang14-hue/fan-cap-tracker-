@@ -45,6 +45,6 @@ jobs:
         env:
           SCOPE: ${{ inputs.scope }}
         run: |
-          # Give Vercel time to deploy the push before Bing fetches the pages.
+          # Give the Cloudflare deploy time to finish before Bing fetches the pages.
           sleep 90
           if [ "$SCOPE" = all ]; then python3 -I tools/indexnow.py --all; else python3 -I tools/indexnow.py; fi

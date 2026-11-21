@@ -18,6 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST = 'www.plainstatsnfl.com'
 ENDPOINT = 'https://api.indexnow.org/indexnow'
 BATCH = 10000  # IndexNow's limit per request
+# Cloudflare answers 403 to Python's default user agent (Python-urllib), so name ours.
+UA = {'User-Agent': 'PlainStats-IndexNow/1.0 (+https://www.plainstatsnfl.com)'}
 
 
 def key():
@@ -39,7 +41,7 @@ def wait_live(k, tries):
     url = f'https://{HOST}/{k}.txt'
     for i in range(tries):
         try:
-            with urllib.request.urlopen(url, timeout=20) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:
                 if r.status == 200 and r.read().decode().strip() == k:
                     return True
         except (urllib.error.URLError, OSError):
@@ -78,7 +80,7 @@ def main():
         body = json.dumps({'host': HOST, 'key': k, 'keyLocation': f'https://{HOST}/{k}.txt',
                            'urlList': urls[i:i + BATCH]}).encode()
         req = urllib.request.Request(ENDPOINT, data=body, method='POST',
-                                     headers={'Content-Type': 'application/json; charset=utf-8'})
+                                     headers={'Content-Type': 'application/json; charset=utf-8', **UA})
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
                 print(f'sent {len(urls[i:i + BATCH])}: HTTP {r.status}')
