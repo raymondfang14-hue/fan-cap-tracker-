@@ -860,6 +860,7 @@ h2.sec{font:700 clamp(1.3rem,2.4vw,1.7rem)/1.15 var(--display);letter-spacing:-.
 .lede{font-size:1.1rem;line-height:1.5;color:var(--muted);max-width:62ch}
 .note{font-size:.82rem}
 .tc .hd b,.deal h3,.watch b,.sh-hd h3,.sh-top h3,.dpos h3,.coachcard b,.tier b,.fc-name,.faq summary,.tile b{text-transform:none!important;letter-spacing:-.015em!important;font-family:var(--display)!important}
+.deal-src a:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:2px}
 summary[style]{text-transform:none!important;letter-spacing:-.015em!important;font-family:var(--display)!important;font-weight:650!important}
 .kpi .k,.stiles .k,.rtile .k,.bigrow .k,.pace .k,.haw .k,.awc .aw-k{font-family:var(--body);letter-spacing:.02em}
 .num{font-variant-numeric:tabular-nums}
@@ -4443,7 +4444,7 @@ function dealCards(list) {
       <p style="font-size:.92rem">${esc(c.plain)}</p>
       <div class="watch"><b>Watch for</b>${esc(c.watch)}</div>
       ${(c.sources || []).some(x => safeUrl(x[1])) ? `<p class="note deal-src">Source${c.sources.length > 1 ? 's' : ''}: ${c.sources.filter(x => safeUrl(x[1])).map(([n, u]) => `<a href="${safeUrl(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(', ')}. Anything not stated in a report is worked out from the reported figures with the CBA's bonus rules.</p>` : ''}
-      ${pl ? `<button type="button" class="btn ghost" data-p="${pl.i}">Open full contract</button>` : ''}
+      ${pl ? `<button type="button" class="btn ghost" data-p="${pl.i}" aria-label="Open full contract: ${esc(c.name)}">Open full contract</button>` : ''}
     </article>`;
   }).join('');
 }
