@@ -1,6 +1,194 @@
 {
- "asOf": "2026-11-21",
+ "asOf": "2026-11-22",
  "moves": [
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Injury",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Alec Pierce"
+   ],
+   "head": "Colts shut down WR Alec Pierce for the rest of 2026 with a heel injury",
+   "plain": "Pierce had ankle and heel surgery in the spring and hurt the heel again in Week 2, his last game; he played only two games and caught five passes for 72 yards. NFL Network's Ian Rapoport reports he is expected to be fully healthy in 2027. The 3-8 Colts lose a receiver they gave a four-year, $114M extension in March, and the group is now led by Laquon Treadwell.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-shut-down-wr-alec-pierce-for-remainder-of-season",
+   "gids": [
+    "00-0037664"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Release",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Brandin Cooks"
+   ],
+   "head": "49ers waive WR Brandin Cooks",
+   "plain": "San Francisco waived Cooks on Saturday and activated DT CJ West from injured reserve. The move comes as Mike Evans, out the last three games with Achilles tendonitis, is on track to return against the Vikings on Sunday, NFL Network's Ian Rapoport reports.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-21-26",
+   "gids": [
+    "00-0031236"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "DAL"
+   ],
+   "players": [
+    "DaRon Bland"
+   ],
+   "head": "Cowboys put CB DaRon Bland on injured reserve with a high ankle sprain",
+   "plain": "Bland was hurt in the first quarter of the Week 10 loss to the 49ers and will miss at least four games, NFL Network's Mike Garafolo reports. It is his third straight season cut short by injury. Joey Porter Jr., acquired from Pittsburgh this season, becomes Dallas's top cornerback.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cowboys-place-cb-daron-bland-on-ir",
+   "gids": [
+    "00-0037275"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Zack Baun",
+    "Dontayvion Wicks"
+   ],
+   "head": "Eagles put LB Zack Baun and WR Dontayvion Wicks on injured reserve",
+   "plain": "Baun hurt his back in the Nov. 8 loss to the Giants and Wicks has an ankle injury that has cost him the last three games. Both will miss at least four games and cannot return before Week 15. Jihaad Campbell and Jeremiah Trotter Jr. are expected to start at linebacker for the 2-7 Eagles, and DeVonta Smith is set to return from a hamstring injury.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-place-lb-zack-baun-wr-dontayvion-wicks-on-ir",
+   "gids": [
+    "00-0036418",
+    "00-0038393"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Carson Beck",
+    "Josh Johnson"
+   ],
+   "head": "Cardinals rule out QB Carson Beck (back) and turn to 40-year-old Josh Johnson at Kansas City",
+   "plain": "Beck, a rookie third-round pick, has back spasms and was ruled out for Sunday, ESPN's Josh Weinfuss reports. Johnson, signed off the Bengals' practice squad last week, makes his 12th career start. He is Arizona's fourth starter in recent weeks, after Jacoby Brissett, Gardner Minshew and Beck.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cardinals-likely-to-start-qb-josh-johnson-in-week-11",
+   "gids": [
+    "00-0041561",
+    "00-0026300"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Zach Sieler",
+    "Zeek Biggers",
+    "Jordan Phillips"
+   ],
+   "head": "Dolphins have three defensive tackles on injured reserve and lean on Kenneth Grant",
+   "plain": "Sieler (biceps) and Biggers (knee) had season-ending surgery, and Phillips is recovering from a biceps injury; the three had played 1,050 defensive snaps between them this year. Kenneth Grant, the 2025 first-round pick, is expected to play more, with Keith Cooper Jr. and Jordan Jefferson also in the mix. With the trade deadline passed, Miami can only add help through free agency or waivers.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/latest-on-dolphins-dt-plans",
+   "gids": [
+    "00-0034285",
+    "00-0040248",
+    "00-0040175"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Tyjae Spears"
+   ],
+   "head": "Titans put RB Tyjae Spears on injured reserve with a knee injury",
+   "plain": "Tennessee moved Spears to injured reserve on Saturday, so he will miss at least the next four games. The Titans called up RB Michael Carter from the practice squad for Sunday's game against Dallas.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-saturday-nov-21",
+   "gids": [
+    "00-0039032"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "League",
+   "teams": [
+    "TEN"
+   ],
+   "players": [
+    "Jaylen Harrell"
+   ],
+   "head": "Titans DL Jaylen Harrell is in the hospital after a serious car crash in Tampa",
+   "plain": "The Titans said Harrell was hurt in a serious crash on Friday and taken to a hospital in his hometown of Tampa, and asked for privacy for his family. Police allege that Harrell, a passenger in a rideshare car, assaulted the driver while it was moving, causing the crash, WTSP reports; the report did not mention any charges. Harrell was already out for the season after tearing his ACL in August.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/titans-dl-jaylen-harrell-in-hospital-after-serious-car-crash",
+   "gids": [
+    "00-0039436"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Signing",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Charlie Smyth"
+   ],
+   "head": "Saints sign K Charlie Smyth to the active roster on a two-year deal",
+   "plain": "New Orleans promoted Smyth from the practice squad on a deal that runs through 2027 and pays the league minimum for the rest of 2026; the report did not give a total or any guarantees. He made 4 of 5 field goals, with a long of 55, in his last two games as a call-up.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-sign-k-charlie-smyth-to-2-year-deal",
+   "gids": [
+    "00-0039229"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "League",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Bud Dupree"
+   ],
+   "head": "Chargers OLB Bud Dupree asks for his release for the second time",
+   "plain": "Dupree asked to be let go before the season and has asked again, ESPN's Jeremy Fowler reports; the Chargers have not granted it. He has no sacks through 10 weeks, has mostly played special teams since the bye and was a healthy scratch in Week 10.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/chargers-olb-bud-dupree-requests-release",
+   "gids": [
+    "00-0032146"
+   ]
+  },
   {
    "iso": "2026-11-20",
    "date": "Nov 20",
@@ -989,62 +1177,6 @@
   {
    "iso": "2026-11-13",
    "date": "Nov 13",
-   "kind": "Release",
-   "teams": [
-    "PHI"
-   ],
-   "players": [
-    "Fred Johnson"
-   ],
-   "head": "Eagles waive backup T Fred Johnson",
-   "plain": "Johnson re-signed in March on a one-year deal and had played 24 snaps. He goes on waivers; if no team claims him, Philadelphia carries nearly $2M in dead money.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-t-fred-johnson",
-   "gids": [
-    "00-0034951"
-   ]
-  },
-  {
-   "iso": "2026-11-13",
-   "date": "Nov 13",
-   "kind": "Injury",
-   "teams": [
-    "BAL"
-   ],
-   "players": [
-    "Lamar Jackson"
-   ],
-   "head": "Ravens QB Lamar Jackson has surgery on a broken, dislocated thumb",
-   "plain": "Jackson was already on injured reserve. Coach Jesse Minter says injuries like this usually take six to 10 weeks, so he is aiming for a late-season return.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-friday-nov-13",
-   "gids": [
-    "00-0034796"
-   ]
-  },
-  {
-   "iso": "2026-11-13",
-   "date": "Nov 13",
-   "kind": "League",
-   "teams": [
-    "MIN"
-   ],
-   "players": [
-    "Kirk Cousins",
-    "Kyler Murray"
-   ],
-   "head": "Kirk Cousins to start for the Vikings at Green Bay with Kyler Murray hurt",
-   "plain": "Three days after Minnesota traded to bring him back, Cousins starts Sunday because Murray has a hamstring injury.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/vikings-kirk-cousins-to-start-in-week-10",
-   "gids": [
-    "00-0029604",
-    "00-0035228"
-   ]
-  },
-  {
-   "iso": "2026-11-13",
-   "date": "Nov 13",
    "kind": "Extension",
    "teams": [
     "ATL"
@@ -1079,42 +1211,21 @@
    ]
   },
   {
-   "iso": "2026-11-12",
-   "date": "Nov 12",
-   "kind": "Injury",
+   "iso": "2026-11-13",
+   "date": "Nov 13",
+   "kind": "Release",
    "teams": [
-    "LAR"
+    "PHI"
    ],
    "players": [
-    "Puka Nacua"
+    "Fred Johnson"
    ],
-   "head": "Rams change course and put WR Puka Nacua on injured reserve",
-   "plain": "A day after saying he would stay on the roster, the Rams put Nacua (knee sprains and turf toe) on injured reserve. He misses at least four games. Brennan Presley takes his roster spot.",
+   "head": "Eagles waive backup T Fred Johnson",
+   "plain": "Johnson re-signed in March on a one-year deal and had played 24 snaps. He goes on waivers; if no team claims him, Philadelphia carries nearly $2M in dead money.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-shift-course-plan-to-place-puka-nacua-on-ir",
+   "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-t-fred-johnson",
    "gids": [
-    "00-0039075"
-   ]
-  },
-  {
-   "iso": "2026-11-12",
-   "date": "Nov 12",
-   "kind": "Game",
-   "teams": [
-    "WAS",
-    "NYG"
-   ],
-   "players": [
-    "Jayden Daniels",
-    "Stefon Diggs"
-   ],
-   "head": "Thursday night: Commanders beat Giants 24-21",
-   "plain": "Jayden Daniels hit Stefon Diggs for a 32-yard touchdown with 57 seconds left. Washington moves to 3-5-1 and the Giants fall to 5-3-1. Washington now holds the tiebreaker after the teams tied in October.",
-   "source": "ESPN",
-   "url": "https://www.espn.com/nfl/recap/_/gameId/401873052",
-   "gids": [
-    "00-0039910",
-    "00-0031588"
+    "00-0034951"
    ]
   },
   {
@@ -1133,99 +1244,6 @@
    "url": "https://www.profootballrumors.com/2026/11/eagles-to-waive-wr-marquise-brown",
    "gids": [
     "00-0035662"
-   ]
-  },
-  {
-   "iso": "2026-11-11",
-   "date": "Nov 11",
-   "kind": "League",
-   "teams": [
-    "ARI"
-   ],
-   "players": [
-    "Carson Beck",
-    "Gardner Minshew"
-   ],
-   "head": "Cardinals name rookie QB Carson Beck their starter",
-   "plain": "With Minshew out after an elbow injury, the third-round pick gets his first NFL start, against the Rams.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-11",
-   "gids": [
-    "00-0041561",
-    "00-0035289"
-   ]
-  },
-  {
-   "iso": "2026-11-11",
-   "date": "Nov 11",
-   "kind": "League",
-   "teams": [
-    "CLE"
-   ],
-   "players": [
-    "Deshaun Watson"
-   ],
-   "head": "Browns start Deshaun Watson against the Texans",
-   "plain": "Cleveland picked Watson over Shedeur Sanders to start Sunday's game in Houston.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-11",
-   "gids": [
-    "00-0033537"
-   ]
-  },
-  {
-   "iso": "2026-11-11",
-   "date": "Nov 11",
-   "kind": "League",
-   "teams": [
-    "DEN",
-    "LAC"
-   ],
-   "players": [
-    "Daiyan Henley"
-   ],
-   "head": "Broncos call off their deadline-day trade for Chargers LB Daiyan Henley",
-   "plain": "Denver says the deal will not be finalized, so Henley stays with the Chargers and no picks change hands. The team gave no reason. Henley is in the last year of his rookie deal and can become a free agent in March.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/broncos-chargers-daiyan-henley-trade-nixed",
-   "gids": [
-    "00-0038553"
-   ]
-  },
-  {
-   "iso": "2026-11-11",
-   "date": "Nov 11",
-   "kind": "Injury",
-   "teams": [
-    "LAR"
-   ],
-   "players": [
-    "Puka Nacua"
-   ],
-   "head": "Rams will not place WR Puka Nacua on injured reserve despite knee sprains and turf toe",
-   "plain": "Nacua has sprained MCL and PCL ligaments in his right knee plus turf toe. Sean McVay says he will miss an extended stretch, but the Rams are keeping him on the active roster rather than using injured reserve.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/rams-will-not-place-puka-nacua-on-ir-week-13-davante-adams-return-in-play",
-   "gids": [
-    "00-0039075"
-   ]
-  },
-  {
-   "iso": "2026-11-11",
-   "date": "Nov 11",
-   "kind": "League",
-   "teams": [
-    "PIT"
-   ],
-   "players": [
-    "Dick Hoak"
-   ],
-   "head": "Longtime Steelers running back and assistant coach Dick Hoak dies at 86",
-   "plain": "Hoak spent his whole career in Pittsburgh, first as a running back and then for decades as the running backs coach. He coached on four Super Bowl winners.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/longtime-steelers-rb-coach-dick-hoak-dies-at-86",
-   "gids": [
-    ""
    ]
   },
   {
@@ -1252,24 +1270,6 @@
     "00-0036349",
     "00-0036564",
     "00-0036621"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
-   "kind": "League",
-   "teams": [
-    "LV"
-   ],
-   "players": [
-    "Fernando Mendoza"
-   ],
-   "head": "Raiders name rookie Fernando Mendoza their starting QB",
-   "plain": "With Kirk Cousins traded back to Minnesota, the No. 1 overall pick takes over. His first start is Sunday against Seattle.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/raiders-name-fernando-mendoza-starting-qb",
-   "gids": [
-    "00-0041562"
    ]
   },
   {
@@ -1466,46 +1466,6 @@
   {
    "iso": "2026-11-10",
    "date": "Nov 10",
-   "kind": "Injury",
-   "teams": [
-    "MIA"
-   ],
-   "players": [
-    "Zach Sieler",
-    "Malik Willis"
-   ],
-   "head": "Dolphins put DT Zach Sieler (biceps, season-ending surgery) and QB Malik Willis (groin) on injured reserve",
-   "plain": "Sieler needs surgery on a ruptured biceps and is out for the season. Willis will miss at least four games, so Kyle McCord starts at quarterback in Week 10.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
-   "gids": [
-    "00-0034285",
-    "00-0038128"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
-   "kind": "Injury",
-   "teams": [
-    "ARI"
-   ],
-   "players": [
-    "Gardner Minshew",
-    "Michael Wilson"
-   ],
-   "head": "Cardinals put QB Gardner Minshew (elbow) and WR Michael Wilson (neck) on injured reserve",
-   "plain": "Minshew's elbow injury will likely need season-ending surgery, and Wilson is out for the season. Carson Beck is in line to start at quarterback, and Arizona signed QBs Josh Johnson and Joey Aguilar for depth.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-10",
-   "gids": [
-    "00-0035289",
-    "00-0038559"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
    "kind": "Restructure",
    "teams": [
     "BAL",
@@ -1530,24 +1490,6 @@
   {
    "iso": "2026-11-10",
    "date": "Nov 10",
-   "kind": "Injury",
-   "teams": [
-    "SF"
-   ],
-   "players": [
-    "Gracen Halton"
-   ],
-   "head": "49ers rookie DT Gracen Halton out for the season with a broken ankle",
-   "plain": "The fourth-round pick had started 7 of 9 games. San Francisco placed him on injured reserve.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/49ers-rookie-dt-gracen-halton-out-for-season",
-   "gids": [
-    "00-0041557"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
    "kind": "Restructure",
    "teams": [
     "BUF"
@@ -1561,25 +1503,6 @@
    "url": "https://www.profootballrumors.com/2026/11/titans-to-trade-s-amani-hooker-to-bills",
    "gids": [
     "00-0033904"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
-   "kind": "League",
-   "teams": [
-    "PHI",
-    "CIN"
-   ],
-   "players": [
-    "Arnold Ebiketie"
-   ],
-   "head": "Eagles-Bengals trade for LB Arnold Ebiketie called off",
-   "plain": "The deal for a 2027 sixth-round pick was agreed, then dropped the same night: it would have cost Cincinnati the 2027 third-round compensatory pick it is due. Ebiketie stays in Philadelphia.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/eagles-to-trade-arnold-ebiketie-to-bengals",
-   "gids": [
-    "00-0038116"
    ]
   },
   {
@@ -1601,24 +1524,6 @@
    "gids": [
     "00-0025565",
     "00-0038562"
-   ]
-  },
-  {
-   "iso": "2026-11-10",
-   "date": "Nov 10",
-   "kind": "Injury",
-   "teams": [
-    "NO"
-   ],
-   "players": [
-    "Erik McCoy"
-   ],
-   "head": "Saints C Erik McCoy to miss time with a biceps injury",
-   "plain": "Kellen Moore expects McCoy back this season. Cesar Ruiz moves from guard to center while he is out.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/saints-c-erik-mccoy-to-miss-time-with-biceps-injury",
-   "gids": [
-    "00-0035242"
    ]
   },
   {
@@ -1940,25 +1845,6 @@
   {
    "iso": "2026-10-27",
    "date": "Oct 27",
-   "kind": "Release",
-   "teams": [
-    "SEA",
-    "MIA"
-   ],
-   "players": [
-    "Christian Haynes"
-   ],
-   "head": "Seahawks cut G Christian Haynes; Dolphins claim him",
-   "plain": "Seattle released the guard on Oct 27 and Miami picked him up off waivers the next day, cutting DJ Campbell. No contract figures were reported.",
-   "source": "CBS Sports",
-   "url": "https://www.cbssports.com/nfl/transactions/",
-   "gids": [
-    "00-0039839"
-   ]
-  },
-  {
-   "iso": "2026-10-27",
-   "date": "Oct 27",
    "kind": "Trade",
    "teams": [
     "IND",
@@ -2025,6 +1911,25 @@
    },
    "gids": [
     "00-0034342"
+   ]
+  },
+  {
+   "iso": "2026-10-27",
+   "date": "Oct 27",
+   "kind": "Release",
+   "teams": [
+    "SEA",
+    "MIA"
+   ],
+   "players": [
+    "Christian Haynes"
+   ],
+   "head": "Seahawks cut G Christian Haynes; Dolphins claim him",
+   "plain": "Seattle released the guard on Oct 27 and Miami picked him up off waivers the next day, cutting DJ Campbell. No contract figures were reported.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/transactions/",
+   "gids": [
+    "00-0039839"
    ]
   },
   {
@@ -2124,6 +2029,27 @@
   {
    "iso": "2026-10-20",
    "date": "Oct 20",
+   "kind": "Signing",
+   "teams": [
+    "ATL",
+    "WAS"
+   ],
+   "players": [
+    "Charles Snowden",
+    "Bralen Trice"
+   ],
+   "head": "Falcons poach edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice",
+   "plain": "Atlanta signed edge rusher Charles Snowden to its active roster from Washington's practice squad. To make room, it is waiving Bralen Trice, who could return to the practice squad if he clears waivers.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/10/falcons-to-sign-charles-snowden-off-commanders-taxi-squad-cut-bralen-trice",
+   "gids": [
+    "00-0036711",
+    "00-0039837"
+   ]
+  },
+  {
+   "iso": "2026-10-20",
+   "date": "Oct 20",
    "kind": "Release",
    "teams": [
     "MIA"
@@ -2143,27 +2069,6 @@
     "00-0039481",
     "00-0033862",
     ""
-   ]
-  },
-  {
-   "iso": "2026-10-20",
-   "date": "Oct 20",
-   "kind": "Signing",
-   "teams": [
-    "ATL",
-    "WAS"
-   ],
-   "players": [
-    "Charles Snowden",
-    "Bralen Trice"
-   ],
-   "head": "Falcons poach edge rusher Charles Snowden from the Commanders' practice squad and cut Bralen Trice",
-   "plain": "Atlanta signed edge rusher Charles Snowden to its active roster from Washington's practice squad. To make room, it is waiving Bralen Trice, who could return to the practice squad if he clears waivers.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/10/falcons-to-sign-charles-snowden-off-commanders-taxi-squad-cut-bralen-trice",
-   "gids": [
-    "00-0036711",
-    "00-0039837"
    ]
   },
   {
