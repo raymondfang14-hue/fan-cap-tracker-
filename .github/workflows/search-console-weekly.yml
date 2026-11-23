@@ -22,7 +22,7 @@ permissions:
 jobs:
   report:
     runs-on: ubuntu-latest
-    timeout-minutes: 20                 # the indexed-pages check inspects every sitemap address, about 3 minutes
+    timeout-minutes: 30                 # the indexed-pages check (every sitemap address) stops itself after 10 minutes (INSPECT_BUDGET)
     steps:
       - uses: actions/checkout@v4
         with:

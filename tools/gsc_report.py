@@ -352,6 +352,8 @@ SITEMAPS_API = 'https://searchconsole.googleapis.com/webmasters/v3/sites/{site}/
 INSPECT_API = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect'
 INSPECT_CAP = 1500
 INSPECT_PER_SEC = 8           # stays under the 600-a-minute limit
+INSPECT_WORKERS = 16          # calls in flight: Google takes 1 to 5 s a call, so 6 managed only ~1 to 3 a second
+INSPECT_BUDGET = 10 * 60      # seconds; stop and report what it has, so the job (timeout-minutes) still posts the issue
 INDEXED = 'Submitted and indexed'
 STATE_COLS = [(INDEXED, 'Indexed'), ('Crawled - currently not indexed', 'Crawled, not indexed'),
               ('Discovered - currently not indexed', 'Discovered, not indexed'), ('URL is unknown to Google', 'Unknown to Google')]
@@ -393,15 +395,27 @@ def pick(urls, cap=INSPECT_CAP):
 
 
 def inspect_all(tok, site, urls):
-    """{url: {'state': coverageState, 'verdict', 'crawled': lastCrawlTime, 'canon': googleCanonical}}. Stops early, keeping what
-    it has, if Google says the day's quota is used up."""
+    """({url: {'state': coverageState, 'verdict', 'crawled': lastCrawlTime, 'canon': googleCanonical}}, why_stopped).
+    Stops early, keeping what it has, if Google says the day's quota is used up (why_stopped 'quota') or INSPECT_BUDGET
+    runs out ('time'); why_stopped is None when every address was inspected."""
     import threading
     import time
     from concurrent.futures import ThreadPoolExecutor
     lock, nxt, stop, got = threading.Lock(), [time.monotonic()], threading.Event(), {}
+    why, t0 = [None], time.monotonic()
+
+    def note_done():
+        n = len(got)
+        if n % 100 == 0:
+            print(f'URL inspection: {n:,} of {len(urls):,} in {time.monotonic() - t0:.0f} s', file=sys.stderr, flush=True)
 
     def one(u):
         if stop.is_set():
+            return
+        if time.monotonic() - t0 > INSPECT_BUDGET:
+            with lock:
+                why[0] = why[0] or 'time'
+            stop.set()
             return
         for attempt in range(4):
             with lock:                       # spread calls INSPECT_PER_SEC a second
@@ -417,11 +431,14 @@ def inspect_all(tok, site, urls):
                     res = json.load(r).get('inspectionResult', {}).get('indexStatusResult', {})
                 got[u] = {'state': res.get('coverageState') or 'No answer', 'verdict': res.get('verdict'),
                           'crawled': res.get('lastCrawlTime'), 'canon': res.get('googleCanonical'), 'mine': res.get('userCanonical')}
+                note_done()
                 return
             except urllib.error.HTTPError as e:
                 msg = e.read().decode('utf-8', 'replace')
                 low = msg.lower()
                 if e.code == 429 and ('per day' in low or 'daily' in low):
+                    with lock:
+                        why[0] = why[0] or 'quota'
                     stop.set()
                     return
                 if e.code in (429, 500, 503) and attempt < 3:
@@ -436,9 +453,11 @@ def inspect_all(tok, site, urls):
                 got[u] = {'state': 'Inspection failed (network)', 'verdict': None, 'crawled': None, 'canon': None, 'mine': None}
                 return
 
-    with ThreadPoolExecutor(max_workers=6) as ex:
+    with ThreadPoolExecutor(max_workers=INSPECT_WORKERS) as ex:
         list(ex.map(one, urls))
-    return got, stop.is_set()
+    print(f'URL inspection: {len(got):,} of {len(urls):,} in {time.monotonic() - t0:.0f} s'
+          + (f' (stopped: {why[0]})' if why[0] else ''), file=sys.stderr, flush=True)
+    return got, why[0]
 
 
 def read_prev(path):
@@ -493,7 +512,10 @@ def index_report(maps, total, results, sampled, quota_hit, prev, today):
         notes.append(f"Change is against the report of {prev.get('date', 'last week')}: indexed pages, and in brackets the indexed share.")
     if sampled:
         notes.append(f'The sitemap has more addresses than the {INSPECT_CAP:,} the report inspects (Google allows 2,000 a day), so player pages are an even sample and their counts are of the sample.')
-    if quota_hit:
+    if quota_hit == 'time':
+        notes.append(f"Google answered slowly, so the check stopped after {INSPECT_BUDGET // 60} minutes with {len(results):,} addresses "
+                     "inspected; the counts above are of those.")
+    elif quota_hit:
         notes.append("Google's daily inspection quota ran out part way (someone may have used URL Inspection today), so some addresses were not inspected.")
     if notes:
         out.extend([' '.join(notes), ''])
