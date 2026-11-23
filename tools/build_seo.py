@@ -233,7 +233,69 @@ def substantive(p):
     return False
 
 
-PAGES = [p for p in PLAYERS if substantive(p)]
+# Just released (Growth Playbook, Nov 23 audit, finding 3): searches for a player spike in the days after a cut, and the
+# nflverse roster drops him within a day, which used to take his page away exactly then. For RELEASE_DAYS after a `Release`
+# item in moves.json names him as the one let go, his page leads with the move (title, first line, FAQ) and stays
+# indexable. A player the roster no longer lists comes back from data/off_roster.json (the row build_contracts.py parked,
+# contract and all) as p.gone: he gets his page but stays off team pages, the players hub and comparisons. A player claimed
+# or signed by another team since, or back on the same team's game-day roster, gets his normal page.
+RELEASE_DAYS = 7
+_REL_VERB = re.compile(r'\b(release[sd]?|waive[sd]?|cut[s]?|part(?:s|ed)? ways with)\s+(.*?)(?=,|;| and [a-z]| as | after | at | to | following |$)')
+
+
+def released_names(head):
+    """The names a Release headline says were let go: the words after each release verb, up to the next clause.
+    "Colts waive QB Daniel Jones and turn to Anthony Richardson" -> Daniel Jones only."""
+    return [(m.group(1), m.group(2)) for m in _REL_VERB.finditer(head or '')]
+
+
+def _rel_team(m, nick_head):
+    """The team in the item's `teams` whose nickname leads the headline (the team that let him go), else the first."""
+    for t in m.get('teams') or []:
+        if t in TEAMS and nick_head.startswith(TEAMS[t]['name']):
+            return t
+    return (m.get('teams') or [None])[0]
+
+
+_parked = {}
+for _r in _load('off_roster.json', {'rows': []}).get('rows', []):
+    if len(_r) > 19 and _r[19]:
+        _parked.setdefault(_r[19], []).append(_r)
+_on = {p.gid: p for p in PLAYERS if p.gid}
+_cut = (dt.date.fromisoformat(ASOF) - dt.timedelta(days=RELEASE_DAYS - 1)).isoformat()
+RELEASED = {}  # gid -> dict(m=news item, team=team that let him go, verb='released' | 'waived')
+for _m in sorted(MOVES.get('moves', []), key=lambda m: m.get('iso') or ''):  # oldest first, so the newest release wins
+    if _m.get('kind') != 'Release' or (_m.get('iso') or '') < _cut or (_m.get('iso') or '') > ASOF:
+        continue
+    for _verb, _clause in released_names(_m.get('head')):
+        for _nm, _g in zip(_m.get('players') or [], _m.get('gids') or []):
+            if not _g or not re.search(r'(^|\s)' + re.escape(_nm) + r'(\s|$)', _clause):
+                continue
+            _t = _rel_team(_m, _m.get('head') or '')
+            RELEASED[_g] = dict(m=_m, team=_t, verb='waived' if _verb.startswith('waive') else 'released')
+for _g, _rel in list(RELEASED.items()):
+    p = _on.get(_g)
+    if p:
+        if p.team != _rel['team']:  # claimed or signed elsewhere since: his normal page tells that story
+            del RELEASED[_g]
+        continue
+    row = next((r for r in _parked.get(_g, []) if r[1] == _rel['team']), None)
+    if not row or row[1] not in TEAMS:
+        del RELEASED[_g]
+        continue
+    p = Pl()
+    (p.name, p.team, p.pos, p.age, p.total, p.apy, p.gtd, p.fg, p.end, p.voidy, p.cap, p.base, p.bonus,
+     p.dpre, p.dpost, p.prov, p.srcI, p.ver, p.sb, p.gid) = row[:20]
+    p.ver = p.ver or ''
+    p.hist = HISTBY.get(p.gid)
+    p.s26 = (p.hist or {}).get('s', {}).get(str(SEASON_YEAR))
+    p.gone = True
+    _on[_g] = p
+GONE = [_on[g] for g in RELEASED if getattr(_on[g], 'gone', False)]
+for p in PLAYERS:
+    p.gone = False
+
+PAGES = [p for p in PLAYERS if substantive(p) or p.gid in RELEASED] + GONE
 # Player pages Google showed 20+ times in a week (Monday Search Console reports); they skip the thin rule in build_player().
 SEARCH_SEEN = set(_load('search_seen.json', {'slugs': []}).get('slugs', []))
 seen = {}
@@ -653,7 +715,8 @@ def player_name_link(p):
 
 PAGE_BY_TEAM = {}
 for p in PAGES:
-    PAGE_BY_TEAM.setdefault(p.team, []).append(p)
+    if not p.gone:  # a released player the roster no longer lists is not under his old team in the hub
+        PAGE_BY_TEAM.setdefault(p.team, []).append(p)
 
 # ---------------------------------------------------------------- PlainScore
 PS_COLOR = lambda v: '#1565C0' if v >= 80 else '#2A78D6' if v >= 50 else '#9FB4CF' if v >= 25 else '#E0602C'   # same steps as pColor() in src.html
@@ -902,10 +965,20 @@ def back_since(p, m):
     return ''
 
 
-def latest_html(p):
+def release_of(p):
+    """RELEASED entry when his page should lead with a release this week, else None (back on the team's game-day roster since)."""
+    rel = RELEASED.get(p.gid) if p.gid else None
+    if not rel or back_since(p, rel['m']):
+        return None
+    return rel
+
+
+def latest_html(p, skip=None):
     """The 'Latest' box under the lede: In the news, this week's injury report, last game. Empty when there is nothing to say."""
     rows = []
-    for m in player_news(p):
+    for m in player_news(p, 3 if skip else 2):
+        if m is skip:  # already the first line of the page
+            continue
         src = f' <a href="{esc(m["url"])}" rel="nofollow noopener">{esc(m.get("source") or "Source")}</a>' if m.get('url') else ''
         rows.append(('In the news, ' + esc(m.get('date') or m.get('iso')), f'<b>{esc(m["head"])}.</b> {esc(m.get("plain") or "")}{src}{esc(back_since(p, m))}'))
     inj = injury_now(p)
@@ -1009,6 +1082,34 @@ def gamelog_html(p):
 URLS = []  # (path, priority, changefreq)
 
 
+def released_page(p, f, rel):
+    """(title, description, h1, first line HTML, FAQ) for a page that leads with this week's release (RELEASED).
+    The words come from the news item (moves.json, a named report); contract figures only from contract_facts()."""
+    m, T, n = rel['m'], TEAMS[p.team], p.name
+    verb, date = rel['verb'], m.get('date') or m.get('iso')
+    vb = 'waive' if verb == 'waived' else 'release'
+    role = POSNAME.get(p.pos, p.pos)
+    plain = m.get('plain') or ''
+    src = m.get('source') or 'a named report'
+    first = f"The {T['full']} {verb} {n}, {article(role)} {role}, on {date}."
+    title = brand(f"{n} {verb} by the {T['name']} on {date}")
+    line = season_line(p)
+    desc = pack([first, re.split(r'(?<=[.!?])\s+(?=[A-Z])', plain)[0], line and line[0].upper() + line[1:] + '.'])  # the report's first sentence only, so it reads in order
+    link = f' <a href="{esc(m["url"])}" rel="nofollow noopener">{esc(src)}</a>' if m.get('url') else ''
+    lede = f'<p class="lede"><b>{esc(first)}</b> {esc(plain)}{link}</p>'
+    where = ('He is no longer on their roster in the nflverse roster data.' if p.gone else
+             'He was still listed on their roster in the latest nflverse roster data.')
+    faq = [(f"Why did the {T['name']} {vb} {n}?", plain or f"{src} reported the move on {date} and gave no reason."),
+           (f"Is {n} still on the {T['name']}?", f"The {T['full']} {verb} him on {date}, {src} reported. {where}")]
+    if f['total'] or f['apy'] or f['cap']:
+        calc = {'f': ' PlainStats calculated it from the draft slot and the CBA rookie scale.', 'm': ' PlainStats calculated it from the CBA league minimum.',
+                'p': ' Practice squad pay is set by the CBA.'}.get(p.prov, '')
+        faq.append((f"What was {poss(n)} contract?", deal_sentence(p, f, rookie=p.prov == 'f') + f" He was on it when the {T['name']} {verb} him." + calc))
+    else:
+        faq.append((f"What was {poss(n)} contract?", 'PlainStats shows contract figures only after a named report confirms them, and this one is still being verified.'))
+    return title, desc, f"{n} {verb} by the {T['name']}", lede, faq
+
+
 def build_player(p):
     T = TEAMS[p.team]
     f = contract_facts(p)
@@ -1020,8 +1121,14 @@ def build_player(p):
         faq.insert(1, (f"What is {poss(p.name)} PlainScore?", plainscore_sentence(p, ps) + ' PlainScore ranks his play rating against everyone at his position with enough snaps.'))
     path = f'/players/{p.slug}'
     has_deal = bool(f['total'] or f['apy'] or f['cap'] or f['base'])
-    intent = page_intent(p, f, ps)
-    title, desc, h1 = player_meta(p, f, ps, intent, summary)
+    rel = release_of(p)
+    intent = 'released' if rel else page_intent(p, f, ps)
+    if rel:  # the week's news leads: title, first line and FAQ (released_page)
+        title, desc, h1, rel_lede, faq = released_page(p, f, rel)
+        if ps:
+            faq.insert(1, (f"What is {poss(p.name)} PlainScore?", plainscore_sentence(p, ps) + ' PlainScore ranks his play rating against everyone at his position with enough snaps.'))
+    else:
+        title, desc, h1 = player_meta(p, f, ps, intent, summary)
 
     src_html = ''
     if p.prov == 'r' and p.srcI >= 0 and p.srcI < len(SOURCES):
@@ -1036,7 +1143,7 @@ def build_player(p):
     elif p.prov == 'p':
         src_html = '<p class="note">Practice squad pay set by the CBA.</p>'
 
-    rows = [('Position', esc(POSNAME.get(p.pos, p.pos)).capitalize()), ('Team', f'<a href="/teams/{T["slug"]}">{esc(T["full"])}</a>')]
+    rows = [('Position', esc(POSNAME.get(p.pos, p.pos)).capitalize()), ('Last team' if rel else 'Team', f'<a href="/teams/{T["slug"]}">{esc(T["full"])}</a>')]
     if p.age:
         rows.append(('Age', esc(p.age)))
     if has_deal and f['base'] and not (f['total'] or f['apy'] or f['cap']):
@@ -1059,30 +1166,38 @@ def build_player(p):
     img = headshot(p.name, p.team)
     img_html = f'<img src="{esc(img)}" alt="{esc(p.name)}" width="72" height="72" loading="lazy" decoding="async" onerror="this.remove()">' if img else ''
     spa = f'/player/{slugify(p.name)}-{p.team.lower()}'
-    PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
+    if not p.gone:  # the app has no sheet for a player off every roster
+        PAGEMAP['p'][f'p-{slugify(p.name)}-{p.team.lower()}'] = p.slug
     deal_html = facts_html(rows) + src_html
+    if rel and (f['total'] or f['apy'] or f['cap']):
+        deal_html += f'<p class="note">The contract he was on when the {esc(T["name"])} {rel["verb"]} him.</p>'
     # Stats-first pages put the season (PlainScore, stats) above the contract; the rest lead with the contract.
     stats_html += gamelog_html(p)
-    main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent == 'stats' else (deal_html + plainscore_html(p, ps) + stats_html)
+    main_html = (plainscore_html(p, ps) + stats_html + deal_html) if intent in ('stats', 'released') else (deal_html + plainscore_html(p, ps) + stats_html)
     # Pages that lead with a confirmed contract open with the pay questions people search, each a heading with a
     # one-sentence answer, in place of the summary (which says the same). They are left out of the "Quick answers" at
     # the bottom so the numbers are not repeated, and stay in the FAQ JSON-LD because they are on the page.
     pay_first = intent in ('contract', 'rookie', 'salary') and has_deal
-    if pay_first:
+    if rel:
+        top_html, rest = rel_lede, faq
+    elif pay_first:
         top_html = '<section class="pay">' + ''.join(f'<h2>{esc(q)}</h2><p>{esc(a)}</p>' for q, a in pay_q) + '</section>'
         shown = {q for q, _ in pay_q}
         rest = [x for x in faq if x[0] not in shown]
     else:
         top_html, rest = f'<p class="lede">{esc(summary)}</p>', faq
     body = (f'<div class="id">{img_html}<div><h1>{esc(h1)}</h1></div></div>'
-            f'{top_html}{latest_html(p)}{main_html}'
+            f'{top_html}{latest_html(p, rel and rel["m"])}{main_html}'
             f'{faq_html(rest) if rest else ""}'
-            f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>'
+            + ('<p><a class="cta" href="/news">See every move this week in the PlainStats app</a></p>' if p.gone else
+               f'<p><a class="cta" href="{esc(spa)}">See {esc(p.name)} in the PlainStats app</a><a class="cta alt" rel="nofollow" href="{esc(spa)}?share=1">Share</a></p>') +
             f'{vs_links_html(p)}'
             f'<h2>More on the {esc(T["name"])}</h2><ul class="chips"><li><a href="/teams/{T["slug"]}">{esc(T["full"])} roster and contracts</a></li><li><a href="/teams/{T["slug"]}/cap">How much cap space do the {esc(T["name"])} have?</a></li><li><a href="/teams/{T["slug"]}/dead-money">{esc(T["name"])} dead money</a></li></ul>'
             f'{player_doors(p, f, T)}{signup_html()}')
     person = {'@type': 'Person', 'name': p.name, 'jobTitle': f"{POSNAME.get(p.pos, p.pos).capitalize()}, NFL",
               'url': SITE + path, 'memberOf': {'@type': 'SportsTeam', 'name': T['full'], 'sport': 'American football', 'url': f'{SITE}/teams/{T["slug"]}'}}
+    if rel:  # let go: not a member of that team any more
+        del person['memberOf']
     if img:
         person['image'] = img
     graph = [person, {'@type': 'WebPage', 'name': title, 'url': SITE + path, 'description': desc, 'dateModified': LM_TOKEN, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}, 'about': {'@type': 'Person', 'name': p.name}},
@@ -1093,11 +1208,15 @@ def build_player(p):
     # still exist and are linked, but carry noindex and stay out of the sitemap. Exception (owner, Nov 23, 2026): a page
     # Google showed 20+ times in a week (data/search_seen.json) stays indexable, if its contract figure is confirmed.
     reported = p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap'])
-    thin = not has_deal or not (ps or reported or p.slug in SEARCH_SEEN)
-    card = og_add('players', p.slug, **player_card(p, f, T, has_deal))
+    # A release this week (RELEASED, owner, Nov 23, 2026) is news other pages are slow to cover: indexable for RELEASE_DAYS.
+    thin = not rel and (not has_deal or not (ps or reported or p.slug in SEARCH_SEEN))
+    card_kw = player_card(p, f, T, has_deal)
+    if rel:
+        card_kw['e'] = f"{rel['verb'].capitalize()} {rel['m'].get('date') or ''}".strip()
+    card = og_add('players', p.slug, **card_kw)
     write(f'players{"/" + p.slug}.html', shell(path, title, desc, body, graph, robots='noindex,follow' if thin else None, image=img, crumbs=crumbs, card=card))
     if not thin:
-        URLS.append((path, '0.7' if p.prov == 'r' else '0.5', 'weekly'))
+        URLS.append((path, '0.7' if p.prov == 'r' or rel else '0.5', 'daily' if rel else 'weekly'))
 
 
 # ---------------------------------------------------------------- team pages
@@ -1486,9 +1605,9 @@ def build_hubs():
             vs += f'<h3>{esc(VS_WORD[g].capitalize())}s</h3><ul class="list">' + ''.join(f'<li><a href="/players/{s}">{esc(a.name)} vs. {esc(b.name)}</a></li>' for s, a, b in L) + '</ul>'
     if vs:
         vs = f'<h2 id="comparisons">Player comparisons</h2><p>{len(VS_PAGES)} head-to-head pages with this season\'s numbers side by side.</p>{vs}'
-    body = f'<h1>NFL player stats and contracts</h1><p class="lede">{len(PAGES)} players with a confirmed contract or {SEASON_YEAR} stats, grouped by team. Contracts still being verified are not shown until a named report confirms them. <a href="#comparisons">Player comparisons</a> are at the bottom.</p>{blocks}{vs}'
+    body = f'<h1>NFL player stats and contracts</h1><p class="lede">{sum(not p.gone for p in PAGES)} players with a confirmed contract or {SEASON_YEAR} stats, grouped by team. Contracts still being verified are not shown until a named report confirms them. <a href="#comparisons">Player comparisons</a> are at the bottom.</p>{blocks}{vs}'
     graph = [{'@type': 'CollectionPage', 'name': title, 'url': SITE + path, 'description': desc, 'isPartOf': {'@type': 'WebSite', 'name': 'PlainStats', 'url': SITE + '/'}}, crumbs_ld([('PlainStats', '/'), ('Players', path)])]
-    card = og_add('pages', 'players', m='brand', c=OG_BRAND, e='PlainStats', t='NFL player stats and contracts', s='Explained in plain English', n=f'{len(PAGES):,}', l=f'players with a contract or {SEASON_YEAR} stats',
+    card = og_add('pages', 'players', m='brand', c=OG_BRAND, e='PlainStats', t='NFL player stats and contracts', s='Explained in plain English', n=f'{sum(not p.gone for p in PAGES):,}', l=f'players with a contract or {SEASON_YEAR} stats',
                   x='Browse every team')
     write('players/index.html', shell(path, title, desc, body, graph, crumbs=[('PlainStats', '/'), ('Players', path)], card=card))
     URLS.append((path, '0.9', 'daily'))
@@ -2100,7 +2219,7 @@ USHARE = _usage_shares()
 
 
 def vs_ok(p):
-    return hasattr(p, 'slug') and p.pos in VS_GROUP and p.gid and p.s26 and (p.s26.get('g') or 0) >= 2
+    return hasattr(p, 'slug') and not p.gone and p.pos in VS_GROUP and p.gid and p.s26 and (p.s26.get('g') or 0) >= 2
 
 
 def vs_pairs():
