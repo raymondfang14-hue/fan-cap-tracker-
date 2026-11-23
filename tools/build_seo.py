@@ -234,6 +234,8 @@ def substantive(p):
 
 
 PAGES = [p for p in PLAYERS if substantive(p)]
+# Player pages Google showed 20+ times in a week (Monday Search Console reports); they skip the thin rule in build_player().
+SEARCH_SEEN = set(_load('search_seen.json', {'slugs': []}).get('slugs', []))
 seen = {}
 for p in PAGES:
     seen.setdefault(slugify(p.name), []).append(p)
@@ -1088,9 +1090,10 @@ def build_player(p):
     crumbs = [('PlainStats', '/'), ('Players', '/players'), (p.name, path)]
     # Google is shown a page only when it says something another site does not: a PlainScore (he has played enough to be
     # rated) or a contract a named report confirms. Rookie-scale, minimum-salary and unverified pages without a PlainScore
-    # still exist and are linked, but carry noindex and stay out of the sitemap.
+    # still exist and are linked, but carry noindex and stay out of the sitemap. Exception (owner, Nov 23, 2026): a page
+    # Google showed 20+ times in a week (data/search_seen.json) stays indexable, if its contract figure is confirmed.
     reported = p.prov == 'r' and bool(f['total'] or f['apy'] or f['cap'])
-    thin = not has_deal or not (ps or reported)
+    thin = not has_deal or not (ps or reported or p.slug in SEARCH_SEEN)
     card = og_add('players', p.slug, **player_card(p, f, T, has_deal))
     write(f'players{"/" + p.slug}.html', shell(path, title, desc, body, graph, robots='noindex,follow' if thin else None, image=img, crumbs=crumbs, card=card))
     if not thin:
