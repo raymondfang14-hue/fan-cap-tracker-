@@ -2,6 +2,24 @@
  "asOf": "2026-11-23",
  "moves": [
   {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Release",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Brandon Aiyuk"
+   ],
+   "head": "49ers waive WR Brandon Aiyuk",
+   "plain": "San Francisco let Aiyuk go on Monday, the day his roster exemption ran out, ESPN's Adam Schefter first reported; he goes on waivers first, and a free-agent deal is the next step if no team claims him. He has not played since tearing his ACL seven games into 2024, the season he signed a four-year, $120MM extension. Washington is seen as his preferred landing spot, and the money the 49ers say he owes them from voided guarantees may be settled later.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-to-waive-wr-brandon-aiyuk",
+   "gids": [
+    "00-0036261"
+   ]
+  },
+  {
    "iso": "2026-11-22",
    "date": "Nov 22",
    "kind": "Game",
