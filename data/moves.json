@@ -1,6 +1,150 @@
 {
- "asOf": "2026-11-22",
+ "asOf": "2026-11-23",
  "moves": [
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Game",
+   "teams": [
+    "SF",
+    "MIN",
+    "BUF",
+    "DEN",
+    "LAC",
+    "NYJ",
+    "PHI",
+    "PIT"
+   ],
+   "players": [
+    "Justin Herbert",
+    "Saquon Barkley"
+   ],
+   "head": "Week 11: 49ers beat Vikings 35-10 in Mexico City, Bills and Broncos keep rolling",
+   "plain": "San Francisco won 35-10 in Mexico City to go 9-1, and Minnesota drops to 7-3. Buffalo beat Miami 26-9 to reach 9-1, and Denver, Chicago, Detroit and Kansas City all won to sit at 8-2. The Jets beat the Chargers 27-24, and Justin Herbert was put in the concussion protocol after the game; the Chargers are 1-9. Philadelphia edged Pittsburgh 19-16, but Saquon Barkley left in the fourth quarter with an apparent shoulder issue.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/2026-nfl-season-week-11-what-we-learned-from-sunday-s-games",
+   "gids": [
+    "00-0036355",
+    "00-0034844"
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Injury",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Colton McKivitz",
+    "Vederian Lowe"
+   ],
+   "head": "49ers RT Colton McKivitz is carted off with a lower leg injury in Mexico City",
+   "plain": "McKivitz needed an aircast and a cart late in the win over the Vikings, the Bay Area News Group's Cam Inman reports; no diagnosis has been announced and more tests will show how bad it is. He had played all but 50 of the offense's snaps since the start of 2023. Vederian Lowe took over at right tackle, and the 49ers are thin behind him with Austen Pleasants on injured reserve.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-rt-colton-mckivitz-carted-off-with-lower-leg-injury",
+   "gids": [
+    "00-0036256",
+    "00-0037287"
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Injury",
+   "teams": [
+    "KC",
+    "BAL",
+    "PIT"
+   ],
+   "players": [
+    "Patrick Mahomes",
+    "Mark Andrews",
+    "Patrick Queen"
+   ],
+   "head": "Mahomes has been playing with a small elbow ligament sprain; Andrews and Queen played with broken hands",
+   "plain": "ESPN's Adam Schefter reports Mahomes has a muscle strain and a very small UCL sprain from a Week 9 strip-sack against the Jets; two team doctors cleared him, and he has thrown for 642 yards and eight touchdowns with no interceptions in the two games since. Ravens TE Mark Andrews played with a broken hand from Week 3 on and is now fully healed, ESPN's Lisa Salters reports. Steelers LB Patrick Queen has a broken hand, The Athletic confirmed, but he still played every snap in Sunday's loss to the Eagles.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/afc-injury-rumors-mahomes-andrews-queen",
+   "gids": [
+    "00-0033873",
+    "00-0034753",
+    "00-0036323"
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "League",
+   "teams": [
+    "DEN"
+   ],
+   "players": [
+    "Tom Jackson"
+   ],
+   "head": "Former Broncos LB and ESPN broadcaster Tom Jackson dies at 75",
+   "plain": "Jackson, a Broncos Ring of Fame linebacker, died Friday, his family told ESPN. He was a three-time Pro Bowler and a First Team All-Pro on Denver's 1977 Super Bowl team, and his 20 interceptions tie Randy Gradishar for the most by a Broncos linebacker. He then spent nearly 30 years at ESPN alongside Chris Berman.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/former-broncos-lb-espn-broadcaster-tom-jackson-passes-away",
+   "gids": [
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "League",
+   "teams": [
+    "SF",
+    "WAS"
+   ],
+   "players": [
+    "Brandon Aiyuk"
+   ],
+   "head": "49ers expected to release WR Brandon Aiyuk when his roster exemption ends Monday",
+   "plain": "San Francisco must cut Aiyuk or put him back on the active roster and pay him when the exemption runs out on Monday, and a release is expected; it has not happened yet. He would have to clear waivers first, and the Commanders are seen as the leading landing spot, with the Seahawks, Rams and Vikings also mentioned. The team and his camp are still discussing $13MM in bonus money the 49ers believe he gave up, which agent Drew Rosenhaus wants to settle separately.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/brandon-aiyuks-49ers-tenure-nearing-an-end-latest-on-wrs-potential-suitors",
+   "gids": [
+    "00-0036261"
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Davante Adams"
+   ],
+   "head": "Rams WR Davante Adams will not return in Week 12",
+   "plain": "Adams is still on injured reserve after hamstring surgery. NFL Network's Ian Rapoport reports he will miss the Thanksgiving Eve game, a Week 13 return is a longshot, and he may not be back until Week 14 against the 49ers. With Puka Nacua out for the season, the 6-4 Rams are short at receiver for the playoff push.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/no-return-imminent-for-rams-wr-davante-adams",
+   "gids": [
+    "00-0031381"
+   ]
+  },
+  {
+   "iso": "2026-11-22",
+   "date": "Nov 22",
+   "kind": "Injury",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Daiyan Henley"
+   ],
+   "head": "Chargers LB Daiyan Henley ruled out for Week 11 with a knee injury",
+   "plain": "Henley missed a full week of practice before being ruled out. He is the linebacker whose deadline trade to Denver fell apart after a failed physical. He is a pending free agent, and the Chargers are open to re-signing him.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/chargers-daiyan-henley-out-for-week-11",
+   "gids": [
+    "00-0038553"
+   ]
+  },
   {
    "iso": "2026-11-22",
    "date": "Nov 22",
@@ -17,6 +161,26 @@
    "url": "https://www.profootballrumors.com/2026/11/colts-shut-down-wr-alec-pierce-for-remainder-of-season",
    "gids": [
     "00-0037664"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Cade Mays",
+    "Nick Whiteside"
+   ],
+   "head": "Lions put C Cade Mays back on injured reserve with an ankle injury",
+   "plain": "Mays was activated a month ago but played only two games before the ankle injury, and he is expected to miss at least four more games. Practice squad CB Nick Whiteside takes his spot on the 53-man roster. Juice Scruggs, who has started the last three games, stays at center.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/lions-return-c-cade-mays-to-ir",
+   "gids": [
+    "00-0037297",
+    "00-0038841"
    ]
   },
   {
@@ -169,6 +333,24 @@
    "url": "https://www.profootballrumors.com/2026/11/saints-sign-k-charlie-smyth-to-2-year-deal",
    "gids": [
     "00-0039229"
+   ]
+  },
+  {
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "League",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Shane Steichen"
+   ],
+   "head": "Colts start a preliminary GM candidate list; Shane Steichen not expected to be fired midseason",
+   "plain": "Indianapolis parted ways with GM Chris Ballard about a month ago after a five-game midseason slide, and has begun a preliminary list of candidates, Bleacher Report's James Palmer reports. Palmer expects the Colts to keep evaluating Steichen through the end of the season rather than fire him now; owner Carlie Irsay-Gordon had a big say in hiring him. Steichen is 28-34 as the Colts' coach.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-putting-together-preliminary-list-for-gm-early-insights-on-hc-shane-steichen",
+   "gids": [
+    ""
    ]
   },
   {
@@ -995,165 +1177,6 @@
    "gids": [
     "00-0036932",
     "00-0029592"
-   ]
-  },
-  {
-   "iso": "2026-11-15",
-   "date": "Nov 15",
-   "kind": "Game",
-   "teams": [
-    "CIN",
-    "PIT"
-   ],
-   "players": [
-    "Joe Burrow",
-    "Ja'Marr Chase"
-   ],
-   "head": "Sunday night: Bengals rout Steelers 38-18",
-   "plain": "Joe Burrow threw for over 400 yards and four touchdowns, and Ja'Marr Chase caught 11 passes for 231 yards. Cincinnati is 7-2, tied for the AFC's best record.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-week-10-sunday-aftermath-bengals-equal-afc-s-best-kirk-cousins-returns-mendoza-debuts",
-   "gids": [
-    "00-0036442",
-    "00-0036900"
-   ]
-  },
-  {
-   "iso": "2026-11-15",
-   "date": "Nov 15",
-   "kind": "Game",
-   "teams": [
-    "MIN",
-    "GB",
-    "SEA",
-    "LV",
-    "SF",
-    "DAL"
-   ],
-   "players": [
-    "Kirk Cousins",
-    "Fernando Mendoza"
-   ],
-   "head": "Week 10: Cousins wins his Vikings return, 49ers outlast Cowboys 46-40",
-   "plain": "Kirk Cousins led Minnesota to a 30-10 win at Green Bay days after the trade. Fernando Mendoza lost his first start 21-13 to Seattle. San Francisco won a 46-40 shootout in Dallas, and Detroit beat New England 35-10 in Munich.",
-   "source": "NFL.com",
-   "url": "https://www.nfl.com/news/nfl-week-10-sunday-aftermath-bengals-equal-afc-s-best-kirk-cousins-returns-mendoza-debuts",
-   "gids": [
-    "00-0029604",
-    "00-0041562"
-   ]
-  },
-  {
-   "iso": "2026-11-15",
-   "date": "Nov 15",
-   "kind": "Game",
-   "teams": [
-    "LAR",
-    "ARI"
-   ],
-   "players": [
-    "Carson Beck"
-   ],
-   "head": "Rams rout Cardinals 34-6 in Carson Beck's first start",
-   "plain": "The rookie went 11 of 18 for 108 yards with two interceptions and a lost fumble, and was sacked five times. Arizona falls to 3-7.",
-   "source": "Yahoo Sports",
-   "url": "https://sports.yahoo.com/nfl/los-angeles-rams-arizona-cardinals-20261115022/",
-   "gids": [
-    "00-0041561"
-   ]
-  },
-  {
-   "iso": "2026-11-15",
-   "date": "Nov 15",
-   "kind": "Injury",
-   "teams": [
-    "GB"
-   ],
-   "players": [
-    "Josh Jacobs"
-   ],
-   "head": "Packers RB Josh Jacobs has finger surgery, out 2-3 weeks",
-   "plain": "Jacobs broke a finger on his right hand. Green Bay did not put him on injured reserve and brought RB Chris Brooks back from IR.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/packers-josh-jacobs-undergoes-finger-surgery-rb-chris-brooks-activated",
-   "gids": [
-    "00-0035700"
-   ]
-  },
-  {
-   "iso": "2026-11-15",
-   "date": "Nov 15",
-   "kind": "Injury",
-   "teams": [
-    "TB"
-   ],
-   "players": [
-    "Baker Mayfield",
-    "Easton Stick"
-   ],
-   "head": "Bucs QB Baker Mayfield's status for Detroit is in doubt",
-   "plain": "Mayfield has a foot and ankle injury from the loss to the Bears. It is not seen as long-term and he is not going on injured reserve. Tampa Bay signed Easton Stick to the active roster as cover.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/bucs-qb-baker-mayfields-week-11-availability-in-doubt",
-   "gids": [
-    "00-0034855",
-    "00-0035282"
-   ]
-  },
-  {
-   "iso": "2026-11-14",
-   "date": "Nov 14",
-   "kind": "Injury",
-   "teams": [
-    "NE"
-   ],
-   "players": [
-    "TreVeyon Henderson"
-   ],
-   "head": "Patriots put RB TreVeyon Henderson on injured reserve with an illness",
-   "plain": "Henderson had been in hospital with what he called unexplained neurological symptoms. He must miss at least four games, and there is no timetable for his return. New England activated FB Reggie Gilliam and G Greg Van Roten from IR the same day.",
-   "source": "Yahoo Sports",
-   "url": "https://sports.yahoo.com/articles/patriots-put-rb-treveyon-henderson-001252442.html",
-   "gids": [
-    "00-0040734"
-   ]
-  },
-  {
-   "iso": "2026-11-14",
-   "date": "Nov 14",
-   "kind": "Injury",
-   "teams": [
-    "TEN"
-   ],
-   "players": [
-    "Peter Skoronski",
-    "Tommy Townsend"
-   ],
-   "head": "Titans put G Peter Skoronski and P Tommy Townsend on injured reserve",
-   "plain": "Skoronski, a starting guard, has a hamstring injury and will miss at least four games. Townsend hurt his knee and Achilles. Tennessee signed veteran punter Thomas Morstead and guard Chandler Zavala from the practice squad.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/titans-place-g-peter-skoronski-on-ir",
-   "gids": [
-    "00-0039034",
-    "00-0035889"
-   ]
-  },
-  {
-   "iso": "2026-11-14",
-   "date": "Nov 14",
-   "kind": "Injury",
-   "teams": [
-    "NO"
-   ],
-   "players": [
-    "Christen Miller"
-   ],
-   "head": "Saints put rookie DT Christen Miller on injured reserve; Travis Etienne returns",
-   "plain": "Miller has a knee injury and will miss at least four games. RB Travis Etienne came off IR after a hamstring injury, giving New Orleans its lead back for Sunday.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/saints-plan-to-activate-travis-etienne",
-   "gids": [
-    "00-0041390"
    ]
   },
   {
