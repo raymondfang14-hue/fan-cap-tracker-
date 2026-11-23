@@ -436,7 +436,8 @@ def inspect_all(tok, site, urls):
             except urllib.error.HTTPError as e:
                 msg = e.read().decode('utf-8', 'replace')
                 low = msg.lower()
-                if e.code == 429 and ('per day' in low or 'daily' in low):
+                # a daily-quota answer, or still 429 after the retries (calls stay under the per-minute limit, so it is the day's quota)
+                if e.code == 429 and ('per day' in low or 'daily' in low or 'quota' in low or attempt == 3):
                     with lock:
                         why[0] = why[0] or 'quota'
                     stop.set()
@@ -478,6 +479,13 @@ def index_report(maps, total, results, sampled, quota_hit, prev, today):
            'Whether Google keeps the pages we ask it to (every address in sitemap.xml), from the URL Inspection API: the same words as '
            'Search Console > Indexing > Pages. "Crawled, not indexed" means Google read the page and turned it down; "Discovered" means it '
            'knows the address but has not read it yet. Pages with `noindex` are left out of the sitemap on purpose and are not counted here.', '']
+    failed = {}
+    for r in results.values():
+        if r['state'].startswith('Inspection failed'):
+            failed[r['state']] = failed.get(r['state'], 0) + 1
+    denied = failed.get('Inspection failed (403)', 0)
+    # failed inspections say nothing about indexing: leave them out of the counts and of next week's baseline
+    results = {u: r for u, r in results.items() if not r['state'].startswith('Inspection failed')}
     by = {}
     for u, r in results.items():
         by.setdefault(section(u), []).append(r)
@@ -504,8 +512,10 @@ def index_report(maps, total, results, sampled, quota_hit, prev, today):
             allr = rows
     out.append('')
     notes = []
-    denied = sum(1 for r in results.values() if r['state'] == 'Inspection failed (403)')
-    if denied and denied >= len(results) / 2:
+    if failed:
+        notes.append(f"{sum(failed.values()):,} inspections failed and are left out of the counts ("
+                     + '; '.join(f'{s[len("Inspection failed "):].strip("()")}: {n:,}' for s, n in sorted(failed.items())) + ').')
+    if denied and denied >= len(results):
         notes.append(f'Google refused {denied:,} inspections (403): give the service account Full permission in Search Console > '
                      'Settings > Users and permissions (Restricted may not be enough for URL Inspection).')
     if prev:
