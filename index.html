@@ -781,6 +781,14 @@ a{color:var(--link)}
 code{font-family:var(--code);font-size:.9em}
 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 main{padding-block:28px 88px}
+/* Keep the footer below the screen until a view's data arrives: an empty view let it draw near the top and then jump
+   (CLS 0.6 to 0.8 on /team-tiers and /scores, PageSpeed and Cloudflare, Nov 23, 2026). */
+main{min-height:100vh;min-height:100svh;box-sizing:border-box}
+/* Games tab: on phones the eyebrow grows to "... · scores updated ... · standings and model updated ..." (two lines) once
+   the data loads, and the game list grows from a few rows to the full week; reserve both so the heading doesn't move. */
+#gm-eyebrow{display:block}
+@media (max-width:640px){#gm-eyebrow{min-height:2.6em}}
+#gm-scores{min-height:100vh;min-height:100svh}
 .view{gap:28px}
 
 /* ---------- global nav ---------- */
