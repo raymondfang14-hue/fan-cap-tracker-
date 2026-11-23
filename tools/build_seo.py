@@ -2388,6 +2388,66 @@ def build_og_data():
         (out / f'{kind}.json').write_text(json.dumps({'asOf': label, 'cards': cards}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 
 
+# ---------------------------------------------------------------- app page summaries (data/app_summaries.json)
+# App pages (/free-agency, /roster-builder, ...) draw their tables with JavaScript, so a crawler that doesn't run it (ChatGPT's,
+# the largest source of visitors in Nov 2026) sees only the app menu. cf/worker.js puts the summary for its path at the top of
+# <body>, under the page's own title and description, and hides it as the page loads. Same data rules as the search pages:
+# end years only when contract_facts() confirms them, PlainScores from data/plainscore.json, no pay figures.
+SUM_GROUPS = ['quarterbacks', 'running backs', 'wide receivers', 'tight ends', 'left tackles', 'left guards', 'centers',
+              'right guards', 'right tackles', 'edge rushers', 'def. tackles', 'linebackers', 'cornerbacks', 'safeties',
+              'kickers', 'punters']
+
+
+def build_app_summaries():
+    rated = []
+    for p in PLAYERS:
+        f = contract_facts(p)
+        rated.append((p, f, plainscore(p, f)))
+
+    def who(p, ps=None, team=True):
+        name = f'<a href="/players/{p.slug}">{esc(p.name)}</a>' if getattr(p, 'slug', None) else esc(p.name)
+        return (f"{name}, {esc(POSNAME.get(p.pos, p.pos))}" + (f", {esc(TEAMS[p.team]['full'])}" if team else '')
+                + (f": PlainScore {ps['s']}" if ps else ''))
+
+    fa_year = SEASON_YEAR + 1
+    cls = [(p, ps) for p, f, ps in rated if f['end'] == SEASON_YEAR]
+    top = sorted((x for x in cls if x[1]), key=lambda x: (-x[1]['s'], x[0].name))[:25]
+    lead = (f"<p>The {fa_year} free agent class: {len(cls):,} players whose contracts end after the {SEASON_YEAR} season, counting only "
+            f"deals whose end year a named report or the CBA confirms. Data as of {esc(ASOF)}.</p>")
+    top_html = ('<h2>Highest PlainScores in the class</h2><ol>' + ''.join(f'<li>{who(p, ps)}</li>' for p, ps in top) + '</ol>'
+                '<p>PlainScore ranks a player\'s play this season against everyone at his position with enough snaps, from 0 to 100. '
+                '<a href="/learn">How the numbers work</a>.</p>')
+    by_pos = {}
+    for p, ps in cls:
+        by_pos.setdefault(POSNAME.get(p.pos, p.pos), []).append(p)
+    pos_html = '<h2>By position</h2><ul>' + ''.join(f'<li>{esc(k.capitalize())}: {len(v)}</li>' for k, v in sorted(by_pos.items(), key=lambda kv: -len(kv[1]))) + '</ul>'
+    by_team = {}
+    for p, ps in cls:
+        by_team.setdefault(p.team, []).append((p, ps))
+    team_html = '<h2>By team</h2><ul>' + ''.join(
+        f'<li><a href="/teams/{TEAMS[t]["slug"]}">{esc(TEAMS[t]["full"])}</a>: {len(v)} pending free agents'
+        + (lambda b: f'; highest PlainScore: {who(b[0], b[1], team=False)}' if b else '')(max((x for x in v if x[1]), key=lambda x: x[1]['s'], default=None)) + '</li>'
+        for t, v in sorted(by_team.items(), key=lambda kv: (-len(kv[1]), TEAMS[kv[0]]['full']))) + '</ul>'
+    fa_open = '<p><a href="/free-agency">Open the free agency tool</a> to sort the class by position, team and estimated next deal.</p>'
+    out = {'/free-agency': lead + top_html + pos_html + fa_open, '/free-agency/all': lead + top_html + fa_open,
+           '/free-agency/by-position': lead + pos_html + top_html + fa_open, '/free-agency/by-team': lead + team_html + fa_open}
+
+    groups = {}
+    for p, f, ps in rated:
+        if ps:
+            groups.setdefault(ps['grp'], []).append((p, ps))
+    rb = ['<p>The roster builder lets you pick a player at every position from all 32 rosters and rates the team you build, '
+          'using each player\'s PlainScore. It shows no contract costs: it is about who plays best. '
+          f'Data as of {esc(ASOF)}.</p><h2>Highest PlainScores by position</h2>']
+    for g in SUM_GROUPS:
+        best = sorted(groups.get(g, []), key=lambda x: (-x[1]['s'], x[0].name))[:3]
+        if best:
+            rb.append(f'<h3>{esc(g.capitalize())}</h3><ol>' + ''.join(f'<li>{who(p, ps)}</li>' for p, ps in best) + '</ol>')
+    rb.append('<p><a href="/roster-builder">Open the roster builder</a> to build your own team.</p>')
+    out['/roster-builder'] = ''.join(rb)
+    (ROOT / 'data' / 'app_summaries.json').write_text(json.dumps(out, separators=(',', ':'), sort_keys=True), encoding='utf-8')
+
+
 def main():
     for d in ('players', 'teams', 'draft', 'learn', 'weekly'):
         shutil.rmtree(ROOT / d, ignore_errors=True)
@@ -2404,6 +2464,7 @@ def main():
     build_sitemap()
     build_nav()
     build_og_data()
+    build_app_summaries()
     (ROOT / 'data' / 'pageslugs.json').write_text(json.dumps(PAGEMAP, separators=(',', ':'), sort_keys=True), encoding='utf-8')
     print(f'social cards {sum(len(c) for c in OG.values())}', end=' | ')
     print(f'players {len(PAGES)} of {len(PLAYERS)} | teams {len(TEAMS)} x3 | draft {len(PROS)} | sitemap urls {len(URLS) + 3}')

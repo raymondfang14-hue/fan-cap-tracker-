@@ -17,6 +17,7 @@
 import contracts from '../api/contracts.js';
 import { pageMeta, SITE } from '../api/_page-meta.js';
 import C from './_meta.json'; // written by tools/build_cf_meta.mjs at deploy
+import SUMMARY from '../data/app_summaries.json'; // written by tools/build_seo.py (build_app_summaries)
 
 const KINDS = new Set(['players', 'teams', 'draft', 'pages']);
 const OG_CACHE = 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800';
@@ -70,6 +71,19 @@ const BOT = C.botUA ? new RegExp(C.botUA) : null;
 
 // Set an attribute on the first matching element only (index.html has each tag once).
 const attr = (name, value) => ({ element(el) { el.setAttribute(name, value); } });
+const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+// App pages draw their tables with JavaScript, so a crawler that doesn't run it (ChatGPT's) saw only the app menu. For the
+// paths in data/app_summaries.json, put a plain-text summary first in <body>; the script right after it removes it as the
+// page loads, so people see the app exactly as before. index.html has a second <body> (the wrapped src.html): first one only.
+function summaryAt(path, pm) {
+  const body = SUMMARY[path];
+  if (!body) return null;
+  let done = false;
+  const html = `<section id="ps-sum"><h1>${escH(pm.title)}</h1><p>${escH(pm.desc)}</p>${body}</section>` +
+    `<script>document.getElementById('ps-sum').remove()</script>`;
+  return { element(el) { if (!done) { done = true; el.prepend(html, { html: true }); } } };
+}
 
 async function appPage(request, env, url) {
   let path = url.pathname.replace(/\/+$/, '') || '/';
@@ -98,6 +112,8 @@ async function appPage(request, env, url) {
     .on('meta[name="twitter:description"]', attr('content', pm.desc))
     .on('meta[name="twitter:image"]', attr('content', img));
   if (pm.img) rw = rw.on('meta[property="og:image:alt"]', attr('content', pm.title));
+  const sum = summaryAt(path, pm);
+  if (sum) rw = rw.on('body', sum);
   return rw.transform(new Response(app.body, { status: 200, headers }));
 }
 

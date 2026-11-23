@@ -24,6 +24,7 @@ data/lastmod.json
 data/vs_pairs.json
 data/compare_pairs.json
 data/search_seen.json
+data/app_summaries.json
 data/weekly
 cf
 wrangler.jsonc
