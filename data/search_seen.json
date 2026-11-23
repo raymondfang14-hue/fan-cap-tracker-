@@ -1,0 +1,19 @@
+{
+  "about": "Player pages Google showed 20 or more times in one week (the Monday Search Console reports, GitHub issues labelled search-console). build_seo.py keeps these indexable even when they fail the thin rule, as long as a contract figure is confirmed (named report or CBA). The Monday Search Console task adds new ones; nothing is removed by hand. Owner decision, Nov 23, 2026.",
+  "from": ["#4 Oct 31-Nov 6", "#12 Nov 3-9", "#13 Nov 7-13", "#25 Nov 14-20"],
+  "slugs": [
+    "aaron-rodgers", "aj-barner", "al-quadin-muhammad", "anthony-richardson", "arik-armstead", "bhayshul-tuten",
+    "blake-corum", "braelon-allen", "branson-combs", "brian-thomas-jr", "caleb-williams", "calais-campbell",
+    "cam-little", "chad-ryland", "chase-brown", "chase-young", "chuba-hubbard", "dak-prescott", "davante-adams",
+    "derrick-brown", "derrick-henry", "devaughn-vele", "dion-dawkins", "dj-moore", "dk-metcalf", "donte-jackson",
+    "dontayvion-wicks", "dylan-laube", "eli-heidenreich", "greg-dulcich", "jack-kiser", "jack-sawyer",
+    "jake-bates", "jalen-milroe", "jameson-williams", "jayden-daniels", "jerry-jeudy", "jj-mccarthy",
+    "joe-milton-iii", "jordan-mailata", "josh-downs", "josh-simmons", "juice-scruggs", "justin-fields",
+    "justin-herbert", "justin-jefferson-wr", "juwan-johnson", "kurtis-rourke", "lamar-jackson", "mack-hollins",
+    "mason-mccormick", "matt-araiza", "mike-evans", "mike-gesicki", "nate-wiggins", "nico-collins",
+    "ollie-gordon-ii", "payton-wilson", "rashee-rice", "robert-spillane", "rome-odunze", "ronnie-stanley",
+    "roquan-smith", "roschon-johnson", "sam-darnold", "savion-williams", "sione-vaki", "stetson-bennett",
+    "tanner-mckee", "tez-johnson", "tony-pollard", "tory-taylor", "travis-etienne", "trey-smack", "tyler-loop",
+    "walker-little"
+  ]
+}

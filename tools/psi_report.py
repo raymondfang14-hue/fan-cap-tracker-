@@ -10,7 +10,7 @@ they move a few points week to week; the field data (real Chrome users, last 28 
 """
 import argparse, json, os, re, sys, time, urllib.parse, urllib.request
 
-PAGES = ['/', '/players/patrick-mahomes', '/teams/kc', '/team-tiers', '/power-rankings', '/contracts', '/scores', '/weekly',
+PAGES = ['/', '/players/patrick-mahomes', '/teams/chiefs', '/team-tiers', '/power-rankings', '/contracts', '/scores', '/weekly',
          '/learn/epa']
 CATS = ['performance', 'accessibility', 'best-practices', 'seo']
 API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed'
