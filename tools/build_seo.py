@@ -1237,7 +1237,14 @@ def team_injuries_html(t):
             if inj:
                 rows.append((POS_ORDER.get(p.pos, 99), p, inj))
     if not rows:
-        return ''
+        wk = INJ.get('thru')
+        if not wk:
+            return ''
+        played = any(t['id'] in (g[4], g[5]) for g in SCHED.get('games', []) if g[1] == wk)
+        why = (f"No {t['name']} players were on the official injury report for week {wk}." if played else
+               f"The {t['name']} had a bye in week {wk}, so they were not on that week's official injury report.")
+        return (f'<h2>{esc(t["name"])} injury report, week {wk}</h2><p>{esc(why)}</p>'
+                '<p class="note">From the NFL\'s official injury report, through nflverse.</p>')
     rows.sort(key=lambda r: (r[0], r[1].name))
     li = ''.join(f'<li>{player_name_link(p) if hasattr(p, "slug") else esc(p.name)} <span class="note">{esc(p.pos)}</span>: {esc(inj[1])}</li>' for _o, p, inj in rows)
     return (f'<h2>{esc(t["name"])} injury report, week {rows[0][2][0]}</h2><ul class="list">{li}</ul>'
