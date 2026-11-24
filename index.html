@@ -788,7 +788,13 @@ main{min-height:100vh;min-height:100svh;box-sizing:border-box}
    the data loads, and the game list grows from a few rows to the full week; reserve both so the heading doesn't move. */
 #gm-eyebrow{display:block}
 @media (max-width:640px){#gm-eyebrow{min-height:2.6em}}
-#gm-scores{min-height:100vh;min-height:100svh}
+#gm-scores{min-height:100vh;min-height:100svh;align-content:start}
+/* align-content:start: with the min-height, the grid stretched its empty rows (week chips 90px tall) and they shrank
+   back once the data drew. Reserve one row of week chips and one line of the summary (Nov 24, 2026). */
+#gm-weeks{min-height:31px}
+#gm-sum{min-height:1.3em}
+/* Division standings: 16 teams + 4 division rows draw at 842px at every width; reserve it so the note below stays put */
+.tw:has(> #gm-st){min-height:52rem}
 /* Eyebrows the script fills in after the data loads: an empty one grew from 0 to one line, and on phones the
    "· updated ..." ones grew to two lines, pushing the heading and the view down 16px (/free-agency CLS 0.74,
    /standings 0.26, Nov 24, 2026). Reserve the room up front. */
@@ -1713,7 +1719,8 @@ tr[data-p]:focus-visible,tr[data-team]:focus-visible,td[data-team]:focus-visible
 
   <div id="gm-proj" hidden style="display:grid;gap:16px;min-width:0">
     <p data-sp="picture" class="lede">The PlainStats game model rates every team from its results, picks every game and plays out the rest of the season thousands of times, playoffs included. It updates every week after Monday night.</p>
-    <div data-sp="picture" class="kpis" id="gm-pkpis"></div>
+    <!-- Placeholder tiles the same shape as renderGProj() draws, so the playoff picture doesn't jump (CLS, Nov 24, 2026) -->
+    <div data-sp="picture" class="kpis" id="gm-pkpis" aria-busy="true"><div class="kpi"><span class="k">Super Bowl favorite</span><span class="v num">–</span><span class="s">&nbsp;</span></div><div class="kpi"><span class="k">Best projected record</span><span class="v num">–</span><span class="s">&nbsp;</span></div><div class="kpi fit"><span class="k">Closest division race</span><span class="v num">–</span><span class="s">&nbsp;</span></div><div class="kpi"><span class="k">Model picks this season</span><span class="v num">–</span><span class="s">&nbsp;</span></div></div>
     <section data-sp="picture" class="panel pp" aria-labelledby="h-pp">
       <div class="sechead"><div><span class="eyebrow" id="gm-pp-eb">Playoff picture</span><h2 class="sec" id="h-pp">If the season ended today</h2></div>
         <div class="seg" id="gm-pp-mode" role="group" aria-label="Playoff picture"><button type="button" data-pp="now" aria-pressed="true">Today</button><button type="button" data-pp="proj" aria-pressed="false">Projected</button></div></div>
@@ -6851,6 +6858,7 @@ function renderPlayoffPicture() {
     : 'Division winners are the teams that won each division most often in the simulated seasons, seeded by projected record; the wild cards are the three other teams that made the playoffs most often. Records are projected final records.';
 }
 function renderGProj() {
+  $('#gm-pkpis').removeAttribute('aria-busy');
   if (!GPROJ) { $('#gm-pkpis').innerHTML = '<p class="empty" style="background:var(--surface)">The model did not load.</p>'; return; }
   const T = GPROJ.teams, ids = TEAMS.map(t => t.id), M = GPROJ.model, bt = M.backtest || {}, pk = M.picks || { w: 0, l: 0 };
   const top = [...ids].sort((a, b) => T[b].sb - T[a].sb), best = [...ids].sort((a, b) => T[b].pw - T[a].pw);
