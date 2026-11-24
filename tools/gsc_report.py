@@ -439,6 +439,8 @@ def inspect_all(tok, site, urls):
                 # a daily-quota answer, or still 429 after the retries (calls stay under the per-minute limit, so it is the day's quota)
                 if e.code == 429 and ('per day' in low or 'daily' in low or 'quota' in low or attempt == 3):
                     with lock:
+                        if not why[0]:              # say which limit Google hit (daily, per minute, project), once
+                            print(f'URL inspection stopped on 429: {" ".join(msg.split())[:400]}', file=sys.stderr, flush=True)
                         why[0] = why[0] or 'quota'
                     stop.set()
                     return
@@ -525,6 +527,9 @@ def index_report(maps, total, results, sampled, quota_hit, prev, today):
     if quota_hit == 'time':
         notes.append(f"Google answered slowly, so the check stopped after {INSPECT_BUDGET // 60} minutes with {len(results):,} addresses "
                      "inspected; the counts above are of those.")
+    elif quota_hit and not results:
+        notes.append("Google refused every inspection with 429 (quota) before any address was checked, so this week has no indexed count. "
+                     "The run log names the limit Google gave.")
     elif quota_hit:
         notes.append("Google's daily inspection quota ran out part way (someone may have used URL Inspection today), so some addresses were not inspected.")
     if notes:
