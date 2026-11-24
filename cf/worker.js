@@ -6,7 +6,9 @@
 //                     (the free plan's CPU limit is too small to draw it here); unknown cards redirect to /og-image.png
 //   /api/contracts    the verified Airtable deal cards, same filter and shape as api/contracts.js on Vercel. Needs the
 //                     Worker secret AIRTABLE_TOKEN (Cloudflare dashboard: plainstats > Settings > Variables and Secrets).
-//                     Cached 5 minutes at the edge. Without the secret it answers 503 and the page shows the built-in DEALS.
+//                     Cached 12 hours at the edge (Airtable's free plan allows about 1,000 calls a month and each Cloudflare
+//                     data center keeps its own copy); if Airtable refuses, the last good copy (kept 30 days) is served.
+//                     Without the secret it answers 503 and the page shows the built-in DEALS.
 //   other /api/*      404 JSON (the page falls back: /api/espn-csv -> data/espn_assets.json)
 //   app paths         /scores, /team-tiers, /team/kc, /player/<slug>-<team>, /game/<id>, ... (the rewrites to "/" in vercel.json):
 //                     index.html with its own title, description, canonical and social card tags, the job api/page.js did for
@@ -36,6 +38,7 @@ async function og(url, env) {
 
 async function deals(request, env, ctx) {
   const cache = caches.default, key = new Request(new URL('/api/contracts', request.url).href);
+  const lastKey = new Request(new URL('/api/contracts?last-good=1', request.url).href);
   const hit = await cache.match(key);
   if (hit) return hit;
   const token = env.AIRTABLE_TOKEN;
@@ -57,11 +60,14 @@ async function deals(request, env, ctx) {
       offset = j.offset;
     } while (offset);
     const list = records.filter(r => contracts.isVerified(r.fields)).map(r => contracts.toContract(r.fields)).filter(c => c.name && c.league);
-    const res = json({ updated: new Date().toISOString(), held: records.length - list.length, contracts: list }, 200, { 'Cache-Control': 'public, max-age=60, s-maxage=300' });
-    ctx.waitUntil(cache.put(key, res.clone()));
+    const body = { updated: new Date().toISOString(), held: records.length - list.length, contracts: list };
+    const res = json(body, 200, { 'Cache-Control': 'public, max-age=300, s-maxage=43200' });
+    ctx.waitUntil(Promise.all([cache.put(key, res.clone()), cache.put(lastKey, json(body, 200, { 'Cache-Control': 'public, s-maxage=2592000' }))]));
     return res;
   } catch (e) {
     console.error('contracts:', e && e.message);
+    const last = await cache.match(lastKey);
+    if (last) return json(await last.json(), 200, { 'Cache-Control': 'public, max-age=300' });
     return json({ error: 'Could not read the deals table right now.' }, 502, { 'Cache-Control': 'no-store' });
   }
 }

@@ -57,7 +57,7 @@ async function handler(req, res) {
     } while (offset);
     const contracts = records.filter(r => isVerified(r.fields)).map(r => toContract(r.fields)).filter(c => c.name && c.league);
     const held = records.length - contracts.length;
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate=604800');
     res.status(200).json({ updated: new Date().toISOString(), held, contracts });
   } catch (e) {
     console.error('contracts:', e);
