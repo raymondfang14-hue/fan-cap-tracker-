@@ -790,6 +790,11 @@ main{min-height:100vh;min-height:100svh;box-sizing:border-box}
 #gm-eyebrow{display:block}
 @media (max-width:640px){#gm-eyebrow{min-height:2.6em}}
 #gm-scores{min-height:100vh;min-height:100svh}
+/* Eyebrows the script fills in after the data loads: an empty one grew from 0 to one line, and on phones the
+   "· updated ..." ones grew to two lines, pushing the heading and the view down 16px (/free-agency CLS 0.74,
+   /standings 0.26, Nov 24, 2026). Reserve the room up front. */
+.eyebrow[id]{display:block;min-height:1.3em}
+@media (max-width:640px){#news-asof,#tr-eyebrow,#ur-eyebrow,#aw-eyebrow,#pw-asof,#gm-st-eb,#gm-pp-eb,#gm-pt-eb,#td-eyebrow,#of-eyebrow,#hs-eb,#fa-eyebrow,#fa-tcount{min-height:2.6em}}
 .view{gap:28px}
 
 /* ---------- global nav ---------- */
@@ -2066,8 +2071,9 @@ tr[data-p]:focus-visible,tr[data-team]:focus-visible,td[data-team]:focus-visible
 
   <div id="fa-class" style="display:grid;gap:16px;min-width:0">
     <p data-sp="top" class="lede">Every player whose contract ends after a given season, with how well he is playing and a PlainStats estimate of what his next deal could pay. Pick a class year, then filter by position or pay.</p>
-    <div class="chips" id="fa-years" role="group" aria-label="Free agent class"></div>
-    <div data-sp="top" class="kpis" id="fa-kpis"></div>
+    <!-- Placeholders the same shape as what renderFAClass() draws, so the board below doesn't jump when the data arrives (CLS, Nov 24, 2026) -->
+    <div class="chips" id="fa-years" role="group" aria-label="Free agent class"><button type="button" class="chip" aria-pressed="true">2027 class <span class="num" style="opacity:.7">–</span></button><button type="button" class="chip" aria-pressed="false">2028 class <span class="num" style="opacity:.7">–</span></button><button type="button" class="chip" aria-pressed="false">2029 class <span class="num" style="opacity:.7">–</span></button><button type="button" class="chip" aria-pressed="false">2030 class <span class="num" style="opacity:.7">–</span></button><button type="button" class="chip" aria-pressed="false">2031+ class <span class="num" style="opacity:.7">–</span></button></div>
+    <div data-sp="top" class="kpis" id="fa-kpis" aria-busy="true"><div class="kpi"><span class="k">2027 free agents</span><span class="v num">–</span><span class="s">&nbsp;</span></div><div class="kpi"><span class="k">Pay coming off</span><span class="v num">–</span><span class="s">Yearly averages of the class</span></div><div class="kpi"><span class="k">Rated 80 or better</span><span class="v num">–</span><span class="s">Players playing at a high level</span></div><div class="kpi"><span class="k">Best player in class</span><span class="v num">–</span><span class="s">&nbsp;</span></div></div>
     <div data-sp="top" class="panel">
       <div class="sechead"><div><span class="eyebrow" id="fa-board-eb">Best players with expiring deals</span><h2 class="sec" id="fa-board-t">Top of the class</h2></div></div>
       <div class="fcs row" id="fa-board"></div>
@@ -5467,6 +5473,7 @@ function renderFAClass() {
   $('#fa-years').innerHTML = FA_YEARS.map(Y => `<button type="button" class="chip" data-fay="${Y}" aria-pressed="${Y === f.year}">${yLabel(Y)} class <span class="num" style="opacity:.7">${faClass(Y).filter(p => p.apy >= 5e6).length}</span></button>`).join('');
   const best = [...all].filter(p => p.play != null).sort((a, b) => b.play - a.play || b.apy - a.apy)[0];
   const money = all.reduce((s, p) => s + (p.apy || 0), 0), top80 = all.filter(p => p.play >= 80).length;
+  $('#fa-kpis').removeAttribute('aria-busy');
   $('#fa-kpis').innerHTML = `
     <div class="kpi"><span class="k">${yLabel(f.year)} free agents</span><span class="v num">${all.length.toLocaleString()}</span><span class="s">${all.filter(p => p.apy >= 5e6).length} earn $5M+ a year</span></div>
     <div class="kpi"><span class="k">Pay coming off</span><span class="v num">${mon(money, 0)}</span><span class="s">Yearly averages of the class</span></div>
