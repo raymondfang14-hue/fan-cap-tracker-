@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.plainstatsnfl.com/</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>https://www.plainstatsnfl.com/contracts</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.plainstatsnfl.com/players</loc><lastmod>2026-11-23</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.plainstatsnfl.com/scores</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.plainstatsnfl.com/standings</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.plainstatsnfl.com/teams</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
@@ -215,7 +215,7 @@
   <url><loc>https://www.plainstatsnfl.com/players/christian-darrisaw</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/christian-elliss</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/christian-gonzalez</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.plainstatsnfl.com/players/christian-harris</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/christian-harris</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/christian-izien</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/christian-kirk</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/christian-mccaffrey</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -370,6 +370,7 @@
   <url><loc>https://www.plainstatsnfl.com/players/hunter-luepke</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/ian-thomas</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/isaac-seumalo</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/isaac-yiadom</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/isaiah-likely</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/isaiah-mcduffie</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/isaiah-pola-mao</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -494,6 +495,7 @@
   <url><loc>https://www.plainstatsnfl.com/players/kenneth-gainwell</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/kenneth-walker-iii</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/kenny-clark</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/kenny-moore</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/kenny-pickett</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/kerby-joseph</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/kevin-byard</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -544,11 +546,13 @@
   <url><loc>https://www.plainstatsnfl.com/players/marlon-humphrey</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/martin-emerson</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/mason-rudolph</loc><lastmod>2026-11-22</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/matt-peart</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/matt-stafford</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/matthew-bergeron</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/max-llewellyn</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/maxx-crosby</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/micah-mcfadden</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.plainstatsnfl.com/players/micah-parsons</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/micah-parsons</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/michael-hoecht</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/michael-mayer</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/michael-onwenu</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -649,6 +653,7 @@
   <url><loc>https://www.plainstatsnfl.com/players/sean-rhyan</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/sean-tucker</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/sebastian-joseph-day</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/shaka-heyward</loc><lastmod>2026-11-24</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/shelby-harris</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/sheldon-rankins</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/skyy-moore</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -674,7 +679,7 @@
   <url><loc>https://www.plainstatsnfl.com/players/tj-edwards</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/tj-hockenson</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/tj-watt</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.plainstatsnfl.com/players/tommy-devito</loc><lastmod>2026-11-21</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.plainstatsnfl.com/players/tommy-devito</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/tommy-togiai</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/tommy-tremble</loc><lastmod>2026-11-24</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.plainstatsnfl.com/players/tony-adams</loc><lastmod>2026-11-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>

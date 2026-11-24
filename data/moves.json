@@ -1,6 +1,182 @@
 {
- "asOf": "2026-11-23",
+ "asOf": "2026-11-24",
  "moves": [
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Coaching",
+   "teams": [
+    "ARI"
+   ],
+   "players": [
+    "Nick Rallis",
+    "Teryl Austin"
+   ],
+   "head": "Cardinals fire defensive coordinator Nick Rallis; Teryl Austin takes over for the rest of the season",
+   "plain": "Arizona let Rallis go after another blowout loss on Sunday, the second game in a row the defense gave up 34 points, NFL Network's Ian Rapoport first reported. He had run the defense since 2023 and was kept on by new head coach Mike LaFleur. Senior defensive assistant Teryl Austin, a former coordinator with the Lions, Bengals and Steelers, is the interim coordinator. The Cardinals are 3-8.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cardinals-fire-dc-nick-rallis",
+   "gids": [
+    "",
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Coaching",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "John Lynch"
+   ],
+   "head": "49ers sign general manager John Lynch to an extension",
+   "plain": "Lynch finalized a new deal shortly before Sunday's game, Fox Sports' Jay Glazer reports; the length and money were not given. He has run the front office alongside head coach Kyle Shanahan since 2017, and both have now been extended three times. San Francisco is 9-1 and leads the NFC.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-extend-gm-john-lynch",
+   "gids": [
+    ""
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Terrance Ferguson"
+   ],
+   "head": "Rams TE Terrance Ferguson is out for the season and needs ankle surgery",
+   "plain": "Ferguson will not be brought back from injured reserve, ESPN's Sarah Barshop reports, and NFL Network's Ian Rapoport says he needs surgery. He sprained his ankle in Week 3, and Sean McVay said the injury is just not healing the way the team wanted. Tyler Higbee, Colby Parkinson and Davis Allen keep sharing the tight end snaps.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-te-terrance-ferguson-done-for-season",
+   "gids": [
+    "00-0040737"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "GB"
+   ],
+   "players": [
+    "Micah Parsons"
+   ],
+   "head": "Packers clear Micah Parsons to make his debut Wednesday against the Rams",
+   "plain": "Parsons has been cleared to come off the reserve/PUP list in time for the Nov. 25 game against the Rams, NFL.com's Ian Rapoport reports. He tore his ACL and meniscus in Week 15 last season. Getting their star pass rusher back is a big lift for Green Bay's defense, and his return does not use one of the team's eight injury activations.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/packers-micah-parsons-receives-clearance-to-return-in-week-12",
+   "gids": [
+    "00-0036932"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Signing",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Trevon Diggs",
+    "Bobby Hart",
+    "George Holani"
+   ],
+   "head": "Seahawks promote CB Trevon Diggs and OT Bobby Hart to the active roster; RB George Holani goes on IR",
+   "plain": "Seattle signed Diggs and Hart from its practice squad to the 53-man roster, and put Holani on injured reserve. The terms of the new deals were not reported. The move gives Seattle two more veterans on the game-day roster.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-23-26",
+   "gids": [
+    "00-0036361",
+    "00-0031622",
+    "00-0039299"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Release",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Shaka Heyward",
+    "Max Llewellyn"
+   ],
+   "head": "Dolphins waive LB Shaka Heyward and EDGE Max Llewellyn",
+   "plain": "Miami put both players on waivers on Monday, freeing two roster spots. Any team can claim them before they become free agents.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-23-26",
+   "gids": [
+    "00-0038890",
+    "00-0041531"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Release",
+   "teams": [
+    "ATL"
+   ],
+   "players": [
+    "Christian Harris",
+    "Jammie Robinson"
+   ],
+   "head": "Falcons waive LB Christian Harris and promote S Jammie Robinson",
+   "plain": "Atlanta cut Harris on Monday, NFL.com's daily roundup and the league's transaction wire show, and signed safety Jammie Robinson from the practice squad to the active roster. Harris joined the Falcons in March on a one-year deal. He goes on waivers first, so another team can claim him.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-23",
+   "gids": [
+    "00-0037823",
+    "00-0038587"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Release",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Isaac Yiadom"
+   ],
+   "head": "Commanders waive CB Isaac Yiadom",
+   "plain": "Washington cut Yiadom on Monday, NFL.com's daily roundup and the league's transaction wire show. The Commanders also brought running back Jacory Croskey-Merritt back from injured reserve the same day.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-monday-nov-23",
+   "gids": [
+    "00-0034780"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "NE"
+   ],
+   "players": [
+    "Alijah Vera-Tucker",
+    "Tommy DeVito",
+    "Drake Maye"
+   ],
+   "head": "Patriots open G Alijah Vera-Tucker's return window; Tommy DeVito will start at QB",
+   "plain": "New England designated Vera-Tucker to return from injured reserve, KPRC2's Aaron Wilson reports; he started the first six games before a hamstring injury in late October. With Drake Maye out with a fractured fibula, Mike Vrabel said Tommy DeVito is in line to start and a quarterback signing is not expected right away. The Patriots are 5-5.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/patriots-designate-g-alijah-vera-tucker-for-return",
+   "gids": [
+    "00-0036979",
+    "00-0038476",
+    "00-0039851"
+   ]
+  },
   {
    "iso": "2026-11-23",
    "date": "Nov 23",
@@ -179,6 +355,62 @@
    "url": "https://www.profootballrumors.com/2026/11/colts-shut-down-wr-alec-pierce-for-remainder-of-season",
    "gids": [
     "00-0037664"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "Isaiah Simmons",
+    "Michael Jackson Sr."
+   ],
+   "head": "Panthers put S Isaiah Simmons on injured reserve and bring back CB Mike Jackson",
+   "plain": "Simmons went on injured reserve with a knee injury, NFL.com's Saturday roundup shows, so he must miss at least four games. Cornerback Mike Jackson came back from injured reserve after a groin injury, which helps the secondary right away.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-saturday-nov-21",
+   "gids": [
+    "00-0036356",
+    "00-0035277"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "CIN"
+   ],
+   "players": [
+    "Oren Burks"
+   ],
+   "head": "Bengals put LB Oren Burks on injured reserve",
+   "plain": "Burks went on injured reserve with a groin injury, Pro Football Rumors' daily transactions list shows. Cincinnati is down a veteran linebacker for at least the next few weeks.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-21-26",
+   "gids": [
+    "00-0034754"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Kobie Turner"
+   ],
+   "head": "Rams open DE Kobie Turner's window to return from injured reserve",
+   "plain": "Turner was designated to return and can practice for up to 21 days before the Rams must activate him, NFL.com's Saturday roundup shows. Getting him back would boost the Rams' defensive line for the stretch run.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-saturday-nov-21",
+   "gids": [
+    "00-0039138"
    ]
   },
   {
