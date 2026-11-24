@@ -1,0 +1,130 @@
+{
+ "url": "plainstatsnfl.com/usage-risers",
+ "foot": "Usage \u00b7 2026 thru Week 11",
+ "cover": {
+  "photo": "cover",
+  "team": "MIN",
+  "label": "Week 12 waiver wire \u00b7 usage, not hype",
+  "line1": "The Vikings' most targeted player Sunday wasn't Justin Jefferson.",
+  "line2": "It was Tai Felton.",
+  "pills": [
+   {
+    "text": "Felton 12"
+   },
+   {
+    "text": "Jefferson 9"
+   },
+   {
+    "text": "Hockenson 7"
+   }
+  ],
+  "swipe": "Swipe for the numbers \u2192"
+ },
+ "slides": [
+  {
+   "type": "usage",
+   "photo": "p1",
+   "gid": "00-0040154",
+   "week": 11,
+   "tag": "Week 11 usage",
+   "title": "From part-timer to the job.",
+   "hook": "His target share went from 5% to 28%. His snaps from 40% to 72%."
+  },
+  {
+   "type": "targets",
+   "photo": "p2",
+   "week": 11,
+   "tag": "Vikings targets \u00b7 Week 11",
+   "title": "He led the team.",
+   "hook": "12 of Minnesota's 43 targets went to Felton in the 35-10 loss to the 49ers.",
+   "star": "00-0040154",
+   "gids": [
+    "00-0040154",
+    "00-0036322",
+    "00-0035229",
+    "00-0036259"
+   ]
+  },
+  {
+   "type": "weeks",
+   "photo": "p3",
+   "gid": "00-0040154",
+   "week": 11,
+   "tag": "Targets, game by game",
+   "title": "Never more than 5. Then 12.",
+   "hook": "One game is not a trend, but the snap jump says it was a role, not garbage time.",
+   "h": 340
+  },
+  {
+   "type": "cta",
+   "photo": "cta",
+   "title": "Who's rising<br>this week?",
+   "text": "Every player's target, carry and snap share, week by week, with the biggest risers and fallers. Updated every Tuesday.",
+   "source": "Source: nflverse play-by-play and snap counts (CC BY 4.0), 2026 regular season through Week 11. Target share = his targets / team targets. Before Week 11 = his share in the earlier weeks. Next game: Falcons at Vikings, Sun Nov 29."
+  }
+ ],
+ "story": {
+  "photo": "cover",
+  "kicker": "Week 12 waiver wire",
+  "title": "Not Jefferson.",
+  "line2": "Tai Felton. 12 targets.",
+  "text": "28% of the Vikings' targets and 72% of the snaps in Week 11, up from 5% and 40%.",
+  "sticker": "See every riser"
+ },
+ "crop": {
+  "cover": {
+   "ig": [
+    "cover",
+    "50% 0%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ],
+   "story": [
+    "cover",
+    "50% 0%"
+   ]
+  },
+  "p1": {
+   "ig": [
+    "cover",
+    "50% 0%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ]
+  },
+  "p2": {
+   "ig": [
+    "cover",
+    "60% 0%"
+   ],
+   "tt": [
+    "cover",
+    "100% 0%"
+   ]
+  },
+  "p3": {
+   "ig": [
+    "cover",
+    "55% 0%"
+   ],
+   "tt": [
+    "cover",
+    "100% 0%"
+   ]
+  },
+  "cta": {
+   "ig": [
+    "cover",
+    "50% 0%"
+   ],
+   "tt": [
+    "cover",
+    "50% 0%"
+   ]
+  }
+ }
+}
