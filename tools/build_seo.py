@@ -504,7 +504,10 @@ def headline_stat(p):
             'S': ('tk', 'tackles'), 'K': ('fgm', 'field goals made'), 'P': ('pun', 'punts')}.get(p.pos)
     if pick and s.get(pick[0]):
         v = s[pick[0]]
-        return (f'{v:,}' if isinstance(v, int) else f'{v:g}'), pick[1]
+        lab = pick[1]
+        if v == 1:
+            lab = {'sacks': 'sack', 'tackles': 'tackle', 'punts': 'punt', 'field goals made': 'field goal made'}.get(lab, lab.replace(' yards', ' yard'))
+        return (f'{v:,}' if isinstance(v, int) else f'{v:g}'), lab
     return str(s['g']), ('game played' if s['g'] == 1 else 'games played')
 
 

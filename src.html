@@ -795,7 +795,7 @@ main{min-height:100vh;min-height:100svh;box-sizing:border-box}
 #gm-weeks{min-height:31px}
 #gm-sum{min-height:1.3em}
 /* Division standings: 16 teams + 4 division rows draw at 842px at every width; reserve it so the note below stays put */
-.tw:has(> #gm-st){min-height:52rem}
+.tw:has(> #gm-st){min-height:min(52rem,842px)}
 /* Eyebrows the script fills in after the data loads: an empty one grew from 0 to one line, and on phones the
    "· updated ..." ones grew to two lines, pushing the heading and the view down 16px (/free-agency CLS 0.74,
    /standings 0.26, Nov 24, 2026). Reserve the room up front. */
@@ -6630,8 +6630,8 @@ function gPick(gid) {   // [home win chance, home pts, away pts, adjusted for in
 }
 function gWxLoad(week) {   // fetch this week's forecasts, then redraw the cards once
   if (!GDAY || week !== GDAY.week) return;
-  const ids = GSCHED.games.filter(g => g[1] === week && !gFinal(g)).map(g => g[0]).filter(id => GDAY.games[id] && GDAY.games[id].ll && !WXP[id]);
-  if (ids.length) Promise.all(ids.map(wxFor)).then(() => { if (gm.tab === 'scores' && gm.week === week) renderScores(); });
+  const ids = GSCHED.games.filter(g => g[1] === week && !gFinal(g)).map(g => g[0]).filter(id => GDAY.games[id] && GDAY.games[id].ll && !WXP[id] && !WXF[id]);
+  if (ids.length) Promise.all(ids.map(wxFor)).then(r => { if (r.some(Boolean) && gm.tab === 'scores' && gm.week === week) renderScores(); });
 }
 /* ----- Pick'em against the PlainStats model. Picks stay in this browser (localStorage pc.pickem), no account.
    { season, picks: { gameId: { t: team you picked, m: the model's pick when you made yours, at } } }.
