@@ -1,6 +1,212 @@
 {
- "asOf": "2026-11-24",
+ "asOf": "2026-11-25",
  "moves": [
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Coaching",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Aaron Rodgers",
+    "Mason Rudolph"
+   ],
+   "head": "Steelers bench Aaron Rodgers; Mason Rudolph starts Friday against the Broncos",
+   "plain": "Pittsburgh is turning to Rudolph for Friday's home game against Denver, NFL Network's Cameron Wolfe reported, and NFL.com says Rodgers will be inactive. Rodgers was not on the injury report, so this is a straight benching. He re-signed this year on a one-year, $22.5 million deal.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/aaron-rodgers-will-be-inactive-for-steelers-friday-vs-broncos-mason-rudolph-to-start",
+   "gids": [
+    "00-0023459",
+    "00-0034771"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "League",
+   "teams": [
+    "DEN"
+   ],
+   "players": [
+    "J.K. Dobbins"
+   ],
+   "head": "Broncos suspend RB J.K. Dobbins for Week 12",
+   "plain": "Sean Payton announced a one-game ban for conduct detrimental to the team, so Dobbins misses Friday's game at Pittsburgh and can return in Week 13. He is in the first year of a two-year, $16 million deal with $8 million guaranteed.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/broncos-suspend-rb-j-k-dobbins-for-week-12",
+   "gids": [
+    "00-0036158"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "League",
+   "teams": [
+    "SF",
+    "WAS"
+   ],
+   "players": [
+    "Brandon Aiyuk"
+   ],
+   "head": "Brandon Aiyuk clears waivers and visits the Commanders",
+   "plain": "No team claimed Aiyuk after the 49ers let him go on Monday, so he is a free agent and can pick his next team, ESPN's Adam Schefter reported. Washington has him in for a visit on Wednesday. Whoever signs him pays only his new deal, not the rest of his old $120 million contract.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-24",
+   "gids": [
+    "00-0036261"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Release",
+   "teams": [
+    "BAL"
+   ],
+   "players": [
+    "LaJohntay Wester",
+    "Kedon Slovis"
+   ],
+   "head": "Ravens waive returner LaJohntay Wester and QB Kedon Slovis",
+   "plain": "Baltimore cut Wester after he muffed two punts in Sunday's loss to the Panthers. Slovis was waived too, and NFL Network's Mike Garafolo says the Ravens hope to bring him back on the practice squad if he clears waivers. The Ravens are 4-7.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/ravens-waive-lajohntay-wester",
+   "gids": [
+    "00-0040075",
+    "00-0039577"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Signing",
+   "teams": [
+    "CHI",
+    "WAS"
+   ],
+   "players": [
+    "Isaac Yiadom"
+   ],
+   "head": "Bears claim CB Isaac Yiadom off waivers from the Commanders",
+   "plain": "Chicago picked up Yiadom a day after Washington waived him, adding depth with Kyler Gordon missing practice. A waiver claim keeps his existing contract; no new terms were reported.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-24",
+   "gids": [
+    "00-0034780"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Injury",
+   "teams": [
+    "DET"
+   ],
+   "players": [
+    "Skyler Gill-Howard"
+   ],
+   "head": "Lions DT Skyler Gill-Howard is out for the season with a knee injury",
+   "plain": "Dan Campbell said the rookie defensive tackle needs knee surgery and will miss the rest of 2026. It is another hit to a Detroit defensive line already without Aidan Hutchinson.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-tuesday-nov-24",
+   "gids": [
+    "00-0041447"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Injury",
+   "teams": [
+    "NYG"
+   ],
+   "players": [
+    "Greg Newsome II"
+   ],
+   "head": "Giants put CB Greg Newsome II on injured reserve after ankle surgery",
+   "plain": "Newsome is expected to miss four to six weeks, so he sits out at least the next four games. He signed a new deal with the Giants earlier this month.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-24-26",
+   "gids": [
+    "00-0036996"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Injury",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "Brady Christensen"
+   ],
+   "head": "Panthers G Brady Christensen reverts to season-ending injured reserve",
+   "plain": "Carolina did not activate Christensen before his three-week return window closed, so he cannot play again this season. He was on a one-year, $2.77 million deal.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/panthers-g-brady-christensen-reverts-to-season-ending-ir",
+   "gids": [
+    "00-0036968"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Signing",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Shane Buechele",
+    "Carl Lawson",
+    "Caden Curry"
+   ],
+   "head": "Colts sign QB Shane Buechele off the Bills' practice squad; Caden Curry to IR",
+   "plain": "With Daniel Jones gone, Indianapolis added Buechele behind Anthony Richardson and Riley Leonard; no contract terms were reported. The Colts also promoted DE Carl Lawson from the practice squad and put DE Caden Curry on injured reserve.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-work-out-three-quarterbacks",
+   "gids": [
+    "00-0036679",
+    "00-0033463",
+    "00-0041111"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "League",
+   "teams": [
+    "DET"
+   ],
+   "players": [],
+   "head": "Lions owner emerita Martha Firestone Ford dies at 101",
+   "plain": "Ford owned the Lions from 2014, after her husband William Clay Ford died, until handing control to their daughter Sheila Ford Hamp in 2020. The team is 8-2 this season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/lions-owner-martha-firestone-ford-passes-away",
+   "gids": []
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Colton McKivitz",
+    "Vederian Lowe"
+   ],
+   "head": "49ers RT Colton McKivitz is out for the season with a fractured, dislocated ankle",
+   "plain": "The injury from Sunday's game in Mexico City ends McKivitz's season. Vederian Lowe takes over at right tackle for the 9-1 49ers.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-rt-colton-mckivitz-carted-off-with-lower-leg-injury",
+   "gids": [
+    "00-0036256",
+    "00-0037287"
+   ]
+  },
   {
    "iso": "2026-11-23",
    "date": "Nov 23",
