@@ -1,6 +1,391 @@
 {
- "asOf": "2026-11-25",
+ "asOf": "2026-11-26",
  "moves": [
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Release",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Aaron Rodgers",
+    "Mason Rudolph"
+   ],
+   "head": "Steelers waive QB Aaron Rodgers a day after benching him",
+   "plain": "Pittsburgh let Rodgers go after his McAfee Show comments about head coach Mike McCarthy, and Mason Rudolph starts Friday against Denver. Any team can claim him until 4 p.m. ET on Nov. 26. Pro Football Rumors says he is owed $8.6 million in guaranteed base salary for the rest of the season on the one-year, $22.5 million deal he signed in May.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/aaron-rodgers-on-steelers-tenure-that-ship-has-sailed",
+   "gids": [
+    "00-0023459",
+    "00-0034771"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "WAS",
+    "SF"
+   ],
+   "players": [
+    "Brandon Aiyuk",
+    "Jayden Daniels"
+   ],
+   "head": "Brandon Aiyuk agrees to join the Commanders practice squad",
+   "plain": "Aiyuk, cut by the 49ers on Monday, is heading to Washington's practice squad, where he reunites with quarterback Jayden Daniels. No contract figures were reported. Washington can call practice squad players up for game days.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/commanders-to-sign-wr-brandon-aiyuk",
+   "gids": [
+    "00-0036261",
+    "00-0039910"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Game",
+   "teams": [
+    "LAR",
+    "GB"
+   ],
+   "players": [
+    "Kamren Kinchens",
+    "Christian Watson"
+   ],
+   "head": "Rams beat the Packers 26-13; Kamren Kinchens ejected for a hit on Christian Watson",
+   "plain": "Los Angeles won Wednesday night's game 26-13. Rams safety Kamren Kinchens was thrown out for an illegal hit on Packers receiver Christian Watson, who left the game with a concussion.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-25",
+   "gids": [
+    "00-0039834",
+    "00-0038124"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "ARI",
+    "BAL"
+   ],
+   "players": [
+    "Kedon Slovis"
+   ],
+   "head": "Cardinals claim QB Kedon Slovis off waivers from the Ravens",
+   "plain": "Arizona picked up Slovis a day after Baltimore waived him, A waiver claim keeps his existing contract; no new terms were reported.",
+   "source": "Arizona Cardinals",
+   "url": "https://www.azcardinals.com/news/cardinals-awarded-claim-of-kedon-slovis-off-waivers",
+   "gids": [
+    "00-0039577"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "LAC",
+    "SEA"
+   ],
+   "players": [
+    "Avery Smith"
+   ],
+   "head": "Chargers claim DB Avery Smith off waivers from the Seahawks",
+   "plain": "Los Angeles picked up Smith a day after Seattle waived him. A waiver claim keeps his existing contract; no new terms were reported.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-25",
+   "gids": [
+    "00-0041382"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Nate Hobbs",
+    "Brandin Cooks"
+   ],
+   "head": "49ers activate CB Nate Hobbs off IR and bring WR Brandin Cooks back on the practice squad",
+   "plain": "Hobbs is back on the active roster and can help the 49ers secondary this week. Cooks, released last week, returns on the practice squad, so San Francisco can call him up on game days.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-activate-cb-nate-hobbs-sign-wr-brandin-cooks-to-practice-squad",
+   "gids": [
+    "00-0036871",
+    "00-0031236"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "SF"
+   ],
+   "players": [
+    "Brock Purdy",
+    "Mac Jones"
+   ],
+   "head": "Brock Purdy is uncertain for Week 12 against Seattle with a low ankle sprain",
+   "plain": "The 49ers are not sure their starting quarterback can play against the Seahawks. If Purdy sits, Mac Jones starts.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/49ers-brock-purdy-uncertain-for-week-12",
+   "gids": [
+    "00-0037834",
+    "00-0036972"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Sam Darnold"
+   ],
+   "head": "Seahawks expect Sam Darnold back for Week 12 against the 49ers",
+   "plain": "Seattle expects its starting quarterback to return for the division game against San Francisco. Getting Darnold back is a big lift for the offense.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/seahawks-expecting-sam-darnold-week-12-return",
+   "gids": [
+    "00-0034869"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Kobie Turner",
+    "Justin Dedich"
+   ],
+   "head": "Rams activate DL Kobie Turner and OL Justin Dedich from IR",
+   "plain": "Both are back on the active roster, a boost for the Rams on both lines.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-designate-dl-kobie-turner-for-return",
+   "gids": [
+    "00-0039138",
+    "00-0039784"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "KC"
+   ],
+   "players": [
+    "Kenneth Walker III"
+   ],
+   "head": "Kenneth Walker III is out for Thanksgiving against the Bills",
+   "plain": "The Chiefs running back has a groin injury and will miss his third straight game. Kansas City has to lean on its other backs again on Thursday.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-25",
+   "gids": [
+    "00-0038134"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "DAL"
+   ],
+   "players": [
+    "Jalen Thompson"
+   ],
+   "head": "Cowboys activate S Jalen Thompson off IR",
+   "plain": "Thompson is back on the active roster, giving Dallas another experienced safety for the stretch run.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/cowboys-activate-s-jalen-thompson-off-ir",
+   "gids": [
+    "00-0035705"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Release",
+   "teams": [
+    "TEN",
+    "CAR"
+   ],
+   "players": [
+    "Tanoh Kpassagnon",
+    "Corey Thornton"
+   ],
+   "head": "Titans waive EDGE Tanoh Kpassagnon and sign CB Corey Thornton",
+   "plain": "Tennessee let Kpassagnon go with an injury settlement and used the spot on Thornton, signed off the Panthers' practice squad. No contract figures were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-25-26",
+   "gids": [
+    "00-0033902",
+    "00-0040296"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Jack Browning",
+    "Bradley Pinion"
+   ],
+   "head": "Dolphins sign P Jack Browning to the 53-man roster",
+   "plain": "Miami moved Browning up from the practice squad because punter Bradley Pinion is hurt. No contract figures were reported.",
+   "source": "NBC Sports / PFT",
+   "url": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dolphins-sign-p-jack-browning-to-their-53-man-roster",
+   "gids": [
+    "00-0039477",
+    "00-0032065"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "IND",
+    "DAL"
+   ],
+   "players": [
+    "Wanya Morris"
+   ],
+   "head": "Colts sign OT Wanya Morris off the Cowboys practice squad",
+   "plain": "Indianapolis added Morris to its active roster for offensive line depth. No contract figures were reported.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-25",
+   "gids": [
+    "00-0038981"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Signing",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Gabe Hall"
+   ],
+   "head": "Eagles sign DT Gabe Hall to the active roster",
+   "plain": "Philadelphia moved Hall up from its practice squad for defensive line depth. No contract figures were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-25-26",
+   "gids": [
+    "00-0039265"
+   ]
+  },
+  {
+   "iso": "2026-11-25",
+   "date": "Nov 25",
+   "kind": "Injury",
+   "teams": [
+    "NE",
+    "NYJ",
+    "TB",
+    "JAX",
+    "LV"
+   ],
+   "players": [
+    "Romeo Doubs",
+    "T'Vondre Sweat",
+    "Jalen McMillan",
+    "Christian Rozeboom",
+    "Patrick Mekari",
+    "Patrick Johnson"
+   ],
+   "head": "Six players start their return from IR, including Romeo Doubs and T'Vondre Sweat",
+   "plain": "Practice windows opened for Patriots WR Romeo Doubs, Jets NT T'Vondre Sweat, Buccaneers WR Jalen McMillan and LB Christian Rozeboom, Jaguars G Patrick Mekari and Raiders EDGE Patrick Johnson. They can practice now and come back to the active roster later.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-wednesday-nov-25",
+   "gids": [
+    "00-0037816",
+    "00-0039886",
+    "00-0039855",
+    "00-0035942",
+    "00-0035112",
+    "00-0036922"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Release",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "Payton Page",
+    "Isaiahh Loudermilk"
+   ],
+   "head": "Jets waive DT Payton Page and release DL Isaiahh Loudermilk from the practice squad",
+   "plain": "New York trimmed two defensive linemen. Page goes on waivers, where any team can claim him, and Loudermilk is a free agent.",
+   "source": "New York Jets",
+   "url": "https://www.newyorkjets.com/news/jets-waive-payton-page-release-isaiahh-loudermilk-from-practice-squad-11-24-2026",
+   "gids": [
+    "00-0040404",
+    "00-0036843"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Injury",
+   "teams": [
+    "KC"
+   ],
+   "players": [
+    "Ben VanSumeren",
+    "Fred Johnson"
+   ],
+   "head": "Chiefs put FB Ben VanSumeren on IR and promote T Fred Johnson",
+   "plain": "VanSumeren goes on injured reserve, and Kansas City used his roster spot on Johnson, moved up from the practice squad for offensive line depth.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-24-26",
+   "gids": [
+    "00-0038489",
+    "00-0034951"
+   ]
+  },
+  {
+   "iso": "2026-11-24",
+   "date": "Nov 24",
+   "kind": "Signing",
+   "teams": [
+    "SEA",
+    "BUF"
+   ],
+   "players": [
+    "Chase Lundt",
+    "Avery Smith"
+   ],
+   "head": "Seahawks sign T Chase Lundt off the Bills practice squad and waive CB Avery Smith",
+   "plain": "Seattle added Lundt for offensive line depth and cut Smith to make room. No contract figures were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-24-26",
+   "gids": [
+    "00-0040217",
+    "00-0041382"
+   ]
+  },
   {
    "iso": "2026-11-24",
    "date": "Nov 24",
@@ -186,6 +571,46 @@
    "source": "Pro Football Rumors",
    "url": "https://www.profootballrumors.com/2026/11/lions-owner-martha-firestone-ford-passes-away",
    "gids": []
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "WAS"
+   ],
+   "players": [
+    "Jacory Croskey-Merritt",
+    "Isaac Yiadom"
+   ],
+   "head": "Commanders activate RB Jacory Croskey-Merritt from IR",
+   "plain": "The running back is back on the active roster. Washington waived cornerback Isaac Yiadom to make room.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/commanders-activate-rb-jacory-croskey-merritt-from-ir",
+   "gids": [
+    "00-0040242",
+    "00-0034780"
+   ]
+  },
+  {
+   "iso": "2026-11-23",
+   "date": "Nov 23",
+   "kind": "Injury",
+   "teams": [
+    "CIN"
+   ],
+   "players": [
+    "Swayze Bozeman",
+    "Brian Parker II"
+   ],
+   "head": "Bengals activate LB Swayze Bozeman and G Brian Parker II from IR",
+   "plain": "Both are back on Cincinnati's active roster, adding depth at linebacker and on the offensive line.",
+   "source": "Cincinnati Bengals",
+   "url": "https://www.bengals.com/news/swayze-bozeman-brian-parker-ii-activated-reserve-injured-list-bengals-roster-update",
+   "gids": [
+    "00-0039313",
+    "00-0041098"
+   ]
   },
   {
    "iso": "2026-11-23",
@@ -758,6 +1183,24 @@
   {
    "iso": "2026-11-21",
    "date": "Nov 21",
+   "kind": "Signing",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Charlie Smyth"
+   ],
+   "head": "Saints sign K Charlie Smyth to the active roster on a two-year deal",
+   "plain": "New Orleans promoted Smyth from the practice squad on a deal that runs through 2027 and pays the league minimum for the rest of 2026; the report did not give a total or any guarantees. He made 4 of 5 field goals, with a long of 55, in his last two games as a call-up.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-sign-k-charlie-smyth-to-2-year-deal",
+   "gids": [
+    "00-0039229"
+   ]
+  },
+  {
+   "iso": "2026-11-21",
+   "date": "Nov 21",
    "kind": "League",
    "teams": [
     "TEN"
@@ -774,21 +1217,23 @@
    ]
   },
   {
-   "iso": "2026-11-21",
-   "date": "Nov 21",
-   "kind": "Signing",
+   "iso": "2026-11-20",
+   "date": "Nov 20",
+   "kind": "Release",
    "teams": [
-    "NO"
+    "IND"
    ],
    "players": [
-    "Charlie Smyth"
+    "Daniel Jones",
+    "Anthony Richardson"
    ],
-   "head": "Saints sign K Charlie Smyth to the active roster on a two-year deal",
-   "plain": "New Orleans promoted Smyth from the practice squad on a deal that runs through 2027 and pays the league minimum for the rest of 2026; the report did not give a total or any guarantees. He made 4 of 5 field goals, with a long of 55, in his last two games as a call-up.",
+   "head": "Colts waive QB Daniel Jones and turn to Anthony Richardson",
+   "plain": "Coach Shane Steichen announced the move Friday and said Jones did not ask to be released; Jones leads the NFL with 13 interceptions this season. He is on waivers until Monday afternoon, and a team that claims him would owe the rest of his 2026 base salary (about $2.14M) and a $10.51M injury guarantee for 2027 from the two-year, $88M deal he signed in March, so a claim is unlikely. Anthony Richardson is expected to start, and the report did not give the Colts' dead money.",
    "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/saints-sign-k-charlie-smyth-to-2-year-deal",
+   "url": "https://www.profootballrumors.com/2026/11/colts-release-qb-daniel-jones",
    "gids": [
-    "00-0039229"
+    "00-0035710",
+    "00-0039164"
    ]
   },
   {
@@ -825,26 +1270,6 @@
    "url": "https://www.profootballrumors.com/2026/11/chargers-olb-bud-dupree-requests-release",
    "gids": [
     "00-0032146"
-   ]
-  },
-  {
-   "iso": "2026-11-20",
-   "date": "Nov 20",
-   "kind": "Release",
-   "teams": [
-    "IND"
-   ],
-   "players": [
-    "Daniel Jones",
-    "Anthony Richardson"
-   ],
-   "head": "Colts waive QB Daniel Jones and turn to Anthony Richardson",
-   "plain": "Coach Shane Steichen announced the move Friday and said Jones did not ask to be released; Jones leads the NFL with 13 interceptions this season. He is on waivers until Monday afternoon, and a team that claims him would owe the rest of his 2026 base salary (about $2.14M) and a $10.51M injury guarantee for 2027 from the two-year, $88M deal he signed in March, so a claim is unlikely. Anthony Richardson is expected to start, and the report did not give the Colts' dead money.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/colts-release-qb-daniel-jones",
-   "gids": [
-    "00-0035710",
-    "00-0039164"
    ]
   },
   {
@@ -946,6 +1371,26 @@
   {
    "iso": "2026-11-19",
    "date": "Nov 19",
+   "kind": "Release",
+   "teams": [
+    "NO"
+   ],
+   "players": [
+    "Justin Reid",
+    "Jordan Howden"
+   ],
+   "head": "Saints agree to release S Justin Reid at his request",
+   "plain": "Reid asked to be let go earlier this week, NewOrleans.Football reports, and he will not play Sunday against the Bears. The move was not yet on the league's transaction report Thursday, and because the trade deadline has passed he goes on waivers first. Jordan Howden, who has taken some of Reid's snaps in recent weeks, is set to start.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/saints-s-justin-reid-agree-to-part-ways",
+   "gids": [
+    "00-0034361",
+    "00-0038588"
+   ]
+  },
+  {
+   "iso": "2026-11-19",
+   "date": "Nov 19",
    "kind": "League",
    "teams": [
     "LAR"
@@ -981,26 +1426,6 @@
     "00-0033281",
     "00-0033548",
     "00-0039234"
-   ]
-  },
-  {
-   "iso": "2026-11-19",
-   "date": "Nov 19",
-   "kind": "Release",
-   "teams": [
-    "NO"
-   ],
-   "players": [
-    "Justin Reid",
-    "Jordan Howden"
-   ],
-   "head": "Saints agree to release S Justin Reid at his request",
-   "plain": "Reid asked to be let go earlier this week, NewOrleans.Football reports, and he will not play Sunday against the Bears. The move was not yet on the league's transaction report Thursday, and because the trade deadline has passed he goes on waivers first. Jordan Howden, who has taken some of Reid's snaps in recent weeks, is set to start.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/saints-s-justin-reid-agree-to-part-ways",
-   "gids": [
-    "00-0034361",
-    "00-0038588"
    ]
   },
   {
@@ -1427,6 +1852,24 @@
   {
    "iso": "2026-11-16",
    "date": "Nov 16",
+   "kind": "Release",
+   "teams": [
+    "MIA"
+   ],
+   "players": [
+    "Zane Gonzalez"
+   ],
+   "head": "Dolphins waive K Zane Gonzalez after a two-point loss",
+   "plain": "Gonzalez missed two of three field goals and an extra point in the 24-22 loss to the Colts. Miami is looking for its third kicker of the season.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/dolphins-waive-k-zane-gonzalez",
+   "gids": [
+    "00-0033862"
+   ]
+  },
+  {
+   "iso": "2026-11-16",
+   "date": "Nov 16",
    "kind": "Game",
    "teams": [
     "LAC",
@@ -1577,24 +2020,6 @@
    "url": "https://www.profootballrumors.com/2026/11/dolphins-dl-zeek-biggers-to-undergo-season-ending-knee-surgery",
    "gids": [
     "00-0040248"
-   ]
-  },
-  {
-   "iso": "2026-11-16",
-   "date": "Nov 16",
-   "kind": "Release",
-   "teams": [
-    "MIA"
-   ],
-   "players": [
-    "Zane Gonzalez"
-   ],
-   "head": "Dolphins waive K Zane Gonzalez after a two-point loss",
-   "plain": "Gonzalez missed two of three field goals and an extra point in the 24-22 loss to the Colts. Miami is looking for its third kicker of the season.",
-   "source": "Pro Football Rumors",
-   "url": "https://www.profootballrumors.com/2026/11/dolphins-waive-k-zane-gonzalez",
-   "gids": [
-    "00-0033862"
    ]
   },
   {
@@ -2444,7 +2869,7 @@
    "source": "Pro Football Rumors",
    "url": "https://www.profootballrumors.com/transactions",
    "gids": [
-    ""
+    "00-0034807"
    ]
   },
   {
@@ -2464,7 +2889,7 @@
    "url": "https://www.profootballrumors.com/transactions",
    "gids": [
     "00-0036425",
-    ""
+    "00-0041348"
    ]
   },
   {
@@ -2547,7 +2972,7 @@
     "00-0036816",
     "00-0039481",
     "00-0033862",
-    ""
+    "00-0029597"
    ]
   },
   {
