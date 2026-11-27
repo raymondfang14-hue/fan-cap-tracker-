@@ -1,6 +1,331 @@
 {
- "asOf": "2026-11-26",
+ "asOf": "2026-11-27",
  "moves": [
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Game",
+   "teams": [
+    "KC",
+    "BUF"
+   ],
+   "players": [],
+   "head": "Thanksgiving night: Bills beat Chiefs 13-10",
+   "plain": "Buffalo won a low-scoring game in Orchard Park to move to 10-1. Kansas City falls to 8-3.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/scoreboard/2026/regular/12/",
+   "gids": []
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Game",
+   "teams": [
+    "PHI",
+    "DAL"
+   ],
+   "players": [],
+   "head": "Eagles edge Cowboys 39-38 in Dallas on Thanksgiving",
+   "plain": "Philadelphia won by one point at AT&T Stadium. The Eagles are 4-7 and the Cowboys fall to 5-7.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/scoreboard/2026/regular/12/",
+   "gids": []
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Game",
+   "teams": [
+    "CHI",
+    "DET"
+   ],
+   "players": [],
+   "head": "Bears beat Lions 39-35 in Detroit on Thanksgiving",
+   "plain": "Chicago won a shootout at Ford Field to move to 9-2. Detroit drops to 8-3, a game behind the Bears.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/nfl/scoreboard/2026/regular/12/",
+   "gids": []
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "PHI"
+   ],
+   "players": [
+    "Saquon Barkley",
+    "Dallas Goedert",
+    "Cooper DeJean",
+    "Marcus Epps"
+   ],
+   "head": "Eagles lose Saquon Barkley, Dallas Goedert, Cooper DeJean and Marcus Epps during the Cowboys game",
+   "plain": "Barkley (stinger) did not return, and Goedert (shoulder), Epps (foot) and DeJean (concussion, in the first half) were ruled out during Thursday's game in Dallas. Philadelphia won anyway, but how many of them can play next week is the big question for the offense and the secondary.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0034844",
+    "00-0034351",
+    "00-0039841",
+    "00-0034993"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "CHI"
+   ],
+   "players": [
+    "Colston Loveland"
+   ],
+   "head": "Bears TE Colston Loveland leaves the Lions game with a knee injury",
+   "plain": "Loveland was ruled out in the first half of Thursday's win in Detroit. No timeline was given.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0040126"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Abraham Lucas",
+    "Quenton Nelson"
+   ],
+   "head": "Seahawks rule out OT Abraham Lucas and G Quenton Nelson for Sunday against the 49ers",
+   "plain": "Lucas (ankle) and Nelson (knee) will both miss the division game in San Francisco, so Seattle plays with two backups on the offensive line. Coach Mike Macdonald said the team hopes Nelson is back next week.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0037812",
+    "00-0034342"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "LAC"
+   ],
+   "players": [
+    "Justin Herbert",
+    "Jake Browning",
+    "D.J. Uiagalelei"
+   ],
+   "head": "Justin Herbert is in the concussion protocol and expected to miss Week 12; Chargers sign QB Jake Browning to the active roster",
+   "plain": "Herbert has not practiced since the Week 11 loss and is expected to sit. Undrafted rookie D.J. Uiagalelei is in line to start, with Browning, the former Bengals backup, moved up from the practice squad behind him. The Chargers are 1-9.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/chargers-qb-justin-herbert-in-concussion-protocol-team-promotes-jake-browning",
+   "gids": [
+    "00-0036355",
+    "00-0035100",
+    "00-0040464"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Michael Pittman Jr.",
+    "Ben Skowronek",
+    "Max Hurleman"
+   ],
+   "head": "Steelers activate WR Michael Pittman Jr. off IR; Ben Skowronek goes to IR",
+   "plain": "Pittman is back from his foot injury in time for Friday's game against Denver. Skowronek (calf) will miss at least four games, and undrafted rookie Max Hurleman, who caught six passes for 61 yards on Sunday, moves up from the practice squad to the active roster.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/steelers-activate-wr-michael-pittman-jr",
+   "gids": [
+    "00-0036252",
+    "00-0036862",
+    "00-0040618"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "DEN"
+   ],
+   "players": [
+    "Tyler Badie",
+    "Cody Schrader",
+    "Sai'vion Jones"
+   ],
+   "head": "Broncos activate RB Tyler Badie off IR and put DT Sai'vion Jones on IR",
+   "plain": "Badie is back on the active roster for Friday's game in Pittsburgh, though NFL.com lists him as questionable with a thumb injury. Denver also signed RB Cody Schrader from its practice squad. No contract figures were reported.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-26-26",
+   "gids": [
+    "00-0037085",
+    "00-0039703",
+    "00-0040153"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "NYJ"
+   ],
+   "players": [
+    "David Onyemata",
+    "T'Vondre Sweat"
+   ],
+   "head": "Jets activate DL David Onyemata and NT T'Vondre Sweat from IR",
+   "plain": "Both are back on the active roster, which gives the Jets their run-stuffers back in the middle of the defense.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0033051",
+    "00-0039886"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "CAR"
+   ],
+   "players": [
+    "Jonathon Brooks"
+   ],
+   "head": "Panthers activate RB Jonathon Brooks from IR",
+   "plain": "Brooks is back on the active roster and adds depth to Carolina's backfield.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0039344"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Cam Taylor-Britt"
+   ],
+   "head": "Colts activate CB Cam Taylor-Britt from IR",
+   "plain": "Taylor-Britt is back on the active roster, a help for the Colts secondary.",
+   "source": "NFL.com",
+   "url": "https://www.nfl.com/news/nfl-news-roundup-latest-league-updates-from-thursday-nov-26",
+   "gids": [
+    "00-0037753"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "IND"
+   ],
+   "players": [
+    "Caden Curry"
+   ],
+   "head": "Colts rookie DE Caden Curry is out for the season with a torn wrist ligament",
+   "plain": "Curry went on injured reserve this week, and ESPN's Stephen Holder reports the torn ligament ends his rookie season. The sixth-round pick had played in all 11 games, with 26 tackles and a sack.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/colts-de-caden-curry-out-for-season-with-wrist-injury",
+   "gids": [
+    "00-0041111"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Injury",
+   "teams": [
+    "LAR"
+   ],
+   "players": [
+    "Kyren Williams"
+   ],
+   "head": "Rams RB Kyren Williams has been playing through turf toe",
+   "plain": "Netflix's Tom Pelissero reports Williams has had turf toe for about a month and it bothers him when he speeds up. He is still playing, and Blake Corum has taken on more of the work.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/rams-rb-kyren-williams-dealing-with-turf-toe",
+   "gids": [
+    "00-0037840"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Restructure",
+   "teams": [
+    "SEA"
+   ],
+   "players": [
+    "Sam Darnold",
+    "Julian Love",
+    "Ernest Jones"
+   ],
+   "head": "Seahawks restructure the deals of Sam Darnold, Julian Love and Ernest Jones to free cap space",
+   "plain": "Seattle turned salary into bonus money for three starters, which spreads the cost over later years and frees room under the cap now. The figures in the report come from a cap site we don't use, so no amounts are shown here.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/nfl-restructures-seahawks-oluokun-little",
+   "gids": [
+    "00-0034869",
+    "00-0034974",
+    "00-0036994"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Restructure",
+   "teams": [
+    "JAX"
+   ],
+   "players": [
+    "Foyesade Oluokun",
+    "Walker Little"
+   ],
+   "head": "Jaguars restructure the deals of Foyesade Oluokun and Walker Little to free cap space",
+   "plain": "Jacksonville turned salary into bonus money for its linebacker and left tackle, which pushes some of the cost into later years. The figures in the report come from a cap site we don't use, so no amounts are shown here.",
+   "source": "Pro Football Rumors",
+   "url": "https://www.profootballrumors.com/2026/11/nfl-restructures-seahawks-oluokun-little",
+   "gids": [
+    "00-0034413",
+    "00-0036975"
+   ]
+  },
+  {
+   "iso": "2026-11-26",
+   "date": "Nov 26",
+   "kind": "Release",
+   "teams": [
+    "PIT"
+   ],
+   "players": [
+    "Aaron Rodgers"
+   ],
+   "head": "Aaron Rodgers clears waivers and is a free agent",
+   "plain": "No team claimed Rodgers or the $8.56 million left on his contract, CBS Sports reports, citing Tom Pelissero. He can now sign with any team, and Pittsburgh goes on with Mason Rudolph at quarterback.",
+   "source": "CBS Sports",
+   "url": "https://www.cbssports.com/fantasy/football/news/aaron-rodgers-goes-unclaimed-on-waivers/",
+   "gids": [
+    "00-0023459"
+   ]
+  },
   {
    "iso": "2026-11-25",
    "date": "Nov 25",
